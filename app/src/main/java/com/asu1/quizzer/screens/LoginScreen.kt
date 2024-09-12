@@ -167,7 +167,9 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
                     }
                     val profileUri = googleIdTokenCredential.profilePictureUri
 
-                    navController.navigate(Route.RegisterPolicyAgreement.route+"?email=${email}?profileUri=${profileUri}")
+                    navController.navigate(Route.RegisterPolicyAgreement(email,
+                        profileUri.toString()
+                    ))
                 } catch (e: GetCredentialException) {
                     Log.e("Quizzer", "Error getting credential", e)
                 }

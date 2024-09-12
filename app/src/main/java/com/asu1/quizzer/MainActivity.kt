@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
 import androidx.navigation.NavType
@@ -16,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.asu1.quizzer.screens.InitializationScreen
 import com.asu1.quizzer.screens.LoginScreen
 import com.asu1.quizzer.screens.MainScreen
@@ -92,39 +94,39 @@ class MainActivity : ComponentActivity() {
 
                         NavHost(
                             navController = navController,
-                            startDestination = Route.Init.route
+                            startDestination = Route.Init
                         ) {
-                            composable(Route.Init.route) {
+                            composable<Route.Init> {
                                 mainViewModel.updateInternetConnection()
                                 InitializationScreen(
                                     navController,
                                     initActivityState = initState
                                 )
                             }
-                            composable(Route.Home.route) {
+                            composable<Route.Home> {
                                 MainScreen(
                                     navController,
                                     mainActivityState,
                                 )
                             }
-                            composable(Route.Trends.route) {
+                            composable<Route.Trends> {
                                 //TODO
                             }
-                            composable(Route.Statistics.route) {
+                            composable<Route.Statistics> {
                                 //TODO
                             }
-                            composable(Route.Setting.route) {
+                            composable<Route.Setting> {
                                 //TODO
                             }
-                            composable(Route.Search.route,
+                            composable<Route.Search>(
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
-                                ) {
+                            ) {
                                 SearchScreen(navController, searchScreenActivityState)
                             }
-                            composable(Route.Login.route,
+                            composable<Route.Login>(
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
@@ -132,7 +134,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 LoginScreen(navController, loginActivityState)
                             }
-                            composable(Route.PrivacyPolicy.route,
+                            composable<Route.PrivacyPolicy>(
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
@@ -140,37 +142,28 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 PrivacyPolicy(navController)
                             }
-                            composable(Route.RegisterPolicyAgreement.route + "?email={email}?profileUri={profileUri}",
-                                arguments = listOf(
-                                    navArgument("email") {
-                                        type = NavType.StringType
-                                        nullable = true
-                                    },
-                                    navArgument("profileUri") { type = NavType.StringType
-                                        nullable = true
-                                    }
-                                ),
+                            composable<Route.RegisterPolicyAgreement> (
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
-                                ) {backStackEntry ->
-                                val email = backStackEntry.arguments?.getString("email")
-                                val profileUri = backStackEntry.arguments?.getString("profileUri")
-                                if(email == null || profileUri == null) {
+                            ) {backStackEntry ->
+                                val email = backStackEntry.toRoute<Route.RegisterPolicyAgreement>().email
+                                val profileUri = backStackEntry.toRoute<Route.RegisterPolicyAgreement>().profileUri
+                                if(email == "" || profileUri == null) {
                                     return@composable
                                 }
                                 registerActivityState.email = email
                                 registerActivityState.photoUri = profileUri
                                 UsageAgreement(navController, registerActivityState)
                             }
-                            composable(Route.RegisterNickname.route) {
+                            composable<Route.RegisterNickname> {
                                 NicknameInput (navController, registerActivityState)
                             }
-                            composable(Route.RegisterTags.route) {
+                            composable<Route.RegisterTags> {
                                 TagSetting(navController, registerActivityState)
                             }
-                            composable(Route.CreateQuizLayout.route,
+                            composable<Route.CreateQuizLayout>(
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),

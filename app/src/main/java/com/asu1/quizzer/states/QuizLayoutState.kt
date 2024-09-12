@@ -72,13 +72,13 @@ fun rememberQuizLayoutState(
         creator = rememberUpdatedState(creator),
         uuid = rememberUpdatedState(uuid),
         quizzes = rememberUpdatedState(quizzes),
-        setQuizTitle = {it ->
+        setQuizTitle = {
             if (it != null) {
                 quizLayoutViewModel.setQuizTitle(it)
             }
         },
-        setQuizImage = {it ->
-                quizLayoutViewModel.setQuizImage(it)
+        setQuizImage = {
+            quizLayoutViewModel.setQuizImage(it)
         },
         setQuizDescription = {it ->
             if (it != null) {

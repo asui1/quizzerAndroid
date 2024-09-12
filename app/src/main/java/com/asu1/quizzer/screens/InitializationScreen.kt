@@ -42,7 +42,7 @@ fun InitializationScreen(navHostController: NavHostController, initActivityState
             )
             else -> {
                 Logger().debug("InitializationScreen: Navigating to Home")
-                navHostController.navigate(Route.Home.route) {
+                navHostController.navigate(Route.Home) {
                     popUpTo(navHostController.graph.startDestinationId) {
                         inclusive = true
                     }

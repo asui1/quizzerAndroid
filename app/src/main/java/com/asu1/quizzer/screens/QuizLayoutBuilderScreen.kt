@@ -80,7 +80,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             quizLayoutState: QuizLayoutState,
 ) {
     var policyAgreed by remember { mutableStateOf(false) }
-    var step by remember { mutableIntStateOf(1) }
+    var step by remember { mutableIntStateOf(0) }
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
         stringResource(R.string.set_quiz_image),
@@ -112,15 +112,19 @@ fun QuizLayoutBuilderScreen(navController: NavController,
             modifier = Modifier.imePadding()
         ) {
 
-            QuizPolicyAgreement(onAgree = { policyAgreed = true })
+            QuizPolicyAgreement(onAgree = {
+                policyAgreed = true
+                step++
+            })
         }
     }
 
     Scaffold(
         topBar = {
             StepProgressBar(
+                navController = navController,
                 totalSteps = 7,
-                currentStep = step,
+                currentStep = if(step == 0) 1 else step,
                 layoutSteps = layoutSteps
             )
         }
@@ -133,8 +137,12 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         ) {
             Column {
                 when(step) {
+                    0 -> {}
                     1 -> {
-                        QuizLayoutTitle(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutTitle(
+                            quizLayoutState = quizLayoutState,
+                            proceed = {step++},
+                        )
                     }
                     2 ->{
                         QuizLayoutSetTitleImage(quizLayoutState = quizLayoutState, proceed = {step++})
@@ -168,18 +176,24 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         step--
                     }},
                         enabled = step > 1,
-                        ) {
+                    ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Move Back"
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { if(step > 1){
-                        step--
-                    }},
+                    IconButton(
+                        onClick = {
+                            if(step < 7){
+                                step++
+                            }
+                            else{
+                                //TODO: Navigate to Quiz Builder
+                            }
+                        },
                         enabled = true,
-                        ) {
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                             contentDescription = "Move Forward"
@@ -214,7 +228,7 @@ fun getQuizLayoutState() : QuizLayoutState{
         uuid = remember { mutableStateOf(null) },
         quizzes = remember { mutableStateOf(emptyList()) },
 
-    )
+        )
 }
 
 @Preview
@@ -268,6 +282,7 @@ fun QuizPolicyAgreementPreview() {
 
 @Composable
 fun StepProgressBar(
+    navController: NavController,
     totalSteps: Int,
     currentStep: Int,
     modifier: Modifier = Modifier,
@@ -275,6 +290,7 @@ fun StepProgressBar(
     completedColor: Color = MaterialTheme.colorScheme.primary,
     pendingColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
 ) {
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -283,7 +299,7 @@ fun StepProgressBar(
         RowWithAppIconAndName(
             showBackButton = true,
             onBackPressed = {
-
+                navController.popBackStack()
             }
         )
         Text(
@@ -312,6 +328,7 @@ fun StepProgressBar(
 fun StepProgressBarPreview() {
     QuizzerAndroidTheme {
         StepProgressBar(
+            navController = rememberNavController(),
             totalSteps = 7,
             currentStep = 3,
             layoutSteps = listOf(

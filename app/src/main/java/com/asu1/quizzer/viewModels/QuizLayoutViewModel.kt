@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.util.Logger
 import com.github.f4b6a3.uuid.UuidCreator
 
 class QuizLayoutViewModel(application: Application) : AndroidViewModel(application) {
@@ -58,7 +59,8 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
         _colorScheme.value = colorScheme
     }
 
-    fun resetQuizLayout() {
+    private fun resetQuizLayout() {
+        Logger().debug("resetQuizLayout")
         _quizTitle.value = ""
         _quizImage.value = null
         _quizDescription.value = ""
@@ -75,7 +77,8 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setQuizTitle(title: String) {
-        _quizTitle.value = title
+        Logger().debug("setQuizTitle: $title")
+        _quizTitle.postValue(title)
     }
 
     fun setQuizImage(image: ByteArray) {

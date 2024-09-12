@@ -34,6 +34,7 @@ import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
@@ -84,6 +85,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -149,14 +151,6 @@ fun MainScreen(navController: NavController, mainActivityState: MainActivityStat
                         },
                         bottomBar = {
                             MainActivityBottomBar(navController, mainActivityState, drawerState)
-                        },
-                        floatingActionButton = {
-                            FloatingActionButton(
-                                onClick = { /* Handle FAB click */ },
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = "Create New Quiz")
-                            }
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
@@ -230,7 +224,7 @@ fun MainActivityTopbar(navController: NavController, mainActivityState: MainActi
                         drawerState.open()
                     }
                     else{
-                        navController.navigate(Route.Login.route)
+                        navController.navigate(Route.Login)
                     }
                 }
             })
@@ -254,6 +248,7 @@ fun MainActivityTopbarPreview(){
 fun MainActivityBottomBar(navController: NavController, mainActivityState: MainActivityState, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
     val bottomBarSelection by mainActivityState.bottomBarSelection
+    val defaultIconSize = 24.dp
 
     BottomAppBar(
         content = {
@@ -268,16 +263,7 @@ fun MainActivityBottomBar(navController: NavController, mainActivityState: MainA
                         contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-                IconButton(
-                    onClick = { moveToSearchActivity(navController) },
-                    modifier = Modifier.weight(1f),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
+                    Icon(Icons.Default.Home, contentDescription = "Home", modifier = Modifier.size(defaultIconSize))
                 }
                 IconButton(
                     onClick = { /* Handle Trends click */ },
@@ -286,16 +272,25 @@ fun MainActivityBottomBar(navController: NavController, mainActivityState: MainA
                         contentColor = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = "Trends")
+                    Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = "Trends", modifier = Modifier.size(defaultIconSize))
+                }
+                IconButton(
+                    onClick = { navController.navigate(Route.CreateQuizLayout) },
+                    modifier = Modifier.weight(1.5f),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
+                    Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Quiz", modifier = Modifier.size(1.5f * defaultIconSize))
                 }
                 IconButton(
                     onClick = { /* Handle Stats click */ },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
-                    Icon(Icons.Default.BarChart, contentDescription = "Stats")
+                    Icon(Icons.Default.BarChart, contentDescription = "Stats", modifier = Modifier.size(defaultIconSize))
                 }
                 IconButton(
                     onClick = {
@@ -305,10 +300,10 @@ fun MainActivityBottomBar(navController: NavController, mainActivityState: MainA
                     },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        contentColor = if (bottomBarSelection == 4) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(defaultIconSize))
                 }
             }
         }
@@ -328,7 +323,7 @@ fun MainActivityBottomBarPreview(){
 }
 
 fun moveToSearchActivity(navController: NavController) {
-    navController.navigate(Route.Search.route)
+    navController.navigate(Route.Search)
 }
 
 @Composable
@@ -342,7 +337,7 @@ fun PrivacyPolicyRow(navController: NavController) {
         horizontalArrangement = Arrangement.Center
     ) {
         TextButton(onClick = {
-            navController.navigate(Route.PrivacyPolicy.route)
+            navController.navigate(Route.PrivacyPolicy)
         }) {
             Text(stringResource(R.string.privacy_policy))
         }
@@ -461,7 +456,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {}, ma
                             if (isUserLoggedIn) {
                                 //TODO LATER for profile pic fix and user tags setting
                             } else {
-                                navController.navigate(Route.Login.route)
+                                navController.navigate(Route.Login)
                             }
                         }
                     })
@@ -470,7 +465,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {}, ma
                         if (isUserLoggedIn) {
                             showLogoutDialog = true
                         } else {
-                            navController.navigate(Route.Login.route)
+                            navController.navigate(Route.Login)
                         }
                     }) {
                         Icon(

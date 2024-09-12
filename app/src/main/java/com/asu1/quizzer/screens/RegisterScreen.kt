@@ -63,7 +63,7 @@ fun UsageAgreement(navController: NavHostController, registerActivityState: Regi
 
     LaunchedEffect(registerStep) {
         if (registerStep == 1) {
-            navController.navigate(Route.RegisterNickname.route)
+            navController.navigate(Route.RegisterNickname)
         }
     }
     BackHandler {
@@ -152,7 +152,7 @@ fun NicknameInput(navController: NavHostController, registerActivityState: Regis
     LaunchedEffect(registerStep) {
         Logger().printBackStack(navController)
         if (registerStep == 2) {
-            navController.navigate(Route.RegisterTags.route)
+            navController.navigate(Route.RegisterTags)
         }
     }
     BackHandler {
@@ -242,7 +242,7 @@ fun TagSetting(navController: NavHostController, registerActivityState: Register
             registerActivityState.email = null
             registerActivityState.photoUri = null
             registerActivityState.reset()
-            navController.popBackStack(Route.Login.route, inclusive = false)
+            navController.popBackStack(Route.Login, inclusive = false)
         }
     }
 

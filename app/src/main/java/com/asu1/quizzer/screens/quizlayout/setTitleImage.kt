@@ -33,6 +33,7 @@ import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.screens.getQuizLayoutState
 import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import loadImageAsByteArray
 
 @Composable
@@ -47,6 +48,8 @@ fun QuizLayoutSetTitleImage(quizLayoutState: QuizLayoutState, proceed: () -> Uni
     val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
         quizLayoutState.setQuizImage(byteArray)
     }
+
+    Logger().debug(quizLayoutState.quizTitle.value)
 
     Column(
         modifier = Modifier
