@@ -1,0 +1,6 @@
+{
+    "editor.formatOnSave": true,
+    "[kotlin]": {
+      "editor.defaultFormatter": "esafirm.kotlin-formatter"
+    }
+  }

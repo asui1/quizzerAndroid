@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Quizzer</string>
+    <string name="no_internet_connection">인터넷이 연결되지 않았습니다.</string>
+    <string name="please_check_your_internet_connection_and_try_again">인터넷 연결을 확인하고 다시 시도해주세요.</string>
+    <string name="retry">재시도</string>
+    <string name="exit">나가기</string>
+    <string name="update_available">업데이트가 가능합니다.</string>
+    <string name="a_new_update_is_available_would_you_like_to_update_now">새 업데이트가 있습니다. 바로 업데이트 하시겠습니까?</string>
+    <string name="update">업데이트</string>
+    <string name="privacy_policy">개인정보 처리방침</string>
+    <string name="privacy_policy_body">1. 개인정보의 수집 및 이용 목적\nQuizzer(이하 \"앱\")은 사용자의 개인정보를 중요하게 생각하며, 아래와 같은 목적을 위해 개인정보를 수집 및 이용합니다.\n\n사용자 식별 및 앱 서비스 제공\n사용자와의 의사소통을 위한 이메일 사용\n앱 내부에서의 활동 정보 분석을 통한 서비스 개선\n\n2. 수집하는 개인정보 항목\n앱은 다음과 같은 개인정보를 수집합니다.\n\n이메일 주소: 사용자 식별 및 의사소통을 위해 사용됩니다.\n앱 내부 활동 정보: 앱 사용 패턴 분석 및 서비스 개선을 위해 사용됩니다.\n\n3. 개인정보의 보유 및 이용기간\n수집된 개인정보는 이용목적이 달성되거나 사용자가 삭제를 요청할 때까지 보유 및 이용됩니다. 사용자가 요청할 경우, 수집된 개인정보는 지체 없이 삭제됩니다.\n\n4. 개인정보의 제3자 제공\n앱은 사용자의 사전 동의 없이는 개인정보를 제3자에게 제공하지 않습니다.\n\n5. 개인정보의 안전성 확보 조치\n앱은 사용자의 개인정보를 안전하게 관리하기 위해 다음과 같은 조치를 취하고 있습니다.\n\n개인정보의 암호화\n해킹이나 컴퓨터 바이러스 등에 의한 개인정보 유출을 막기 위한 기술적 대책\n개인정보 접근 권한 제한\n\n6. 개인정보보호책임자\n개인정보와 관련된 문의사항은 아래의 개인정보보호책임자에게 연락해 주시기 바랍니다.\n\n책임자: 조장현\n연락처: whwkd122@gmail.com\n\n7. 개인정보 처리방침의 변경\n개인정보처리방침이 변경될 경우, 변경 사항은 앱 내 공지사항을 통해 고지됩니다.\n\n본 방침은 2024년 8월 4일부터 시행됩니다.</string>
+    <string name="contact">Contact</string>
+    <string name="inquiry">Inquiry</string>
+    <string name="sign_out">Sign out</string>
+    <string name="most_viewed">Most Viewed</string>
+    <string name="similar_items">Similar Items</string>
+    <string name="recent_items">Recent Items</string>
+    <string name="inquiry_body">Response will be given by email. If you\'re guest, enter email for reply.</string>
+    <string name="logout_confirmation">Logout Confirmation</string>
+    <string name="logout_confirmation_body">Are you sure you want to logout?</string>
+    <string name="logout_confirm">Confirm</string>
+    <string name="logout_cancel">Cancel</string>
+    <string name="quizGenPolicyBody">When creating a quiz, if the content of the quiz contains content that may cause social controversy such as disparagement or ridicule, or if it contains content that infringes on rights such as copyright, portrait rights, or pornography, the quiz may be deleted without the consent of the creator.\\nIn addition, problems arising from the quizzes you have created are entirely the user\'s responsibility and quizzer is not responsible for them.\\nIf you agree to this, please click the AGREE button.</string>
+    <string name="agree">Agree</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="set_quiz_title">Quiz Title</string>
+    <string name="set_quiz_image">Quiz Image</string>
+    <string name="set_quiz_description">Quiz Description</string>
+    <string name="set_quiz_tags">Quiz Tags</string>
+    <string name="set_flip_style">Flip Style</string>
+    <string name="set_color_setting">Color Setting</string>
+    <string name="set_text_setting">Text Setting</string>
+</resources>
