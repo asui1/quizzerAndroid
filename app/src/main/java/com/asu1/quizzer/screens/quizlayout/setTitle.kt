@@ -21,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.screens.getQuizLayoutState
@@ -32,7 +34,7 @@ import com.asu1.quizzer.util.Logger
 @Composable
 fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
                     ) {
-    var title by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(TextFieldValue("")) }
     val focusRequester = remember{ FocusRequester() }
 
     Column(
@@ -64,13 +66,16 @@ fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
 
     LaunchedEffect(Unit) {
         Logger().debug("QuizLayoutTitle: LaunchedEffect ${quizLayoutState.quizTitle.value}")
+        title = TextFieldValue(
+            text = quizLayoutState.quizTitle.value,
+            selection = TextRange(quizLayoutState.quizTitle.value.length)
+        )
         focusRequester.requestFocus()
-        title = quizLayoutState.quizTitle.value
     }
     DisposableEffect(Unit){
         onDispose {
-            Logger().debug("QuizLayoutTitle: DisposableEffect $title")
-            quizLayoutState.setQuizTitle(title)
+            Logger().debug("QuizLayoutTitle: DisposableEffect ${title.text}")
+            quizLayoutState.setQuizTitle(title.text)
         }
     }
 }

@@ -2,12 +2,21 @@ package com.asu1.quizzer.viewModels
 
 import android.app.Application
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.withErrorColor
+import com.asu1.quizzer.util.withOnErrorColor
+import com.asu1.quizzer.util.withOnPrimaryColor
+import com.asu1.quizzer.util.withOnSecondaryColor
+import com.asu1.quizzer.util.withOnTertiaryColor
+import com.asu1.quizzer.util.withPrimaryColor
+import com.asu1.quizzer.util.withSecondaryColor
+import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
 
 class QuizLayoutViewModel(application: Application) : AndroidViewModel(application) {
@@ -101,16 +110,31 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
         _quizTags.value = tags
     }
 
-    fun updateQuizTags(tags: List<String>) {
-        _quizTags.value = tags
-    }
-
     fun setFlipStyle(flipStyle: Int) {
         _flipStyle.value = flipStyle
     }
 
     fun updateBackgroundImage(imageColor: ImageColor) {
         _backgroundImage.postValue(imageColor)
+    }
+
+    fun setColorScheme(name: String, color: Color){
+        val colorScheme = when(name){
+            "Primary Color" -> _colorScheme.value!!.withPrimaryColor(color)
+            "Secondary Color" -> _colorScheme.value!!.withSecondaryColor(color)
+            "Tertiary Color" -> _colorScheme.value!!.withTertiaryColor(color)
+            "onPrimary Color" -> _colorScheme.value!!.withOnPrimaryColor(color)
+            "onSecondary Color" -> _colorScheme.value!!.withOnSecondaryColor(color)
+            "onTertiary Color" -> _colorScheme.value!!.withOnTertiaryColor(color)
+            "Error Color" -> _colorScheme.value!!.withErrorColor(color)
+            "onError Color" -> _colorScheme.value!!.withOnErrorColor(color)
+            else -> _colorScheme.value!!
+        }
+        _colorScheme.value = colorScheme
+    }
+
+    fun setColorScheme(colorScheme: ColorScheme) {
+        _colorScheme.value = colorScheme
     }
 
     fun updateShuffleQuestions(shuffleQuestions: Boolean) {

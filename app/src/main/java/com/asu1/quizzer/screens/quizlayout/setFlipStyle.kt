@@ -27,10 +27,14 @@ import com.asu1.quizzer.util.loadImageFromDrawable
 @Composable
 fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
     val context = LocalContext.current
-    val layout1 = loadImageFromDrawable(context, R.drawable.layoutoption1)
-    val layout2 = loadImageFromDrawable(context, R.drawable.layoutoption2)
-    val layout3 = loadImageFromDrawable(context, R.drawable.layoutoption3)
-    val layout4 = loadImageFromDrawable(context, R.drawable.layoutoption4)
+    val layoutImages = remember {
+        listOf(
+            loadImageFromDrawable(context, R.drawable.layoutoption1),
+            loadImageFromDrawable(context, R.drawable.layoutoption2),
+            loadImageFromDrawable(context, R.drawable.layoutoption3),
+            loadImageFromDrawable(context, R.drawable.layoutoption4)
+        )
+    }
     var selectedFlipStyle by remember { mutableStateOf(quizLayoutState.flipStyle.value) }
 
     Column(
@@ -44,9 +48,10 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.size(16.dp))
-        ImageRow(layout1, layout2, selectedFlipStyle, 0) { selectedFlipStyle = it }
-        ImageRow(layout3, layout4, selectedFlipStyle, 2) { selectedFlipStyle = it }
+        ImageRow(layoutImages[0], layoutImages[1], selectedFlipStyle, 0) { selectedFlipStyle = it }
+        ImageRow(layoutImages[2], layoutImages[3], selectedFlipStyle, 2) { selectedFlipStyle = it }
     }
+
     LaunchedEffect(selectedFlipStyle) {
         if(selectedFlipStyle != null){
             quizLayoutState.setFlipStyle(selectedFlipStyle!!)

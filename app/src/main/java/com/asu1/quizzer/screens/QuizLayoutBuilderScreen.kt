@@ -72,15 +72,18 @@ import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.UserViewModel
 import loadImageAsByteArray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizLayoutBuilderScreen(navController: NavController,
                             quizLayoutState: QuizLayoutState,
+                            userData: UserViewModel.UserDatas?,
 ) {
     var policyAgreed by remember { mutableStateOf(false) }
     var step by remember { mutableIntStateOf(0) }
+    val colorScheme = MaterialTheme.colorScheme
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
         stringResource(R.string.set_quiz_image),
@@ -94,6 +97,16 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         1 -> quizLayoutState.quizTitle.value.isNotBlank()
 
         else -> true
+    }
+
+    LaunchedEffect (Unit){
+        if(!policyAgreed){
+            val email = userData?.email ?: "GUEST"
+            quizLayoutState.initQuizLayout(
+                email,
+                colorScheme
+            )
+        }
     }
 
     BackHandler {
@@ -238,7 +251,8 @@ fun QuizLayoutBuilderScreenPreview() {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             QuizLayoutBuilderScreen(
                 navController = rememberNavController(),
-                quizLayoutState = getQuizLayoutState()
+                quizLayoutState = getQuizLayoutState(),
+                userData = UserViewModel.UserDatas("", "", "", setOf(""))
             )
         }
     }

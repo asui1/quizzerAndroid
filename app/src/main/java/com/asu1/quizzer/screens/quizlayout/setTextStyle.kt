@@ -48,10 +48,6 @@ val borders = listOf("No border", "Underline", "Box")
 
 @Composable
 fun QuizLayoutSetTextStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val colorStrings = listOf("BackGround Setting", "Primary Color", "Secondary Color", "Territory Color", "onPrimary Color", "onSecondary Color", "onTerritory Color", "Error Color", "onError Color")
-
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -70,11 +66,6 @@ fun QuizLayoutSetTextStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
             quizLayoutState = quizLayoutState,
             targetSelector = 2,
         )
-    }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
     }
 }
 

@@ -90,8 +90,7 @@ class MainActivity : ComponentActivity() {
                         val quizLayoutState = rememberQuizLayoutState(
                             quizLayoutViewModel = quizLayoutViewModel
                         )
-
-
+                        Logger().debug("MainActivity: NavHost")
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -170,12 +169,7 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitToRightTransition(),
                             ) {
                                 val userData = userViewModel.userData.value
-                                val email = userData?.email ?: "GUEST"
-                                quizLayoutViewModel.initQuizLayout(
-                                    email = email,
-                                    colorScheme = MaterialTheme.colorScheme
-                                )
-                                QuizLayoutBuilderScreen(navController, quizLayoutState)
+                                QuizLayoutBuilderScreen(navController, quizLayoutState, userData)
                             }
 
                         }

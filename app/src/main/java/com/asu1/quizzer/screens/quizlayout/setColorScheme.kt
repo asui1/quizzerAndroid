@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material3.Button
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,11 +44,12 @@ import com.asu1.quizzer.screens.getQuizLayoutState
 import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
+//TODO: 버튼 눌렀을 때 열면서 버튼이 body 상단에 위치하도록 올리기.
 @Composable
 fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val colorStrings = listOf("BackGround Setting", "Primary Color", "Secondary Color", "Territory Color", "onPrimary Color", "onSecondary Color", "onTerritory Color", "Error Color", "onError Color")
+    val colorStrings = listOf("Primary Color", "Secondary Color", "Territory Color", "onPrimary Color", "onSecondary Color", "onTerritory Color", "Error Color", "onError Color")
+    val colorScheme by remember { mutableStateOf(quizLayoutState.colorScheme.value) }
+    val background by remember { mutableStateOf(quizLayoutState.backgroundImage.value) }
 
     Column(
         modifier = Modifier
@@ -56,18 +58,30 @@ fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Un
             .verticalScroll(rememberScrollState())
     ) {
         GenerateColorScheme(quizLayoutState)
+        // BackgroundPickerRowOpener()
         for(i in colorStrings){
             ColorPickerRowOpener(
                 text = i,
-                imageColor = Color.Red,
-                onColorSelected = {},
+                imageColor = getColorbyName(colorScheme, i),
+                onColorSelected = {
+                    quizLayoutState.setColorScheme(i, it)
+                },
             )
         }
     }
+}
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
+fun getColorbyName(colorScheme: ColorScheme, name: String): Color {
+    return when(name){
+        "Primary Color" -> colorScheme.primary
+        "Secondary Color" -> colorScheme.secondary
+        "Territory Color" -> colorScheme.tertiary
+        "onPrimary Color" -> colorScheme.onPrimary
+        "onSecondary Color" -> colorScheme.onSecondary
+        "onTerritory Color" -> colorScheme.onTertiary
+        "Error Color" -> colorScheme.error
+        "onError Color" -> colorScheme.onError
+        else -> Color.Red
     }
 }
 
@@ -104,7 +118,7 @@ fun ColorPickerRowOpener(
     imageColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    var isOpen by remember { mutableStateOf(true) }
+    var isOpen by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf(imageColor) }
     Box(
         modifier = Modifier

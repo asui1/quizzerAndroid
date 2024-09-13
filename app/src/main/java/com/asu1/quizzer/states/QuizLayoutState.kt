@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.Quiz
@@ -35,6 +36,9 @@ data class QuizLayoutState(
     val addQuizTag: (String) -> Unit = {},
     val removeQuizTag: (String) -> Unit = {},
     val setFlipStyle: (Int) -> Unit = {},
+    val initQuizLayout: (String?, ColorScheme) -> Unit = {_, _ -> },
+    val setColorScheme: (String, Color) -> Unit = {_, _ -> },
+    val setColorSchemeFull: (ColorScheme) -> Unit = {},
 )
 
 @Composable
@@ -93,6 +97,15 @@ fun rememberQuizLayoutState(
         },
         setFlipStyle = {it ->
             quizLayoutViewModel.setFlipStyle(it)
+        },
+        initQuizLayout = {title, colorScheme ->
+            quizLayoutViewModel.initQuizLayout(title, colorScheme)
+        },
+        setColorScheme = {key, color ->
+            quizLayoutViewModel.setColorScheme(key, color)
+        },
+        setColorSchemeFull = {colorScheme ->
+            quizLayoutViewModel.setColorScheme(colorScheme)
         },
     )
 }
