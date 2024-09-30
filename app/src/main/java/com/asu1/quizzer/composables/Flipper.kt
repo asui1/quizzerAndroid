@@ -13,6 +13,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -21,16 +25,26 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
 fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit) {
+    var accumulatedDrag by remember { mutableStateOf(0f) }
+    val dragThreshold = 100f // Set your desired drag threshold here
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
+                detectDragGestures(
+                    onDragEnd = {
+                        accumulatedDrag = 0f // Reset drag distance on drag end
+                    }
+                ) { change, dragAmount ->
                     change.consume()
-                    if (dragAmount.x > 0) {
+                    accumulatedDrag += dragAmount.x
+                    if (accumulatedDrag > dragThreshold) {
                         onPrevious(currentIndex)
-                    } else {
+                        accumulatedDrag = 0f // Reset drag distance after triggering change
+                    } else if (accumulatedDrag < -dragThreshold) {
                         onNext(currentIndex)
+                        accumulatedDrag = 0f // Reset drag distance after triggering change
                     }
                 }
             },

@@ -86,15 +86,19 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     val colorScheme = MaterialTheme.colorScheme
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
-        stringResource(R.string.set_quiz_image),
         stringResource(R.string.set_quiz_description),
         stringResource(R.string.set_quiz_tags),
-        stringResource(R.string.set_flip_style),
+        stringResource(R.string.set_quiz_image),
         stringResource(R.string.set_color_setting),
+        stringResource(R.string.set_flip_style),
         stringResource(R.string.set_text_setting),
     )
     val enabled = when(step){
         1 -> quizLayoutState.quizTitle.value.isNotBlank()
+        2 -> true
+        3 -> true
+        4 -> true
+        5 -> true
 
         else -> true
     }
@@ -158,20 +162,20 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         )
                     }
                     2 ->{
-                        QuizLayoutSetTitleImage(quizLayoutState = quizLayoutState, proceed = {step++})
-                    }
-                    3 -> {
                         QuizLayoutSetDescription(quizLayoutState = quizLayoutState, proceed = {step++})
                     }
-                    4 -> {
+                    3 -> {
                         QuizLayoutSetTags(quizLayoutState = quizLayoutState, proceed = {step++})
                     }
-                    5 -> {
-                        QuizLayoutSetFlipStyle(quizLayoutState = quizLayoutState, proceed = {step++})
+                    4 -> {
+                        QuizLayoutSetTitleImage(quizLayoutState = quizLayoutState, proceed = {step++})
                     }
-                    6 -> {
+                    5 -> {
                         // Set Color Setting
                         QuizLayoutSetColorScheme(quizLayoutState = quizLayoutState, proceed = {step++})
+                    }
+                    6 -> {
+                        QuizLayoutSetFlipStyle(quizLayoutState = quizLayoutState, proceed = {step++})
                     }
                     7 -> {
                         QuizLayoutSetTextStyle(quizLayoutState = quizLayoutState, proceed = {step++})
@@ -205,7 +209,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                 //TODO: Navigate to Quiz Builder
                             }
                         },
-                        enabled = true,
+                        enabled = enabled,
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -240,7 +244,7 @@ fun getQuizLayoutState() : QuizLayoutState{
         creator = remember { mutableStateOf("GUEST") },
         uuid = remember { mutableStateOf(null) },
         quizzes = remember { mutableStateOf(emptyList()) },
-
+        fullUpdate = remember { mutableStateOf(0) },
         )
 }
 

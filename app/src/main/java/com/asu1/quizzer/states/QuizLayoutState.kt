@@ -30,6 +30,7 @@ data class QuizLayoutState(
     val creator: State<String?>,
     val uuid: State<String?>,
     val quizzes: State<List<Quiz>?>,
+    val fullUpdate: State<Int>,
     val setQuizTitle: (String?) -> Unit = {},
     val setQuizImage: (ByteArray) -> Unit = {},
     val setQuizDescription: (String?) -> Unit = {},
@@ -39,6 +40,7 @@ data class QuizLayoutState(
     val initQuizLayout: (String?, ColorScheme) -> Unit = {_, _ -> },
     val setColorScheme: (String, Color) -> Unit = {_, _ -> },
     val setColorSchemeFull: (ColorScheme) -> Unit = {},
+    val updateTextStyle: (Int, Int, Boolean) -> Unit = {_, _, _ -> },
 )
 
 @Composable
@@ -59,6 +61,7 @@ fun rememberQuizLayoutState(
     val creator by quizLayoutViewModel.creator.observeAsState(initial = null)
     val uuid by quizLayoutViewModel.uuid.observeAsState(initial = null)
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(initial = null)
+    val fullUpdate by quizLayoutViewModel.fullUpdate.observeAsState(initial = 0)
 
 
     return QuizLayoutState(
@@ -76,6 +79,7 @@ fun rememberQuizLayoutState(
         creator = rememberUpdatedState(creator),
         uuid = rememberUpdatedState(uuid),
         quizzes = rememberUpdatedState(quizzes),
+        fullUpdate = rememberUpdatedState(fullUpdate),
         setQuizTitle = {
             if (it != null) {
                 quizLayoutViewModel.setQuizTitle(it)
@@ -106,6 +110,9 @@ fun rememberQuizLayoutState(
         },
         setColorSchemeFull = {colorScheme ->
             quizLayoutViewModel.setColorScheme(colorScheme)
+        },
+        updateTextStyle = {targetSelector, indexSelector, isIncrease ->
+            quizLayoutViewModel.updateTextStyle(targetSelector, indexSelector, isIncrease)
         },
     )
 }

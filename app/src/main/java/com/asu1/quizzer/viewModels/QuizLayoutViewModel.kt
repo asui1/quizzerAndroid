@@ -1,13 +1,20 @@
 package com.asu1.quizzer.viewModels
 
 import android.app.Application
+import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.screens.quizlayout.borders
+import com.asu1.quizzer.screens.quizlayout.colors
+import com.asu1.quizzer.screens.quizlayout.fonts
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.withErrorColor
 import com.asu1.quizzer.util.withOnErrorColor
@@ -18,6 +25,9 @@ import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
 import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
+import com.materialkolor.ktx.themeColor
+import com.materialkolor.ktx.themeColors
+import com.materialkolor.rememberDynamicColorScheme
 
 class QuizLayoutViewModel(application: Application) : AndroidViewModel(application) {
     private val _quizTitle = MutableLiveData<String>()
@@ -61,6 +71,9 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _colorScheme = MutableLiveData<ColorScheme>()
     val colorScheme: LiveData<ColorScheme> get() = _colorScheme
+
+    private val _fullUpdate = MutableLiveData<Int>(0)
+    val fullUpdate: LiveData<Int> get() = _fullUpdate
 
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
         resetQuizLayout()
@@ -135,22 +148,50 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
 
     fun setColorScheme(colorScheme: ColorScheme) {
         _colorScheme.value = colorScheme
+        _fullUpdate.value = _fullUpdate.value!!.plus(1)
+    }
+
+    fun updateTextStyle(targetSelector: Int, indexSelector: Int, isIncrease: Boolean) {
+        when(targetSelector){
+            0 -> updateQuestionTextStyle(indexSelector, isIncrease)
+            1 -> updateBodyTextStyle(indexSelector, isIncrease)
+            2 -> updateAnswerTextStyle(indexSelector, isIncrease)
+        }
     }
 
     fun updateShuffleQuestions(shuffleQuestions: Boolean) {
         _shuffleQuestions.value = shuffleQuestions
     }
 
-    fun updateQuestionTextStyle(style: List<Int>) {
-        _questionTextStyle.value = style
+    fun textStyleUpdater(textStyle: List<Int>, indexSelector: Int, isIncrease: Boolean): List<Int> {
+        val size = when(indexSelector){
+            0 -> fonts.size
+            1 -> colors.size
+            2 -> borders.size
+            else -> borders.size
+        }
+        return textStyle.toMutableList().apply {
+
+            if(isIncrease){
+                this[indexSelector] = (this[indexSelector] + 1)
+            } else {
+                this[indexSelector] = (this[indexSelector] - 1)
+            }
+            if(this[indexSelector] < 0) this[indexSelector] = size - 1
+            if(this[indexSelector] >= size) this[indexSelector] = 0
+        }
     }
 
-    fun updateBodyTextStyle(style: List<Int>) {
-        _bodyTextStyle.value = style
+    fun updateQuestionTextStyle(indexSelector: Int, isIncrease: Boolean) {
+        _questionTextStyle.value = textStyleUpdater(_questionTextStyle.value!!, indexSelector, isIncrease)
     }
 
-    fun updateAnswerTextStyle(style: List<Int>) {
-        _answerTextStyle.value = style
+    fun updateBodyTextStyle(indexSelector: Int, isIncrease: Boolean) {
+        _bodyTextStyle.value = textStyleUpdater(_bodyTextStyle.value!!, indexSelector, isIncrease)
+    }
+
+    fun updateAnswerTextStyle(indexSelector: Int, isIncrease: Boolean) {
+        _answerTextStyle.value = textStyleUpdater(_answerTextStyle.value!!, indexSelector, isIncrease)
     }
 
     fun updateCreator(creator: String) {
@@ -193,4 +234,6 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
     fun updateColorScheme(colorScheme: ColorScheme) {
         _colorScheme.value = colorScheme
     }
+
+
 }

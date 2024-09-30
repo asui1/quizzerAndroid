@@ -49,7 +49,10 @@ fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
         )
         TextField(
             value = title,
-            onValueChange = {title = it},
+            onValueChange = {
+                quizLayoutState.setQuizTitle(it.text)
+                title = it
+                            },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),

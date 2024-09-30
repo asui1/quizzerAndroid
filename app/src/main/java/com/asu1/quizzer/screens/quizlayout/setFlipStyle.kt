@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
@@ -29,10 +31,10 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
     val context = LocalContext.current
     val layoutImages = remember {
         listOf(
-            loadImageFromDrawable(context, R.drawable.layoutoption1),
-            loadImageFromDrawable(context, R.drawable.layoutoption2),
-            loadImageFromDrawable(context, R.drawable.layoutoption3),
-            loadImageFromDrawable(context, R.drawable.layoutoption4)
+            R.drawable.layoutoption1,
+            R.drawable.layoutoption2,
+            R.drawable.layoutoption3,
+            R.drawable.layoutoption4,
         )
     }
     var selectedFlipStyle by remember { mutableStateOf(quizLayoutState.flipStyle.value) }
@@ -61,8 +63,8 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
 
 @Composable
 fun ImageRow(
-    image1: ImageBitmap,
-    image2: ImageBitmap,
+    image1: Int,
+    image2: Int,
     selectedFlipStyle: Int?,
     givenIndex: Int,
     onImageSelected: (Int) -> Unit
@@ -81,15 +83,15 @@ fun ImageRow(
 
 @Composable
 fun ImageWithBorder(
-    image: ImageBitmap,
+    image: Int,
     flipStyle: Int,
     selectedFlipStyle: Int?,
     onImageSelected: (Int) -> Unit
 ) {
     val borderColor = if (selectedFlipStyle == flipStyle) MaterialTheme.colorScheme.primary else Color.Transparent
     Image(
-        bitmap = image,
-        contentDescription = null,
+        painter = painterResource(id = image), // Replace with your app icon resource
+        contentDescription = "Flip Style $flipStyle",
         modifier = Modifier
             .padding(4.dp)
             .border(BorderStroke(2.dp, borderColor), shape = RoundedCornerShape(8.dp))
@@ -97,7 +99,7 @@ fun ImageWithBorder(
                 detectTapGestures {
                     onImageSelected(flipStyle)
                 }
-            }
+            },
     )
 }
 

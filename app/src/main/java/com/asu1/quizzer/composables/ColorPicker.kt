@@ -34,10 +34,13 @@ fun ColorPicker(
     onColorSelected: (Color) -> Unit
 ) {
     val controller = rememberColorPickerController()
-    var argbValue by remember { mutableStateOf(initialColor.toArgb().toUInt().toString(16).padStart(8, '0').uppercase()) }
+    var localColor by remember { mutableStateOf(Color.Red) }
+    var argbValue by remember { mutableStateOf(localColor.toArgb().toUInt().toString(16).padStart(8, '0').uppercase()) }
 
-    LaunchedEffect(initialColor){
+    LaunchedEffect(Unit){
         controller.selectByColor(initialColor, false)
+        localColor = initialColor
+        argbValue = initialColor.toArgb().toUInt().toString(16).padStart(8, '0').uppercase()
     }
 
     Column(
@@ -52,6 +55,7 @@ fun ColorPicker(
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
                 val color: Color = colorEnvelope.color
+                localColor = color
                 onColorSelected(color)
             }
         )
@@ -75,6 +79,7 @@ fun ColorPicker(
                     } catch (e: IllegalArgumentException) {
                         initialColor
                     }
+                    localColor = color
                     onColorSelected(color)
                 }
             },

@@ -1,7 +1,13 @@
 package com.asu1.quizzer.util
 
+import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import com.materialkolor.ktx.themeColors
+import com.materialkolor.rememberDynamicColorScheme
 
 fun ColorScheme.withPrimaryColor(newPrimaryColor: Color): ColorScheme {
     return this.copy(
@@ -85,4 +91,13 @@ fun ColorScheme.withOnTertiaryContainerColor(newOnTertiaryContainerColor: Color)
     return this.copy(
         onTertiaryContainer = newOnTertiaryContainerColor
     )
+}
+
+fun calculateSeedColor(bitmap: ImageBitmap): Color {
+    val suitableColors = bitmap.themeColors(fallback = Color.Blue)
+    return suitableColors.first()
+}
+fun byteArrayToImageBitmap(byteArray: ByteArray): ImageBitmap {
+    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    return bitmap.asImageBitmap()
 }

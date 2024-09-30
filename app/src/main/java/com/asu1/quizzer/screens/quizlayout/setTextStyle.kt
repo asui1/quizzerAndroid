@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -91,7 +92,7 @@ fun TextStyleRowOpener(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .background(color = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             Button(
@@ -99,7 +100,14 @@ fun TextStyleRowOpener(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                    .background(color = MaterialTheme.colorScheme.surface),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                border = ButtonDefaults.outlinedButtonBorder(
+                    enabled = true,
+                ),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -127,21 +135,33 @@ fun TextStyleRowOpener(
                 ) {
                     Flipper(
                         items = fonts,
-                        currentIndex = 0,
-                        onNext = {},
-                        onPrevious = {}
+                        currentIndex = selectedStyle[0],
+                        onNext = {
+                            quizLayoutState.updateTextStyle(targetSelector, 0, true)
+                        },
+                        onPrevious = {
+                            quizLayoutState.updateTextStyle(targetSelector, 0, false)
+                        }
                     )
                     Flipper(
                         items = colors,
-                        currentIndex = 0,
-                        onNext = {},
-                        onPrevious = {}
+                        currentIndex = selectedStyle[1],
+                        onNext = {
+                            quizLayoutState.updateTextStyle(targetSelector, 1, true)
+                        },
+                        onPrevious = {
+                            quizLayoutState.updateTextStyle(targetSelector, 1, false)
+                        }
                     )
                     Flipper(
                         items = borders,
-                        currentIndex = 0,
-                        onNext = {},
-                        onPrevious = {}
+                        currentIndex = selectedStyle[2],
+                        onNext = {
+                            quizLayoutState.updateTextStyle(targetSelector, 2, true)
+                        },
+                        onPrevious = {
+                            quizLayoutState.updateTextStyle(targetSelector, 2, false)
+                        }
                     )
                 }
             }

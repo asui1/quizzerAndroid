@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -28,7 +30,16 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme) {
     if(backgroundColor == null) backgroundColor = Color.Transparent
     if(contentColor == null) contentColor = Color.Black
     val borderModifier = when (borderStyle) {
-        1 -> Modifier.border(width = 2.dp, brush = SolidColor(colorScheme.outline), shape = RoundedCornerShape(0.dp))
+        1 -> Modifier.drawBehind {
+            val strokeWidth = 4.dp.toPx()
+            val y = size.height - strokeWidth / 2
+            drawLine(
+                color = colorScheme.outline,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = strokeWidth
+            )
+        }
         2 -> Modifier.border(width = 2.dp, brush = SolidColor(colorScheme.outline), shape = RoundedCornerShape(4.dp))
         else -> Modifier
     }
@@ -50,7 +61,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme) {
         modifier = Modifier
             .background(color = backgroundColor)
             .then(borderModifier)
-            .padding(4.dp)
+            .padding(8.dp)
     )
 }
 
