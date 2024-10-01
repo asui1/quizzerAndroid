@@ -30,4 +30,8 @@
     <string name="set_flip_style">Flip Style</string>
     <string name="set_color_setting">Color Setting</string>
     <string name="set_text_setting">Text Setting</string>
+    <string name="warning">Warning</string>
+    <string name="warn_progress_not_saved">Your state will not be saved. Do you want to proceed?</string>
+    <string name="proceed">Proceed</string>
+    <string name="cancel">Cancel</string>
 </resources>

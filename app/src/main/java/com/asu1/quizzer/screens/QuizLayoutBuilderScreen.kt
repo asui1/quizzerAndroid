@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
@@ -85,6 +87,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
 ) {
     var policyAgreed by remember { mutableStateOf(false) }
     var step by remember { mutableIntStateOf(0) }
+    var showExitDialog by remember { mutableStateOf(false) }
     val colorScheme = MaterialTheme.colorScheme
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
@@ -123,6 +126,20 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         }
     }
 
+    if (showExitDialog) {
+        DialogComposable(
+            titleResource = R.string.warning,
+            messageResource = R.string.warn_progress_not_saved,
+            onContinue = {
+                showExitDialog = false
+                navController.popBackStack()
+            },
+            onContinueResource = R.string.proceed,
+            onCancel = { showExitDialog = false },
+            onCancelResource = R.string.cancel
+        )
+    }
+
     if(!policyAgreed) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -144,7 +161,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 navController = navController,
                 totalSteps = 7,
                 currentStep = if(step == 0) 1 else step,
-                layoutSteps = layoutSteps
+                layoutSteps = layoutSteps,
+                showExitDialog = { showExitDialog = true }
             )
         }
     ) {paddingValue ->
@@ -308,7 +326,8 @@ fun StepProgressBar(
     modifier: Modifier = Modifier,
     layoutSteps: List<String>,
     completedColor: Color = MaterialTheme.colorScheme.primary,
-    pendingColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+    pendingColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+    showExitDialog: () -> Unit = {}
 ) {
 
     Column(
@@ -319,7 +338,7 @@ fun StepProgressBar(
         RowWithAppIconAndName(
             showBackButton = true,
             onBackPressed = {
-                navController.popBackStack()
+                showExitDialog()
             }
         )
         Text(

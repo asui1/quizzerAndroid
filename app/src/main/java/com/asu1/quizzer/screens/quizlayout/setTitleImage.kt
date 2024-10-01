@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,6 +80,7 @@ fun QuizLayoutSetTitleImage(quizLayoutState: QuizLayoutState, proceed: () -> Uni
                 Image(
                     bitmap = imageBitmap,
                     contentDescription = "Quiz Title Image",
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .size(200.dp)
                         .align(Alignment.Center)

@@ -296,7 +296,7 @@ fun BackgroundRow(
                                     color = background.color,
                                     image = background.image,
                                     color2 = background.color2,
-                                    state = ImageColorState.COLOR2
+                                    state = ImageColorState.COLOR
                                 )
                             )
                         }) {
@@ -335,6 +335,7 @@ fun BackgroundRow(
 
                         1 -> {
                             // Gradient Picker (Placeholder)
+                            // TODO Make opengl functions using two colors and draw gradient with two selected colors and selected method
                             Text("Gradient Picker Placeholder\n To be implemented")
                         }
 
