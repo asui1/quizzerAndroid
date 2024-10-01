@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.asu1.quizzer.model.ImageColor
+import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
@@ -45,8 +46,8 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
     private val _flipStyle = MutableLiveData<Int>()
     val flipStyle: LiveData<Int> get() = _flipStyle
 
-    private val _backgroundImage = MutableLiveData<ImageColor?>()
-    val backgroundImage: LiveData<ImageColor?> get() = _backgroundImage
+    private val _backgroundImage = MutableLiveData<ImageColor>()
+    val backgroundImage: LiveData<ImageColor> get() = _backgroundImage
 
     private val _shuffleQuestions = MutableLiveData<Boolean>()
     val shuffleQuestions: LiveData<Boolean> get() = _shuffleQuestions
@@ -88,7 +89,7 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
         _quizDescription.value = ""
         _quizTags.value = emptyList()
         _flipStyle.value = 0
-        _backgroundImage.value = null
+        _backgroundImage.value = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR)
         _shuffleQuestions.value = false
         _questionTextStyle.value = listOf(0, 0, 1, 0)
         _bodyTextStyle.value = listOf(0, 0, 2, 1)
@@ -104,6 +105,7 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setQuizImage(image: ByteArray) {
+
         _quizImage.value = image
     }
 
@@ -148,6 +150,12 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
 
     fun setColorScheme(colorScheme: ColorScheme) {
         _colorScheme.value = colorScheme
+        _backgroundImage.value = ImageColor(
+            colorScheme.surface,
+            _backgroundImage.value!!.image,
+            _backgroundImage.value!!.color2,
+            _backgroundImage.value!!.state
+        )
         _fullUpdate.value = _fullUpdate.value!!.plus(1)
     }
 

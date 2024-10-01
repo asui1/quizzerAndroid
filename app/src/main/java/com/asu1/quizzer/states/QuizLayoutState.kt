@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.model.ImageColor
+import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -22,7 +23,7 @@ data class QuizLayoutState(
     val quizTags: State<List<String>?>,
     val flipStyle: State<Int?>,
     val colorScheme: State<ColorScheme>,
-    val backgroundImage: State<ImageColor?>,
+    val backgroundImage: State<ImageColor>,
     val shuffleQuestions: State<Boolean?>,
     val questionTextStyle: State<List<Int>>,
     val bodyTextStyle: State<List<Int>>,
@@ -41,6 +42,7 @@ data class QuizLayoutState(
     val setColorScheme: (String, Color) -> Unit = {_, _ -> },
     val setColorSchemeFull: (ColorScheme) -> Unit = {},
     val updateTextStyle: (Int, Int, Boolean) -> Unit = {_, _, _ -> },
+    val updateBackgroundImage: (ImageColor) -> Unit = {_ -> },
 )
 
 @Composable
@@ -53,7 +55,7 @@ fun rememberQuizLayoutState(
     val quizTags by quizLayoutViewModel.quizTags.observeAsState(initial = null)
     val flipStyle by quizLayoutViewModel.flipStyle.observeAsState(initial = null)
     val colorScheme by quizLayoutViewModel.colorScheme.observeAsState(initial = MaterialTheme.colorScheme)
-    val backgroundImage by quizLayoutViewModel.backgroundImage.observeAsState(initial = null)
+    val backgroundImage by quizLayoutViewModel.backgroundImage.observeAsState(initial = ImageColor(MaterialTheme.colorScheme.surface, byteArrayOf(), MaterialTheme.colorScheme.inverseSurface, ImageColorState.COLOR))
     val shuffleQuestions by quizLayoutViewModel.shuffleQuestions.observeAsState(initial = null)
     val questionTextStyle by quizLayoutViewModel.questionTextStyle.observeAsState(initial = listOf(0, 0, 1, 0))
     val bodyTextStyle by quizLayoutViewModel.bodyTextStyle.observeAsState(initial = listOf(0, 0, 2, 1))
@@ -114,5 +116,8 @@ fun rememberQuizLayoutState(
         updateTextStyle = {targetSelector, indexSelector, isIncrease ->
             quizLayoutViewModel.updateTextStyle(targetSelector, indexSelector, isIncrease)
         },
+        updateBackgroundImage = {imageColor ->
+            quizLayoutViewModel.updateBackgroundImage(imageColor)
+        }
     )
 }

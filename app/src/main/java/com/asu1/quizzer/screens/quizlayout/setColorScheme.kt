@@ -1,7 +1,11 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,11 +27,17 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,22 +51,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ColorPicker
 import com.asu1.quizzer.model.ImageColor
+import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.screens.getQuizLayoutState
 import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.byteArrayToImageBitmap
 import com.asu1.quizzer.util.calculateSeedColor
+import com.asu1.quizzer.util.launchPhotoPicker
 import com.github.skydoves.colorpicker.compose.ImageColorPicker
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
@@ -115,7 +133,7 @@ fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Un
             )
         )
     }
-    val background by remember { mutableStateOf(quizLayoutState.backgroundImage.value) }
+    val background by remember { quizLayoutState.backgroundImage }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val fullUpdate by remember{ quizLayoutState.fullUpdate }
@@ -139,14 +157,22 @@ fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Un
         ) {
             item {
                 GenerateColorScheme(quizLayoutState)
-                BackgroundRow(background, quizLayoutState,
-                    text = "Background",
-                    onOpen = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
+            }
+            item{
+                key(fullUpdate) {
+                    BackgroundRow(
+                        text = "Background",
+                        background = background,
+                        onImageSelected = { imageColor ->
+                            quizLayoutState.updateBackgroundImage(imageColor)
+                        },
+                        onOpen = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(1)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
             items(colorStrings.size) { index ->
                 val colorName = colorStrings[index]
@@ -159,7 +185,7 @@ fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Un
                         },
                         onOpen = {
                             coroutineScope.launch {
-                                listState.animateScrollToItem(index + 1)
+                                listState.animateScrollToItem(index + 2)
                             }
                         }
                     )
@@ -170,66 +196,195 @@ fun QuizLayoutSetColorScheme(quizLayoutState: QuizLayoutState, proceed: () -> Un
 }
 
 @Composable
-fun BackgroundRow(background: ImageColor?, quizLayoutState: QuizLayoutState, text: String, onOpen: () -> Unit){
+fun BackgroundRow(
+    text: String,
+    background: ImageColor,
+    onImageSelected: (ImageColor) -> Unit,
+    onOpen: () -> Unit,
+) {
+    val context = LocalContext.current
     var isOpen by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf(background) }
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = MaterialTheme.colorScheme.surface)
-//    ) {
-//        Column {
-//            Button(
-//                onClick = {
-//                    isOpen = !isOpen
-//                    if (isOpen) onOpen()
-//                },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//            ) {
-//                Row(
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text(text = text, style = MaterialTheme.typography.bodyLarge,
-//                        modifier = Modifier.width(200.dp),
-//                        overflow = TextOverflow.Ellipsis,
-//                    )
-//                    Box(
-//                        modifier = Modifier
-//                            .size(24.dp)
-//                            .background(color = selectedColor)
-//                    )
-//                    Icon(
-//                        imageVector = if(isOpen) Icons.Default.ArrowDropDown
-//                        else Icons.Default.ArrowDropUp,
-//                        contentDescription = "Icon to Open Color Picker",
-//                        tint = MaterialTheme.colorScheme.onSurface
-//                    )
-//                }
-//            }
-//            if (isOpen) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 8.dp)
-//                ) {
-//                    ColorPicker(
-//                        initialColor = selectedColor,
-//                        onColorSelected = { color ->
-//                            selectedColor = color
-//                            onColorSelected(color)
-//                        }
-//                    )
-//                    //TODO: GET IMAGE
-//                }
-//            }
-//        }
-//    }
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
+        onImageSelected(
+            ImageColor(
+                color = Color.White,
+                image = byteArray,
+                color2 = Color.White,
+                state = ImageColorState.IMAGE
+            )
+        )
+    }
 
+    LaunchedEffect(background) {
+        selectedColor = background
+        selectedTabIndex = when (background.state) {
+            ImageColorState.COLOR -> 0
+            ImageColorState.COLOR2 -> 1
+            ImageColorState.IMAGE -> 2
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.surface)
+    ) {
+        Column {
+            Button(
+                onClick = {
+                    isOpen = !isOpen
+                    if (isOpen) onOpen()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = text, style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.width(200.dp),
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .paint(
+                                painter = selectedColor?.getAsImage() ?: ColorPainter(
+                                    MaterialTheme.colorScheme.surface
+                                )
+                            )
+                    )
+                    Icon(
+                        imageVector = if (isOpen) Icons.Default.ArrowDropDown
+                        else Icons.Default.ArrowDropUp,
+                        contentDescription = "Icon to Open Color Picker",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+            if (isOpen) {
+                //SET 3 Tabs for 1 color, 2 colors with gradient, image
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TabRow(
+                        selectedTabIndex = selectedTabIndex,
+                        indicator = { tabPositions ->
+                            SecondaryIndicator(
+                                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            )
+                        }
+                    ) {
+                        Tab(selected = selectedTabIndex == 0, onClick = {
+                            onImageSelected(
+                                ImageColor(
+                                    color = background.color,
+                                    image = background.image,
+                                    color2 = background.color2,
+                                    state = ImageColorState.COLOR
+                                )
+                            )
+                        }) {
+                            Text("Single Color")
+                        }
+                        Tab(selected = selectedTabIndex == 1, onClick = {
+                            onImageSelected(
+                                ImageColor(
+                                    color = background.color,
+                                    image = background.image,
+                                    color2 = background.color2,
+                                    state = ImageColorState.COLOR2
+                                )
+                            )
+                        }) {
+                            Text("Gradient")
+                        }
+                        Tab(selected = selectedTabIndex == 2, onClick = {
+                            onImageSelected(
+                                ImageColor(
+                                    color = background.color,
+                                    image = background.image,
+                                    color2 = background.color2,
+                                    state = ImageColorState.IMAGE
+                                )
+                            )
+                        }) {
+                            Text("Image")
+                        }
+                    }
+                    when (selectedTabIndex) {
+                        0 -> {
+                            // Single Color Picker
+                            ColorPicker(
+                                initialColor = selectedColor.color,
+                                onColorSelected = { color ->
+                                    onImageSelected(
+                                        ImageColor(
+                                            color = color,
+                                            image = selectedColor.image,
+                                            color2 = selectedColor.color2,
+                                            state = ImageColorState.COLOR
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
+                        1 -> {
+                            // Gradient Picker (Placeholder)
+                            Text("Gradient Picker Placeholder\n To be implemented")
+                        }
+
+                        2 -> {
+                            // Image Picker (Placeholder)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(600.dp)
+                                    .padding(16.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onTap = {
+                                                photoPickerLauncher.launch(
+                                                    PickVisualMediaRequest(
+                                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                    )
+                                                )
+                                            })
+                                    }
+                            ) {
+                                if (selectedColor.image.isNotEmpty()) {
+                                    Image(
+                                        bitmap = byteArrayToImageBitmap(selectedColor.image),
+                                        contentDescription = "Quiz Title Image",
+                                        contentScale = ContentScale.FillBounds,
+                                        modifier = Modifier
+                                            .height(600.dp)
+                                            .width(200.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Image,
+                                        contentDescription = "Add Photo Icon",
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
 }
-
 fun getColorbyName(colorScheme: ColorScheme, name: String): Color {
     return when(name){
         "Primary Color" -> colorScheme.primary

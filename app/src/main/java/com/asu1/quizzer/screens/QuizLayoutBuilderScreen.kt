@@ -61,6 +61,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
+import com.asu1.quizzer.model.ImageColor
+import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetColorScheme
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetDescription
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetFlipStyle
@@ -236,7 +238,7 @@ fun getQuizLayoutState() : QuizLayoutState{
         quizTags = remember { mutableStateOf(listOf("TEST", "ADMIN", "ASUI")) },
         flipStyle = remember { mutableStateOf(0) },
         colorScheme = remember { mutableStateOf(colorScheme) },
-        backgroundImage = remember { mutableStateOf(null) },
+        backgroundImage = remember { mutableStateOf(ImageColor(colorScheme.surface, ByteArray(0), colorScheme.inverseSurface, ImageColorState.COLOR)) },
         shuffleQuestions = remember { mutableStateOf(false) },
         questionTextStyle = remember { mutableStateOf(listOf(0, 0, 1, 0)) },
         bodyTextStyle = remember { mutableStateOf(listOf(0, 0, 2, 1)) },
