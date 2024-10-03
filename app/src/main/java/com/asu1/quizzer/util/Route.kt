@@ -29,5 +29,7 @@ sealed interface Route {
     data object RegisterTags : Route
     @Serializable
     data object CreateQuizLayout: Route
+    @Serializable
+    data object QuizBuilder: Route
 }
 

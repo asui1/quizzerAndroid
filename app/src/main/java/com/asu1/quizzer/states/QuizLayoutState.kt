@@ -30,7 +30,7 @@ data class QuizLayoutState(
     val answerTextStyle: State<List<Int>>,
     val creator: State<String?>,
     val uuid: State<String?>,
-    val quizzes: State<List<Quiz>?>,
+    val quizzes: State<List<Quiz>>,
     val fullUpdate: State<Int>,
     val setQuizTitle: (String?) -> Unit = {},
     val setQuizImage: (ByteArray) -> Unit = {},
@@ -62,7 +62,7 @@ fun rememberQuizLayoutState(
     val answerTextStyle by quizLayoutViewModel.answerTextStyle.observeAsState(initial = listOf(0, 0, 0, 2))
     val creator by quizLayoutViewModel.creator.observeAsState(initial = null)
     val uuid by quizLayoutViewModel.uuid.observeAsState(initial = null)
-    val quizzes by quizLayoutViewModel.quizzes.observeAsState(initial = null)
+    val quizzes by quizLayoutViewModel.quizzes.observeAsState(initial = emptyList())
     val fullUpdate by quizLayoutViewModel.fullUpdate.observeAsState(initial = 0)
 
 

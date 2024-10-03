@@ -226,7 +226,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                 step++
                             }
                             else{
-                                //TODO: Navigate to Quiz Builder
+                                navController.navigate(Route.QuizBuilder)
                             }
                         },
                         enabled = enabled,

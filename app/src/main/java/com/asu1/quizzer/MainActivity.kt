@@ -23,6 +23,7 @@ import com.asu1.quizzer.screens.LoginScreen
 import com.asu1.quizzer.screens.MainScreen
 import com.asu1.quizzer.screens.NicknameInput
 import com.asu1.quizzer.screens.PrivacyPolicy
+import com.asu1.quizzer.screens.QuizBuilderScreen
 import com.asu1.quizzer.screens.QuizLayoutBuilderScreen
 import com.asu1.quizzer.screens.SearchScreen
 import com.asu1.quizzer.screens.TagSetting
@@ -171,7 +172,14 @@ class MainActivity : ComponentActivity() {
                                 val userData = userViewModel.userData.value
                                 QuizLayoutBuilderScreen(navController, quizLayoutState, userData)
                             }
-
+                            composable<Route.QuizBuilder>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                QuizBuilderScreen(navController, quizLayoutState)
+                            }
                         }
 
                     }

@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ColorPicker
+import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.screens.getQuizLayoutState
@@ -202,20 +203,9 @@ fun BackgroundRow(
     onImageSelected: (ImageColor) -> Unit,
     onOpen: () -> Unit,
 ) {
-    val context = LocalContext.current
     var isOpen by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf(background) }
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
-        onImageSelected(
-            ImageColor(
-                color = Color.White,
-                image = byteArray,
-                color2 = Color.White,
-                state = ImageColorState.IMAGE
-            )
-        )
-    }
 
     LaunchedEffect(background) {
         selectedColor = background
@@ -341,43 +331,31 @@ fun BackgroundRow(
 
                         2 -> {
                             // Image Picker (Placeholder)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(600.dp)
-                                    .padding(16.dp)
-                                    .align(Alignment.CenterHorizontally)
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onTap = {
-                                                photoPickerLauncher.launch(
-                                                    PickVisualMediaRequest(
-                                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                                    )
-                                                )
-                                            })
-                                    }
-                            ) {
-                                if (selectedColor.image.isNotEmpty()) {
-                                    Image(
-                                        bitmap = byteArrayToImageBitmap(selectedColor.image),
-                                        contentDescription = "Quiz Title Image",
-                                        contentScale = ContentScale.FillBounds,
-                                        modifier = Modifier
-                                            .height(600.dp)
-                                            .width(200.dp)
-                                            .align(Alignment.Center)
+                            ImageGetter(
+                                image = selectedColor.image,
+                                onImageUpdate = { byteArray ->
+                                    onImageSelected(
+                                        ImageColor(
+                                            color = selectedColor.color,
+                                            image = byteArray,
+                                            color2 = selectedColor.color2,
+                                            state = ImageColorState.IMAGE
+                                        )
                                     )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Default.Image,
-                                        contentDescription = "Add Photo Icon",
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .align(Alignment.Center)
+                                },
+                                onImageDelete = {
+                                    onImageSelected(
+                                        ImageColor(
+                                            color = selectedColor.color,
+                                            image = ByteArray(0),
+                                            color2 = selectedColor.color2,
+                                            state = ImageColorState.IMAGE
+                                        )
                                     )
-                                }
-                            }
+                                },
+                                width = 200.dp,
+                                height = 200.dp
+                            )
                         }
                     }
                 }
