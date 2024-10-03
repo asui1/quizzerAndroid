@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quiz
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.quizzer.composables.YoutubeLinkInput
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
@@ -92,7 +96,7 @@ fun Quiz1Creator(
             )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            item { 
+            item {
                 Quiz1BodyBuilder(
                     bodyState,
                     onAddBody = {  },
@@ -101,9 +105,11 @@ fun Quiz1Creator(
                     imageBytes = imageBytes,
                     onImageSelected = { imageBytes = it },
                     youtubeId = youtubeId,
-                    onYoutubeIdChange = { youtubeId = it.text },
                     youtubeStartTime = youtubeStartTime,
-                    onYoutubeStartTimeChange = { youtubeStartTime = it.text.toInt() }
+                    onYoutubeUpdate = { id, time ->
+                        youtubeId = id
+                        youtubeStartTime = time
+                    }
                 )
             }
             items(answers.size) { index ->
@@ -185,11 +191,11 @@ fun Quiz1BodyBuilder(
     imageBytes: ByteArray?,
     onImageSelected: (ByteArray) -> Unit,
     youtubeId: String,
-    onYoutubeIdChange: (TextFieldValue) -> Unit,
     youtubeStartTime: Int,
-    onYoutubeStartTimeChange: (TextFieldValue) -> Unit
+    onYoutubeUpdate: (String, Int) -> Unit,
 ){
     val bodyTextFieldValue by remember { mutableStateOf(TextFieldValue(bodyText)) }
+    val youtubeIdValue by remember { mutableStateOf(TextFieldValue(youtubeId)) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -215,24 +221,70 @@ fun Quiz1BodyBuilder(
                 )
             }
             BodyType.IMAGE -> {
-                Text("Image")
+                ImageGetter(
+                    image = imageBytes ?: ByteArray(0),
+                    onImageUpdate = onImageSelected,
+                    onImageDelete = { onImageSelected(ByteArray(0)) },
+                    width = 200.dp,
+                    height = 200.dp
+                )
             }
             BodyType.YOUTUBE -> {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = TextFieldValue(""),
-                    onValueChange = {},
-                    label = { Text("Body Text") }
+                YoutubeLinkInput(
+                    youtubeId = youtubeId,
+                    startTime = youtubeStartTime,
+                    onYoutubeUpdate = onYoutubeUpdate
                 )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
     }
-
-
-
 }
 
+@Preview(showBackground = true)
+@Composable
+fun bodyPreviews() {
+    QuizzerAndroidTheme {
+        Column(){
+            Quiz1BodyBuilder(
+                bodyState = BodyType.TEXT,
+                onAddBody = {},
+                bodyText = "Body Text",
+                onBodyTextChange = {},
+                imageBytes = null,
+                onImageSelected = {},
+                youtubeId = "",
+                youtubeStartTime = 0,
+                onYoutubeUpdate = { _, _ -> }
+            )
+            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
+            Quiz1BodyBuilder(
+                bodyState = BodyType.IMAGE,
+                onAddBody = {},
+                bodyText = "Body Text",
+                onBodyTextChange = {},
+                imageBytes = null,
+                onImageSelected = {},
+                youtubeId = "",
+                youtubeStartTime = 0,
+                onYoutubeUpdate = { _, _ -> }
+            )
+            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
+            Quiz1BodyBuilder(
+                bodyState = BodyType.YOUTUBE,
+                onAddBody = {},
+                bodyText = "Body Text",
+                onBodyTextChange = {},
+                imageBytes = null,
+                onImageSelected = {},
+                youtubeId = "",
+                youtubeStartTime = 0,
+                onYoutubeUpdate = { _, _ -> }
+            )
+        }
+
+    }
+}
 @Composable
 fun AnswerTextField(
     value: TextFieldValue,
