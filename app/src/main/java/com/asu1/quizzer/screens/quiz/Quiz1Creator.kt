@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.YoutubeLinkInput
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
@@ -93,9 +94,9 @@ fun Quiz1Creator(
         ) {
             item {
                 QuestionTextField(
-                value = questionState,
-                onValueChange = { questionState = TextFieldValue(it.text) }
-            )
+                    value = questionState,
+                    onValueChange = { questionState = TextFieldValue(it.text) }
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
@@ -149,9 +150,8 @@ fun Quiz1Creator(
                 )
             }
         }
-
-        Button(
-            onClick = {
+        SaveButton(
+            onSave = {
                 onSave(
                     Quiz1(
                         question = questionState.text,
@@ -160,13 +160,8 @@ fun Quiz1Creator(
                         maxAnswerSelection = maxAnswerSelection,
                     )
                 )
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Text("Save")
-        }
+            }
+        )
     }
 
 }

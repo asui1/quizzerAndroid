@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -40,7 +41,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -100,6 +103,13 @@ fun Quiz2Creator(
                 Text(text = quiz.answerDate.elementAt(index).toString())
             }
         }
+        SaveButton(
+            onSave = {
+                onSave(
+                    quiz
+                )
+            }
+        )
     }
 }
 
