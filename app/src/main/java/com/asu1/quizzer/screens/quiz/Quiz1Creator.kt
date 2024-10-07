@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.YoutubeLinkInput
 import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
@@ -48,7 +49,7 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 @Composable
 fun Quiz1Creator(
     quiz: Quiz1 = Quiz1(),
-    onSave: (Quiz1) -> Unit
+    onSave: (Quiz) -> Unit
 ) {
     var questionState by remember { mutableStateOf(TextFieldValue(quiz.question)) }
     val answerCheck = remember { mutableStateListOf(*quiz.ans.toTypedArray()) }
@@ -90,7 +91,8 @@ fun Quiz1Creator(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            item { QuestionTextField(
+            item {
+                QuestionTextField(
                 value = questionState,
                 onValueChange = { questionState = TextFieldValue(it.text) }
             )
@@ -243,7 +245,7 @@ fun Quiz1BodyBuilder(
 
 @Preview(showBackground = true)
 @Composable
-fun bodyPreviews() {
+fun BodyPreviews() {
     QuizzerAndroidTheme {
         Column(){
             Quiz1BodyBuilder(

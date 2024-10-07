@@ -1,5 +1,9 @@
 package com.asu1.quizzer.model
 
+import java.time.LocalDate
+import java.time.YearMonth
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
+
 enum class QuizType(val value: Int) {
     QUIZ1(0),
     QUIZ2(1),
@@ -50,21 +54,47 @@ class Quiz1(
 }
 
 //SELECTING DATE FROM CALENDAR
-class Quiz2: Quiz() {
-    var layoutType: QuizType = QuizType.QUIZ2
-    var maxAnswerSelection: Int = 1
-    var centerDate: List<Int> = listOf(2024, 6, 22)
-    var yearRange: Int = 20
-    var answerDate: List<Int> = listOf(2024, 6, 22)
+class Quiz2(
+    var layoutType: QuizType = QuizType.QUIZ2,
+    var maxAnswerSelection: Int = 1,
+    var centerDate: YearMonth = YearMonth.now(),
+    var yearRange: Int = 20,
+    var answerDate: MutableSet<LocalDate> = mutableSetOf(LocalDate.of(2024, 6, 22)),
+    answers: MutableList<String> = mutableListOf(),
+    question: String = ""
+): Quiz(answers, question){
+    init {
+        // Additional initialization logic if needed
+    }
+    fun update(localDate: LocalDate = LocalDate.of(2024, 6, 22)){
+        if(answerDate.contains(localDate)) {
+            answerDate.remove(localDate)
+        }else{
+            answerDate.add(localDate)
+        }
+    }
 }
 
-class Quiz3: Quiz(){
-    var layoutType: QuizType = QuizType.QUIZ3
-    var shuffledAnswers: List<String> = emptyList()
+//ORDERING QUESTIONS
+class Quiz3(
+    var layoutType: QuizType = QuizType.QUIZ3,
+    var shuffledAnswers: MutableList<String> = mutableListOf("", "", "", "", ""),
+    answers: MutableList<String> = mutableListOf("", "", "", "", ""),
+    question: String = ""
+): Quiz(){
+    init {
+        // Additional initialization logic if needed
+    }
+
 }
 
-class Quiz4: Quiz(){
-    var layoutType: QuizType = QuizType.QUIZ4
-    var connectionAnswers: List<String> = emptyList()
-    var connectionAnswerIndex: List<Int> = emptyList()
+//CONNECTING QUESTIONS
+class Quiz4(
+    var layoutType: QuizType = QuizType.QUIZ4,
+    var connectionAnswers: List<String> = emptyList(),
+    var connectionAnswerIndex: List<Int> = emptyList(),
+    answers: MutableList<String> = mutableListOf("", "", "", "", ""),
+    question: String = "",
+): Quiz(answers, question){
+
 }

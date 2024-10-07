@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
@@ -114,6 +114,7 @@ dependencies {
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1")
+    implementation("com.kizitonwose.calendar:compose:2.6.0")
     kapt("com.google.dagger:hilt-compiler:2.44")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
