@@ -1,5 +1,6 @@
 package com.asu1.quizzer.model
 
+import androidx.collection.mutableIntListOf
 import java.time.LocalDate
 import java.time.YearMonth
 import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
@@ -91,10 +92,17 @@ class Quiz3(
 //CONNECTING QUESTIONS
 class Quiz4(
     var layoutType: QuizType = QuizType.QUIZ4,
-    var connectionAnswers: List<String> = emptyList(),
-    var connectionAnswerIndex: List<Int> = emptyList(),
-    answers: MutableList<String> = mutableListOf("", "", "", "", ""),
+    var connectionAnswers: List<String> = mutableListOf("", "", "", ""),
+    var connectionAnswerIndex: List<Int?> = mutableListOf(null, null, null, null),
+    answers: MutableList<String> = mutableListOf("", "", "", ""),
     question: String = "",
 ): Quiz(answers, question){
-
+    init {
+        // Additional initialization logic if needed
+    }
+    fun updateConnectionAnswerIndex(index: Int, value: Int?){
+        connectionAnswerIndex = connectionAnswerIndex.toMutableList().also {
+            it[index] = value
+        }
+    }
 }
