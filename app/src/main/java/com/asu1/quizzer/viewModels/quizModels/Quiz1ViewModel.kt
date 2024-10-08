@@ -1,0 +1,82 @@
+package com.asu1.quizzer.viewModels.quizModels
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.model.Quiz1
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+
+class Quiz1ViewModel : ViewModel(){
+    private val _quiz1State = MutableStateFlow(Quiz1())
+    val quiz1State: StateFlow<Quiz1> = _quiz1State.asStateFlow()
+
+    init {
+        resetQuiz1()
+    }
+
+    private fun resetQuiz1(){
+        _quiz1State.value = Quiz1()
+    }
+
+    fun loadQuiz1(quiz1: Quiz1){
+        _quiz1State.value = quiz1
+    }
+    fun updateBodyState(bodyType: BodyType){
+        _quiz1State.value = _quiz1State.value.copy(bodyType = bodyType)
+    }
+    fun updateQuestion(question: String){
+        _quiz1State.value = _quiz1State.value.copy(question = question)
+    }
+    fun updateBodyText(bodyText: String){
+        _quiz1State.value = _quiz1State.value.copy(bodyText = bodyText)
+    }
+    fun updateBodyImage(image: ByteArray){
+        _quiz1State.value = _quiz1State.value.copy(image = image)
+    }
+    fun updateBodyYoutube(youtubeId: String, startTime: Int){
+        _quiz1State.value = _quiz1State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+    }
+    fun updateAnswerAt(index: Int, answer: String){
+        if(index >= _quiz1State.value.answers.size){
+            return
+        }
+        val answers = _quiz1State.value.answers.toMutableList()
+        answers[index] = answer
+        _quiz1State.value = _quiz1State.value.copy(answers = answers)
+    }
+    fun toggleAnsAt(index: Int){
+        if(index >= _quiz1State.value.ans.size){
+            return
+        }
+        val ans = _quiz1State.value.ans.toMutableList()
+        ans[index] = !ans[index]
+        _quiz1State.value = _quiz1State.value.copy(ans = ans)
+    }
+    fun removeAnswerAt(index: Int){
+        if(index >= _quiz1State.value.answers.size){
+            return
+        }
+        val answers = _quiz1State.value.answers.toMutableList()
+        answers.removeAt(index)
+        val ans = _quiz1State.value.ans.toMutableList()
+        ans.removeAt(index)
+        _quiz1State.value = _quiz1State.value.copy(answers = answers, ans = ans)
+    }
+    fun addAnswer(){
+        val answers = _quiz1State.value.answers.toMutableList()
+        answers.add("")
+        val ans = _quiz1State.value.ans.toMutableList()
+        ans.add(false)
+        _quiz1State.value = _quiz1State.value.copy(answers = answers, ans = ans)
+    }
+    fun toggleShuffleAnswers(){
+        _quiz1State.value = _quiz1State.value.copy(shuffleAnswers = !_quiz1State.value.shuffleAnswers)
+    }
+    fun updateMaxAnswerSelection(maxAnswerSelection: String){
+        val maxAnswerSelection = maxAnswerSelection.toIntOrNull() ?: return
+        _quiz1State.value = _quiz1State.value.copy(maxAnswerSelection = maxAnswerSelection)
+    }
+}

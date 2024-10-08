@@ -189,7 +189,8 @@ class MainActivity : ComponentActivity() {
                             ) {backStackEntry ->
                                 val loadIndex = backStackEntry.toRoute<Route.QuizCaller>().loadIndex
                                 val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
-                                QuizCaller(quizLayoutState, loadIndex, quizType)
+                                val insertIndex = backStackEntry.toRoute<Route.QuizCaller>().insertIndex
+                                QuizCaller(quizLayoutState, loadIndex, quizType, insertIndex, navController)
                             }
                         }
 

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.YoutubeLinkInput
@@ -45,39 +47,30 @@ import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 
 
 @Composable
 fun Quiz1Creator(
-    quiz: Quiz1 = Quiz1(),
+    quiz: Quiz1ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
-    var questionState by remember { mutableStateOf(TextFieldValue(quiz.question)) }
-    val answerCheck = remember { mutableStateListOf(*quiz.ans.toTypedArray()) }
-    val answers = remember { mutableStateListOf(*quiz.answers.toTypedArray()) }
-    var maxAnswerSelection by remember { mutableIntStateOf(quiz.maxAnswerSelection) }
-    var shuffleAnswers by remember { mutableStateOf(quiz.shuffleAnswers) }
-    var bodyState by remember { mutableStateOf(quiz.bodyType) }
+    val quiz1State by quiz.quiz1State.collectAsState()
     var showBodyDialog by remember { mutableStateOf(false) }
-    var bodyText by remember { mutableStateOf(quiz.bodyText) }
-    var imageBytes by remember { mutableStateOf(quiz.image) }
-    var youtubeId by remember { mutableStateOf(quiz.youtubeId) }
-    var youtubeStartTime by remember { mutableStateOf(quiz.youtubeStartTime) }
-
 
     if (showBodyDialog) {
         BodyTypeDialog(
             onDismissRequest = { showBodyDialog = false },
             onTextSelected = {
-                bodyState = BodyType.TEXT
+                quiz.updateBodyState(BodyType.TEXT)
                 showBodyDialog = false
             },
             onImageSelected = {
-                bodyState = BodyType.IMAGE
+                quiz.updateBodyState(BodyType.IMAGE)
                 showBodyDialog = false
             },
             onYoutubeSelected = {
-                bodyState = BodyType.YOUTUBE
+                quiz.updateBodyState(BodyType.YOUTUBE)
                 showBodyDialog = false
             }
         )
@@ -94,38 +87,36 @@ fun Quiz1Creator(
         ) {
             item {
                 QuestionTextField(
-                    value = questionState,
-                    onValueChange = { questionState = TextFieldValue(it.text) }
+                    value = quiz1State.question,
+                    onValueChange = {quiz.updateQuestion(it)}
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
                 Quiz1BodyBuilder(
-                    bodyState,
-                    onAddBody = {  },
-                    bodyText = bodyText,
-                    onBodyTextChange = { bodyText = it.text },
-                    imageBytes = imageBytes,
-                    onImageSelected = { imageBytes = it },
-                    youtubeId = youtubeId,
-                    youtubeStartTime = youtubeStartTime,
+                    bodyState = quiz1State.bodyType,
+                    onAddBody = { showBodyDialog = true },
+                    bodyText = quiz1State.bodyText,
+                    onBodyTextChange = { quiz.updateBodyText(it.text) },
+                    imageBytes = quiz1State.image,
+                    onImageSelected = { quiz.updateBodyImage(it) },
+                    youtubeId = quiz1State.youtubeId,
+                    youtubeStartTime = quiz1State.youtubeStartTime,
                     onYoutubeUpdate = { id, time ->
-                        youtubeId = id
-                        youtubeStartTime = time
+                        quiz.updateBodyYoutube(id, time)
                     }
                 )
             }
-            items(answers.size) { index ->
+            items(quiz1State.answers.size) { index ->
                 AnswerTextField(
-                    value = remember { TextFieldValue(answers[index]) },
-                    onValueChange = {it ->  answers[index] = it.text },
-                    answerCheck = answerCheck[index],
+                    value = quiz1State.answers[index],
+                    onValueChange = {it ->  quiz.updateAnswerAt(index, it) },
+                    answerCheck = quiz1State.ans[index],
                     toggleAnswer = {
-                        answerCheck[index] = !answerCheck[index]
+                        quiz.toggleAnsAt(index)
                     },
                     deleteAnswer = {
-                        answers.removeAt(index)
-                        answerCheck.removeAt(index)
+                        quiz.removeAnswerAt(index)
                     },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -133,19 +124,17 @@ fun Quiz1Creator(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 AddAnswer(
-                    onClick = { answers.add("") }
+                    onClick = { quiz.addAnswer() }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
                 Quiz1AnswerSelection(
-                    shuffleValue = shuffleAnswers,
-                    onShuffleToggle = { shuffleAnswers = !shuffleAnswers },
-                    maxAnswerSelectionValue = maxAnswerSelection,
+                    shuffleValue = quiz1State.shuffleAnswers,
+                    onShuffleToggle = { quiz.toggleShuffleAnswers() },
+                    maxAnswerSelectionValue = quiz1State.maxAnswerSelection,
                     maxAnswerSelectionValueChange = { it ->
-                        if(it.text.all{it.isDigit()}) {
-                            maxAnswerSelection = it.text.toInt()
-                        }
+                        quiz.updateMaxAnswerSelection(it)
                     },
                 )
             }
@@ -153,12 +142,7 @@ fun Quiz1Creator(
         SaveButton(
             onSave = {
                 onSave(
-                    Quiz1(
-                        question = questionState.text,
-                        answers = answers,
-                        ans = answerCheck,
-                        maxAnswerSelection = maxAnswerSelection,
-                    )
+                    quiz1State
                 )
             }
         )
@@ -168,8 +152,8 @@ fun Quiz1Creator(
 
 @Composable
 fun QuestionTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    value: String,
+    onValueChange: (String) -> Unit
 ){
     TextField(
         modifier = Modifier.fillMaxWidth(),
@@ -192,7 +176,6 @@ fun Quiz1BodyBuilder(
     onYoutubeUpdate: (String, Int) -> Unit,
 ){
     val bodyTextFieldValue by remember { mutableStateOf(TextFieldValue(bodyText)) }
-    val youtubeIdValue by remember { mutableStateOf(TextFieldValue(youtubeId)) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -284,8 +267,8 @@ fun BodyPreviews() {
 }
 @Composable
 fun AnswerTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
     answerCheck: Boolean,
     toggleAnswer: () -> Unit,
     deleteAnswer: () -> Unit,
@@ -342,7 +325,7 @@ fun Quiz1AnswerSelection(
     shuffleValue: Boolean = false,
     onShuffleToggle: () -> Unit,
     maxAnswerSelectionValue: Int,
-    maxAnswerSelectionValueChange: (TextFieldValue) -> Unit
+    maxAnswerSelectionValueChange: (String) -> Unit
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -361,7 +344,7 @@ fun Quiz1AnswerSelection(
         TextField(
             modifier = Modifier.width(60.dp)
                 .padding(start = 8.dp),
-            value = TextFieldValue(maxAnswerSelectionValue.toString()),
+            value = maxAnswerSelectionValue.toString(),
             onValueChange = maxAnswerSelectionValueChange,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,

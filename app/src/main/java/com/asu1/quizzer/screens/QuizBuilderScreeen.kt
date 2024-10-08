@@ -1,14 +1,18 @@
 package com.asu1.quizzer.screens
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,8 +35,15 @@ import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.UserViewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
@@ -49,6 +60,17 @@ fun QuizBuilderScreen(navController: NavController,
     val quizzes by quizLayoutState.quizzes
     val colorScheme by quizLayoutState.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
+    var curIndex by remember{mutableStateOf(0)}
+
+    fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
+        navController.navigate(
+            Route.QuizCaller(
+                loadIndex = loadIndex,
+                quizType = quizType,
+                insertIndex = insertIndex
+            )
+        )
+    }
 
     MaterialTheme(
         colorScheme = colorScheme
@@ -87,17 +109,24 @@ fun QuizBuilderScreen(navController: NavController,
                     item {
                         NewQuizAdd(
                             moveToQuizCaller = {loadIndex, quizType ->
-                                navController.navigate(
-                                    Route.QuizCaller(
-                                        loadIndex = loadIndex,
-                                        quizType = quizType
-                                    )
-                                )
+                                moveToQuizCaller(loadIndex, quizType, curIndex)
                             }
                         )
                     }
                 }
-                QuizEditIconsRow()
+                QuizEditIconsRow(
+                    deleteCurrentQuiz = {
+                        //TODO DELETE CURRENT QUIZ
+                    },
+                    curIndex = curIndex,
+                    totalQuizzes = quizzes.size,
+                    editCurrentQuiz = {
+                        //TODO EDIT CURRENT QUIZ
+                    },
+                    addQuiz = {
+                        showNewQuizDialog = true
+                    }
+                )
             }
         }
     }
@@ -108,7 +137,7 @@ fun QuizBuilderScreen(navController: NavController,
 fun NewQuizAdd(
     moveToQuizCaller: (Int, QuizType) -> Unit
 ){
-    var showDialog by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -155,8 +184,58 @@ fun NewQuizAdd(
 }
 
 @Composable
-fun QuizEditIconsRow(){
-
+fun QuizEditIconsRow(
+    deleteCurrentQuiz: () -> Unit,
+    curIndex: Int,
+    totalQuizzes: Int,
+    editCurrentQuiz: () -> Unit,
+    addQuiz: () -> Unit,
+){
+    Row(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        IconButton(
+            onClick = {
+                deleteCurrentQuiz()
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete Current Quiz"
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = "Quiz : $curIndex / $totalQuizzes",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        IconButton(
+            onClick = {
+                editCurrentQuiz()
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit Current Quiz"
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        IconButton(
+            onClick = {
+                addQuiz()
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add New Quiz"
+            )
+        }
+    }
 }
 
 @Composable
