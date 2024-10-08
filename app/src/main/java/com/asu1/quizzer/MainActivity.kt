@@ -28,6 +28,7 @@ import com.asu1.quizzer.screens.QuizLayoutBuilderScreen
 import com.asu1.quizzer.screens.SearchScreen
 import com.asu1.quizzer.screens.TagSetting
 import com.asu1.quizzer.screens.UsageAgreement
+import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.states.rememberInitState
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.states.rememberMainActivityState
@@ -179,6 +180,16 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 QuizBuilderScreen(navController, quizLayoutState)
+                            }
+                            composable<Route.QuizCaller> (
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitToRightTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitToRightTransition(),
+                            ) {backStackEntry ->
+                                val loadIndex = backStackEntry.toRoute<Route.QuizCaller>().loadIndex
+                                val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
+                                QuizCaller(quizLayoutState, loadIndex, quizType)
                             }
                         }
 

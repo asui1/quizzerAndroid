@@ -1,5 +1,6 @@
 package com.asu1.quizzer.util
 
+import com.asu1.quizzer.model.QuizType
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -31,5 +32,7 @@ sealed interface Route {
     data object CreateQuizLayout: Route
     @Serializable
     data object QuizBuilder: Route
+    @Serializable
+    data class QuizCaller(val loadIndex: Int, val quizType: QuizType) : Route
 }
 
