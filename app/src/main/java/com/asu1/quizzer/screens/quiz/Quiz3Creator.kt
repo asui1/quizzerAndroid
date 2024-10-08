@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,16 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 
 @Composable
 fun Quiz3Creator(
-    quiz: Quiz3 = Quiz3(),
+    quiz: Quiz3ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ){
-    var questionState by remember { mutableStateOf(quiz.question) }
+    val quiz3State by quiz.quiz3State.collectAsState()
+
 
     Box(
         modifier = Modifier
@@ -50,18 +54,18 @@ fun Quiz3Creator(
         ) {
             item {
                 QuestionTextField(
-                    value = questionState,
-                    onValueChange = { questionState = it }
+                    value = quiz3State.question,
+                    onValueChange = { quiz.updateQuestion(it) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
                 TextField(
-                    value = TextFieldValue(quiz.answers[0]),
-                    onValueChange = { quiz.answers[0] = it.text },
+                    value = quiz3State.answers[0],
+                    onValueChange = { quiz.updateAnswerAt(0, it) },
                 )
             }
-            items(quiz.answers.size-1) { index ->
+            items(quiz3State.answers.size-1) { index ->
                 val newIndex = index +1
                 Icon(
                     imageVector = Icons.Default.ArrowDownward,
@@ -69,12 +73,12 @@ fun Quiz3Creator(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = TextFieldValue(quiz.answers[newIndex]),
-                    onValueChange = { quiz.answers[newIndex] = it.text },
+                    value = quiz3State.answers[newIndex],
+                    onValueChange = { quiz.updateAnswerAt(newIndex, it) },
                     trailingIcon = {
                         IconButton(
                             onClick = {
-                                quiz.answers.removeAt(newIndex)
+                                quiz.removeAnswerAt(newIndex)
                             }
                         ) {
                             Icon(
@@ -89,7 +93,7 @@ fun Quiz3Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
-                        quiz.answers.add("")
+                        quiz.addAnswer()
                     }
                 ) {
                     Icon(
@@ -100,7 +104,7 @@ fun Quiz3Creator(
             }
         }
         SaveButton {
-            onSave(quiz)
+            onSave(quiz3State)
         }
     }
 
@@ -109,5 +113,7 @@ fun Quiz3Creator(
 @Preview(showBackground = true)
 @Composable
 fun Quiz3CreatorPreview() {
-    Quiz3Creator(Quiz3()) {}
+    Quiz3Creator(
+        onSave = {}
+    )
 }

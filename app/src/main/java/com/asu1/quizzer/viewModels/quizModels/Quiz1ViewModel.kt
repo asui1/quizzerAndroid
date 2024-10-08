@@ -58,6 +58,9 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         if(index >= _quiz1State.value.answers.size){
             return
         }
+        if(_quiz1State.value.answers.size <= 3){
+            return
+        }
         val answers = _quiz1State.value.answers.toMutableList()
         answers.removeAt(index)
         val ans = _quiz1State.value.ans.toMutableList()
