@@ -18,6 +18,7 @@ import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 
 @Composable
@@ -68,12 +69,18 @@ fun QuizCaller(quizLayoutState: QuizLayoutState, loadIndex:Int, quizType: QuizTy
                     },
                 )
             }
-            QuizType.QUIZ4 -> Quiz4Creator(
-                quiz = quiz as Quiz4,
-                onSave = {
-                    navController.popBackStack()
-                },
-            )
+            QuizType.QUIZ4 -> {
+                val quiz4ViewModel: Quiz4ViewModel = viewModel()
+                if(quiz != null){
+                    quiz4ViewModel.loadQuiz(quiz as Quiz4)
+                }
+                Quiz4Creator(
+                    quiz = quiz4ViewModel,
+                    onSave = {
+                        navController.popBackStack()
+                    },
+                )
+            }
         }
     }
 }

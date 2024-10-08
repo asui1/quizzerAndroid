@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,15 +47,17 @@ import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz4
 import kotlin.math.roundToInt
 import androidx.compose.ui.geometry.Offset
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
 fun Quiz4Creator(
-    quiz: Quiz4 = Quiz4(),
+    quiz: Quiz4ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
-    var questionState by remember { mutableStateOf(quiz.question) }
-    var leftDotOffsets by remember { mutableStateOf(List(quiz.answers.size) { Offset.Zero }) }
-    var rightDotOffsets by remember { mutableStateOf(List(quiz.answers.size) { Offset.Zero }) }
+    val quizState by quiz.quiz4State.collectAsState()
+    var leftDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
+    var rightDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
     var startOffset by remember { mutableStateOf(Offset.Zero) }
     var endOffset by remember { mutableStateOf(Offset.Zero) }
     var isDragging by remember { mutableStateOf(false) }
@@ -65,7 +68,7 @@ fun Quiz4Creator(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        DrawLines(leftDotOffsets = leftDotOffsets, rightDotOffsets = rightDotOffsets, connections = quiz.connectionAnswerIndex)
+        DrawLines(leftDotOffsets = leftDotOffsets, rightDotOffsets = rightDotOffsets, connections = quizState.connectionAnswerIndex)
         if(isDragging) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawLine(
@@ -84,19 +87,19 @@ fun Quiz4Creator(
         ) {
             item {
                 QuestionTextField(
-                    value = questionState,
-                    onValueChange = { questionState = it }
+                    value = quizState.question,
+                    onValueChange = { quiz.updateQuestion(it) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            items(quiz.answers.size) { index ->
+            items(quizState.answers.size) { index ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ){
                     TextField(
-                        value = TextFieldValue(quiz.answers[index]),
-                        onValueChange = { quiz.answers[index] = it.text },
+                        value = quizState.answers[index],
+                        onValueChange = { quiz.updateAnswerAt(index, it) },
                         label = { Text("Answer ${index + 1}") },
                         modifier = Modifier.weight(1f)
                     )
@@ -155,14 +158,14 @@ fun Quiz4Creator(
                         }
                     )
                     TextField(
-                        value = TextFieldValue(quiz.answers[index]),
-                        onValueChange = { quiz.answers[index] = it.text },
+                        value = quizState.connectionAnswers[index],
+                        onValueChange = { quiz.updateConnectionAnswer(index, it) },
                         label = { Text("Answer ${index + 1}") },
                         modifier = Modifier.weight(1f)
                     )
                     IconButton(
                         onClick = {
-                            quiz.answers.removeAt(index)
+                            quiz.removeAnswerAt(index)
                         }
                     ) {
                         Icon(
@@ -177,7 +180,7 @@ fun Quiz4Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
-                        quiz.answers.add("")
+                        quiz.addAnswer()
                     }
                 ) {
                     Icon(
@@ -188,7 +191,7 @@ fun Quiz4Creator(
             }
         }
         SaveButton {
-            onSave(quiz)
+            onSave(quizState)
         }
     }
 }
@@ -235,5 +238,5 @@ fun DrawLines(
 @Preview(showBackground = true)
 @Composable
 fun Quiz4CreatorPreview() {
-    Quiz4Creator(Quiz4()) {}
+    Quiz4Creator() {}
 }
