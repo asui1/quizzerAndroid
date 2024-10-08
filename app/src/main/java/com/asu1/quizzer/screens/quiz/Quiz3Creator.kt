@@ -35,7 +35,7 @@ fun Quiz3Creator(
     quiz: Quiz3 = Quiz3(),
     onSave: (Quiz) -> Unit
 ){
-    var questionState by remember { mutableStateOf(TextFieldValue(quiz.question)) }
+    var questionState by remember { mutableStateOf(quiz.question) }
 
     Box(
         modifier = Modifier
@@ -51,7 +51,7 @@ fun Quiz3Creator(
             item {
                 QuestionTextField(
                     value = questionState,
-                    onValueChange = { questionState = TextFieldValue(it.text) }
+                    onValueChange = { questionState = it }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

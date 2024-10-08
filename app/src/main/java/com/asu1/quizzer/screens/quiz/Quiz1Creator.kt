@@ -26,8 +26,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,7 +43,6 @@ import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.YoutubeLinkInput
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 

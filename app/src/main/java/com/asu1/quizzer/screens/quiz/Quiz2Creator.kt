@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.quiz
 
-import android.widget.CalendarView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,19 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,27 +35,26 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import java.time.LocalDate
 import java.time.YearMonth
-import java.util.Calendar
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Composable
 fun Quiz2Creator(
-    quiz: Quiz2 = Quiz2(),
+    quiz: Quiz2ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ){
-    var questionState by remember { mutableStateOf(TextFieldValue(quiz.question)) }
+    val quiz2State by quiz.quiz2State.collectAsState()
+
 
     Box(
         modifier = Modifier
@@ -75,38 +69,38 @@ fun Quiz2Creator(
         ) {
             item {
                 QuestionTextField(
-                    value = questionState,
-                    onValueChange = { questionState = TextFieldValue(it.text) }
+                    value = quiz2State.question,
+                    onValueChange = { quiz.updateQuestion(it) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
                 CalendarWithFocusDates(
-                    focusDates = quiz.answerDate,
+                    focusDates = quiz2State.answerDate,
                     onDateClick = { date ->
-                        quiz.update(date)
+                        quiz.updateDate(date)
                     },
-                    currentMonth = quiz.centerDate,
+                    currentMonth = quiz2State.centerDate,
                 )
             }
             item{
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "CurrentMonth: ${quiz.centerDate}, ±20Y",
+                    "CurrentMonth: ${quiz2State.centerDate}, ±20Y",
                 )
                 YearMonthDropDown(
-                    yearMonth = quiz.centerDate
+                    yearMonth = quiz2State.centerDate
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            items(quiz.answerDate.size){index ->
-                Text(text = quiz.answerDate.elementAt(index).toString())
+            items(quiz2State.answerDate.size){index ->
+                Text(text = quiz2State.answerDate.elementAt(index).toString())
             }
         }
         SaveButton(
             onSave = {
                 onSave(
-                    quiz
+                    quiz2State
                 )
             }
         )
@@ -275,7 +269,8 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
 fun Quiz2CreatorPreview() {
     QuizzerAndroidTheme {
         Quiz2Creator(
-            quiz = Quiz2()
-        ) {}
+            quiz = Quiz2ViewModel(),
+            onSave = {}
+        )
     }
 }

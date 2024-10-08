@@ -52,7 +52,7 @@ fun Quiz4Creator(
     quiz: Quiz4 = Quiz4(),
     onSave: (Quiz) -> Unit
 ) {
-    var questionState by remember { mutableStateOf(TextFieldValue(quiz.question)) }
+    var questionState by remember { mutableStateOf(quiz.question) }
     var leftDotOffsets by remember { mutableStateOf(List(quiz.answers.size) { Offset.Zero }) }
     var rightDotOffsets by remember { mutableStateOf(List(quiz.answers.size) { Offset.Zero }) }
     var startOffset by remember { mutableStateOf(Offset.Zero) }
@@ -85,7 +85,7 @@ fun Quiz4Creator(
             item {
                 QuestionTextField(
                     value = questionState,
-                    onValueChange = { questionState = TextFieldValue(it.text) }
+                    onValueChange = { questionState = it }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

@@ -16,6 +16,7 @@ import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.screens.getQuizLayoutState
 import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 
 
 @Composable
@@ -33,7 +34,7 @@ fun QuizCaller(quizLayoutState: QuizLayoutState, loadIndex:Int, quizType: QuizTy
             QuizType.QUIZ1 -> {
                 val quiz1ViewModel: Quiz1ViewModel = viewModel()
                 if(quiz != null){
-                    quiz1ViewModel.loadQuiz1(quiz as Quiz1)
+                    quiz1ViewModel.loadQuiz(quiz as Quiz1)
                 }
                 Quiz1Creator(
                     quiz = quiz1ViewModel,
@@ -42,12 +43,18 @@ fun QuizCaller(quizLayoutState: QuizLayoutState, loadIndex:Int, quizType: QuizTy
                     },
                 )
             }
-            QuizType.QUIZ2 -> Quiz2Creator(
-                quiz = quiz as Quiz2,
-                onSave = {
-                    navController.popBackStack()
-                },
-            )
+            QuizType.QUIZ2 -> {
+                val quiz2ViewModel: Quiz2ViewModel = viewModel()
+                if(quiz != null){
+                    quiz2ViewModel.loadQuiz(quiz as Quiz2)
+                }
+                Quiz2Creator(
+                    quiz = quiz2ViewModel,
+                    onSave = {
+                        navController.popBackStack()
+                    },
+                )
+            }
             QuizType.QUIZ3 -> Quiz3Creator(
                 quiz = quiz as Quiz3,
                 onSave = {

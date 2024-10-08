@@ -1,9 +1,7 @@
 package com.asu1.quizzer.model
 
-import androidx.collection.mutableIntListOf
 import java.time.LocalDate
 import java.time.YearMonth
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 enum class QuizType(val value: Int) {
     QUIZ1(0),
@@ -46,7 +44,8 @@ data class Quiz1(
     override var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ1,
-) : Quiz(answers, question)
+) : Quiz(answers, question){
+}
 
 
 //SELECTING DATE FROM CALENDAR

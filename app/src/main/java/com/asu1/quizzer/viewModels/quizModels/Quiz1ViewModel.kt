@@ -1,6 +1,5 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz1
@@ -9,25 +8,25 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 
-class Quiz1ViewModel : ViewModel(){
+class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
     private val _quiz1State = MutableStateFlow(Quiz1())
     val quiz1State: StateFlow<Quiz1> = _quiz1State.asStateFlow()
 
     init {
-        resetQuiz1()
+        resetQuiz()
     }
 
-    private fun resetQuiz1(){
+    override fun resetQuiz(){
         _quiz1State.value = Quiz1()
     }
 
-    fun loadQuiz1(quiz1: Quiz1){
+    override fun loadQuiz(quiz1: Quiz1){
         _quiz1State.value = quiz1
     }
     fun updateBodyState(bodyType: BodyType){
         _quiz1State.value = _quiz1State.value.copy(bodyType = bodyType)
     }
-    fun updateQuestion(question: String){
+    override fun updateQuestion(question: String){
         _quiz1State.value = _quiz1State.value.copy(question = question)
     }
     fun updateBodyText(bodyText: String){
@@ -39,7 +38,7 @@ class Quiz1ViewModel : ViewModel(){
     fun updateBodyYoutube(youtubeId: String, startTime: Int){
         _quiz1State.value = _quiz1State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
     }
-    fun updateAnswerAt(index: Int, answer: String){
+    override fun updateAnswerAt(index: Int, answer: String){
         if(index >= _quiz1State.value.answers.size){
             return
         }
@@ -47,7 +46,7 @@ class Quiz1ViewModel : ViewModel(){
         answers[index] = answer
         _quiz1State.value = _quiz1State.value.copy(answers = answers)
     }
-    fun toggleAnsAt(index: Int){
+    override fun toggleAnsAt(index: Int){
         if(index >= _quiz1State.value.ans.size){
             return
         }
@@ -55,7 +54,7 @@ class Quiz1ViewModel : ViewModel(){
         ans[index] = !ans[index]
         _quiz1State.value = _quiz1State.value.copy(ans = ans)
     }
-    fun removeAnswerAt(index: Int){
+    override fun removeAnswerAt(index: Int){
         if(index >= _quiz1State.value.answers.size){
             return
         }
@@ -65,7 +64,7 @@ class Quiz1ViewModel : ViewModel(){
         ans.removeAt(index)
         _quiz1State.value = _quiz1State.value.copy(answers = answers, ans = ans)
     }
-    fun addAnswer(){
+    override fun addAnswer(){
         val answers = _quiz1State.value.answers.toMutableList()
         answers.add("")
         val ans = _quiz1State.value.ans.toMutableList()
