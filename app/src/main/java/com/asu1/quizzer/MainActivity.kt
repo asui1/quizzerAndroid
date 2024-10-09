@@ -34,7 +34,6 @@ import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.states.rememberMainActivityState
 import com.asu1.quizzer.states.rememberQuizLayoutState
 import com.asu1.quizzer.states.rememberRegisterActivityState
-import com.asu1.quizzer.states.rememberSearchActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
@@ -86,9 +85,6 @@ class MainActivity : ComponentActivity() {
                         val registerActivityState = rememberRegisterActivityState(
                             registerViewmodel =registerViewModel
                         )
-                        val searchScreenActivityState = rememberSearchActivityState(
-                            searchViewModel = searchViewModel
-                        )
                         val quizLayoutState = rememberQuizLayoutState(
                             quizLayoutViewModel = quizLayoutViewModel
                         )
@@ -125,7 +121,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) {
-                                SearchScreen(navController, searchScreenActivityState)
+                                SearchScreen(navController, searchViewModel)
                             }
                             composable<Route.Login>(
                                 enterTransition = enterFromRightTransition(),

@@ -1,10 +1,12 @@
 package com.asu1.quizzer.viewModels
 
 import android.app.Application
+import androidx.compose.runtime.State
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardList
@@ -13,7 +15,7 @@ import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel : ViewModel() {
     private val _showToast = MutableLiveData<String?>()
     val showToast: LiveData<String?> get() = _showToast
 
@@ -33,7 +35,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                 Logger().debug("Search Response: $response")
                 if(response.isSuccessful){
                     val quizCards = response.body()?.quizCards
-                    _searchResult.postValue(quizCards)
+                    setSearchResult(quizCards!!)
                 }
                 else{
                     _showToast.postValue("Search No Response")
@@ -44,6 +46,10 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                 _showToast.postValue("Search Failed")
             }
         }
+    }
+
+    fun setSearchResult(quizCards: List<QuizCard>){
+        _searchResult.postValue(quizCards)
     }
 
     fun toastShown() {

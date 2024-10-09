@@ -30,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,35 +45,32 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.states.SearchActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.viewModels.SearchViewModel
 import loadImageAsByteArray
 
 @Composable
-fun SearchScreen(navController: NavHostController, searchScreenActivityState: SearchActivityState) {
-    // 텍스트 필드가 focus가 있을때 -> TODO: 검색어 자동완성.
-    // 텍스트필드가 focus가 없을 때 -> searchScreenActivityState에 있는 searchResult를 보여줌.
-
-    val context = LocalContext.current
+fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel()) {
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
     var searchText by remember {mutableStateOf(TextFieldValue(""))}
-    val searchResult by searchScreenActivityState.searchResult
+    val searchResult by searchViewModel.searchResult.observeAsState()
 
-    LaunchedEffect(Unit){
-        searchScreenActivityState.reset()
-    }
+//    LaunchedEffect(Unit){
+//        searchViewModel.reset()
+//    }
 
     Scaffold(
         topBar = {
             SearchTopBar(
                 searchText = searchText,
                 onSearchTextChanged = { searchText = it },
-                search = { searchScreenActivityState.search(it) },
+                search = { searchViewModel.search(it) },
                 focusManager = focusManager,
                 onTextFieldFocused = { isFocused = true },
                 onTextFieldUnfocused = { isFocused = false }
@@ -111,10 +109,12 @@ fun SearchScreen(navController: NavHostController, searchScreenActivityState: Se
     )
 }
 
+@Preview
 @Composable
-fun provideSearchActivityStateTest(): SearchActivityState {
+fun PreviewSearchScreen(){
     val context = LocalContext.current
     val imageByte = loadImageAsByteArray(context, R.drawable.question2)
+    val searchViewModel: SearchViewModel = viewModel()
     val quizCard = QuizCard(
         id = "1",
         title = "Quiz 1",
@@ -123,20 +123,14 @@ fun provideSearchActivityStateTest(): SearchActivityState {
         image = imageByte,
         count = 0
     )
-    return SearchActivityState(
-        searchResult = remember {mutableStateOf(listOf(quizCard, quizCard, quizCard, quizCard))},
-        search = { searchText -> Log.d("SearchScreen", "search: $searchText") }
+    searchViewModel.setSearchResult(
+        listOf(quizCard, quizCard, quizCard, quizCard, quizCard)
     )
-}
-
-@Preview
-@Composable
-fun PreviewSearchScreen(){
 
     QuizzerAndroidTheme {
         SearchScreen(
             navController = rememberNavController(),
-            searchScreenActivityState = provideSearchActivityStateTest(),
+            searchViewModel = searchViewModel
         )
     }
 }
