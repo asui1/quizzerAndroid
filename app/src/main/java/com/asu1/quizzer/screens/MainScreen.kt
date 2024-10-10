@@ -61,7 +61,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,6 +83,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -88,10 +91,12 @@ import coil.compose.rememberImagePainter
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.states.MainActivityState
+import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
+import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -100,12 +105,21 @@ import loadImageAsByteArray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, mainActivityState: MainActivityState) {
+fun MainScreen(
+    navController: NavController,
+    quizCardMainViewModel: QuizCardMainViewModel = viewModel(),
+    signOutViewModel: SignOutViewModel = viewModel(),
+    inquiryViewModel: InquiryViewModel = viewModel(),
+    loginActivityState: LoginActivityState,
+    ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val quizCards by mainActivityState.quizCards
+    val quizCards by quizCardMainViewModel.quizCards.collectAsState()
     var backPressedTime by remember { mutableStateOf(0L) }
+    val userData by loginActivityState.userData
+    val isUserLoggedIn by loginActivityState.isUserLoggedIn
+    val bottomBarSelection by quizCardMainViewModel.bottomBarSelection.observeAsState(0)
 
     LaunchedEffect(Unit){
 //        mainActivityState.updateQuizCards()
@@ -135,54 +149,53 @@ fun MainScreen(navController: NavController, mainActivityState: MainActivityStat
             drawerState = drawerState,
             drawerContent = {
                 if (drawerState.isOpen) {
-                    DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } }, mainActivityState = mainActivityState)
+                    DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
+                        userData = userData, isLoggedIn = isUserLoggedIn,
+                        onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
+                        logOut = { loginActivityState.logout() },
+                        signOut = { email -> signOutViewModel.sendSignout(email) },
+                        )
                 }
             },
             content = {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Scaffold(
                         topBar = {
-                            MainActivityTopbar(navController, mainActivityState, drawerState)
+                            MainActivityTopbar(navController, drawerState, isUserLoggedIn, userData)
                         },
                         bottomBar = {
-                            MainActivityBottomBar(navController, mainActivityState, drawerState)
+                            MainActivityBottomBar(navController, drawerState, bottomBarSelection = bottomBarSelection)
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
                                 //TODO : Add Search Bar
-                                if (quizCards != null) {
-                                    item {
-                                        Text(
-                                            text = quizCards!!.quizCards1.tag,
-                                            modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                            style = MaterialTheme.typography.headlineMedium
-                                        )
-                                        HorizontalQuizCardItemLarge(quizCards = quizCards!!.quizCards1.quizCards)
-                                    }
-                                    item {
-                                        Text(
-                                            text = quizCards!!.quizCards2.tag,
-                                            modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                            style = MaterialTheme.typography.headlineMedium
-                                        )
-                                        HorizontalQuizCardItemVertical(quizCards = quizCards!!.quizCards2.quizCards)
-                                    }
-                                    item {
-                                        Text(
-                                            text = quizCards!!.quizCards3.tag,
-                                            modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                            style = MaterialTheme.typography.headlineMedium
-                                        )
-                                        HorizontalQuizCardItemVertical(quizCards = quizCards!!.quizCards3.quizCards)
-                                    }
-                                    item{
-                                        Spacer(modifier = Modifier.size(16.dp))
-                                        PrivacyPolicyRow(navController)
-                                    }
-                                } else {
-                                    item {
-                                        Text("Loading...")
-                                    }
+                                item {
+                                    Text(
+                                        text = quizCards.quizCards1.tag,
+                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                    HorizontalQuizCardItemLarge(quizCards = quizCards.quizCards1.quizCards)
+                                }
+                                item {
+                                    Text(
+                                        text = quizCards.quizCards2.tag,
+                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                    HorizontalQuizCardItemVertical(quizCards = quizCards.quizCards2.quizCards)
+                                }
+                                item {
+                                    Text(
+                                        text = quizCards.quizCards3.tag,
+                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
+                                        style = MaterialTheme.typography.headlineMedium
+                                    )
+                                    HorizontalQuizCardItemVertical(quizCards = quizCards.quizCards3.quizCards)
+                                }
+                                item{
+                                    Spacer(modifier = Modifier.size(16.dp))
+                                    PrivacyPolicyRow(navController)
                                 }
                             }
                         }
@@ -195,9 +208,7 @@ fun MainScreen(navController: NavController, mainActivityState: MainActivityStat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainActivityTopbar(navController: NavController, mainActivityState: MainActivityState, drawerState: DrawerState) {
-    val isLoggedIn by mainActivityState.isLoggedIn
-    val userData by mainActivityState.userData
+fun MainActivityTopbar(navController: NavController, drawerState: DrawerState, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?) {
     val scope = rememberCoroutineScope()
     TopAppBar(
         title = { Text("Quizzer") },
@@ -233,16 +244,16 @@ fun MainActivityTopbarPreview(){
     QuizzerAndroidTheme {
         MainActivityTopbar(
             navController = rememberNavController(),
-            mainActivityState = provideMainActivityStateTest(),
-            drawerState = rememberDrawerState(DrawerValue.Closed)
+            drawerState = rememberDrawerState(DrawerValue.Closed),
+            isLoggedIn = true,
+            userData = userDataTest,
         )
     }
 }
 
 @Composable
-fun MainActivityBottomBar(navController: NavController, mainActivityState: MainActivityState, drawerState: DrawerState) {
+fun MainActivityBottomBar(navController: NavController, drawerState: DrawerState, bottomBarSelection: Int = 0) {
     val scope = rememberCoroutineScope()
-    val bottomBarSelection by mainActivityState.bottomBarSelection
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -311,7 +322,6 @@ fun MainActivityBottomBarPreview(){
     QuizzerAndroidTheme {
         MainActivityBottomBar(
             navController = rememberNavController(),
-            mainActivityState = provideMainActivityStateTest(),
             drawerState = rememberDrawerState(DrawerValue.Closed)
         )
     }
@@ -383,17 +393,20 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {}, mainActivityState: MainActivityState) {
-    val context = LocalContext.current
+fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
+                  userData: UserViewModel.UserDatas?, isLoggedIn: Boolean,
+                  onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
+                  logOut: () -> Unit = { },
+                  signOut: (String) -> Unit = { },
+                  ) {
     val scope = rememberCoroutineScope()
-    val userData by mainActivityState.userData
-    val isUserLoggedIn by mainActivityState.isLoggedIn
     val nickname = userData?.nickname
     var showInquiry by remember { mutableStateOf(false) }
     var showSignOut by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val isUserLoggedIn = userData != null
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         if(showInquiry) {
@@ -403,7 +416,12 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {}, ma
                 InquiryBottomSheetContent(
                     onDismissRequest = { showInquiry = false
                         closeDrawer() },
-                    mainActivityState = mainActivityState
+                    userData = userData,
+                    isDone = false,
+                    onSendInquiry = { email, type, text ->
+                        onSendInquiry(email, type, text)
+                        showInquiry = false
+                    }
                 )
             }
         }
@@ -411,17 +429,22 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {}, ma
             ModalBottomSheet(onDismissRequest = {showSignOut = false },
                 modifier = Modifier.imePadding()) {
                 SignoutBottomSheetContent(
-                    mainActivityState,
                     onDismissRequest = { showSignOut = false
-                        mainActivityState.logOut()
+                        logOut()
                         closeDrawer() },
+                    userData = userData,
+                    isDone = false,
+                    onSendSignOut = { email ->
+                        signOut(email)
+                        showSignOut = false
+                    }
                 )
             }
         }
         else if(showLogoutDialog){
             LogoutConfirmationDialog(
                 onConfirm = {
-                    mainActivityState.logOut()
+                    logOut()
                     showLogoutDialog = false
                     closeDrawer()
                 },
@@ -540,14 +563,13 @@ fun LogoutConfirmationDialogPreview(
 
 @Composable
 fun SignoutBottomSheetContent(
-    mainActivityState: MainActivityState,
     onDismissRequest: () -> Unit,
+    userData: UserViewModel.UserDatas?,
+    isDone: Boolean = false,
+    onSendSignOut: (String) -> Unit = { },
 ){
     var textFieldValue by remember { mutableStateOf("") }
-    val userData by mainActivityState.userData
     val email = userData?.email ?: "GUEST"
-    val isDone by mainActivityState.isSignOutDone
-    val onSendSignOut = mainActivityState.onSendSignOut
 
     LaunchedEffect(isDone) {
         if (isDone) {
@@ -590,13 +612,12 @@ fun SignoutBottomSheetContent(
 
 @Composable
 fun InquiryBottomSheetContent(
-    mainActivityState: MainActivityState,
     onDismissRequest: () -> Unit,
+    userData: UserViewModel.UserDatas?,
+    isDone: Boolean,
+    onSendInquiry: (String, String, String) -> Unit
 ) {
-    val userData = mainActivityState.userData.value
     val email = userData?.email ?: "GUEST"
-    val onSendInquiry = mainActivityState.onSendInquiry
-    val isDone by mainActivityState.isInquiryDone
     val options = listOf("Bug Report", "Quiz Report", "Develop Plan Request", "Others")
     var selectedOption by remember { mutableStateOf(options[0]) }
     var textFieldValue by remember { mutableStateOf("") }
@@ -685,49 +706,14 @@ fun InquiryBottomSheetContent(
 val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
 
 
-@Composable
-fun provideMainActivityStateTest(): MainActivityState {
-    val context = LocalContext.current
-    val imageByte = loadImageAsByteArray(context, R.drawable.question2)
-    val quizCard = QuizCard(
-        id = "1",
-        title = "Quiz 1",
-        tags = listOf("tag1", "tag2"),
-        creator = "Creator",
-        image = imageByte,
-        count = 0
-    )
-    return MainActivityState(
-        bottomBarSelection = remember { mutableIntStateOf(0) },
-        userData = remember { mutableStateOf(userDataTest) },
-        quizCards = remember {
-            mutableStateOf(
-                QuizCardMainViewModel.QuizCards(
-                    QuizCardMainViewModel.QuizCardsWithTag("Most Viewed", listOf(quizCard, quizCard, quizCard)),
-                    QuizCardMainViewModel.QuizCardsWithTag("Similar Items", listOf(quizCard, quizCard, quizCard)),
-                    QuizCardMainViewModel.QuizCardsWithTag("Recent Items", listOf(quizCard, quizCard, quizCard))
-                )
-            )
-        },
-        isSignOutDone = remember { mutableStateOf(false) },
-        isInquiryDone = remember { mutableStateOf(false) },
-        isLoggedIn = remember { mutableStateOf(true) },
-        logOut = { },
-        onSendSignOut = { },
-        onSendInquiry = { _, _, _ -> },
-        updateQuizCards = { }
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    val mainActivityStateTest = provideMainActivityStateTest()
     val navController = rememberNavController()
     QuizzerAndroidTheme {
         MainScreen(
             navController,
-            mainActivityStateTest,
+            loginActivityState = getLoginActivityState(),
         )
     }
 }
@@ -736,12 +722,12 @@ fun MainScreenPreview() {
 @Composable
 fun DrawerPreview(){
     val navController = rememberNavController()
-    val mainActivityStateTest = provideMainActivityStateTest()
     QuizzerAndroidTheme {
         DrawerContent(
             navController = navController,
             closeDrawer = {},
-            mainActivityState = mainActivityStateTest
+            userData = userDataTest,
+            isLoggedIn = true
         )
     }
 }
@@ -749,11 +735,12 @@ fun DrawerPreview(){
 @Preview(showBackground = true)
 @Composable
 fun SignoutBottomSheetContentPreview() {
-    val mainActivityStateTest = provideMainActivityStateTest()
     QuizzerAndroidTheme {
         SignoutBottomSheetContent(
             onDismissRequest = { },
-            mainActivityState = mainActivityStateTest
+            userData = userDataTest,
+            isDone = false,
+            onSendSignOut = { },
         )
     }
 }
@@ -761,11 +748,12 @@ fun SignoutBottomSheetContentPreview() {
 @Preview(showBackground = true)
 @Composable
 fun InquiryBottomSheetContentPreview() {
-    val mainActivityStateTest = provideMainActivityStateTest()
     QuizzerAndroidTheme {
         InquiryBottomSheetContent(
             onDismissRequest = { },
-            mainActivityState = mainActivityStateTest
-        )
+            userData = userDataTest,
+            isDone = false,
+            onSendInquiry = { _, _, _ -> }
+            )
     }
 }

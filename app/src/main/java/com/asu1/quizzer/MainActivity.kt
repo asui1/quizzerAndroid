@@ -27,7 +27,6 @@ import com.asu1.quizzer.screens.TagSetting
 import com.asu1.quizzer.screens.UsageAgreement
 import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.states.rememberLoginActivityState
-import com.asu1.quizzer.states.rememberMainActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
@@ -65,12 +64,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController = rememberNavController()
-                        val mainActivityState = rememberMainActivityState(
-                            quizCardMainViewModel = quizCardMainViewModel,
-                            userViewModel = userViewModel,
-                            signOutViewModel = signOutViewModel,
-                            inquiryViewModel = inquiryViewModel,
-                        )
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
                         )
@@ -88,7 +81,10 @@ class MainActivity : ComponentActivity() {
                             composable<Route.Home> {
                                 MainScreen(
                                     navController,
-                                    mainActivityState,
+                                    quizCardMainViewModel = quizCardMainViewModel,
+                                    signOutViewModel = signOutViewModel,
+                                    inquiryViewModel = inquiryViewModel,
+                                    loginActivityState = loginActivityState
                                 )
                             }
                             composable<Route.Trends> {

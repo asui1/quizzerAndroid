@@ -31,9 +31,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _userData = MutableLiveData<UserDatas?>()
     val userData: MutableLiveData<UserDatas?> get() = _userData
 
-    private val _bottomBarSelection = MutableLiveData<Int>()
-    val bottomBarSelection: LiveData<Int> get() = _bottomBarSelection
-
     private val _showToast = MutableLiveData<String?>()
     val showToast: LiveData<String?> get() = _showToast
 
@@ -43,13 +40,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             _userData.value = UserDatas(userInfo.email, userInfo.nickname, userInfo.urlToImage, userInfo.tags ?: emptySet())
             _isUserLoggedIn.value = true
         }
-        _bottomBarSelection.value = 0
     }
 
-    fun setBottomBarSelection(index: Int) {
-        if(index < 0 || index > 4) return
-        _bottomBarSelection.postValue(index)
-    }
 
     fun logIn(email: String, urlToImage: String?) {
         viewModelScope.launch {
@@ -78,14 +70,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         _isUserLoggedIn.postValue(false)
     }
 
-    fun register(email: String, nickname: String, urlToImage: String?, tags: List<String>) {
-        viewModelScope.launch {
-//            val response = RetrofitInstance.api.register(email, nickname, urlToImage, tags)
-//            if(response.isSuccessful){
-//                logIn(email, urlToImage)
-//            }
-        }
-    }
     fun toastShown() {
         _showToast.value = null
     }

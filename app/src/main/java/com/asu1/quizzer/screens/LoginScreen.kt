@@ -190,15 +190,21 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
 
 }
 
+@Composable
+fun getLoginActivityState(): LoginActivityState {
+    return LoginActivityState(
+        isUserLoggedIn = rememberSaveable { mutableStateOf(true) },
+        userData = rememberSaveable()  { mutableStateOf(userDataTest) },
+        login = { _, _ -> },
+        logout = { },
+    )
+}
 
 @Preview
 @Composable
 fun PreviewLoginScreen() {
     val navController = rememberNavController()
-    val loginActivityState = LoginActivityState(
-        isUserLoggedIn = rememberSaveable { mutableStateOf(false) },
-        login = { _, _ -> }
-    )
+    val loginActivityState = getLoginActivityState()
     QuizzerAndroidTheme {
         LoginScreen(
             navController = navController,
