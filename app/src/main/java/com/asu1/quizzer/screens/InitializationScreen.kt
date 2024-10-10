@@ -5,24 +5,26 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.composables.LoadComposable
 import com.asu1.quizzer.composables.NoInternetDialog
 import com.asu1.quizzer.composables.UpdateDialog
-import com.asu1.quizzer.states.InitState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
-fun InitializationScreen(navHostController: NavHostController, initActivityState: InitState){
-    val isInternetAvailable by initActivityState.isInternetAvailable
-    val isUpdateAvailable by initActivityState.isUpdateAvailable
+fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel()) {
+    val isInternetAvailable by initViewModel.isInternetAvailable.observeAsState()
+    val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState()
     val hasCheckedUpdate = remember { mutableStateOf(false) }
 
     Logger().debug("InitializationScreen: isInternetAvailable: $isInternetAvailable")
@@ -31,14 +33,14 @@ fun InitializationScreen(navHostController: NavHostController, initActivityState
         when (isUpdateAvailable) {
             null -> {
                 if (!hasCheckedUpdate.value) {
-                    initActivityState.checkUpdate()
+                    initViewModel.updateIsUpdateAvailable()
                     hasCheckedUpdate.value = true
                 }
                 LoadComposable()
             }
             true -> UpdateDialog(
                 onUpdate = { redirectToPlayStore(it) },
-                onCancel = initActivityState.finishApp,
+                onCancel = { initViewModel.finishApp() },
             )
             else -> {
                 Logger().debug("InitializationScreen: Navigating to Home")
@@ -52,8 +54,8 @@ fun InitializationScreen(navHostController: NavHostController, initActivityState
 
     } else if(isInternetAvailable == false){
         NoInternetDialog(
-            onRetry = {initActivityState.onRetryInternet()},
-            onExit = {initActivityState.finishApp},
+            onRetry = { initViewModel.updateInternetConnection() },
+            onExit = { initViewModel.finishApp() },
         )
     }
     else{
@@ -68,25 +70,4 @@ private fun redirectToPlayStore(context: Context) {
         setPackage("com.android.vending")
     }
     ContextCompat.startActivity(context, intent, null)
-}
-
-@Preview
-@Composable
-fun PreviewInitializationScreen(){
-    val context = LocalContext.current
-    val initActivityState = InitState(
-        isInternetAvailable = remember { mutableStateOf(true) },
-        isUpdateAvailable = remember { mutableStateOf(true) },
-        checkUpdate = {},
-        onRetryInternet = {},
-        finishApp = {},
-    )
-
-    QuizzerAndroidTheme {
-        InitializationScreen(
-            navHostController = NavHostController(context),
-            initActivityState = initActivityState,
-        )
-    }
-
 }
