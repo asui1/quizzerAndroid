@@ -29,7 +29,6 @@ import com.asu1.quizzer.screens.SearchScreen
 import com.asu1.quizzer.screens.TagSetting
 import com.asu1.quizzer.screens.UsageAgreement
 import com.asu1.quizzer.screens.quiz.QuizCaller
-import com.asu1.quizzer.states.rememberInitState
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.states.rememberMainActivityState
 import com.asu1.quizzer.states.rememberQuizLayoutState
@@ -72,7 +71,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController = rememberNavController()
-                        val initState = rememberInitState(mainViewModel = mainViewModel)
                         val mainActivityState = rememberMainActivityState(
                             quizCardMainViewModel = quizCardMainViewModel,
                             userViewModel = userViewModel,
@@ -81,9 +79,6 @@ class MainActivity : ComponentActivity() {
                         )
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
-                        )
-                        val registerActivityState = rememberRegisterActivityState(
-                            registerViewmodel =registerViewModel
                         )
                         val quizLayoutState = rememberQuizLayoutState(
                             quizLayoutViewModel = quizLayoutViewModel
@@ -94,10 +89,9 @@ class MainActivity : ComponentActivity() {
                             startDestination = Route.Init
                         ) {
                             composable<Route.Init> {
-                                mainViewModel.updateInternetConnection()
                                 InitializationScreen(
                                     navController,
-                                    initActivityState = initState
+                                    initViewModel = mainViewModel
                                 )
                             }
                             composable<Route.Home> {
@@ -150,15 +144,15 @@ class MainActivity : ComponentActivity() {
                                 if(email == "" || profileUri == null) {
                                     return@composable
                                 }
-                                registerActivityState.email = email
-                                registerActivityState.photoUri = profileUri
-                                UsageAgreement(navController, registerActivityState)
+                                registerViewModel.setEmail(email)
+                                registerViewModel.setPhotoUri(profileUri)
+                                UsageAgreement(navController, registerViewModel)
                             }
                             composable<Route.RegisterNickname> {
-                                NicknameInput (navController, registerActivityState)
+                                NicknameInput (navController, registerViewModel)
                             }
                             composable<Route.RegisterTags> {
-                                TagSetting(navController, registerActivityState)
+                                TagSetting(navController, registerViewModel)
                             }
                             composable<Route.CreateQuizLayout>(
                                 enterTransition = enterFromRightTransition(),

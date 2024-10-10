@@ -29,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
@@ -54,12 +56,13 @@ import com.asu1.quizzer.states.RegisterActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.RegisterViewModel
 
 @Composable
-fun UsageAgreement(navController: NavHostController, registerActivityState: RegisterActivityState) {
+fun UsageAgreement(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
     // Usage Agreement UI
     val context = LocalContext.current
-    val registerStep by registerActivityState.registerStep
+    val registerStep by registerViewModel.registerStep.observeAsState()
 
     LaunchedEffect(registerStep) {
         if (registerStep == 1) {
@@ -67,9 +70,7 @@ fun UsageAgreement(navController: NavHostController, registerActivityState: Regi
         }
     }
     BackHandler {
-        registerActivityState.email = null
-        registerActivityState.photoUri = null
-        registerActivityState.reset()
+        registerViewModel.reset()
         navController.popBackStack()
     }
 
@@ -97,7 +98,7 @@ fun UsageAgreement(navController: NavHostController, registerActivityState: Regi
             }
             Button(
                 onClick = {
-                    registerActivityState.agreeTerms()
+                    registerViewModel.agreeTerms()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -136,18 +137,17 @@ fun UsageAgreementPreview() {
     QuizzerAndroidTheme {
         UsageAgreement(
             navController = navController,
-            registerActivityState = getRegisterActivityState()
         )
     }
 }
 
 @Composable
-fun NicknameInput(navController: NavHostController, registerActivityState: RegisterActivityState) {
+fun NicknameInput(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
     // Nickname Input UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var nickname by remember { mutableStateOf("") }
-    val registerStep by registerActivityState.registerStep
+    val registerStep by registerViewModel.registerStep.observeAsState()
 
     LaunchedEffect(registerStep) {
         Logger().printBackStack(navController)
@@ -156,7 +156,7 @@ fun NicknameInput(navController: NavHostController, registerActivityState: Regis
         }
     }
     BackHandler {
-        registerActivityState.moveBack()
+        registerViewModel.moveBack()
         navController.popBackStack()
     }
 
@@ -190,13 +190,13 @@ fun NicknameInput(navController: NavHostController, registerActivityState: Regis
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = {
-                                registerActivityState.setNickName(nickname)
+                                registerViewModel.setNickName(nickname)
                             }
                         )
                     )
                 }
                 Button(
-                    onClick = { registerActivityState.setNickName(nickname) },
+                    onClick = { registerViewModel.setNickName(nickname) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -222,32 +222,29 @@ fun NicknameInputPreview() {
     QuizzerAndroidTheme {
         NicknameInput(
             navController = navController,
-            registerActivityState = getRegisterActivityState()
         )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TagSetting(navController: NavHostController, registerActivityState: RegisterActivityState) {
+fun TagSetting(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
     // Tag Setting UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val tags by registerActivityState.tags
-    val registerStep by registerActivityState.registerStep
+    val tags by registerViewModel.tags.observeAsState()
+    val registerStep by registerViewModel.registerStep.observeAsState()
 
 
     LaunchedEffect(registerStep) {
         if (registerStep == 3) {
-            registerActivityState.email = null
-            registerActivityState.photoUri = null
-            registerActivityState.reset()
+            registerViewModel.reset()
             navController.popBackStack(Route.Login, inclusive = false)
         }
     }
 
     BackHandler {
-        registerActivityState.moveBack()
+        registerViewModel.moveBack()
         navController.popBackStack()
     }
 
@@ -263,17 +260,14 @@ fun TagSetting(navController: NavHostController, registerActivityState: Register
             ) {
                 TagSetter(
                     tags = tags,
-                    onClickAdd = {it -> registerActivityState.addTag(it) },
-                    onClickRemove = {it -> registerActivityState.removeTag(it) },
+                    onClickAdd = {it -> registerViewModel.addTag(it) },
+                    onClickRemove = {it -> registerViewModel.removeTag(it) },
                     focusRequester = focusRequester,
                 )
                 Button(
                     onClick = {
-                        if (registerActivityState.email != null && registerActivityState.photoUri != null) {
-                            registerActivityState.register(
-                                registerActivityState.email!!,
-                                registerActivityState.photoUri!!
-                            )
+                        if (registerViewModel.email != null && registerViewModel.photoUri != null) {
+                            registerViewModel.register()
                         }
                     },
                     modifier = Modifier
@@ -300,7 +294,6 @@ fun TagSettingPreview() {
     QuizzerAndroidTheme {
         TagSetting(
             navController = rememberNavController(),
-            registerActivityState = getRegisterActivityState()
         )
     }
 }

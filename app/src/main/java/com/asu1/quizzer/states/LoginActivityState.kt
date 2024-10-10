@@ -14,10 +14,9 @@ import com.asu1.quizzer.viewModels.UserViewModel
 data class LoginActivityState(
     val isUserLoggedIn : State<Boolean>,
     val login: (String, String) -> Unit,
-
-
 )
 
+//KEEP STATE FOR LOGIN ACTIVITY TO USE USERVIEWMODEL AS ANDROIDVIEWMODEL
 @Composable
 fun rememberLoginActivityState(
     userViewModel: UserViewModel = viewModel(),
