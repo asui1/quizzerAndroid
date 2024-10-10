@@ -52,7 +52,6 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.composables.TagSetter
-import com.asu1.quizzer.states.RegisterActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
@@ -109,23 +108,6 @@ fun UsageAgreement(navController: NavHostController, registerViewModel: Register
             }
         }
     }
-}
-
-@Composable
-fun getRegisterActivityState(): RegisterActivityState {
-
-    return RegisterActivityState(
-        agreeTerms = {},
-        setNickName = {},
-        register = { _, _ -> },
-        registerStep = remember { mutableIntStateOf(0)},
-        tags = remember { mutableStateOf(listOf("Test1", "Test2", "Test3")) },
-        removeTag = {},
-        addTag = {},
-        email = "whwkd122@gmail.com",
-        photoUri = null,
-        moveBack = {}
-    )
 }
 
 @Preview
