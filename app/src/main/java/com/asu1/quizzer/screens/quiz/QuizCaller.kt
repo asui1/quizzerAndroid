@@ -2,6 +2,7 @@ package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,8 +14,7 @@ import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.QuizType
-import com.asu1.quizzer.screens.getQuizLayoutState
-import com.asu1.quizzer.states.QuizLayoutState
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
@@ -22,15 +22,18 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 
 @Composable
-fun QuizCaller(quizLayoutState: QuizLayoutState, loadIndex:Int, quizType: QuizType, insertIndex: Int, navController: NavHostController) {
-    val colorScheme by quizLayoutState.colorScheme
-    val quiz: Quiz? = if (loadIndex != -1 && quizLayoutState.quizzes.value.size > loadIndex) {
-        quizLayoutState.quizzes.value[loadIndex]
+fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex:Int, quizType: QuizType, insertIndex: Int, navController: NavHostController) {
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+
+    val quiz: Quiz? = if (loadIndex != -1 && (quizLayoutViewModel.quizzes.value?.size
+            ?: 0) > loadIndex
+    ) {
+        quizLayoutViewModel.quizzes.value?.get(loadIndex)
     } else {
         null
     }
     MaterialTheme(
-        colorScheme = colorScheme
+        colorScheme = quizTheme.colorScheme
     ) {
         when(quizType){
             QuizType.QUIZ1 -> {
@@ -89,7 +92,6 @@ fun QuizCaller(quizLayoutState: QuizLayoutState, loadIndex:Int, quizType: QuizTy
 @Composable
 fun QuizCallerPreview() {
     QuizCaller(
-        quizLayoutState = getQuizLayoutState(),
         loadIndex = -1,
         quizType = QuizType.QUIZ1,
         insertIndex = 0,

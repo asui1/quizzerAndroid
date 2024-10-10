@@ -1,16 +1,10 @@
 package com.asu1.quizzer.viewModels
 
-import android.app.Application
-import androidx.compose.runtime.State
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.QuizCardList
-import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch

@@ -1,6 +1,5 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.model.Quiz2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

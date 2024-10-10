@@ -31,9 +31,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagSetter(
-    tags: List<String>?,
-    onClickRemove: (String) -> Unit,
-    onClickAdd: (String) -> Unit,
+    tags: Set<String>?,
+    onClick: (String) -> Unit,
     focusRequester: androidx.compose.ui.focus.FocusRequester
 ) {
     var tag by remember { mutableStateOf("") }
@@ -55,7 +54,7 @@ fun TagSetter(
             tags?.forEach { tag ->
                 Button(
                     onClick = {
-                        onClickRemove(tag)
+                        onClick(tag)
                               },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
@@ -80,7 +79,7 @@ fun TagSetter(
             keyboardActions = KeyboardActions(
                 onDone = {
                     if (tag.isNotEmpty()) {
-                        onClickAdd(tag)
+                        onClick(tag)
                         tag = ""
                     }
                 }

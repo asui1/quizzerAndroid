@@ -1,19 +1,17 @@
 package com.asu1.quizzer.network
 
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.QuizCardDeserializer
-import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import okhttp3.Interceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ContentTypeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

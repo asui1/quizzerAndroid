@@ -1,13 +1,10 @@
 package com.asu1.quizzer.viewModels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.UserRegister
-import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
@@ -22,8 +19,8 @@ class RegisterViewModel : ViewModel() {
     private val _nickname = MutableLiveData<String?>()
     val nickname: MutableLiveData<String?> get() = _nickname
 
-    private val _tags = MutableLiveData<List<String>>(emptyList())
-    val tags: LiveData<List<String>> get() = _tags
+    private val _tags = MutableLiveData<Set<String>>(emptySet())
+    val tags: LiveData<Set<String>> get() = _tags
 
     private val _email = MutableLiveData<String?>()
     val email: LiveData<String?> get() = _email
@@ -37,7 +34,7 @@ class RegisterViewModel : ViewModel() {
 
     fun reset(){
         _registerStep.postValue(0)
-        _tags.postValue(emptyList())
+        _tags.postValue(emptySet())
         _nickname.value = null
         _email.value = null
         _photoUri.value = null
@@ -89,7 +86,7 @@ class RegisterViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            val response = RetrofitInstance.api.register(UserRegister(_email.value!!, _nickname.value!!, _tags.value!!, photoUri.value ?: ""))
+            val response = RetrofitInstance.api.register(UserRegister(_email.value!!, _nickname.value!!, _tags.value!!.toList(), photoUri.value ?: ""))
             if(response.isSuccessful){
                 if(response.code() == 201){
                     _showToast.postValue("Registered successfully")
@@ -112,13 +109,13 @@ class RegisterViewModel : ViewModel() {
             return
         }
         tags.add(tag)
-        _tags.postValue(tags!!)
+        _tags.postValue(tags!!.toSet())
     }
 
     fun removeTag(tag: String){
         val tags = _tags.value?.toMutableList()
         if(tags?.remove(tag) == true){
-            _tags.postValue(tags!!)
+            _tags.postValue(tags!!.toSet())
         }
     }
 

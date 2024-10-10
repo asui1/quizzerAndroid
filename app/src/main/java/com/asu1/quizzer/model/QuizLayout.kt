@@ -1,7 +1,6 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
 
 data class QuizLayout(
     var quizTitle: String = "",

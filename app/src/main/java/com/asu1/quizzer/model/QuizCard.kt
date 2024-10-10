@@ -1,6 +1,5 @@
 package com.asu1.quizzer.model
 
-import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import java.util.UUID
 

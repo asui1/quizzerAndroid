@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,49 +15,49 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.composables.RowWithAppIconAndName
-import com.asu1.quizzer.states.QuizLayoutState
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.viewModels.UserViewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
+import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
-                      quizLayoutState: QuizLayoutState,
+                      quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
 ) {
-    val quizzes by quizLayoutState.quizzes
-    val colorScheme by quizLayoutState.colorScheme
+    val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+    val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
     var curIndex by remember{mutableStateOf(0)}
 
@@ -73,7 +72,7 @@ fun QuizBuilderScreen(navController: NavController,
     }
 
     MaterialTheme(
-        colorScheme = colorScheme
+        colorScheme = colorScheme!!
     ) {
         Scaffold(
             topBar = {
@@ -250,7 +249,6 @@ fun PreviewQuizBuilderScreen(){
 
         QuizBuilderScreen(
             navController = rememberNavController(),
-            quizLayoutState = getQuizLayoutState(),
         )
     }
 }

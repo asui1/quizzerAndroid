@@ -7,40 +7,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.composables.ColorPicker
 import com.asu1.quizzer.composables.Flipper
 import com.asu1.quizzer.composables.GetTextStyle
-import com.asu1.quizzer.screens.getQuizLayoutState
-import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 val fonts = listOf("Gothic A1", "Noto Sans", "Maruburi", "Spoqahans", "EF-diary", "Ongle-Yunue", "Ongle-Eyeon")
@@ -48,7 +35,14 @@ val colors = listOf("Color1", "Color2", "Color3", "Color4", "Color5", "Color6", 
 val borders = listOf("No border", "Underline", "Box")
 
 @Composable
-fun QuizLayoutSetTextStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
+fun QuizLayoutSetTextStyle(
+    questionStyle: List<Int> = listOf(0, 0, 1, 0),
+    bodyStyle: List<Int> = listOf(0, 0, 2, 1),
+    answerStyle: List<Int> = listOf(0, 0, 0, 2),
+    updateStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
+    colorScheme: ColorScheme = MaterialTheme.colorScheme,
+    proceed: () -> Unit = {},
+    ) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -56,15 +50,19 @@ fun QuizLayoutSetTextStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
             .verticalScroll(rememberScrollState())
     ) {
         TextStyleRowOpener(
-            quizLayoutState = quizLayoutState,
+            textStyle = questionStyle,
+            updateTextStyle = updateStyle,
             targetSelector = 0,
+            colorScheme = colorScheme,
         )
         TextStyleRowOpener(
-            quizLayoutState = quizLayoutState,
+            textStyle = bodyStyle,
+            updateTextStyle = updateStyle,
             targetSelector = 1,
         )
         TextStyleRowOpener(
-            quizLayoutState = quizLayoutState,
+            textStyle = answerStyle,
+            updateTextStyle = updateStyle,
             targetSelector = 2,
         )
     }
@@ -72,23 +70,19 @@ fun QuizLayoutSetTextStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
 
 @Composable
 fun TextStyleRowOpener(
-    quizLayoutState: QuizLayoutState,
+    textStyle: List<Int> = listOf(0, 0, 1, 0),
+    updateTextStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
     targetSelector: Int,
-) {
+    colorScheme: ColorScheme = MaterialTheme.colorScheme,
+    ) {
     var isOpen by remember { mutableStateOf(true) }
-    val colorScheme by quizLayoutState.colorScheme
     val text = when(targetSelector){
         0 -> "Question"
         1 -> "Answer"
         2 -> "Body"
         else -> "Body"
     }
-    val selectedStyle by when(targetSelector){
-        0 -> quizLayoutState.questionTextStyle
-        1 -> quizLayoutState.bodyTextStyle
-        2 -> quizLayoutState.answerTextStyle
-        else -> quizLayoutState.bodyTextStyle
-    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,7 +110,7 @@ fun TextStyleRowOpener(
                 ) {
                     GetTextStyle(
                         text = text,
-                        style = selectedStyle,
+                        style = textStyle,
                         colorScheme = colorScheme,
                     )
                     Icon(
@@ -135,32 +129,32 @@ fun TextStyleRowOpener(
                 ) {
                     Flipper(
                         items = fonts,
-                        currentIndex = selectedStyle[0],
+                        currentIndex = textStyle[0],
                         onNext = {
-                            quizLayoutState.updateTextStyle(targetSelector, 0, true)
+                            updateTextStyle(targetSelector, 0, true)
                         },
                         onPrevious = {
-                            quizLayoutState.updateTextStyle(targetSelector, 0, false)
+                            updateTextStyle(targetSelector, 0, false)
                         }
                     )
                     Flipper(
                         items = colors,
-                        currentIndex = selectedStyle[1],
+                        currentIndex = textStyle[1],
                         onNext = {
-                            quizLayoutState.updateTextStyle(targetSelector, 1, true)
+                            updateTextStyle(targetSelector, 1, true)
                         },
                         onPrevious = {
-                            quizLayoutState.updateTextStyle(targetSelector, 1, false)
+                            updateTextStyle(targetSelector, 1, false)
                         }
                     )
                     Flipper(
                         items = borders,
-                        currentIndex = selectedStyle[2],
+                        currentIndex = textStyle[2],
                         onNext = {
-                            quizLayoutState.updateTextStyle(targetSelector, 2, true)
+                            updateTextStyle(targetSelector, 2, true)
                         },
                         onPrevious = {
-                            quizLayoutState.updateTextStyle(targetSelector, 2, false)
+                            updateTextStyle(targetSelector, 2, false)
                         }
                     )
                 }
@@ -174,7 +168,6 @@ fun TextStyleRowOpener(
 fun TextStyleRowOpenerPreview(){
     QuizzerAndroidTheme {
         TextStyleRowOpener(
-            quizLayoutState = getQuizLayoutState(),
             targetSelector = 0,
         )
     }

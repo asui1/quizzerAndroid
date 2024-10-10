@@ -2,24 +2,37 @@ package com.asu1.quizzer
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.asu1.quizzer.model.VersionResponse
 import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.quizzer.viewModels.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
-import org.junit.*
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.*
-import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.*
-import android.content.pm.PackageInfo
-import com.asu1.quizzer.viewModels.MainViewModel
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import retrofit2.Response
 
 @RunWith(MockitoJUnitRunner::class)

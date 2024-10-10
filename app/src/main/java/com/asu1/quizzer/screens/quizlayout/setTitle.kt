@@ -11,30 +11,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.screens.getQuizLayoutState
-import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 
 @Composable
-fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
-                    ) {
-    var title by remember { mutableStateOf(TextFieldValue("")) }
+fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, proceed: () -> Unit = {},
+) {
     val focusRequester = remember{ FocusRequester() }
 
     Column(
@@ -49,10 +38,7 @@ fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
         )
         TextField(
             value = title,
-            onValueChange = {
-                quizLayoutState.setQuizTitle(it.text)
-                title = it
-                            },
+            onValueChange = onTitleChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
@@ -68,18 +54,7 @@ fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
     }
 
     LaunchedEffect(Unit) {
-        Logger().debug("QuizLayoutTitle: LaunchedEffect ${quizLayoutState.quizTitle.value}")
-        title = TextFieldValue(
-            text = quizLayoutState.quizTitle.value,
-            selection = TextRange(quizLayoutState.quizTitle.value.length)
-        )
         focusRequester.requestFocus()
-    }
-    DisposableEffect(Unit){
-        onDispose {
-            Logger().debug("QuizLayoutTitle: DisposableEffect ${title.text}")
-            quizLayoutState.setQuizTitle(title.text)
-        }
     }
 }
 
@@ -88,8 +63,6 @@ fun QuizLayoutTitle(quizLayoutState: QuizLayoutState, proceed: () -> Unit,
 fun QuizLayoutTitlePreview() {
     QuizzerAndroidTheme {
         QuizLayoutTitle(
-            quizLayoutState = getQuizLayoutState(),
-            proceed = {},
         )
     }
 }

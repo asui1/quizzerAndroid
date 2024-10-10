@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -21,15 +20,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.screens.getQuizLayoutState
-import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun QuizLayoutSetDescription(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
+fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: (String) -> Unit = {}, proceed: () -> Unit = {}) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val description by quizLayoutState.quizDescription
 
     Column(
         modifier = Modifier
@@ -42,8 +38,8 @@ fun QuizLayoutSetDescription(quizLayoutState: QuizLayoutState, proceed: () -> Un
             style = MaterialTheme.typography.titleMedium,
         )
         TextField(
-            value = description,
-            onValueChange = { quizLayoutState.setQuizDescription(it) },
+            value = quizDescription,
+            onValueChange = onDescriptionChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
@@ -71,8 +67,6 @@ fun QuizLayoutSetDescription(quizLayoutState: QuizLayoutState, proceed: () -> Un
 fun QuizLayoutDescriptionPreview() {
     QuizzerAndroidTheme {
         QuizLayoutSetDescription(
-            quizLayoutState = getQuizLayoutState(),
-            proceed = {},
         )
     }
 }

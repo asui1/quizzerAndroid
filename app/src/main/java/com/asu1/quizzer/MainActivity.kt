@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.asu1.quizzer.screens.InitializationScreen
 import com.asu1.quizzer.screens.LoginScreen
@@ -31,12 +28,9 @@ import com.asu1.quizzer.screens.UsageAgreement
 import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.states.rememberMainActivityState
-import com.asu1.quizzer.states.rememberQuizLayoutState
-import com.asu1.quizzer.states.rememberRegisterActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
@@ -79,9 +73,6 @@ class MainActivity : ComponentActivity() {
                         )
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
-                        )
-                        val quizLayoutState = rememberQuizLayoutState(
-                            quizLayoutViewModel = quizLayoutViewModel
                         )
                         Logger().debug("MainActivity: NavHost")
                         NavHost(
@@ -161,7 +152,7 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitToRightTransition(),
                             ) {
                                 val userData = userViewModel.userData.value
-                                QuizLayoutBuilderScreen(navController, quizLayoutState, userData)
+                                QuizLayoutBuilderScreen(navController, quizLayoutViewModel, userData)
                             }
                             composable<Route.QuizBuilder>(
                                 enterTransition = enterFromRightTransition(),
@@ -169,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
-                                QuizBuilderScreen(navController, quizLayoutState)
+                                QuizBuilderScreen(navController, quizLayoutViewModel)
                             }
                             composable<Route.QuizCaller> (
                                 enterTransition = enterFromRightTransition(),
@@ -180,7 +171,7 @@ class MainActivity : ComponentActivity() {
                                 val loadIndex = backStackEntry.toRoute<Route.QuizCaller>().loadIndex
                                 val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
                                 val insertIndex = backStackEntry.toRoute<Route.QuizCaller>().insertIndex
-                                QuizCaller(quizLayoutState, loadIndex, quizType, insertIndex, navController)
+                                QuizCaller(quizLayoutViewModel, loadIndex, quizType, insertIndex, navController)
                             }
                         }
 

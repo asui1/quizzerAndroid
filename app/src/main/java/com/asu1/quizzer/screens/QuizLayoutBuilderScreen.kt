@@ -1,9 +1,6 @@
 package com.asu1.quizzer.screens
 
-import android.graphics.BitmapFactory
-import android.view.GestureDetector
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,20 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.AddAPhoto
-import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,34 +23,25 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.RowWithAppIconAndName
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetColorScheme
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetDescription
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetFlipStyle
@@ -72,19 +49,19 @@ import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTags
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTextStyle
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTitleImage
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutTitle
-import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import loadImageAsByteArray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizLayoutBuilderScreen(navController: NavController,
-                            quizLayoutState: QuizLayoutState,
+                            quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
                             userData: UserViewModel.UserDatas?,
 ) {
+    val quizData by quizLayoutViewModel.quizData.collectAsState()
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
     var policyAgreed by remember { mutableStateOf(false) }
     var step by remember { mutableIntStateOf(0) }
     var showExitDialog by remember { mutableStateOf(false) }
@@ -99,7 +76,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         stringResource(R.string.set_text_setting),
     )
     val enabled = when(step){
-        1 -> quizLayoutState.quizTitle.value.isNotBlank()
+        1 -> quizData.title.isNotEmpty()
         2 -> true
         3 -> true
         4 -> true
@@ -111,7 +88,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     LaunchedEffect (Unit){
         if(!policyAgreed){
             val email = userData?.email ?: "GUEST"
-            quizLayoutState.initQuizLayout(
+            quizLayoutViewModel.initQuizLayout(
                 email,
                 colorScheme
             )
@@ -177,28 +154,55 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                     0 -> {}
                     1 -> {
                         QuizLayoutTitle(
-                            quizLayoutState = quizLayoutState,
+                            title = quizData.title,
+                            onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
                             proceed = {step++},
                         )
                     }
                     2 ->{
-                        QuizLayoutSetDescription(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetDescription(
+                            quizDescription = quizData.description,
+                            onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
+                            proceed = {step++}
+                        )
                     }
                     3 -> {
-                        QuizLayoutSetTags(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetTags(
+                            quizTags = quizData.tags,
+                            onTagChange = { quizLayoutViewModel.updateTag(it) },
+                            proceed = {step++})
                     }
                     4 -> {
-                        QuizLayoutSetTitleImage(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetTitleImage(
+                            quizTitleImage = quizData.image,
+                            onImageChange = { quizLayoutViewModel.setQuizImage(it) },
+                            proceed = {step++})
                     }
                     5 -> {
                         // Set Color Setting
-                        QuizLayoutSetColorScheme(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetColorScheme(
+                            colorScheme = quizTheme.colorScheme,
+                            onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
+                            onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
+                            backgroundImage = quizTheme.backgroundImage,
+                            onBackgroundImageUpdate = { quizLayoutViewModel.setBackgroundImage(it) },
+                            proceed = {step++})
                     }
                     6 -> {
-                        QuizLayoutSetFlipStyle(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetFlipStyle(
+                            flipStyle = quizTheme.flipStyle,
+                            onFlipStyleUpdate = { quizLayoutViewModel.setFlipStyle(it) },
+                            proceed = {step++})
                     }
                     7 -> {
-                        QuizLayoutSetTextStyle(quizLayoutState = quizLayoutState, proceed = {step++})
+                        QuizLayoutSetTextStyle(
+                            questionStyle = quizTheme.questionTextStyle,
+                            bodyStyle = quizTheme.bodyTextStyle,
+                            answerStyle = quizTheme.answerTextStyle,
+                            updateStyle = { targetSelector, index, isIncrease ->
+                                quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
+                            },
+                            proceed = {step++})
                         // Set Text Setting
                     }
                 }
@@ -243,31 +247,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     }
 }
 
-
-
-
-@Composable
-fun getQuizLayoutState() : QuizLayoutState{
-    val colorScheme = MaterialTheme.colorScheme
-    return QuizLayoutState(
-        quizTitle = remember { mutableStateOf("TEST") },
-        quizImage = remember { mutableStateOf(null) },
-        quizDescription = remember { mutableStateOf("TEST DESCRIPTION") },
-        quizTags = remember { mutableStateOf(listOf("TEST", "ADMIN", "ASUI")) },
-        flipStyle = remember { mutableStateOf(0) },
-        colorScheme = remember { mutableStateOf(colorScheme) },
-        backgroundImage = remember { mutableStateOf(ImageColor(colorScheme.surface, ByteArray(0), colorScheme.inverseSurface, ImageColorState.COLOR)) },
-        shuffleQuestions = remember { mutableStateOf(false) },
-        questionTextStyle = remember { mutableStateOf(listOf(0, 0, 1, 0)) },
-        bodyTextStyle = remember { mutableStateOf(listOf(0, 0, 2, 1)) },
-        answerTextStyle = remember { mutableStateOf(listOf(0, 0, 0, 2)) },
-        creator = remember { mutableStateOf("GUEST") },
-        uuid = remember { mutableStateOf(null) },
-        quizzes = remember { mutableStateOf(emptyList()) },
-        fullUpdate = remember { mutableStateOf(0) },
-        )
-}
-
 @Preview
 @Composable
 fun QuizLayoutBuilderScreenPreview() {
@@ -275,7 +254,6 @@ fun QuizLayoutBuilderScreenPreview() {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             QuizLayoutBuilderScreen(
                 navController = rememberNavController(),
-                quizLayoutState = getQuizLayoutState(),
                 userData = UserViewModel.UserDatas("", "", "", setOf(""))
             )
         }

@@ -4,31 +4,37 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
-import com.asu1.quizzer.screens.getQuizLayoutState
-import com.asu1.quizzer.states.QuizLayoutState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.loadImageFromDrawable
+import com.asu1.quizzer.viewModels.FlipStyle
 
 @Composable
-fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit) {
-    val context = LocalContext.current
+fun QuizLayoutSetFlipStyle(
+    flipStyle: FlipStyle = FlipStyle.Center,
+    onFlipStyleUpdate: (FlipStyle) -> Unit = {},
+    proceed: () -> Unit = {},
+) {
     val layoutImages = remember {
         listOf(
             R.drawable.layoutoption1,
@@ -37,8 +43,6 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
             R.drawable.layoutoption4,
         )
     }
-    var selectedFlipStyle by remember { mutableStateOf(quizLayoutState.flipStyle.value) }
-
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -50,14 +54,8 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.size(16.dp))
-        ImageRow(layoutImages[0], layoutImages[1], selectedFlipStyle, 0) { selectedFlipStyle = it }
-        ImageRow(layoutImages[2], layoutImages[3], selectedFlipStyle, 2) { selectedFlipStyle = it }
-    }
-
-    LaunchedEffect(selectedFlipStyle) {
-        if(selectedFlipStyle != null){
-            quizLayoutState.setFlipStyle(selectedFlipStyle!!)
-        }
+        ImageRow(layoutImages[0], layoutImages[1], flipStyle, 0) { onFlipStyleUpdate(it) }
+        ImageRow(layoutImages[2], layoutImages[3], flipStyle, 2) { onFlipStyleUpdate(it) }
     }
 }
 
@@ -65,9 +63,9 @@ fun QuizLayoutSetFlipStyle(quizLayoutState: QuizLayoutState, proceed: () -> Unit
 fun ImageRow(
     image1: Int,
     image2: Int,
-    selectedFlipStyle: Int?,
+    selectedFlipStyle: FlipStyle,
     givenIndex: Int,
-    onImageSelected: (Int) -> Unit
+    onImageSelected: (FlipStyle) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -85,10 +83,10 @@ fun ImageRow(
 fun ImageWithBorder(
     image: Int,
     flipStyle: Int,
-    selectedFlipStyle: Int?,
-    onImageSelected: (Int) -> Unit
+    selectedFlipStyle: FlipStyle,
+    onImageSelected: (FlipStyle) -> Unit
 ) {
-    val borderColor = if (selectedFlipStyle == flipStyle) MaterialTheme.colorScheme.primary else Color.Transparent
+    val borderColor = if (selectedFlipStyle.value == flipStyle) MaterialTheme.colorScheme.primary else Color.Transparent
     Image(
         painter = painterResource(id = image), // Replace with your app icon resource
         contentDescription = "Flip Style $flipStyle",
@@ -97,7 +95,7 @@ fun ImageWithBorder(
             .border(BorderStroke(2.dp, borderColor), shape = RoundedCornerShape(8.dp))
             .pointerInput(Unit) {
                 detectTapGestures {
-                    onImageSelected(flipStyle)
+                    onImageSelected(FlipStyle.from(flipStyle))
                 }
             },
     )
@@ -108,8 +106,6 @@ fun ImageWithBorder(
 fun QuizLayoutSetFlipStylePreview() {
     QuizzerAndroidTheme {
         QuizLayoutSetFlipStyle(
-            quizLayoutState = getQuizLayoutState(),
-            proceed = {},
         )
     }
 }

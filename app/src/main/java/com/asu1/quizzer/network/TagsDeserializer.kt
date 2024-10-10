@@ -1,10 +1,11 @@
 package com.asu1.quizzer.model
 
-import com.google.gson.*
-import java.lang.reflect.Type
 import android.util.Base64
 import com.asu1.quizzer.util.Logger
-import com.google.gson.annotations.SerializedName
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import java.lang.reflect.Type
 
 class UserInfoDeserializer: JsonDeserializer<UserInfo>{
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): UserInfo {
