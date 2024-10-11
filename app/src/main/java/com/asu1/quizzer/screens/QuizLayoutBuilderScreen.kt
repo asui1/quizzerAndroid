@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTitleImage
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutTitle
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 
@@ -63,10 +65,9 @@ fun QuizLayoutBuilderScreen(navController: NavController,
 ) {
     val quizData by quizLayoutViewModel.quizData.collectAsState()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
-    var policyAgreed by remember { mutableStateOf(false) }
-    var step by remember { mutableIntStateOf(0) }
+    val policyAgreed by quizLayoutViewModel.policyAgreement.observeAsState(false)
+    val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }
-    val colorScheme = MaterialTheme.colorScheme
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
         stringResource(R.string.set_quiz_description),
@@ -77,28 +78,14 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         stringResource(R.string.set_text_setting),
     )
     val enabled = when(step){
-        1 -> quizData.title.isNotEmpty()
-        2 -> true
-        3 -> true
-        4 -> true
-        5 -> true
-
+        LayoutSteps.POLICY -> false
+        LayoutSteps.TITLE -> quizData.title.isNotEmpty()
         else -> true
     }
 
-    LaunchedEffect (Unit){
-        if(!policyAgreed){
-            val email = userData?.email ?: "GUEST"
-            quizLayoutViewModel.initQuizLayout(
-                email,
-                colorScheme
-            )
-        }
-    }
-
     BackHandler {
-        if(step > 1){
-            step--
+        if(step > LayoutSteps.TITLE) {
+            quizLayoutViewModel.updateStep(step - 1)
         } else {
             navController.popBackStack()
         }
@@ -127,9 +114,16 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         ) {
 
             QuizPolicyAgreement(onAgree = {
-                policyAgreed = true
-                step++
+                quizLayoutViewModel.updatePolicyAgreement(true)
             })
+        }
+    }
+
+    fun proceed() {
+        if(step.ordinal < 7) {
+            quizLayoutViewModel.updateStep(step + 1)
+        } else {
+            navController.navigate(Route.QuizBuilder)
         }
     }
 
@@ -138,7 +132,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
             StepProgressBar(
                 navController = navController,
                 totalSteps = 7,
-                currentStep = if(step == 0) 1 else step,
+                currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
                 layoutSteps = layoutSteps,
                 showExitDialog = { showExitDialog = true }
             )
@@ -151,33 +145,33 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column {
-                when(step) {
+                when(step.ordinal) {
                     0 -> {}
                     1 -> {
                         QuizLayoutTitle(
                             title = quizData.title,
                             onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
-                            proceed = {step++},
+                            proceed = {proceed()},
                         )
                     }
                     2 ->{
                         QuizLayoutSetDescription(
                             quizDescription = quizData.description,
                             onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
-                            proceed = {step++}
+                            proceed = {proceed()}
                         )
                     }
                     3 -> {
                         QuizLayoutSetTags(
                             quizTags = quizData.tags,
                             onTagChange = { quizLayoutViewModel.updateTag(it) },
-                            proceed = {step++})
+                            proceed = {proceed()})
                     }
                     4 -> {
                         QuizLayoutSetTitleImage(
                             quizTitleImage = quizData.image,
                             onImageChange = { quizLayoutViewModel.setQuizImage(it) },
-                            proceed = {step++})
+                            proceed = {proceed()})
                     }
                     5 -> {
                         // Set Color Setting
@@ -187,13 +181,13 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
                             backgroundImage = quizTheme.backgroundImage,
                             onBackgroundImageUpdate = { quizLayoutViewModel.setBackgroundImage(it) },
-                            proceed = {step++})
+                            proceed = {proceed()})
                     }
                     6 -> {
                         QuizLayoutSetFlipStyle(
                             flipStyle = quizTheme.flipStyle,
                             onFlipStyleUpdate = { quizLayoutViewModel.setFlipStyle(it) },
-                            proceed = {step++})
+                            proceed = {proceed()})
                     }
                     7 -> {
                         QuizLayoutSetTextStyle(
@@ -203,7 +197,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             updateStyle = { targetSelector, index, isIncrease ->
                                 quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
                             },
-                            proceed = {step++})
+                            proceed = {proceed()})
                         // Set Text Setting
                     }
                 }
@@ -214,10 +208,10 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         .imePadding()
                         .padding(16.dp))
                 {
-                    IconButton(onClick = { if(step > 1){
-                        step--
+                    IconButton(onClick = { if(step.ordinal > 1){
+                        quizLayoutViewModel.updateStep(step - 1)
                     }},
-                        enabled = step > 1,
+                        enabled = step.ordinal > 1,
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -227,8 +221,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
-                            if(step < 7){
-                                step++
+                            if(step.ordinal < 7){
+                                proceed()
                             }
                             else{
                                 navController.navigate(Route.QuizBuilder)

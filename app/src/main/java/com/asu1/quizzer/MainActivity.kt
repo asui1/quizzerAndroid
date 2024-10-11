@@ -64,6 +64,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController = rememberNavController()
+                        val colorScheme = MaterialTheme.colorScheme
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
                         )
@@ -84,7 +85,15 @@ class MainActivity : ComponentActivity() {
                                     quizCardMainViewModel = quizCardMainViewModel,
                                     signOutViewModel = signOutViewModel,
                                     inquiryViewModel = inquiryViewModel,
-                                    loginActivityState = loginActivityState
+                                    loginActivityState = loginActivityState,
+                                    navigateToQuizLayoutBuilder = {
+                                        quizLayoutViewModel.resetQuizLayout()
+                                        quizLayoutViewModel.initQuizLayout(
+                                            userViewModel.userData.value?.email,
+                                            colorScheme
+                                        )
+                                        navController.navigate(Route.CreateQuizLayout)
+                                    },
                                 )
                             }
                             composable<Route.Trends> {

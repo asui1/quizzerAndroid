@@ -65,6 +65,42 @@ enum class FlipStyle(val value: Int) {
     }
 }
 
+enum class LayoutSteps(value: Int) {
+    POLICY(0),
+    TITLE(1),
+    DESCRIPTION(2),
+    TAGS(3),
+    IMAGE(4),
+    THEME(5),
+    FLIP(6),
+    TEXTSTYLE(7),;
+
+    operator fun minus(i: Int): LayoutSteps {
+        return when (this) {
+            POLICY -> POLICY
+            TITLE -> POLICY
+            DESCRIPTION -> TITLE
+            TAGS -> DESCRIPTION
+            IMAGE -> TAGS
+            THEME -> IMAGE
+            FLIP -> THEME
+            TEXTSTYLE -> FLIP
+        }
+    }
+
+    operator fun plus(i: Int): LayoutSteps {
+        return when (this) {
+            POLICY -> TITLE
+            TITLE -> DESCRIPTION
+            DESCRIPTION -> TAGS
+            TAGS -> IMAGE
+            IMAGE -> THEME
+            THEME -> FLIP
+            FLIP -> TEXTSTYLE
+            TEXTSTYLE -> TEXTSTYLE
+        }
+    }
+}
 
 class QuizLayoutViewModel(application: Application) : AndroidViewModel(application) {
     private val _quizTheme = MutableStateFlow(QuizTheme())
@@ -77,17 +113,34 @@ class QuizLayoutViewModel(application: Application) : AndroidViewModel(applicati
     private val _quizzes = MutableLiveData<List<Quiz>>(emptyList())
     val quizzes: LiveData<List<Quiz>> get() = _quizzes
 
+    private val _policyAgreement = MutableLiveData(false)
+    val policyAgreement: LiveData<Boolean> get() = _policyAgreement
+
+    private val _step = MutableLiveData<LayoutSteps>(LayoutSteps.POLICY)
+    val step: LiveData<LayoutSteps> get() = _step
+
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
-        resetQuizLayout()
         _quizData.value = _quizData.value.copy(creator = email ?: "GUEST")
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
+        _policyAgreement.value = false
     }
 
-    private fun resetQuizLayout() {
+    fun updatePolicyAgreement(agreement: Boolean) {
+        _policyAgreement.value = agreement
+        updateStep(LayoutSteps.TITLE)
+    }
+
+    fun updateStep(step: LayoutSteps) {
+        _step.value = step
+    }
+
+    fun resetQuizLayout() {
         Logger().debug("resetQuizLayout")
         _quizTheme.value = QuizTheme()
         _quizData.value = QuizData()
         _quizzes.value = emptyList()
+        _policyAgreement.value = false
+        _step.value = LayoutSteps.POLICY
     }
 
     fun setQuizTitle(title: String) {

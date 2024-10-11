@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -64,7 +63,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -86,11 +84,9 @@ import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
-import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
@@ -108,7 +104,8 @@ fun MainScreen(
     signOutViewModel: SignOutViewModel = viewModel(),
     inquiryViewModel: InquiryViewModel = viewModel(),
     loginActivityState: LoginActivityState,
-    ) {
+    navigateToQuizLayoutBuilder: () -> Unit = {},
+) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -140,28 +137,33 @@ fun MainScreen(
             }
         }
     }
+    fun openDrawer() {
+        scope.launch {
+            drawerState.open()
+        }
+    }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                if (drawerState.isOpen) {
-                    DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
-                        userData = userData, isLoggedIn = isUserLoggedIn,
-                        onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
-                        logOut = { loginActivityState.logout() },
-                        signOut = { email -> signOutViewModel.sendSignout(email) },
-                        )
-                }
+                DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
+                    userData = userData,
+                    onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
+                    logOut = { loginActivityState.logout() },
+                    signOut = { email -> signOutViewModel.sendSignout(email) },
+                )
             },
             content = {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Scaffold(
                         topBar = {
-                            MainActivityTopbar(navController, drawerState, isUserLoggedIn, userData)
+                            MainActivityTopbar(navController,
+                                { openDrawer() }, isUserLoggedIn, userData)
                         },
                         bottomBar = {
-                            MainActivityBottomBar(navController, drawerState, bottomBarSelection = bottomBarSelection)
+                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = bottomBarSelection,
+                                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder)
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
@@ -205,7 +207,7 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainActivityTopbar(navController: NavController, drawerState: DrawerState, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?) {
+fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?) {
     val scope = rememberCoroutineScope()
     TopAppBar(
         title = { Text("Quizzer") },
@@ -224,7 +226,7 @@ fun MainActivityTopbar(navController: NavController, drawerState: DrawerState, i
             UserProfilePic(userData, onClick = {
                 scope.launch {
                     if(isLoggedIn){
-                        drawerState.open()
+                        openDrawer()
                     }
                     else{
                         navController.navigate(Route.Login)
@@ -241,7 +243,6 @@ fun MainActivityTopbarPreview(){
     QuizzerAndroidTheme {
         MainActivityTopbar(
             navController = rememberNavController(),
-            drawerState = rememberDrawerState(DrawerValue.Closed),
             isLoggedIn = true,
             userData = userDataTest,
         )
@@ -249,8 +250,8 @@ fun MainActivityTopbarPreview(){
 }
 
 @Composable
-fun MainActivityBottomBar(navController: NavController, drawerState: DrawerState, bottomBarSelection: Int = 0) {
-    val scope = rememberCoroutineScope()
+fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,
+                          navigateToQuizLayoutBuilder: () -> Unit = {}) {
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -278,7 +279,7 @@ fun MainActivityBottomBar(navController: NavController, drawerState: DrawerState
                     Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = "Trends", modifier = Modifier.size(defaultIconSize))
                 }
                 IconButton(
-                    onClick = { navController.navigate(Route.CreateQuizLayout) },
+                    onClick = { navigateToQuizLayoutBuilder() },
                     modifier = Modifier.weight(1.5f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
@@ -297,9 +298,7 @@ fun MainActivityBottomBar(navController: NavController, drawerState: DrawerState
                 }
                 IconButton(
                     onClick = {
-                        scope.launch {
-                            drawerState.open()
-                        }
+                        onDrawerOpen()
                     },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
@@ -318,8 +317,6 @@ fun MainActivityBottomBar(navController: NavController, drawerState: DrawerState
 fun MainActivityBottomBarPreview(){
     QuizzerAndroidTheme {
         MainActivityBottomBar(
-            navController = rememberNavController(),
-            drawerState = rememberDrawerState(DrawerValue.Closed)
         )
     }
 }
@@ -330,7 +327,6 @@ fun moveToSearchActivity(navController: NavController) {
 
 @Composable
 fun PrivacyPolicyRow(navController: NavController) {
-    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -350,8 +346,6 @@ fun PrivacyPolicyRow(navController: NavController) {
     }
 }
 
-
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
     val isUserLoggedIn = userData != null
@@ -362,7 +356,7 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
             IconButton(onClick = onClick) {
                 Box(modifier = Modifier.size(40.dp)) {
                     Image(
-                        painter = rememberImagePainter(data = urlToImage),
+                        painter = rememberAsyncImagePainter(model = urlToImage),
                         contentDescription = "User Image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -393,11 +387,11 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
-                  userData: UserViewModel.UserDatas?, isLoggedIn: Boolean,
+                  userData: UserViewModel.UserDatas?,
                   onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
                   logOut: () -> Unit = { },
                   signOut: (String) -> Unit = { },
-                  ) {
+) {
     val scope = rememberCoroutineScope()
     val nickname = userData?.nickname
     var showInquiry by remember { mutableStateOf(false) }
@@ -724,7 +718,6 @@ fun DrawerPreview(){
             navController = navController,
             closeDrawer = {},
             userData = userDataTest,
-            isLoggedIn = true
         )
     }
 }
@@ -751,6 +744,6 @@ fun InquiryBottomSheetContentPreview() {
             userData = userDataTest,
             isDone = false,
             onSendInquiry = { _, _, _ -> }
-            )
+        )
     }
 }
