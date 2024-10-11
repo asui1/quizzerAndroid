@@ -173,6 +173,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) {backStackEntry ->
+                                Logger().debug("MainActivity: QuizCaller")
                                 val loadIndex = backStackEntry.toRoute<Route.QuizCaller>().loadIndex
                                 val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
                                 val insertIndex = backStackEntry.toRoute<Route.QuizCaller>().insertIndex

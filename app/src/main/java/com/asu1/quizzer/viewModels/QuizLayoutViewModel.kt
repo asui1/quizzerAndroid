@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
@@ -102,7 +103,7 @@ enum class LayoutSteps(value: Int) {
     }
 }
 
-class QuizLayoutViewModel(application: Application) : AndroidViewModel(application) {
+class QuizLayoutViewModel : ViewModel() {
     private val _quizTheme = MutableStateFlow(QuizTheme())
     val quizTheme: StateFlow<QuizTheme> = _quizTheme.asStateFlow()
 

@@ -47,6 +47,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
@@ -72,7 +73,7 @@ fun QuizBuilderScreen(navController: NavController,
     }
 
     MaterialTheme(
-        colorScheme = colorScheme!!
+        colorScheme = colorScheme
     ) {
         Scaffold(
             topBar = {
@@ -170,7 +171,7 @@ fun NewQuizAdd(
                                 .size(width = 100.dp, height = 300.dp)
                                 .clickable{
                                     showDialog = false
-                                    //TODO MOVE TO QuizCaller
+                                    moveToQuizCaller(0, QuizType.entries[index])
                                 }
                         )
                     }

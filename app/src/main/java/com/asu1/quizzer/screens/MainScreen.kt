@@ -350,11 +350,12 @@ fun PrivacyPolicyRow(navController: NavController) {
 fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
     val isUserLoggedIn = userData != null
     val urlToImage = userData?.urlToImage
+    val iconSize = 30.dp
 
     if (isUserLoggedIn) {
         if(urlToImage != null) {
             IconButton(onClick = onClick) {
-                Box(modifier = Modifier.size(40.dp)) {
+                Box(modifier = Modifier.size(iconSize)) {
                     Image(
                         painter = rememberAsyncImagePainter(model = urlToImage),
                         contentDescription = "User Image",
@@ -368,7 +369,7 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
                 Icon(
                     Icons.Default.Person,
                     contentDescription = "User Image",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(iconSize)
                 )
             }
         }
@@ -377,7 +378,7 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
             Icon(
                 Icons.Default.Person,
                 contentDescription = "Login",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(iconSize)
             )
         }
 
