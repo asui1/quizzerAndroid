@@ -4,11 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
-class SignOutViewModel(application: Application) : AndroidViewModel(application) {
+class SignOutViewModel : ViewModel() {
     private val _isDone = MutableLiveData<Boolean>()
     val isDone: LiveData<Boolean> get() = _isDone
 

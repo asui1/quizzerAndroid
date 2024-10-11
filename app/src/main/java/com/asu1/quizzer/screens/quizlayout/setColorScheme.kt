@@ -38,10 +38,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -179,7 +182,9 @@ fun BackgroundRow(
     var isOpen by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf(background) }
     var selectedTabIndex by remember { mutableStateOf(0) }
-
+    val gradient = Brush.linearGradient(
+        colors = listOf(Color.Red, Color.Blue)
+    )
     LaunchedEffect(background) {
         selectedColor = background
         selectedTabIndex = when (background.state) {
@@ -231,7 +236,11 @@ fun BackgroundRow(
             }
             if (isOpen) {
                 //SET 3 Tabs for 1 color, 2 colors with gradient, image
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Spacer(modifier = Modifier.height(8.dp))
                     TabRow(
                         selectedTabIndex = selectedTabIndex,
@@ -263,7 +272,12 @@ fun BackgroundRow(
                                 )
                             )
                         }) {
-                            Text("Gradient")
+                            Text("Gradient",
+                                style = TextStyle(
+                                    brush = gradient,
+                                    textDecoration = TextDecoration.LineThrough
+                                ),
+                            )
                         }
                         Tab(selected = selectedTabIndex == 2, onClick = {
                             onImageSelected(
@@ -304,6 +318,7 @@ fun BackgroundRow(
 
                         2 -> {
                             // Image Picker (Placeholder)
+                            Spacer(modifier = Modifier.height(24.dp))
                             ImageGetter(
                                 image = selectedColor.image,
                                 onImageUpdate = { byteArray ->

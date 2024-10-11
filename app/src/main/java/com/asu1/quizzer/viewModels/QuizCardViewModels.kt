@@ -23,17 +23,19 @@ class QuizCardMainViewModel : ViewModel() {
         val quizCards3: QuizCardsWithTag,
     )
 
+    private val emptyQuizCards = QuizCards(
+        QuizCardsWithTag("", emptyList()),
+        QuizCardsWithTag("", emptyList()),
+        QuizCardsWithTag("", emptyList())
+    )
+
     data class QuizCardsWithTag(
         val tag: String,
         val quizCards: List<QuizCard>
     )
 
     private val _quizCards = MutableStateFlow(
-        QuizCards(
-            QuizCardsWithTag("Most Viewed", emptyList()),
-            QuizCardsWithTag("Similar Items", emptyList()),
-            QuizCardsWithTag("Recent Items", emptyList())
-        )
+        emptyQuizCards
     )
     val quizCards: StateFlow<QuizCards> get() = _quizCards
 

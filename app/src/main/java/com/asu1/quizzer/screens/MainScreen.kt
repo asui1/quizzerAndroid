@@ -100,10 +100,7 @@ import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import loadImageAsByteArray
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
