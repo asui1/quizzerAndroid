@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -24,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -54,6 +62,12 @@ fun Quiz1Creator(
 ) {
     val quiz1State by quiz.quiz1State.collectAsState()
     var showBodyDialog by remember { mutableStateOf(false) }
+    var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 1) { FocusRequester() }) }
+
+    //TODO :
+    // BODY TEXT 가 입력이 안됨.
+    // LoadVideo 안됨.
+    // 비디오 제거하는 기능 추가.
 
     if (showBodyDialog) {
         BodyTypeDialog(
@@ -85,7 +99,11 @@ fun Quiz1Creator(
             item {
                 QuestionTextField(
                     value = quiz1State.question,
-                    onValueChange = {quiz.updateQuestion(it)}
+                    onValueChange = {quiz.updateQuestion(it)},
+                    focusRequester = focusRequesters[0],
+                    onNext = {
+                        focusRequesters[1].requestFocus()
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -94,13 +112,16 @@ fun Quiz1Creator(
                     bodyState = quiz1State.bodyType,
                     onAddBody = { showBodyDialog = true },
                     bodyText = quiz1State.bodyText,
-                    onBodyTextChange = { quiz.updateBodyText(it.text) },
+                    onBodyTextChange = { quiz.updateBodyText(it) },
                     imageBytes = quiz1State.image,
                     onImageSelected = { quiz.updateBodyImage(it) },
                     youtubeId = quiz1State.youtubeId,
                     youtubeStartTime = quiz1State.youtubeStartTime,
                     onYoutubeUpdate = { id, time ->
                         quiz.updateBodyYoutube(id, time)
+                    },
+                    onRemoveBody = {
+                        quiz.updateBodyState(BodyType.NONE)
                     }
                 )
             }
@@ -113,15 +134,32 @@ fun Quiz1Creator(
                         quiz.toggleAnsAt(index)
                     },
                     deleteAnswer = {
+                        focusRequesters = focusRequesters.toMutableList().also {
+                            it.removeAt(index+1)
+                        }
                         quiz.removeAnswerAt(index)
                     },
+                    focusRequester = focusRequesters[index+1],
+                    onNext = {
+                        if(index == quiz1State.answers.size-1){
+                            focusRequesters[0].requestFocus()
+                        } else {
+                            focusRequesters[index+2].requestFocus()
+                        }
+                    },
+                    isLast = index == quiz1State.answers.size-1,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 AddAnswer(
-                    onClick = { quiz.addAnswer() }
+                    onClick = {
+                        focusRequesters = focusRequesters.toMutableList().also {
+                            it.add(FocusRequester())
+                        }
+                        quiz.addAnswer()
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -129,7 +167,7 @@ fun Quiz1Creator(
                 Quiz1AnswerSelection(
                     shuffleValue = quiz1State.shuffleAnswers,
                     onShuffleToggle = { quiz.toggleShuffleAnswers() },
-                    maxAnswerSelectionValue = quiz1State.maxAnswerSelection,
+                    maxAnswerSelectionValue = if(quiz1State.maxAnswerSelection == -1) "" else quiz1State.maxAnswerSelection.toString(),
                     maxAnswerSelectionValueChange = { it ->
                         quiz.updateMaxAnswerSelection(it)
                     },
@@ -150,13 +188,24 @@ fun Quiz1Creator(
 @Composable
 fun QuestionTextField(
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    onNext: () -> Unit = {},
 ){
     TextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().
+        focusRequester(focusRequester),
         value = value,
         onValueChange = onValueChange,
-        label = { Text("Question") }
+        label = { Text("Question") },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                onNext()
+            }
+        )
     )
 }
 
@@ -165,20 +214,34 @@ fun Quiz1BodyBuilder(
     bodyState: BodyType,
     onAddBody: () -> Unit,
     bodyText: String,
-    onBodyTextChange: (TextFieldValue) -> Unit,
+    onBodyTextChange: (String) -> Unit,
     imageBytes: ByteArray?,
     onImageSelected: (ByteArray) -> Unit,
     youtubeId: String,
     youtubeStartTime: Int,
     onYoutubeUpdate: (String, Int) -> Unit,
+    onRemoveBody: () -> Unit = {},
 ){
-    val bodyTextFieldValue by remember { mutableStateOf(TextFieldValue(bodyText)) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Spacer(modifier = Modifier.height(8.dp))
+        if(bodyState != BodyType.NONE) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = onRemoveBody,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RemoveCircleOutline,
+                        contentDescription = "Delete Body"
+                    )
+                }
+            }
+        }
         when(bodyState){
             BodyType.NONE -> {
                 Button(
@@ -190,7 +253,7 @@ fun Quiz1BodyBuilder(
             BodyType.TEXT -> {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = bodyTextFieldValue,
+                    value = bodyText,
                     onValueChange = {it ->
                         onBodyTextChange(it)
                     },
@@ -269,6 +332,9 @@ fun AnswerTextField(
     answerCheck: Boolean,
     toggleAnswer: () -> Unit,
     deleteAnswer: () -> Unit,
+    focusRequester: FocusRequester,
+    onNext: () -> Unit = {},
+    isLast: Boolean = false,
 ){
     Row(
         modifier = Modifier
@@ -283,9 +349,18 @@ fun AnswerTextField(
             },
         )
         TextField(
+            modifier = Modifier.focusRequester(focusRequester),
             value = value,
             onValueChange = onValueChange,
-            label = { Text("Answer") }
+            label = { Text("Answer") },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = if(isLast) ImeAction.Done else ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    onNext()
+                }
+            ),
         )
         IconButton(
             onClick = deleteAnswer,
@@ -321,7 +396,7 @@ fun AddAnswer(
 fun Quiz1AnswerSelection(
     shuffleValue: Boolean = false,
     onShuffleToggle: () -> Unit,
-    maxAnswerSelectionValue: Int,
+    maxAnswerSelectionValue: String,
     maxAnswerSelectionValueChange: (String) -> Unit
 ){
     Row(
@@ -329,24 +404,24 @@ fun Quiz1AnswerSelection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
+        Text("Max. Answer\nSelectable")
+        TextField(
+            modifier = Modifier.width(60.dp)
+                .padding(start = 8.dp),
+            value = maxAnswerSelectionValue,
+            onValueChange = maxAnswerSelectionValueChange,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
         Text("Shuffle\nAnswers?")
         Checkbox(
             checked = shuffleValue,
             onCheckedChange = {
                 onShuffleToggle()
             }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Max. Answer\nSelectable")
-        TextField(
-            modifier = Modifier.width(60.dp)
-                .padding(start = 8.dp),
-            value = maxAnswerSelectionValue.toString(),
-            onValueChange = maxAnswerSelectionValueChange,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            )
         )
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,8 +33,9 @@ fun Quiz3Creator(
     quiz: Quiz3ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ){
+    //TODO : 텍스트 필드들에 대한 키보드 타입 설정.
+    
     val quiz3State by quiz.quiz3State.collectAsState()
-
 
     Box(
         modifier = Modifier
@@ -49,13 +51,15 @@ fun Quiz3Creator(
             item {
                 QuestionTextField(
                     value = quiz3State.question,
-                    onValueChange = { quiz.updateQuestion(it) }
-                )
+                    onValueChange = { quiz.updateQuestion(it) },
+                    focusRequester = FocusRequester(),
+                    )
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
                 TextField(
                     value = quiz3State.answers[0],
+                    modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
                     onValueChange = { quiz.updateAnswerAt(0, it) },
                 )
             }
@@ -68,6 +72,7 @@ fun Quiz3Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = quiz3State.answers[newIndex],
+                    modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
                     onValueChange = { quiz.updateAnswerAt(newIndex, it) },
                     trailingIcon = {
                         IconButton(

@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -47,6 +48,11 @@ fun Quiz4Creator(
     quiz: Quiz4ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
+    //TODO:
+    // 텍스트 필드들에 대한 키보드 타입 설정.
+    // 제거 버튼 눌렀을 때 없어지도록.
+    // 드래그 기능 개발.
+
     val quizState by quiz.quiz4State.collectAsState()
     var leftDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
     var rightDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
@@ -80,8 +86,9 @@ fun Quiz4Creator(
             item {
                 QuestionTextField(
                     value = quizState.question,
-                    onValueChange = { quiz.updateQuestion(it) }
-                )
+                    onValueChange = { quiz.updateQuestion(it) },
+                    focusRequester = FocusRequester(),
+                    )
                 Spacer(modifier = Modifier.height(16.dp))
             }
             items(quizState.answers.size) { index ->

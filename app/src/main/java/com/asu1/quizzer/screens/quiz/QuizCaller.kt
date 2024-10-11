@@ -44,6 +44,12 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 Quiz1Creator(
                     quiz = quiz1ViewModel,
                     onSave = {
+                        if(quiz != null){
+                            quizLayoutViewModel.updateQuiz(it, loadIndex)
+                        }
+                        else{
+                            quizLayoutViewModel.addQuiz(it, insertIndex)
+                        }
                         navController.popBackStack()
                     },
                 )

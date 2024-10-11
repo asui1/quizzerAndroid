@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +52,10 @@ fun Quiz2Creator(
     onSave: (Quiz) -> Unit
 ){
     val quiz2State by quiz.quiz2State.collectAsState()
-
+    //TODO : QUestion TextField 엔터 대신 완료로 바꾸기.
+    // 오늘에 대한 노랑색 원 제거. 선택된 날들에 대해 하이라이트 설정.
+    // 센터 Dropdown 안열림.
+    // 달력 위쪽의 < > 버튼 눌러도 아무 변화가 없음.
 
     Box(
         modifier = Modifier
@@ -67,7 +71,8 @@ fun Quiz2Creator(
             item {
                 QuestionTextField(
                     value = quiz2State.question,
-                    onValueChange = { quiz.updateQuestion(it) }
+                    onValueChange = { quiz.updateQuestion(it) },
+                    focusRequester = FocusRequester(),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

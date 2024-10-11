@@ -279,6 +279,12 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
+    fun updateQuiz(quiz: Quiz, index: Int) {
+        val quizzes = quizzes.value!!.toMutableList()
+        quizzes[index] = quiz
+        _quizzes.value = quizzes
+    }
+
     fun removeQuiz(quiz: Quiz) {
         val quizzes = quizzes.value!!.toMutableList()
         quizzes.remove(quiz)

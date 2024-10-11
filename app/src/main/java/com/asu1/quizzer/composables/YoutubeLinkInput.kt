@@ -1,11 +1,19 @@
 package com.asu1.quizzer.composables
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -17,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -49,6 +58,7 @@ fun YoutubeLinkInput(
                 onValueChange = { link = it },
                 label = { Text("Enter YouTube Link") },
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         val (id, time) = parseYoutubeLink(link)
@@ -64,6 +74,10 @@ fun YoutubeLinkInput(
             Button(
                 onClick = {
                     val (id, time) = parseYoutubeLink(link)
+                    if(id == "") {
+                        Toast.makeText(context, "Invalid YouTube link", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     onYoutubeUpdate(id, time)
                 },
                 modifier = Modifier.padding(top = 8.dp)
@@ -72,11 +86,25 @@ fun YoutubeLinkInput(
             }
         }
     } else {
+        Row(modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            IconButton(
+                onClick = {
+                    onYoutubeUpdate("DELETE", 0)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.RemoveCircleOutline,
+                    contentDescription = "Delete Current Quiz"
+                )
+            }
+        }
         AndroidView(factory = {
             val youTubePlayerView = YouTubePlayerView(context)
             youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
-                    youTubePlayer.loadVideo(youtubeId, startTime.toFloat())
+                    youTubePlayer.cueVideo(youtubeId, startTime.toFloat())
                 }
             })
             youTubePlayerView
@@ -84,8 +112,22 @@ fun YoutubeLinkInput(
     }
 }
 
+//https://www.youtube.com/live/AkvX-E9lnBs?si=NM78tAR8WUL3jB7O&t=8236
 fun parseYoutubeLink(link: String): Pair<String, Int> {
-    val regex = Regex("v=([a-zA-Z0-9_-]+).*t=(\\d+)")
+
+    val regex =
+        if(link.contains("youtube.com/watch?v=")){
+            Regex("v=([a-zA-Z0-9_-]+)(?:.*?[?&]t=(\\d+))?")
+        }
+        else if(link.contains("youtu.be")){
+            Regex("youtu\\.be/([a-zA-Z0-9_-]+)(?:.*?[?&]t=(\\d+))?")
+        }
+        else if(link.contains("youtube.com/live")){
+            Regex("youtube.com/live/([a-zA-Z0-9_-]+)(?:.*?[?&]t=(\\d+))?")
+        }
+        else{
+            return "" to 0
+        }
     val matchResult = regex.find(link)
     val id = matchResult?.groups?.get(1)?.value ?: ""
     val time = matchResult?.groups?.get(2)?.value?.toInt() ?: 0

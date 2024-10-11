@@ -35,6 +35,13 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         _quiz1State.value = _quiz1State.value.copy(image = image)
     }
     fun updateBodyYoutube(youtubeId: String, startTime: Int){
+        if(youtubeId == "DELETE"){
+            _quiz1State.value = _quiz1State.value.copy(youtubeId = "", youtubeStartTime = 0)
+            return
+        }
+        if(youtubeId == ""){
+            return
+        }
         _quiz1State.value = _quiz1State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
     }
     override fun updateAnswerAt(index: Int, answer: String){
@@ -50,6 +57,10 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
             return
         }
         val ans = _quiz1State.value.ans.toMutableList()
+        val trueCount = ans.count { it }
+        if (trueCount >= _quiz1State.value.maxAnswerSelection && !ans[index]) {
+            return
+        }
         ans[index] = !ans[index]
         _quiz1State.value = _quiz1State.value.copy(ans = ans)
     }
@@ -77,7 +88,11 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         _quiz1State.value = _quiz1State.value.copy(shuffleAnswers = !_quiz1State.value.shuffleAnswers)
     }
     fun updateMaxAnswerSelection(maxAnswerSelection: String){
-        val maxAnswerSelection = maxAnswerSelection.toIntOrNull() ?: return
-        _quiz1State.value = _quiz1State.value.copy(maxAnswerSelection = maxAnswerSelection)
+        val maxAnswerSelectionValue = maxAnswerSelection.toIntOrNull()
+        if (maxAnswerSelection.isEmpty() || maxAnswerSelectionValue == null) {
+            _quiz1State.value = _quiz1State.value.copy(maxAnswerSelection = -1) // or any default value
+        } else {
+            _quiz1State.value = _quiz1State.value.copy(maxAnswerSelection = maxAnswerSelectionValue)
+        }
     }
 }
