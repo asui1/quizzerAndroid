@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class QuizTheme(
-    var flipStyle: FlipStyle = FlipStyle.Center,
     var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
     var questionTextStyle: List<Int> = listOf(0, 0, 1, 0),
     var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
@@ -47,25 +46,6 @@ data class QuizData(
     var uuid : String? = null,
 )
 
-enum class FlipStyle(val value: Int) {
-    Center(0),
-    Bottom(1),
-    UnderBar(2),
-    FingerFlip(3), ;
-
-    companion object {
-        fun from(flipStyle: Int): FlipStyle {
-            return when (flipStyle) {
-                0 -> Center
-                1 -> Bottom
-                2 -> UnderBar
-                3 -> FingerFlip
-                else -> Center
-            }
-        }
-    }
-}
-
 enum class LayoutSteps(value: Int) {
     POLICY(0),
     TITLE(1),
@@ -73,8 +53,7 @@ enum class LayoutSteps(value: Int) {
     TAGS(3),
     IMAGE(4),
     THEME(5),
-    FLIP(6),
-    TEXTSTYLE(7),;
+    TEXTSTYLE(6),;
 
     operator fun minus(i: Int): LayoutSteps {
         return when (this) {
@@ -84,8 +63,7 @@ enum class LayoutSteps(value: Int) {
             TAGS -> DESCRIPTION
             IMAGE -> TAGS
             THEME -> IMAGE
-            FLIP -> THEME
-            TEXTSTYLE -> FLIP
+            TEXTSTYLE -> THEME
         }
     }
 
@@ -96,8 +74,7 @@ enum class LayoutSteps(value: Int) {
             DESCRIPTION -> TAGS
             TAGS -> IMAGE
             IMAGE -> THEME
-            THEME -> FLIP
-            FLIP -> TEXTSTYLE
+            THEME -> TEXTSTYLE
             TEXTSTYLE -> TEXTSTYLE
         }
     }
@@ -176,10 +153,6 @@ class QuizLayoutViewModel : ViewModel() {
             tags.add(tag)
         }
         _quizData.value = _quizData.value.copy(tags = tags)
-    }
-
-    fun setFlipStyle(flipStyle: FlipStyle) {
-        _quizTheme.value = _quizTheme.value.copy(flipStyle = flipStyle)
     }
 
     fun setBackgroundImage(imageColor: ImageColor) {

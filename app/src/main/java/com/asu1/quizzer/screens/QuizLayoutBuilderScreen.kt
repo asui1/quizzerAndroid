@@ -46,7 +46,6 @@ import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetColorScheme
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetDescription
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetFlipStyle
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTags
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTextStyle
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTitleImage
@@ -74,7 +73,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         stringResource(R.string.set_quiz_tags),
         stringResource(R.string.set_quiz_image),
         stringResource(R.string.set_color_setting),
-        stringResource(R.string.set_flip_style),
         stringResource(R.string.set_text_setting),
     )
     val enabled = when(step){
@@ -120,7 +118,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     }
 
     fun proceed() {
-        if(step.ordinal < 7) {
+        if(step.ordinal < 6) {
             quizLayoutViewModel.updateStep(step + 1)
         } else {
             navController.navigate(Route.QuizBuilder)
@@ -131,7 +129,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         topBar = {
             StepProgressBar(
                 navController = navController,
-                totalSteps = 7,
+                totalSteps = 6,
                 currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
                 layoutSteps = layoutSteps,
                 showExitDialog = { showExitDialog = true }
@@ -184,12 +182,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             proceed = {proceed()})
                     }
                     6 -> {
-                        QuizLayoutSetFlipStyle(
-                            flipStyle = quizTheme.flipStyle,
-                            onFlipStyleUpdate = { quizLayoutViewModel.setFlipStyle(it) },
-                            proceed = {proceed()})
-                    }
-                    7 -> {
                         QuizLayoutSetTextStyle(
                             questionStyle = quizTheme.questionTextStyle,
                             bodyStyle = quizTheme.bodyTextStyle,
@@ -341,14 +333,13 @@ fun StepProgressBarPreview() {
     QuizzerAndroidTheme {
         StepProgressBar(
             navController = rememberNavController(),
-            totalSteps = 7,
+            totalSteps = 6,
             currentStep = 3,
             layoutSteps = listOf(
                 stringResource(R.string.set_quiz_title),
                 stringResource(R.string.set_quiz_image),
                 stringResource(R.string.set_quiz_description),
                 stringResource(R.string.set_quiz_tags),
-                stringResource(R.string.set_flip_style),
                 stringResource(R.string.set_color_setting),
                 stringResource(R.string.set_text_setting),
             )
