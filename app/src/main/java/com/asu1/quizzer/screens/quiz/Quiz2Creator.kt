@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -22,15 +25,23 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,10 +63,8 @@ fun Quiz2Creator(
     onSave: (Quiz) -> Unit
 ){
     val quiz2State by quiz.quiz2State.collectAsState()
-    //TODO : QUestion TextField 엔터 대신 완료로 바꾸기.
-    // 오늘에 대한 노랑색 원 제거. 선택된 날들에 대해 하이라이트 설정.
-    // 센터 Dropdown 안열림.
-    // 달력 위쪽의 < > 버튼 눌러도 아무 변화가 없음.
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
@@ -72,26 +81,35 @@ fun Quiz2Creator(
                 QuestionTextField(
                     value = quiz2State.question,
                     onValueChange = { quiz.updateQuestion(it) },
-                    focusRequester = FocusRequester(),
+                    imeAction = ImeAction.Done,
+                    focusRequester = focusRequester,
+                    onNext = {
+                        focusManager.clearFocus()
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                CalendarWithFocusDates(
-                    focusDates = quiz2State.answerDate,
-                    onDateClick = { date ->
-                        quiz.updateDate(date)
-                    },
-                    currentMonth = quiz2State.centerDate,
-                )
+                key(quiz2State.centerDate){
+                    CalendarWithFocusDates(
+                        focusDates = quiz2State.answerDate,
+                        onDateClick = { date ->
+                            quiz.updateDate(date)
+                        },
+                        currentMonth = quiz2State.centerDate,
+                    )
+                }
             }
             item{
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "CurrentMonth: ${quiz2State.centerDate}, ±20Y",
+                    "Current Start: ${quiz2State.centerDate}, ±20Y",
                 )
                 YearMonthDropDown(
-                    yearMonth = quiz2State.centerDate
+                    yearMonth = quiz2State.centerDate,
+                    onYearMonthChange = {
+                        quiz.updateCenterDate(it)
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -110,55 +128,69 @@ fun Quiz2Creator(
 }
 
 @Composable
-fun YearMonthDropDown(yearMonth: YearMonth){
-    val years = (yearMonth.year - 20)..(yearMonth.year + 20)
+fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {}){
     val months = 1..12
+    var expanded by remember { mutableStateOf(false) }
+    var year by remember { mutableStateOf(yearMonth.year.toString()) }
+    val focusManager = LocalFocusManager.current
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(){
-            Text(text = "Year: ${yearMonth.year}",
-                modifier = Modifier
-                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
-                    .padding(8.dp)
-            )
-            DropdownMenu(
-                expanded = false,
-                onDismissRequest = { },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                years.forEach { year ->
-                    DropdownMenuItem(
-                        onClick = {
-                            yearMonth.plusYears(year.toLong())
-                        },
-                        text = { Text(year.toString()) }
-                    )
-
-                }
-            }
-        }
-        Column(){
-            Text(text = "Month: ${yearMonth.month}",
-                modifier = Modifier
-                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
-                    .padding(8.dp)
-            )
-            DropdownMenu(
-                expanded = false,
-                onDismissRequest = {
-
+        TextField(
+            value = year,
+            onValueChange = {
+                year = it
+            },
+            label = { Text("Year : ") },
+            modifier = Modifier.weight(1f)
+                .onFocusChanged { focusState ->
+                    if(!focusState.isFocused){
+                        onYearMonthChange(YearMonth.of(year.toInt(), yearMonth.month))
+                    }
                 },
-                modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+        ){
+            Text(text = "Month: ${yearMonth.month}",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .clickable { expanded = true }
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
             ) {
                 months.forEach { month ->
                     DropdownMenuItem(
                         onClick = {
-                            yearMonth.plusMonths(month.toLong())
+                            onYearMonthChange(YearMonth.of(year.toInt(), month))
+                            expanded = false
                         },
-                        text = { Text(month.toString()) },
+                        text = {
+                            Text(
+                                text = month.toString(),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                        ) },
                     )
                 }
             }
@@ -170,11 +202,11 @@ fun YearMonthDropDown(yearMonth: YearMonth){
 fun CalendarWithFocusDates(
     focusDates: Set<LocalDate>,
     onDateClick: (LocalDate) -> Unit,
-    currentMonth: YearMonth = YearMonth.now()
+    currentMonth: YearMonth = YearMonth.now(),
+    yearRange: Int = 10,
 ) {
-    val selectedDates by remember { mutableStateOf(focusDates) }
-    val startMonth = remember { currentMonth.minusYears(100) } // Adjust as needed
-    val endMonth = remember { currentMonth.plusYears(100) } // Adjust as needed
+    val startMonth = currentMonth.minusYears(yearRange.toLong()) // Adjust as needed
+    val endMonth = currentMonth.plusYears(yearRange.toLong()) // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
     val state = rememberCalendarState(
@@ -185,40 +217,24 @@ fun CalendarWithFocusDates(
     )
 
     HorizontalCalendar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(400.dp),
         state = state,
         dayContent = {it ->
-            val isSelected = selectedDates.contains(it.date)
-            Day(it, currentMonth, isSelected, onDateClick)
+            val isSelected = focusDates.contains(it.date)
+            Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick)
         },
         monthHeader = { month ->
             Column() {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    IconButton(
-                        onClick = {
-                            currentMonth.minusMonths(1)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
-                            contentDescription = "Previous Month"
-                        )
-                    }
                     Text(text = month.yearMonth.year.toString() + ",  " + month.yearMonth.month.name)
-                    IconButton(
-                        onClick = {
-                            currentMonth.plusMonths(1)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                            contentDescription = "Previous Month"
-                        )
-                    }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(){
                     daysOfWeek.forEach { day ->
                         Text(

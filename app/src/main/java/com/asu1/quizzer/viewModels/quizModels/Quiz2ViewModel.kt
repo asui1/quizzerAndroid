@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
+import java.time.YearMonth
 
 class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
     private val _quiz2State = MutableStateFlow(Quiz2())
@@ -40,6 +41,10 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
 
     override fun updateQuestion(question: String) {
         _quiz2State.value = _quiz2State.value.copy(question = question)
+    }
+
+    fun updateCenterDate(date: YearMonth){
+        _quiz2State.value = _quiz2State.value.copy(centerDate = date)
     }
 
     fun updateDate(date: LocalDate){

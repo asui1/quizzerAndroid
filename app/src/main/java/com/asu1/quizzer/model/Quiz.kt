@@ -53,7 +53,7 @@ data class Quiz2(
     var maxAnswerSelection: Int = 1,
     var centerDate: YearMonth = YearMonth.now(),
     var yearRange: Int = 20,
-    var answerDate: MutableSet<LocalDate> = mutableSetOf(LocalDate.of(2024, 6, 22)),
+    var answerDate: MutableSet<LocalDate> = mutableSetOf(),
     override var answers: MutableList<String> = mutableListOf(),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ2,

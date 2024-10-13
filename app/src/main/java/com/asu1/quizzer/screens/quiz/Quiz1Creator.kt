@@ -64,11 +64,6 @@ fun Quiz1Creator(
     var showBodyDialog by remember { mutableStateOf(false) }
     var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 1) { FocusRequester() }) }
 
-    //TODO :
-    // BODY TEXT 가 입력이 안됨.
-    // LoadVideo 안됨.
-    // 비디오 제거하는 기능 추가.
-
     if (showBodyDialog) {
         BodyTypeDialog(
             onDismissRequest = { showBodyDialog = false },
@@ -189,6 +184,7 @@ fun Quiz1Creator(
 fun QuestionTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    imeAction : ImeAction = ImeAction.Next,
     focusRequester: FocusRequester,
     onNext: () -> Unit = {},
 ){
@@ -199,13 +195,15 @@ fun QuestionTextField(
         onValueChange = onValueChange,
         label = { Text("Question") },
         keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Next
+            imeAction = imeAction
         ),
         keyboardActions = KeyboardActions(
-            onNext = {
-                onNext()
-            }
-        )
+            onNext = { onNext() },
+            onDone = { onNext() },
+            onGo = { onNext() },
+            onSearch = { onNext() },
+            onSend = { onNext() }
+        ),
     )
 }
 
