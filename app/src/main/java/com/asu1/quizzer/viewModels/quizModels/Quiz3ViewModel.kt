@@ -13,6 +13,10 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
         resetQuiz()
     }
 
+    override fun viewerInit() {
+        _quiz3State.value.initViewState()
+    }
+
     override fun loadQuiz(quiz: Quiz3) {
         _quiz3State.value = quiz
     }

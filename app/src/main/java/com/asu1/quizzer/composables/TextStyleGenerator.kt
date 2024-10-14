@@ -21,7 +21,7 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.ui.theme.getFontFamily
 
 @Composable
-fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme) {
+fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modifier: Modifier = Modifier) {
     // -> FONT FAMILY, Color, BoderStyle, FontWeight
     val fontFamily = getFontFamily(style[0])
     val color = style[1]
@@ -58,7 +58,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme) {
             color = contentColor,
             fontSize = fontSize
         ),
-        modifier = Modifier
+        modifier = modifier
             .background(color = backgroundColor)
             .then(borderModifier)
             .padding(8.dp)

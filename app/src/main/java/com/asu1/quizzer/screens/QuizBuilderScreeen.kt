@@ -1,8 +1,14 @@
 package com.asu1.quizzer.screens
 
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -28,15 +35,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,11 +57,11 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
+import com.asu1.quizzer.screens.quiz.QuizViewer
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -61,6 +72,18 @@ fun QuizBuilderScreen(navController: NavController,
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
     var curIndex by remember{mutableStateOf(0)}
+    val screenWidthHalf = LocalConfiguration.current.screenWidthDp.dp/2
+    val padding = screenWidthHalf - 150.dp
+    val snapLayoutInfoProvider = rememberLazyListState()
+    val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
+
+    LaunchedEffect(snapLayoutInfoProvider) {
+        snapshotFlow { snapLayoutInfoProvider.firstVisibleItemIndex }
+            .collect { index ->
+                curIndex = index
+                Logger().debug("Current Index : $index")
+            }
+    }
 
     fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
         navController.navigate(
@@ -97,19 +120,40 @@ fun QuizBuilderScreen(navController: NavController,
                 verticalArrangement = Arrangement.Center
             ) {
                 LazyRow(
-                    modifier = Modifier
-                        .size(width = 300.dp, height = 550.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    flingBehavior = snapFlingBehavior,
+                    state = snapLayoutInfoProvider,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = padding, end = padding),
                 ) {
                     items(quizzes.size) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Box(
+                            modifier = Modifier.pointerInput(Unit) { detectTapGestures {} }
+                                .size(width = 292.dp, height = 550.dp)
+                                .border(
+                                    width = 2.dp,
+                                    color = Color.Gray,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                        ) {
+                            QuizViewer(
+                                quiz = quizzes[it],
+                                quizTheme = quizTheme,
+                                updateQuiz = { newQuiz ->
+                                    quizLayoutViewModel.updateQuiz(newQuiz, it)
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
                         // Your item content here
                     }
                     item {
                         NewQuizAdd(
-                            moveToQuizCaller = {loadIndex, quizType ->
-                                moveToQuizCaller(loadIndex, quizType, curIndex)
+                            moveToQuizCaller = {quizType ->
+                                moveToQuizCaller(-1, quizType, quizzes.size)
                             }
                         )
                     }
@@ -135,11 +179,14 @@ fun QuizBuilderScreen(navController: NavController,
 
 @Composable
 fun NewQuizAdd(
-    moveToQuizCaller: (Int, QuizType) -> Unit
+    moveToQuizCaller: (QuizType) -> Unit
 ){
     var showDialog by remember { mutableStateOf(false) }
     Box(
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(width = 300.dp, height = 550.dp)
+            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
     ) {
         FloatingActionButton(onClick = { showDialog = true }) {
             Text("+")
@@ -171,7 +218,7 @@ fun NewQuizAdd(
                                 .size(width = 100.dp, height = 300.dp)
                                 .clickable{
                                     showDialog = false
-                                    moveToQuizCaller(0, QuizType.entries[index])
+                                    moveToQuizCaller(QuizType.entries[index])
                                 }
                         )
                     }
@@ -191,6 +238,7 @@ fun QuizEditIconsRow(
     editCurrentQuiz: () -> Unit,
     addQuiz: () -> Unit,
 ){
+    val curIndexText = if(totalQuizzes == 0) 0 else if(totalQuizzes == curIndex) curIndex else curIndex + 1
     Row(
         modifier = Modifier
             .padding(16.dp)
@@ -210,7 +258,7 @@ fun QuizEditIconsRow(
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "Quiz : $curIndex / $totalQuizzes",
+            text = "Quiz : $curIndexText / $totalQuizzes",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.width(16.dp))

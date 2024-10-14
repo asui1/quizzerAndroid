@@ -51,11 +51,6 @@ fun Quiz4Creator(
     quiz: Quiz4ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
-    //TODO:
-    // 텍스트 필드들에 대한 키보드 타입 설정.
-    // 추가 버튼 기능 구현.
-    // 제거 버튼 눌렀을 때 없어지도록.
-
     val quizState by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }

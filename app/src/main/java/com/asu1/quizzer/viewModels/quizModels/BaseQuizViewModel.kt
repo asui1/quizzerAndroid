@@ -17,4 +17,5 @@ abstract class BaseQuizViewModel<T : Quiz> : ViewModel() {
     abstract fun removeAnswerAt(index: Int)
     abstract fun addAnswer()
     abstract fun updateQuestion(question: String)
+    abstract fun viewerInit()
 }

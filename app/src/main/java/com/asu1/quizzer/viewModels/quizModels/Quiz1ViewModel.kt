@@ -22,6 +22,11 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
     override fun loadQuiz(quiz1: Quiz1){
         _quiz1State.value = quiz1
     }
+
+    override fun viewerInit(){
+        _quiz1State.value.initViewState()
+    }
+
     fun updateBodyState(bodyType: BodyType){
         _quiz1State.value = _quiz1State.value.copy(bodyType = bodyType)
     }
@@ -64,6 +69,20 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         ans[index] = !ans[index]
         _quiz1State.value = _quiz1State.value.copy(ans = ans)
     }
+
+    fun toggleUserAnsAt(index: Int){
+        if(index >= _quiz1State.value.userAns.size){
+            return
+        }
+        val userAns = _quiz1State.value.userAns.toMutableList()
+        val trueCount = userAns.count { it }
+        if (trueCount >= _quiz1State.value.maxAnswerSelection && !userAns[index]) {
+            return
+        }
+        userAns[index] = !userAns[index]
+        _quiz1State.value = _quiz1State.value.copy(userAns = userAns)
+    }
+
     override fun removeAnswerAt(index: Int){
         if(index >= _quiz1State.value.answers.size){
             return

@@ -15,6 +15,10 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
         resetQuiz()
     }
 
+    override fun viewerInit() {
+        _quiz2State.value.initViewState()
+    }
+
     override fun loadQuiz(quiz: Quiz2) {
         _quiz2State.value = quiz
     }
@@ -55,5 +59,15 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
             answerDate.add(date)
         }
         _quiz2State.value = _quiz2State.value.copy(answerDate = answerDate)
+    }
+
+    fun updateUserAnswerDate(date: LocalDate){
+        val userAnswerDate = _quiz2State.value.userAnswerDate.toMutableSet()
+        if(userAnswerDate.contains(date)){
+            userAnswerDate.remove(date)
+        }else{
+            userAnswerDate.add(date)
+        }
+        _quiz2State.value = _quiz2State.value.copy(userAnswerDate = userAnswerDate)
     }
 }

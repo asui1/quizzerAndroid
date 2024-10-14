@@ -32,6 +32,18 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
     } else {
         null
     }
+
+    fun onSave(newQuiz: Quiz){
+        newQuiz.initViewState()
+        if(quiz != null){
+            quizLayoutViewModel.updateQuiz(newQuiz, loadIndex)
+        }
+        else{
+            quizLayoutViewModel.addQuiz(newQuiz, insertIndex)
+        }
+        navController.popBackStack()
+    }
+
     MaterialTheme(
         colorScheme = quizTheme.colorScheme
     ) {
@@ -44,13 +56,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 Quiz1Creator(
                     quiz = quiz1ViewModel,
                     onSave = {
-                        if(quiz != null){
-                            quizLayoutViewModel.updateQuiz(it, loadIndex)
-                        }
-                        else{
-                            quizLayoutViewModel.addQuiz(it, insertIndex)
-                        }
-                        navController.popBackStack()
+                        onSave(it)
                     },
                 )
             }
@@ -62,7 +68,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 Quiz2Creator(
                     quiz = quiz2ViewModel,
                     onSave = {
-                        navController.popBackStack()
+                        onSave(it)
                     },
                 )
             }
@@ -74,7 +80,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 Quiz3Creator(
                     quiz = quiz3ViewModel,
                     onSave = {
-                        navController.popBackStack()
+                        onSave(it)
                     },
                 )
             }
@@ -86,7 +92,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 Quiz4Creator(
                     quiz = quiz4ViewModel,
                     onSave = {
-                        navController.popBackStack()
+                        onSave(it)
                     },
                 )
             }
