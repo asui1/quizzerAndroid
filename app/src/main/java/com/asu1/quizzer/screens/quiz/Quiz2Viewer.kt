@@ -46,7 +46,7 @@ fun Quiz2Viewer(
     ){
         item{
             GetTextStyle(quiz2State.question, quizTheme.questionTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
         item {
             key(quiz2State.userAnswerDate){
@@ -64,7 +64,7 @@ fun Quiz2Viewer(
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(quiz2State.userAnswerDate.size){
-            GetTextStyle(quiz2State.userAnswerDate[it], quizTheme.answerTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            GetTextStyle("${it+1}. " + quiz2State.userAnswerDate[it], quizTheme.answerTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(4.dp))
         }
     }

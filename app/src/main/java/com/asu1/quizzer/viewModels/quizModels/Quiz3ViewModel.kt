@@ -1,6 +1,7 @@
 package com.asu1.quizzer.viewModels.quizModels
 
 import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,4 +61,12 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
         _quiz3State.value = _quiz3State.value.copy(question = question)
     }
 
+    fun switchShuffledAnswers(from: Int, to: Int){
+        _quiz3State.value = _quiz3State.value.copy(shuffledAnswers = _quiz3State.value.shuffledAnswers.toMutableList().apply {
+            val temp = get(from)
+            set(from, get(to))
+            set(to, temp)
+        })
+        Logger().debug("switchShuffledAnswers ${_quiz3State.value.shuffledAnswers}")
+    }
 }

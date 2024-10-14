@@ -118,11 +118,17 @@ data class Quiz3(
     override var layoutType: QuizType = QuizType.QUIZ3,
 ): Quiz(answers, question){
     override fun initViewState() {
-        shuffledAnswers = answers.toMutableList().also {
-            it.shuffle()
+        if (answers.isNotEmpty()) {
+            shuffledAnswers = (mutableListOf(answers.first()) + answers.drop(1).shuffled()).toMutableList()
         }
     }
 }
+
+val sampleQuiz3 = Quiz3(
+    question = "Arrange the following in ascending order",
+    answers = mutableListOf("1", "2", "3", "4", "5"),
+    shuffledAnswers = mutableListOf("1", "4", "2", "5", "3"),
+)
 
 //CONNECTING QUESTIONS
 data class Quiz4(

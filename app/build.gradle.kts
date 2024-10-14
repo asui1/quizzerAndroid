@@ -115,6 +115,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1")
     implementation("com.kizitonwose.calendar:compose:2.6.0")
+    implementation("sh.calvin.reorderable:reorderable:2.3.3")
     kapt("com.google.dagger:hilt-compiler:2.44")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
