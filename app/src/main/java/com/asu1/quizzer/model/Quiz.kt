@@ -1,5 +1,6 @@
 package com.asu1.quizzer.model
 
+import androidx.compose.ui.geometry.Offset
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -71,6 +72,7 @@ data class Quiz3(
 data class Quiz4(
     var connectionAnswers: List<String> = mutableListOf("", "", "", ""),
     var connectionAnswerIndex: List<Int?> = mutableListOf(null, null, null, null),
+    var dotPairOffsets: List<Pair<Offset?, Offset?>> = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
     override var answers: MutableList<String> = mutableListOf("", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ4,

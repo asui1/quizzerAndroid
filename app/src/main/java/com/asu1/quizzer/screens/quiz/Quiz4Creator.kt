@@ -36,6 +36,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,45 +53,39 @@ fun Quiz4Creator(
 ) {
     //TODO:
     // 텍스트 필드들에 대한 키보드 타입 설정.
+    // 추가 버튼 기능 구현.
     // 제거 버튼 눌렀을 때 없어지도록.
-    // 드래그 기능 개발.
 
     val quizState by quiz.quiz4State.collectAsState()
-    var leftDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
-    var rightDotOffsets by remember { mutableStateOf(List(quizState.answers.size) { Offset.Zero }) }
-    var startOffset by remember { mutableStateOf(Offset.Zero) }
-    var endOffset by remember { mutableStateOf(Offset.Zero) }
-    var isDragging by remember { mutableStateOf(false) }
+    var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
+    var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
+    var initOffset by remember { mutableStateOf<Offset?>(null) }
+    var isDragging by remember { mutableStateOf(true) }
     val color = MaterialTheme.colorScheme.primary
+    var focusRequesters = List(quizState.answers.size * 2 + 1) { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        DrawLines(leftDotOffsets = leftDotOffsets, rightDotOffsets = rightDotOffsets, connections = quizState.connectionAnswerIndex)
-        if(isDragging) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawLine(
-                    color = color,
-                    start = startOffset,
-                    end = endOffset,
-                    strokeWidth = 4f
-                )
-            }
-        }
+        DrawLines(dotOffsets = quizState.dotPairOffsets, connections = quizState.connectionAnswerIndex)
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                QuestionTextField(
+                MyTextField(
                     value = quizState.question,
                     onValueChange = { quiz.updateQuestion(it) },
                     focusRequester = FocusRequester(),
-                    )
+                    onNext = {
+                        focusRequesters[1].requestFocus()
+                    },
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
             items(quizState.answers.size) { index ->
@@ -96,48 +93,44 @@ fun Quiz4Creator(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    TextField(
+                    MyTextField(
                         value = quizState.answers[index],
                         onValueChange = { quiz.updateAnswerAt(index, it) },
-                        label = { Text("Answer ${index + 1}") },
-                        modifier = Modifier.weight(1f)
+                        focusRequester = focusRequesters[index * 2 + 1],
+                        onNext = {
+                            focusRequesters[index * 2 + 2].requestFocus()
+                        },
+                        modifier = Modifier.weight(1f),
+                        label = "Answer ${index + 1}"
                     )
                     DraggableDot(
                         setOffset = {offset ->
-                            if (index < leftDotOffsets.size) {
-                                leftDotOffsets = leftDotOffsets.toMutableList().also {
-                                    it[index] = offset
-                                }
-                            } else {
-                                leftDotOffsets = leftDotOffsets.toMutableList().also {
-                                    it.add(offset)
-                                }
-                            }
+                            quiz.updateDotOffset(index, offset, true)
                         },
-                        pointerEvent = {
+                        pointerEvent = { it ->
                             detectDragGestures(
                                 onDragStart = {
-                                    startOffset = leftDotOffsets[index]
-                                    endOffset = leftDotOffsets[index]
+                                    startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
+                                    endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
+                                    quiz.updateConnection(index, null)
+                                    initOffset = null
                                     isDragging = true
-                                    quiz.updateConnectionAnswerIndex(index, null)
                                 },
                                 onDragEnd = {
                                     isDragging = false
-                                    val rightIndex = rightDotOffsets.indexOfFirst {
-                                        it.x in (endOffset.x - 20)..(endOffset.x + 20) &&
-                                                it.y in (endOffset.y - 20)..(endOffset.y + 20)
-                                    }
-
-                                    if(rightIndex != -1) {
-                                        quiz.updateConnectionAnswerIndex(index, rightIndex)
-                                    }
+                                    //TODO : 가장 가까운 점을 찾아서 quizState에 업데이트.
+                                    val connectionIndex = quiz.updateConnection(index, endOffset)
+                                    startOffset = Offset(0f, 0f)
+                                    endOffset = Offset(0f, 0f)
                                 },
                             ) { change, dragAmount ->
                                 change.consume()
+                                if(initOffset == null){
+                                    initOffset = change.position
+                                }
                                 endOffset = Offset(
-                                    x = startOffset.x + dragAmount.x,
-                                    y = startOffset.y + dragAmount.y
+                                    x = startOffset.x + change.position.x - initOffset!!.x,
+                                    y = startOffset.y + change.position.y - initOffset!!.y
                                 )
                             }
                         }
@@ -145,25 +138,37 @@ fun Quiz4Creator(
                     Spacer(modifier = Modifier.width(60.dp))
                     DraggableDot(
                         setOffset = {offset ->
-                            if (index < rightDotOffsets.size) {
-                                rightDotOffsets = rightDotOffsets.toMutableList().also {
-                                    it[index] = offset
-                                }
-                            } else {
-                                rightDotOffsets = rightDotOffsets.toMutableList().also {
-                                    it.add(offset)
-                                }
-                            }
+                            quiz.updateDotOffset(index, offset, false)
                         }
                     )
-                    TextField(
+                    MyTextField(
                         value = quizState.connectionAnswers[index],
                         onValueChange = { quiz.updateConnectionAnswer(index, it) },
-                        label = { Text("Answer ${index + 1}") },
-                        modifier = Modifier.weight(1f)
+                        focusRequester = focusRequesters[index * 2 + 2],
+                        imeAction = if(index == quizState.answers.size - 1) {
+                            ImeAction.Done
+                        } else {
+                            ImeAction.Next
+                        },
+                        onNext = {
+                            if(index == quizState.answers.size - 1) {
+                                focusManager.clearFocus()
+                            } else {
+                                focusRequesters[index * 2 + 3].requestFocus()
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        label = "Answer ${index + 1}"
                     )
                     IconButton(
                         onClick = {
+                            if(focusRequesters.size <= 7){
+                                return@IconButton
+                            }
+                            focusRequesters = focusRequesters.toMutableList().also {
+                                it.removeAt(index * 2 + 1)
+                                it.removeAt(index * 2 + 1)
+                            }
                             quiz.removeAnswerAt(index)
                         }
                     ) {
@@ -179,6 +184,10 @@ fun Quiz4Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
+                        focusRequesters = focusRequesters.toMutableList().also {
+                            it.add(FocusRequester())
+                            it.add(FocusRequester())
+                        }
                         quiz.addAnswer()
                     }
                 ) {
@@ -192,47 +201,66 @@ fun Quiz4Creator(
         SaveButton {
             onSave(quizState)
         }
+        if(isDragging) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawLine(
+                    color = color,
+                    start = startOffset,
+                    end = endOffset,
+                    strokeWidth = 4f
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun DraggableDot(
     setOffset: (Offset) -> Unit = {},
-    pointerEvent: suspend PointerInputScope.() -> Unit = {},
+    pointerEvent: suspend PointerInputScope.(Offset) -> Unit = {},
 ) {
     Box(
         modifier = Modifier
             .size(20.dp)
             .padding(4.dp)
-            .background(color = MaterialTheme.colorScheme.primary,shape = CircleShape)
+            .background(color = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            )
             .pointerInput(Unit) {
-                pointerEvent()
+                val center = Offset((size.width / 2).toFloat(), (size.height / 2).toFloat())
+                pointerEvent(center)
             }
             .onGloballyPositioned { coordinates ->
-                setOffset(Offset(coordinates.size.width / 2f, coordinates.size.height / 2f))
+                coordinates.positionInRoot().let{
+                    setOffset(Offset(it.x - 28, it.y - 28))
+                }
             }
     )
 }
 
 @Composable
 fun DrawLines(
-    leftDotOffsets: List<Offset>,
-    rightDotOffsets: List<Offset>,
+    dotOffsets: List<Pair<Offset?, Offset?>> = emptyList(),
     connections: List<Int?> = emptyList()
 ) {
+    val leftDotOffsets = dotOffsets.map { it.first }
+    val rightDotOffsets = dotOffsets.map { it.second }
     val color = MaterialTheme.colorScheme.primary
     Canvas(modifier = Modifier.fillMaxSize()) {
         for(i in connections.indices) {
-            if(connections[i] == null) continue
-            drawLine(
-                color = color,
-                start = leftDotOffsets[i], // Center of left dot
-                end = rightDotOffsets[connections[i]!!], // Center of right dot
-                strokeWidth = 4f
-            )
+            if(connections[i] == null || leftDotOffsets[i] == null || rightDotOffsets[connections[i]!!] == null) continue
+            else{
+                drawLine(
+                    color = color,
+                    start = leftDotOffsets[i]!!, // Center of left dot
+                    end = rightDotOffsets[connections[i]!!]!!, // Center of right dot
+                    strokeWidth = 4f
+                )
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

@@ -59,7 +59,7 @@ fun Quiz3Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                QuestionTextField(
+                MyTextField(
                     value = quiz3State.question,
                     onValueChange = { quiz.updateQuestion(it) },
                     focusRequester = focusRequesters[0],

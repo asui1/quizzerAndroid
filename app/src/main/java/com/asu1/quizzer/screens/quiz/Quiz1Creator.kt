@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -28,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,7 +87,7 @@ fun Quiz1Creator(
                 .fillMaxWidth()
         ) {
             item {
-                QuestionTextField(
+                MyTextField(
                     value = quiz1State.question,
                     onValueChange = {quiz.updateQuestion(it)},
                     focusRequester = focusRequesters[0],
@@ -181,19 +176,21 @@ fun Quiz1Creator(
 }
 
 @Composable
-fun QuestionTextField(
+fun MyTextField(
     value: String,
     onValueChange: (String) -> Unit,
     imeAction : ImeAction = ImeAction.Next,
     focusRequester: FocusRequester,
     onNext: () -> Unit = {},
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    label: String = "Question",
 ){
     TextField(
-        modifier = Modifier.fillMaxWidth().
+        modifier = modifier.
         focusRequester(focusRequester),
         value = value,
         onValueChange = onValueChange,
-        label = { Text("Question") },
+        label = { Text(label) },
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = imeAction
         ),
@@ -206,6 +203,8 @@ fun QuestionTextField(
         ),
     )
 }
+
+
 
 @Composable
 fun Quiz1BodyBuilder(

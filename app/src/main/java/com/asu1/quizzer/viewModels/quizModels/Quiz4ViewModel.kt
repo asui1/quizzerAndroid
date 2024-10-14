@@ -1,6 +1,8 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import androidx.compose.ui.geometry.Offset
 import com.asu1.quizzer.model.Quiz4
+import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,13 +38,14 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     }
 
     override fun removeAnswerAt(index: Int) {
-        if(_quiz4State.value.answers.size >= index){
+        if(_quiz4State.value.answers.size <= index){
+            Logger().debug("Index out of range")
             return
         }
         if(_quiz4State.value.answers.size <= 3){
+            Logger().debug("Cannot remove more answers")
             return
         }
-
         _quiz4State.value = _quiz4State.value.copy(
             answers = _quiz4State.value.answers.toMutableList().apply {
                 removeAt(index)
@@ -51,11 +54,20 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
                 removeAt(index)
             },
             connectionAnswerIndex = _quiz4State.value.connectionAnswerIndex.toMutableList().apply {
-                if (contains(index)) {
-                    set(index, null)
+                for (i in 0 until size) {
+                    if(this[i] != null){
+                        if(this[i] == index){
+                            set(i, null)
+                        } else if(this[i]!! > index){
+                            set(i, this[i]!! - 1)
+                        }
+                    }
                 }
                 removeAt(index)
             },
+            dotPairOffsets = _quiz4State.value.dotPairOffsets.toMutableList().apply {
+                removeAt(index)
+            }
         )
     }
 
@@ -67,6 +79,12 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
             connectionAnswers = _quiz4State.value.connectionAnswers.toMutableList().apply {
                 add("")
             },
+            connectionAnswerIndex = _quiz4State.value.connectionAnswerIndex.toMutableList().apply {
+                add(null)
+            },
+            dotPairOffsets = _quiz4State.value.dotPairOffsets.toMutableList().apply {
+                add(Pair(null, null))
+            }
         )
 
     }
@@ -93,4 +111,49 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         })
     }
 
+    fun updateDotOffset(index: Int, offset: Offset, isLeft: Boolean){
+        if(index >= _quiz4State.value.answers.size){
+            return
+        }
+        _quiz4State.value = _quiz4State.value.copy(dotPairOffsets = _quiz4State.value.dotPairOffsets.toMutableList().apply {
+            if(isLeft){
+                set(index, Pair(offset, get(index).second))
+            }else{
+                set(index, Pair(get(index).first, offset))
+            }
+        })
+    }
+
+    fun updateConnection(curIndex: Int, offset: Offset?){
+        if(offset == null){
+            updateConnectionAnswerIndex(curIndex, null)
+        }
+        else {
+            val connectionIndex = getClosestDotIndex(offset)
+            Logger().debug("Connection index : $connectionIndex")
+            if (connectionIndex != -1) {
+                updateConnectionAnswerIndex(curIndex, connectionIndex)
+            }
+        }
+    }
+
+
+    fun getClosestDotIndex(offset: Offset): Int {
+        val referDistance = 3000f
+        for (i in quiz4State.value.dotPairOffsets.indices) {
+            val rightDot = quiz4State.value.dotPairOffsets[i].second
+            if (rightDot != null) {
+                Logger().debug("Right dot : $rightDot")
+                val distance = Offset(
+                    x = rightDot.x - offset.x,
+                    y = rightDot.y - offset.y
+                ).getDistanceSquared()
+                Logger().debug("Distance : $distance")
+                if (distance < referDistance) {
+                    return i
+                }
+            }
+        }
+        return -1
+    }
 }
