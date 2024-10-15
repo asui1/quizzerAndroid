@@ -87,7 +87,6 @@ fun Quiz3Viewer(
                 modifier = Modifier.fillMaxWidth().padding(8.dp)
             )
         }
-        // 부드러운 전환을 위해선 텍스트 키로 고정을 해야함 (index 사용시 recompose 되면서 버벅임) 그런데 텍스트를 비어있게주면 오류발생. -> 임의의 텍스트 추가.
         items(quiz3State.shuffledAnswers.size -1, key = { quiz3State.shuffledAnswers[it + 1] }) {
             ReorderableItem(reorderableLazyListState, key = quiz3State.shuffledAnswers[it + 1]) { isDragging ->
                 val item = quiz3State.shuffledAnswers[it + 1].replace(Regex("Q!Z2\\d+$"), "")

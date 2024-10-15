@@ -37,13 +37,16 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
@@ -59,11 +62,20 @@ fun Quiz4Creator(
     val color = MaterialTheme.colorScheme.primary
     var focusRequesters = List(quizState.answers.size * 2 + 1) { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    var boxPosition by remember { mutableStateOf(Offset.Zero) }
+    val dotSizeDp = 20.dp
+    val paddingDp = 4.dp
+    val boxPadding = 16.dp
+    val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
+    val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(boxPadding)
+            .onGloballyPositioned { coordinates ->
+                boxPosition = coordinates.positionInRoot()
+            }
     ) {
         DrawLines(dotOffsets = quizState.dotPairOffsets, connections = quizState.connectionAnswerIndex)
         LazyColumn(
@@ -128,13 +140,21 @@ fun Quiz4Creator(
                                     y = startOffset.y + change.position.y - initOffset!!.y
                                 )
                             }
-                        }
+                        },
+                        boxPosition = boxPosition,
+                        dotSize = dotSizeDp,
+                        padding = paddingDp,
+                        moveOffset = moveOffset,
                     )
                     Spacer(modifier = Modifier.width(60.dp))
                     DraggableDot(
                         setOffset = {offset ->
                             quiz.updateDotOffset(index, offset, false)
-                        }
+                        },
+                        boxPosition = boxPosition,
+                        dotSize = dotSizeDp,
+                        padding = paddingDp,
+                        moveOffset = moveOffset,
                     )
                     MyTextField(
                         value = quizState.connectionAnswers[index],
@@ -179,6 +199,7 @@ fun Quiz4Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
+                        Logger().debug(boxPosition.toString())
                         focusRequesters = focusRequesters.toMutableList().also {
                             it.add(FocusRequester())
                             it.add(FocusRequester())
@@ -213,11 +234,16 @@ fun Quiz4Creator(
 fun DraggableDot(
     setOffset: (Offset) -> Unit = {},
     pointerEvent: suspend PointerInputScope.(Offset) -> Unit = {},
+    boxPosition: Offset = Offset.Zero,
+    dotSize: Dp = 20.dp,
+    padding: Dp = 4.dp,
+    moveOffset: Float = 0f
 ) {
+
     Box(
         modifier = Modifier
-            .size(20.dp)
-            .padding(4.dp)
+            .size(dotSize)
+            .padding(padding)
             .background(color = MaterialTheme.colorScheme.primary,
                 shape = CircleShape
             )
@@ -226,9 +252,12 @@ fun DraggableDot(
                 pointerEvent(center)
             }
             .onGloballyPositioned { coordinates ->
-                coordinates.positionInRoot().let{
-                    setOffset(Offset(it.x - 28, it.y - 28))
-                }
+                val globalOffset = coordinates.positionInRoot()
+                val relativeOffset = Offset(
+                    globalOffset.x - boxPosition.x + moveOffset,
+                    globalOffset.y - boxPosition.y + moveOffset
+                )
+                setOffset(relativeOffset)
             }
     )
 }

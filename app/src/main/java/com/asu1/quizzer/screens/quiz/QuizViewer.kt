@@ -24,6 +24,11 @@ fun QuizViewer(
     updateUserInput: (Quiz) -> Unit = {},
     isPreview: Boolean = false,
 ) {
+    fun updateQuiz(quiz: Quiz){
+        if(!isPreview){
+            updateUserInput(quiz)
+        }
+    }
     when(quiz){
         is Quiz1 -> {
             val quiz1ViewModel: Quiz1ViewModel = viewModel(
@@ -34,9 +39,7 @@ fun QuizViewer(
                 quiz = quiz1ViewModel,
                 quizTheme = quizTheme,
                 onExit = {
-                    if(!isPreview){
-                        updateUserInput(it)
-                    }
+                    updateQuiz(it)
                 }
             )
         }
@@ -47,9 +50,7 @@ fun QuizViewer(
                 quiz = quiz2ViewModel,
                 quizTheme = quizTheme,
                 onExit = {
-                    if(!isPreview){
-                        updateUserInput(it)
-                    }
+                    updateQuiz(it)
                 }
             )
         }
@@ -60,9 +61,7 @@ fun QuizViewer(
                 quiz = quiz3ViewModel,
                 quizTheme = quizTheme,
                 onExit = {
-                    if(!isPreview){
-                        updateUserInput(it)
-                    }
+                    updateQuiz(it)
                 }
             )
         }
@@ -73,9 +72,7 @@ fun QuizViewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
                 onExit = {
-                    if(!isPreview){
-                        updateUserInput(it)
-                    }
+                    updateQuiz(it)
                 }
             )
         }
