@@ -20,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +46,12 @@ fun Quiz4Viewer(
     var initOffset by remember { mutableStateOf<Offset?>(null) }
     var isDragging by remember { mutableStateOf(false) }
     val color = quizTheme.colorScheme.primary
+    var boxPosition by remember { mutableStateOf(Offset.Zero) }
+    val dotSizeDp = 20.dp
+    val paddingDp = 4.dp
+    val boxPadding = 16.dp
+    val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
+    val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -53,7 +62,10 @@ fun Quiz4Viewer(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(boxPadding)
+            .onGloballyPositioned { coordinates ->
+                boxPosition = coordinates.positionInRoot()
+            }
     ) {
         DrawLines(
             dotOffsets = quiz4State.dotPairOffsets,
@@ -113,14 +125,22 @@ fun Quiz4Viewer(
                                     y = startOffset.y + change.position.y - initOffset!!.y
                                 )
                             }
-                        }
-                    )
+                        },
+                        boxPosition = boxPosition,
+                        dotSize = dotSizeDp,
+                        padding = paddingDp,
+                        moveOffset = moveOffset,
+                        )
                     Spacer(modifier = Modifier.weight(1.0f))
                     DraggableDot(
                         setOffset = {offset ->
                             quiz.updateDotOffset(index, offset, false)
-                        }
-                    )
+                        },
+                        boxPosition = boxPosition,
+                        dotSize = dotSizeDp,
+                        padding = paddingDp,
+                        moveOffset = moveOffset,
+                        )
                     GetTextStyle(
                         quiz4State.connectionAnswers[index],
                         quizTheme.bodyTextStyle,
