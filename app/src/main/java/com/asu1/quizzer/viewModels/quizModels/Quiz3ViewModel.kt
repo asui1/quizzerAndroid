@@ -67,6 +67,6 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
             set(from, get(to))
             set(to, temp)
         })
-        Logger().debug("switchShuffledAnswers ${_quiz3State.value.shuffledAnswers}")
+        Logger().debug("switchShuffledAnswers from: $from to: $to")
     }
 }

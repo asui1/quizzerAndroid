@@ -1,14 +1,11 @@
 package com.asu1.quizzer.screens
 
-import androidx.compose.animation.core.DecayAnimationSpec
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +21,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -34,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,6 +62,8 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+
+val bodyheight = 600.dp
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -98,6 +100,47 @@ fun QuizBuilderScreen(navController: NavController,
     MaterialTheme(
         colorScheme = colorScheme
     ) {
+        if (showNewQuizDialog) {
+            AlertDialog(
+                onDismissRequest = { showNewQuizDialog = false },
+                title = { Text("Select Question Type") },
+                text = {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        items(4) { index ->
+                            val imageRes = when (index) {
+                                0 -> R.drawable.questiontype1
+                                1 -> R.drawable.questiontype2
+                                2 -> R.drawable.questiontype3
+                                3 -> R.drawable.questiontype4
+                                else -> R.drawable.questiontype1
+                            }
+                            Image(
+                                painter = painterResource(id = imageRes),
+                                contentDescription = "Question Type ${index + 1}",
+                                modifier = Modifier
+                                    .size(width = 100.dp, height = 300.dp)
+                                    .clickable{
+                                        showNewQuizDialog = false
+                                        moveToQuizCaller(
+                                            loadIndex = -1,
+                                            quizType = QuizType.entries[index],
+                                            insertIndex = curIndex
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                }
+            )
+        }
+
         Scaffold(
             topBar = {
                 RowWithAppIconAndName(
@@ -108,7 +151,14 @@ fun QuizBuilderScreen(navController: NavController,
                 )
             },
             bottomBar = {
-                QuizBuilderBottomBar()
+                QuizBuilderBottomBar(
+                    onPreview = {
+                        //TODO move to Preview Screen
+                    },
+                    onProceed = {
+                        //TODO move to Scoring Screen
+                    }
+                )
             },
 
             ) { innerPadding ->
@@ -132,7 +182,7 @@ fun QuizBuilderScreen(navController: NavController,
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier.pointerInput(Unit) { detectTapGestures {} }
-                                .size(width = 292.dp, height = 550.dp)
+                                .size(width = 292.dp, height = bodyheight)
                                 .border(
                                     width = 2.dp,
                                     color = Color.Gray,
@@ -142,9 +192,10 @@ fun QuizBuilderScreen(navController: NavController,
                             QuizViewer(
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
-                                updateQuiz = { newQuiz ->
-                                    quizLayoutViewModel.updateQuiz(newQuiz, it)
-                                }
+                                updateUserInput = { newQuiz ->
+                                    quizLayoutViewModel.updateUserAnswer(newQuiz)
+                                },
+                                isPreview = true,
                             )
                         }
                         Spacer(modifier = Modifier.width(4.dp))
@@ -152,20 +203,24 @@ fun QuizBuilderScreen(navController: NavController,
                     }
                     item {
                         NewQuizAdd(
-                            moveToQuizCaller = {quizType ->
-                                moveToQuizCaller(-1, quizType, quizzes.size)
+                            showDialog = {
+                                showNewQuizDialog = it
                             }
                         )
                     }
                 }
                 QuizEditIconsRow(
                     deleteCurrentQuiz = {
-                        //TODO DELETE CURRENT QUIZ
+                        quizLayoutViewModel.removeQuizAt(curIndex)
                     },
                     curIndex = curIndex,
                     totalQuizzes = quizzes.size,
                     editCurrentQuiz = {
-                        //TODO EDIT CURRENT QUIZ
+                        moveToQuizCaller(
+                            loadIndex = curIndex,
+                            quizType = quizzes[curIndex].layoutType,
+                            insertIndex = curIndex
+                        )
                     },
                     addQuiz = {
                         showNewQuizDialog = true
@@ -179,54 +234,17 @@ fun QuizBuilderScreen(navController: NavController,
 
 @Composable
 fun NewQuizAdd(
-    moveToQuizCaller: (QuizType) -> Unit
+    showDialog: (Boolean) -> Unit = {},
 ){
-    var showDialog by remember { mutableStateOf(false) }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(width = 300.dp, height = 550.dp)
+            .size(width = 300.dp, height = bodyheight)
             .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
     ) {
-        FloatingActionButton(onClick = { showDialog = true }) {
+        FloatingActionButton(onClick = { showDialog(true) }) {
             Text("+")
         }
-    }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Select Question Type") },
-            text = {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    items(4) { index ->
-                        val imageRes = when (index) {
-                            0 -> R.drawable.questiontype1
-                            1 -> R.drawable.questiontype2
-                            2 -> R.drawable.questiontype3
-                            3 -> R.drawable.questiontype4
-                            else -> R.drawable.questiontype1
-                        }
-                        Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = "Question Type ${index + 1}",
-                            modifier = Modifier
-                                .size(width = 100.dp, height = 300.dp)
-                                .clickable{
-                                    showDialog = false
-                                    moveToQuizCaller(QuizType.entries[index])
-                                }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-            }
-        )
     }
 }
 
@@ -264,7 +282,9 @@ fun QuizEditIconsRow(
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
             onClick = {
-                editCurrentQuiz()
+                if(totalQuizzes != 0 || curIndex != totalQuizzes){
+                    editCurrentQuiz()
+                }
             }
         ) {
             Icon(
@@ -287,7 +307,35 @@ fun QuizEditIconsRow(
 }
 
 @Composable
-fun QuizBuilderBottomBar(){
+fun QuizBuilderBottomBar(
+    onPreview: () -> Unit = {},
+    onProceed: () -> Unit = {},
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        TextButton(
+            onClick = {
+                onPreview()
+            }
+        ) {
+            Text("Preview")
+        }
+        IconButton(
+            onClick = {
+                onProceed()
+            }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = "Move to Scoring Screen"
+            )
+        }
+    }
 
 }
 

@@ -14,6 +14,7 @@ enum class QuizType(val value: Int) {
 abstract class Quiz(
     open var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     open var question: String = "",
+    val uuid: String = java.util.UUID.randomUUID().toString(),
     open val layoutType: QuizType = QuizType.QUIZ1,
 ) {
     operator fun get(index: Int): String {
@@ -119,7 +120,9 @@ data class Quiz3(
 ): Quiz(answers, question){
     override fun initViewState() {
         if (answers.isNotEmpty()) {
-            shuffledAnswers = (mutableListOf(answers.first()) + answers.drop(1).shuffled()).toMutableList()
+            shuffledAnswers = (mutableListOf(answers.first()) + answers.drop(1).mapIndexed { index, answer ->
+                answer + "Q!Z2${index + 1}"
+            }.shuffled()).toMutableList()
         }
     }
 }

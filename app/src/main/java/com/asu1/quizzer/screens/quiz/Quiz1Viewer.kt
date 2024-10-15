@@ -40,9 +40,16 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 fun Quiz1Viewer(
     quiz: Quiz1ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
+    onExit: (Quiz1) -> Unit = {},
 )
 {
     val quiz1State by quiz.quiz1State.collectAsState()
+
+    DisposableEffect(key1 = quiz1State){
+        onDispose {
+            onExit(quiz1State)
+        }
+    }
 
     LazyColumn(
         modifier = Modifier

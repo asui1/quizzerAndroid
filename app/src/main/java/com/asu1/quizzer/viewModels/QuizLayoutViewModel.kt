@@ -10,6 +10,10 @@ import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.Quiz1
+import com.asu1.quizzer.model.Quiz2
+import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
@@ -27,6 +31,7 @@ import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.time.LocalDate
 
 data class QuizTheme(
     var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
@@ -239,7 +244,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun addQuiz(quiz: Quiz, index: Int? = null) {
-        if(index == null){
+        if(index == null || index >= quizzes.value!!.size || index == -1){
             val quizzes = quizzes.value!!.toMutableList()
             quizzes.add(quiz)
             _quizzes.value = quizzes
@@ -259,9 +264,71 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun removeQuiz(quiz: Quiz) {
-        val quizzes = quizzes.value!!.toMutableList()
-        quizzes.remove(quiz)
-        _quizzes.value = quizzes
+        _quizzes.value = quizzes.value!!.toMutableList().apply {
+            remove(quiz)
+        }
+    }
+
+    fun removeQuizAt(index: Int) {
+        if(index >= quizzes.value!!.size || index < 0){
+            return
+        }
+        _quizzes.value = quizzes.value!!.toMutableList().apply {
+            removeAt(index)
+        }
+    }
+
+    fun updateUserAnswer(quiz: Quiz){
+        when(quiz){
+            is Quiz1 -> updateUserAnswer(quiz)
+            is Quiz2 -> updateUserAnswer(quiz)
+            is Quiz3 -> updateUserAnswer(quiz)
+            is Quiz4 -> updateUserAnswer(quiz)
+        }
+    }
+
+    private fun updateUserAnswer(quiz: Quiz1) {
+        val updatedQuizzes = _quizzes.value!!.map {
+            if (it.uuid == quiz.uuid) {
+                (it as Quiz1).copy(userAns = quiz.userAns)
+            } else {
+                it
+            }
+        }
+        _quizzes.value = updatedQuizzes
+    }
+
+    private fun updateUserAnswer(quiz: Quiz2) {
+        val updatedQuizzes = _quizzes.value!!.map {
+            if (it.uuid == quiz.uuid) {
+                (it as Quiz2).copy(userAnswerDate = quiz.userAnswerDate)
+            } else {
+                it
+            }
+        }
+        _quizzes.value = updatedQuizzes
+    }
+
+    private fun updateUserAnswer(quiz: Quiz3) {
+        val updatedQuizzes = _quizzes.value!!.map {
+            if (it.uuid == quiz.uuid) {
+                (it as Quiz3).copy(shuffledAnswers = quiz.shuffledAnswers)
+            } else {
+                it
+            }
+        }
+        _quizzes.value = updatedQuizzes
+    }
+
+    private fun updateUserAnswer(quiz: Quiz4) {
+        val updatedQuizzes = _quizzes.value!!.map {
+            if (it.uuid == quiz.uuid) {
+                (it as Quiz4).copy(userConnectionIndex = quiz.userConnectionIndex)
+            } else {
+                it
+            }
+        }
+        _quizzes.value = updatedQuizzes
     }
 
     fun updateColorScheme(colorScheme: ColorScheme) {

@@ -49,7 +49,7 @@ fun Quiz2Viewer(
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
-            key(quiz2State.userAnswerDate){
+            key(quiz2State.userAnswerDate, quiz2State.uuid, "viewer"){
                 CalendarWithFocusDates(
                     focusDates = quiz2State.userAnswerDate,
                     onDateClick = { date ->

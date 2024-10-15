@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
+import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.sampleQuiz3
 import com.asu1.quizzer.model.sampleQuiz4
 import com.asu1.quizzer.viewModels.QuizTheme
@@ -33,8 +35,7 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 fun Quiz4Viewer(
     quiz: Quiz4ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
-    updateDotOffset: (Int, Offset, Boolean) -> Unit = { _, _, _ -> },
-    updateConnection: (Int, Offset?) -> Unit = { _, _ -> },
+    onExit: (Quiz4) -> Unit = {},
 ) {
     val quiz4State by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
@@ -42,6 +43,12 @@ fun Quiz4Viewer(
     var initOffset by remember { mutableStateOf<Offset?>(null) }
     var isDragging by remember { mutableStateOf(false) }
     val color = quizTheme.colorScheme.primary
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onExit(quiz4State)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -79,20 +86,20 @@ fun Quiz4Viewer(
                     )
                     DraggableDot(
                         setOffset = {offset ->
-                            updateDotOffset(index, offset, true)
+                            quiz.updateDotOffset(index, offset, true)
                         },
                         pointerEvent = { it ->
                             detectDragGestures(
                                 onDragStart = {
                                     startOffset = quiz4State.dotPairOffsets[index].first ?: Offset(0f, 0f)
                                     endOffset = quiz4State.dotPairOffsets[index].second ?: Offset(0f, 0f)
-                                    updateConnection(index, null)
+                                    quiz.updateConnection(index, null)
                                     initOffset = null
                                     isDragging = true
                                 },
                                 onDragEnd = {
                                     isDragging = false
-                                    updateConnection(index, endOffset)
+                                    quiz.updateConnection(index, endOffset)
                                     startOffset = Offset(0f, 0f)
                                     endOffset = Offset(0f, 0f)
                                 },
@@ -111,7 +118,7 @@ fun Quiz4Viewer(
                     Spacer(modifier = Modifier.weight(1.0f))
                     DraggableDot(
                         setOffset = {offset ->
-                            updateDotOffset(index, offset, false)
+                            quiz.updateDotOffset(index, offset, false)
                         }
                     )
                     GetTextStyle(

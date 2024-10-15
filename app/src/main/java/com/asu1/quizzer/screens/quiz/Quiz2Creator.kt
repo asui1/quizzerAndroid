@@ -84,7 +84,7 @@ fun Quiz2Creator(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                key(quiz2State.centerDate){
+                key(quiz2State.centerDate, quiz2State.uuid, "creator"){
                     CalendarWithFocusDates(
                         focusDates = quiz2State.answerDate,
                         onDateClick = { date ->
