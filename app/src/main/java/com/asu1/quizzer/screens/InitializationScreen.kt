@@ -15,6 +15,7 @@ import com.asu1.quizzer.composables.LoadComposable
 import com.asu1.quizzer.composables.NoInternetDialog
 import com.asu1.quizzer.composables.UpdateDialog
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.MainViewModel
 
@@ -41,7 +42,7 @@ fun InitializationScreen(navHostController: NavHostController, initViewModel: Ma
             )
             else -> {
                 Logger().debug("InitializationScreen: Navigating to Home")
-                navHostController.navigate(Route.Home) {
+                NavMultiClickPreventer.navigate(navHostController,Route.Home) {
                     popUpTo(navHostController.graph.startDestinationId) {
                         inclusive = true
                     }

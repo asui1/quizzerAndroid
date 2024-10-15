@@ -41,6 +41,7 @@ import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -166,7 +167,7 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
                     }
                     val profileUri = googleIdTokenCredential.profilePictureUri
 
-                    navController.navigate(Route.RegisterPolicyAgreement(email,
+                    NavMultiClickPreventer.navigate(navController, Route.RegisterPolicyAgreement(email,
                         profileUri.toString()
                     ))
                 } catch (e: GetCredentialException) {

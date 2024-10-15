@@ -1,6 +1,9 @@
 package com.asu1.quizzer.model
 
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.background
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -27,6 +30,18 @@ data class ImageColor(
                 BitmapPainter(bitmap.asImageBitmap())
             } else {
                 ColorPainter(color)
+            }
+        }
+    }
+    fun asBackgroundModifier(): Modifier {
+        return when(state) {
+            ImageColorState.COLOR -> Modifier.background(color)
+            ImageColorState.COLOR2 -> Modifier.background(color2)
+            ImageColorState.IMAGE -> if (image.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+                Modifier.paint(BitmapPainter(bitmap.asImageBitmap()))
+            } else {
+                Modifier.background(color)
             }
         }
     }

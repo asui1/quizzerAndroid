@@ -51,6 +51,7 @@ import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTextStyle
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTitleImage
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutTitle
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -121,7 +122,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         if(step.ordinal < 6) {
             quizLayoutViewModel.updateStep(step + 1)
         } else {
-            navController.navigate(Route.QuizBuilder)
+            NavMultiClickPreventer.navigate(navController, Route.QuizBuilder)
         }
     }
 
@@ -213,12 +214,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
-                            if(step.ordinal < 7){
-                                proceed()
-                            }
-                            else{
-                                navController.navigate(Route.QuizBuilder)
-                            }
+                            proceed()
                         },
                         enabled = enabled,
                     ) {

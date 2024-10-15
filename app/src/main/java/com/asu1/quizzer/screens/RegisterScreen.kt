@@ -43,6 +43,7 @@ import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.RegisterViewModel
 
@@ -54,7 +55,7 @@ fun UsageAgreement(navController: NavHostController, registerViewModel: Register
 
     LaunchedEffect(registerStep) {
         if (registerStep == 1) {
-            navController.navigate(Route.RegisterNickname)
+            NavMultiClickPreventer.navigate(navController, Route.RegisterNickname)
         }
     }
     BackHandler {
@@ -123,7 +124,7 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
     LaunchedEffect(registerStep) {
         Logger().printBackStack(navController)
         if (registerStep == 2) {
-            navController.navigate(Route.RegisterTags)
+            NavMultiClickPreventer.navigate(navController,Route.RegisterTags)
         }
     }
     BackHandler {

@@ -22,6 +22,7 @@ import com.asu1.quizzer.screens.NicknameInput
 import com.asu1.quizzer.screens.PrivacyPolicy
 import com.asu1.quizzer.screens.QuizBuilderScreen
 import com.asu1.quizzer.screens.QuizLayoutBuilderScreen
+import com.asu1.quizzer.screens.QuizSolver
 import com.asu1.quizzer.screens.SearchScreen
 import com.asu1.quizzer.screens.TagSetting
 import com.asu1.quizzer.screens.UsageAgreement
@@ -29,6 +30,7 @@ import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
@@ -92,7 +94,10 @@ class MainActivity : ComponentActivity() {
                                             userViewModel.userData.value?.email,
                                             colorScheme
                                         )
-                                        navController.navigate(Route.CreateQuizLayout)
+                                        NavMultiClickPreventer.navigate(
+                                            navController,
+                                            Route.CreateQuizLayout
+                                        )
                                     },
                                 )
                             }
@@ -178,6 +183,15 @@ class MainActivity : ComponentActivity() {
                                 val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
                                 val insertIndex = backStackEntry.toRoute<Route.QuizCaller>().insertIndex
                                 QuizCaller(quizLayoutViewModel, loadIndex, quizType, insertIndex, navController)
+                            }
+                            composable<Route.QuizSolver>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitToRightTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitToRightTransition(),
+                            ) { backStackEntry ->
+                                val loadIndex = backStackEntry.toRoute<Route.QuizSolver>().initIndex
+                                QuizSolver(navController, quizLayoutViewModel, loadIndex)
                             }
                         }
 

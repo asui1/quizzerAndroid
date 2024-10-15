@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -60,10 +59,11 @@ import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.screens.quiz.QuizViewer
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
-val bodyheight = 600.dp
+val bodyHeight = 600.dp
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -88,7 +88,7 @@ fun QuizBuilderScreen(navController: NavController,
     }
 
     fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
-        navController.navigate(
+        NavMultiClickPreventer.navigate(navController,
             Route.QuizCaller(
                 loadIndex = loadIndex,
                 quizType = quizType,
@@ -153,7 +153,9 @@ fun QuizBuilderScreen(navController: NavController,
             bottomBar = {
                 QuizBuilderBottomBar(
                     onPreview = {
-                        //TODO move to Preview Screen
+                        NavMultiClickPreventer.navigate(navController, Route.QuizSolver(
+                            initIndex = curIndex
+                        ))
                     },
                     onProceed = {
                         //TODO move to Scoring Screen
@@ -182,7 +184,7 @@ fun QuizBuilderScreen(navController: NavController,
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier.pointerInput(Unit) { detectTapGestures {} }
-                                .size(width = 292.dp, height = bodyheight)
+                                .size(width = 292.dp, height = bodyHeight)
                                 .border(
                                     width = 2.dp,
                                     color = Color.Gray,
@@ -239,7 +241,7 @@ fun NewQuizAdd(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(width = 300.dp, height = bodyheight)
+            .size(width = 300.dp, height = bodyHeight)
             .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
     ) {
         FloatingActionButton(onClick = { showDialog(true) }) {

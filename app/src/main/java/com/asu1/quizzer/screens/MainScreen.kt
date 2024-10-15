@@ -89,6 +89,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
@@ -229,7 +230,7 @@ fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}
                         openDrawer()
                     }
                     else{
-                        navController.navigate(Route.Login)
+                        NavMultiClickPreventer.navigate(navController, Route.Login)
                     }
                 }
             })
@@ -322,7 +323,7 @@ fun MainActivityBottomBarPreview(){
 }
 
 fun moveToSearchActivity(navController: NavController) {
-    navController.navigate(Route.Search)
+    NavMultiClickPreventer.navigate(navController, Route.Search)
 }
 
 @Composable
@@ -335,7 +336,7 @@ fun PrivacyPolicyRow(navController: NavController) {
         horizontalArrangement = Arrangement.Center
     ) {
         TextButton(onClick = {
-            navController.navigate(Route.PrivacyPolicy)
+            NavMultiClickPreventer.navigate(navController, Route.PrivacyPolicy)
         }) {
             Text(stringResource(R.string.privacy_policy))
         }
@@ -466,7 +467,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             if (isUserLoggedIn) {
                                 //TODO LATER for profile pic fix and user tags setting
                             } else {
-                                navController.navigate(Route.Login)
+                                NavMultiClickPreventer.navigate(navController, Route.Login)
                             }
                         }
                     })
@@ -475,7 +476,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         if (isUserLoggedIn) {
                             showLogoutDialog = true
                         } else {
-                            navController.navigate(Route.Login)
+                            NavMultiClickPreventer.navigate(navController, Route.Login)
                         }
                     }) {
                         Icon(

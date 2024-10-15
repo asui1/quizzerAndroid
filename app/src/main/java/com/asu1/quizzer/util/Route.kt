@@ -34,5 +34,7 @@ sealed interface Route {
     data object QuizBuilder: Route
     @Serializable
     data class QuizCaller(val loadIndex: Int, val quizType: QuizType, val insertIndex: Int) : Route
+    @Serializable
+    data class QuizSolver(val initIndex: Int) : Route
 }
 
