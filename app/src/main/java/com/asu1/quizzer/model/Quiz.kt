@@ -135,6 +135,7 @@ data class Quiz4(
     var connectionAnswers: List<String> = mutableListOf("", "", "", ""),
     var connectionAnswerIndex: List<Int?> = mutableListOf(null, null, null, null),
     var dotPairOffsets: List<Pair<Offset?, Offset?>> = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
+    var userConnectionIndex: List<Int?> = mutableListOf(null, null, null, null),
     override var answers: MutableList<String> = mutableListOf("", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ4,
@@ -143,6 +144,15 @@ data class Quiz4(
         // Additional initialization logic if needed
     }
     override fun initViewState() {
-        TODO("Not yet implemented")
+        userConnectionIndex = MutableList(answers.size) { null }
     }
 }
+
+val sampleQuiz4 = Quiz4(
+    question = "Connect the following",
+    answers = mutableListOf("A", "B", "C", "D"),
+    connectionAnswers = mutableListOf("1", "2", "3", "4"),
+    userConnectionIndex = mutableListOf(null, null, null, null),
+    connectionAnswerIndex = mutableListOf(null, null, null, null),
+    dotPairOffsets = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
+)

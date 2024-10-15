@@ -19,6 +19,7 @@ import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
 fun QuizViewer(
@@ -33,9 +34,6 @@ fun QuizViewer(
             Quiz1Viewer(
                 quiz = quiz1ViewModel,
                 quizTheme = quizTheme,
-                onExit = {
-                    updateQuiz(it)
-                }
             )
         }
         is Quiz2 -> {
@@ -61,10 +59,12 @@ fun QuizViewer(
             )
         }
         is Quiz4 -> {
-//            Quiz4Viewer(
-//                quiz = viewModel(),
-//                quizTheme = quizTheme
-//            )
+            val quiz4ViewModel: Quiz4ViewModel = viewModel()
+            quiz4ViewModel.loadQuiz(quiz)
+            Quiz4Viewer(
+                quiz = quiz4ViewModel,
+                quizTheme = quizTheme,
+            )
         }
     }
 
