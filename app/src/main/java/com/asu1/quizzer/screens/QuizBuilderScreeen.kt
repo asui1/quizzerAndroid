@@ -195,7 +195,6 @@ fun QuizBuilderScreen(navController: NavController,
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
                                 updateUserInput = { newQuiz ->
-                                    quizLayoutViewModel.updateUserAnswer(newQuiz)
                                 },
                                 isPreview = true,
                             )

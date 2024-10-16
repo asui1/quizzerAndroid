@@ -67,10 +67,6 @@ fun Quiz4Viewer(
                 boxPosition = coordinates.positionInRoot()
             }
     ) {
-        DrawLines(
-            dotOffsets = quiz4State.dotPairOffsets,
-            connections = quiz4State.userConnectionIndex
-        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,13 +101,13 @@ fun Quiz4Viewer(
                                 onDragStart = {
                                     startOffset = quiz4State.dotPairOffsets[index].first ?: Offset(0f, 0f)
                                     endOffset = quiz4State.dotPairOffsets[index].second ?: Offset(0f, 0f)
-                                    quiz.updateConnection(index, null)
+                                    quiz.updateUserConnection(index, null)
                                     initOffset = null
                                     isDragging = true
                                 },
                                 onDragEnd = {
                                     isDragging = false
-                                    quiz.updateConnection(index, endOffset)
+                                    quiz.updateUserConnection(index, endOffset)
                                     startOffset = Offset(0f, 0f)
                                     endOffset = Offset(0f, 0f)
                                 },
@@ -151,6 +147,10 @@ fun Quiz4Viewer(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+        DrawLines(
+            dotOffsets = quiz4State.dotPairOffsets,
+            connections = quiz4State.userConnectionIndex
+        )
         if(isDragging) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawLine(

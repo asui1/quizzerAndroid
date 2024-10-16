@@ -278,57 +278,12 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateUserAnswer(quiz: Quiz){
-        when(quiz){
-            is Quiz1 -> updateUserAnswer(quiz)
-            is Quiz2 -> updateUserAnswer(quiz)
-            is Quiz3 -> updateUserAnswer(quiz)
-            is Quiz4 -> updateUserAnswer(quiz)
+    fun updateUserAnswer(quiz: Quiz, index: Int) {
+        if (index >= 0 && index < _quizzes.value!!.size) {
+            val quizzes = _quizzes.value!!.toMutableList()
+            quizzes[index] = quiz
+            _quizzes.value = quizzes
         }
-    }
-
-    private fun updateUserAnswer(quiz: Quiz1) {
-        val updatedQuizzes = _quizzes.value!!.map {
-            if (it.uuid == quiz.uuid) {
-                (it as Quiz1).copy(userAns = quiz.userAns)
-            } else {
-                it
-            }
-        }
-        _quizzes.value = updatedQuizzes
-    }
-
-    private fun updateUserAnswer(quiz: Quiz2) {
-        val updatedQuizzes = _quizzes.value!!.map {
-            if (it.uuid == quiz.uuid) {
-                (it as Quiz2).copy(userAnswerDate = quiz.userAnswerDate)
-            } else {
-                it
-            }
-        }
-        _quizzes.value = updatedQuizzes
-    }
-
-    private fun updateUserAnswer(quiz: Quiz3) {
-        val updatedQuizzes = _quizzes.value!!.map {
-            if (it.uuid == quiz.uuid) {
-                (it as Quiz3).copy(shuffledAnswers = quiz.shuffledAnswers)
-            } else {
-                it
-            }
-        }
-        _quizzes.value = updatedQuizzes
-    }
-
-    private fun updateUserAnswer(quiz: Quiz4) {
-        val updatedQuizzes = _quizzes.value!!.map {
-            if (it.uuid == quiz.uuid) {
-                (it as Quiz4).copy(userConnectionIndex = quiz.userConnectionIndex)
-            } else {
-                it
-            }
-        }
-        _quizzes.value = updatedQuizzes
     }
 
     fun updateColorScheme(colorScheme: ColorScheme) {

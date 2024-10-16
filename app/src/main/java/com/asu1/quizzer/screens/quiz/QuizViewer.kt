@@ -11,6 +11,7 @@ import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.model.sampleQuiz3
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
@@ -26,6 +27,7 @@ fun QuizViewer(
 ) {
     fun updateQuiz(quiz: Quiz){
         if(!isPreview){
+            Logger().debug("QuizViewer ${quiz.layoutType}")
             updateUserInput(quiz)
         }
     }

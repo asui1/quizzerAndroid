@@ -106,6 +106,15 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         })
     }
 
+    fun updateUserConnectionAnswerIndex(index: Int, answerIndex: Int?){
+        if(index >= _quiz4State.value.answers.size){
+            return
+        }
+        _quiz4State.value = _quiz4State.value.copy(userConnectionIndex = _quiz4State.value.userConnectionIndex.toMutableList().apply {
+            set(index, answerIndex)
+        })
+    }
+
     fun updateConnectionAnswer(index: Int, answer: String){
         if(index >= _quiz4State.value.answers.size){
             return
@@ -141,6 +150,18 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         }
     }
 
+    fun updateUserConnection(curIndex: Int, offset: Offset?){
+        if(offset == null){
+            updateUserConnectionAnswerIndex(curIndex, null)
+        }
+        else {
+            val connectionIndex = getClosestDotIndex(offset)
+            Logger().debug("Connection index : $connectionIndex")
+            if (connectionIndex != -1) {
+                updateUserConnectionAnswerIndex(curIndex, connectionIndex)
+            }
+        }
+    }
 
     fun getClosestDotIndex(offset: Offset): Int {
         val referDistance = 3000f

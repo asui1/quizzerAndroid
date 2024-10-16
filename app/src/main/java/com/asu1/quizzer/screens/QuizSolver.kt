@@ -79,7 +79,7 @@ fun QuizSolver(
                             quiz = quizzes[it],
                             quizTheme = quizTheme,
                             updateUserInput = { newQuiz ->
-                                quizLayoutViewModel.updateUserAnswer(newQuiz)
+                                quizLayoutViewModel.updateUserAnswer(newQuiz, it)
                             },
                             isPreview = false,
                         )
