@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.asu1.quizzer.screens.DesignScoreCardScreen
 import com.asu1.quizzer.screens.InitializationScreen
 import com.asu1.quizzer.screens.LoginScreen
 import com.asu1.quizzer.screens.MainScreen
@@ -40,6 +41,7 @@ import com.asu1.quizzer.viewModels.MainViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.RegisterViewModel
+import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
@@ -53,6 +55,7 @@ class MainActivity : ComponentActivity() {
     private val registerViewModel: RegisterViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
     private val quizLayoutViewModel: QuizLayoutViewModel by viewModels()
+    private val scoreCardViewModel: ScoreCardViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Logger().debug("MainActivity: onCreate")
@@ -94,6 +97,7 @@ class MainActivity : ComponentActivity() {
                                             userViewModel.userData.value?.email,
                                             colorScheme
                                         )
+                                        scoreCardViewModel.resetScoreCard()
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.CreateQuizLayout
@@ -170,7 +174,12 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
-                                QuizBuilderScreen(navController, quizLayoutViewModel)
+                                QuizBuilderScreen(navController, quizLayoutViewModel,
+                                    onMoveToScoringScreen = {
+                                        scoreCardViewModel.updateScoreCard(quizLayoutViewModel.quizData.value, quizLayoutViewModel.quizTheme.value.colorScheme)
+                                        NavMultiClickPreventer.navigate(navController, Route.DesignScoreCard)
+                                    }
+                                )
                             }
                             composable<Route.QuizCaller> (
                                 enterTransition = enterFromRightTransition(),
@@ -192,6 +201,16 @@ class MainActivity : ComponentActivity() {
                             ) { backStackEntry ->
                                 val loadIndex = backStackEntry.toRoute<Route.QuizSolver>().initIndex
                                 QuizSolver(navController, quizLayoutViewModel, loadIndex)
+                            }
+                            composable<Route.DesignScoreCard>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                DesignScoreCardScreen(navController, quizLayoutViewModel, scoreCardViewModel, onUpload = {
+                                    //TODO implement upload function at quizLayoutViewModel using ScoreCardViewModel contents
+                                })
                             }
                         }
 

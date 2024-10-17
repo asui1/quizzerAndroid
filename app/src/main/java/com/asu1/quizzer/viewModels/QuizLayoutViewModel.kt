@@ -14,6 +14,8 @@ import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
+import com.asu1.quizzer.model.sampleQuiz1
+import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
@@ -289,4 +291,14 @@ class QuizLayoutViewModel : ViewModel() {
     fun updateColorScheme(colorScheme: ColorScheme) {
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
     }
+}
+
+fun createSampleQuizLayoutViewModel(): QuizLayoutViewModel {
+    val viewModel = QuizLayoutViewModel()
+    viewModel.addQuiz(sampleQuiz1, null)
+    viewModel.addQuiz(sampleQuiz2, null)
+    viewModel.setQuizTitle("Sample Quiz")
+    viewModel.setQuizDescription("This is a sample quiz description.")
+    viewModel.updateCreator("Sample Creator")
+    return viewModel
 }

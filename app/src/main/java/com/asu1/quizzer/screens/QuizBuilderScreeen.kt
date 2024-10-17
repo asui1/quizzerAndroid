@@ -68,6 +68,7 @@ val bodyHeight = 600.dp
 @Composable
 fun QuizBuilderScreen(navController: NavController,
                       quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
+                      onMoveToScoringScreen: () -> Unit = {},
 ) {
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
@@ -158,7 +159,7 @@ fun QuizBuilderScreen(navController: NavController,
                         ))
                     },
                     onProceed = {
-                        //TODO move to Scoring Screen
+                        onMoveToScoringScreen()
                     }
                 )
             },
