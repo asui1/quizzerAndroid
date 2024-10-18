@@ -1,0 +1,27 @@
+TODOs to app implementation
+First aim to make app launchable without some features that are not essential.
+
+- Implement Score Card decoration.
+This will have image or color decoration with opengl.
+
+- Implement Save and Upload QuizLayout.
+This should save content as json format and match other previous items on server.
+
+- Test Code to Generate Quizzes with AI gen datas.
+This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
+
+- ColorScheme generation with Random Strength.
+Generate Random ColorScheme should have a value from 0 to 5 to show how strong random color should be.
+
+----------------
+TODO For servers.
+
+- Register Nickname Dup check.
+Current code when checking duplicate nicknames, it gets partial match. ABC and AB are considered same. This should be fixed.
+
+- Implement Session token for search request.
+I need session token to that user can request for more search results on current search request.
+
+- Implement suggestion algorithm for search.
+This should suggest user with similar search results. I will use LLM models with title, tags, and description.
+
