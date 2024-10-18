@@ -2,7 +2,10 @@ TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
 - Implement Score Card decoration.
-This will have image or color decoration with opengl.
+This will have image or color decoration with agsl.
+스코어카드에 사용할 색 2개를 고를 때, colorScheme에 들어간 색들을 grid로 보여주고 그 중에서 고르게 하는 방식으로 ㄱㄱ.
+agsl은 드랍다운을 열어서 선택하는 방식으로 하면 될듯.
+
 
 - Implement Save and Upload QuizLayout.
 This should save content as json format and match other previous items on server.

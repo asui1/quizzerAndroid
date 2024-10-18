@@ -1,9 +1,7 @@
 package com.asu1.quizzer.screens
 
-import android.graphics.RenderEffect
-import android.graphics.RuntimeShader
-import android.os.Build
-import android.os.Build.VERSION_CODES
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,39 +21,34 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.ImageSearch
-import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -63,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -72,16 +66,14 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.ongle_yunue
-import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.customShader
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DesignScoreCardScreen(
     navController: NavController,
@@ -96,7 +88,10 @@ fun DesignScoreCardScreen(
     val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
     val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
+        scoreCardViewModel.updateBackgroundImage(byteArray)
     }
+    var showScoreCardColorPicker by remember { mutableStateOf(false) }
+    var showDropdownMenu by remember { mutableStateOf(false) }
 
     MaterialTheme(
         colorScheme = scoreCard.colorScheme
@@ -104,6 +99,15 @@ fun DesignScoreCardScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
+            if(showScoreCardColorPicker){
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showScoreCardColorPicker = false
+                    }
+                ) {
+                    
+                }
+            }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -169,7 +173,9 @@ fun DesignScoreCardScreen(
             // 3. Change background's opengl state. SHADER USING AGSL
             IconButton(
                 onClick = {
-
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
                 }
             ) {
                 Icon(
@@ -189,20 +195,37 @@ fun DesignScoreCardScreen(
                     modifier = Modifier.size(32.dp)
                 )
             }
-            IconButton(
-                onClick = {
-                    scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
+            Box(){
+                IconButton(
+                    onClick = {
+                        showDropdownMenu = true
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Animation,
+                        contentDescription = "Close",
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.InvertColors,
-                    contentDescription = "Close",
-                    modifier = Modifier.size(32.dp)
-                )
+                DropdownMenu(
+                    expanded = showDropdownMenu,
+                    onDismissRequest = { showDropdownMenu = false },
+                ) {
+                    ShaderType.entries.forEach { shader ->
+                        DropdownMenuItem(
+                            text = { Text(text = shader.shaderName,
+                                color = if (shader == scoreCard.shaderType) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            ) },
+                            onClick = {
+                                scoreCardViewModel.updateShaderType(shader)
+                                showDropdownMenu = false
+                            }
+                        )
+                    }
+                }
             }
         }
     }
-
 }
 
 @Composable
@@ -276,7 +299,7 @@ fun ScoreCardComposable(
                 shape = RoundedCornerShape(8.dp),
             )
             .then(scoreCard.background.asBackgroundModifierForScoreCard(
-                shaderOption = scoreCard.shaderBrush,
+                shaderOption = scoreCard.shaderType,
                 time = time
             ))
     ) {

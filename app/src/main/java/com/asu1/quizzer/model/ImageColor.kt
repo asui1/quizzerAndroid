@@ -4,11 +4,8 @@ import android.graphics.BitmapFactory
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -21,6 +18,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 
 //State 0 -> Color, State 1 -> Color1 + Color2, State 2 -> Image
 enum class ImageColorState {
@@ -59,7 +57,7 @@ data class ImageColor(
         }
     }
 
-    fun asBackgroundModifierForScoreCard(shaderOption: ShaderBrush, time: Float): Modifier {
+    fun asBackgroundModifierForScoreCard(shaderOption: ShaderType, time: Float): Modifier {
         return when(state) {
             ImageColorState.COLOR -> Modifier.background(color)
             ImageColorState.COLOR2 -> {
@@ -78,7 +76,9 @@ data class ImageColor(
                     )
                     Modifier.graphicsLayer {
                         shader.setFloatUniform("resolution", size.width, size.height)
-                        shader.setFloatUniform("time", time)
+                        if(shaderOption == ShaderType.Brush2) {
+                            shader.setFloatUniform("time", time)
+                        }
                         shader.setColorUniform(
                             "color",
                             color.toArgb(),
@@ -93,7 +93,9 @@ data class ImageColor(
             }
             ImageColorState.IMAGE -> if (image.isNotEmpty()) {
                 val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
-                Modifier.paint(BitmapPainter(bitmap.asImageBitmap()))
+                Modifier.paint(BitmapPainter(bitmap.asImageBitmap()),
+                    contentScale = ContentScale.FillBounds
+                    )
             } else {
                 Modifier.background(color)
             }

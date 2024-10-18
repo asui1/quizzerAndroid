@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.ShaderType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,24 +18,41 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = ScoreCard()
     }
 
+    fun updateBackgroundImage(image: ByteArray){
+        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(image = image, state = ImageColorState.IMAGE))
+    }
+
     fun updateScoreCard(quizData: QuizData, colorScheme: ColorScheme){
+        val currentColorScheme = _scoreCard.value.colorScheme
         val imageColor = _scoreCard.value.background
-        val colors = _scoreCard.value.colorGradient.getColors(colorScheme)
-        _scoreCard.value = _scoreCard.value.copy(
-            title = quizData.title,
-            creator = quizData.creator,
-            colorScheme = colorScheme,
-            background = ImageColor(
-                color = colors.first,
-                image = imageColor.image,
-                color2 = colors.second,
-                state = imageColor.state
+
+        if (currentColorScheme != colorScheme) {
+            _scoreCard.value = _scoreCard.value.copy(
+                title = quizData.title,
+                creator = quizData.creator,
+                colorScheme = colorScheme,
+                background = ImageColor(
+                    color = colorScheme.primary,
+                    image = imageColor.image,
+                    color2 = colorScheme.secondary,
+                    state = imageColor.state
+                )
             )
-        )
+        } else {
+            _scoreCard.value = _scoreCard.value.copy(
+                title = quizData.title,
+                creator = quizData.creator,
+                colorScheme = colorScheme
+            )
+        }
     }
 
     fun updateBackgroundState(imageColorState: ImageColorState){
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(state = imageColorState))
+    }
+
+    fun updateShaderType(shaderType: ShaderType){
+        _scoreCard.value = _scoreCard.value.copy(shaderType = shaderType)
     }
 
     fun updateImageColorState(imageColorState: ImageColorState){
