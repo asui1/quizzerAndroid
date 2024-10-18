@@ -5,10 +5,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +31,7 @@ import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,11 +50,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -56,7 +60,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -64,9 +67,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
+import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.quizzer.ui.theme.LightPrimary
+import com.asu1.quizzer.ui.theme.LightSecondary
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -105,7 +112,13 @@ fun DesignScoreCardScreen(
                         showScoreCardColorPicker = false
                     }
                 ) {
-                    
+                    ModalSheetForColorSelection(
+                        colorScheme = scoreCard.colorScheme,
+                        onColorSelected = { color ->
+                            scoreCardViewModel.onColorSelection(color)
+                        },
+                        curSelection = scoreCard.background,
+                    )
                 }
             }
             Column(
@@ -173,6 +186,7 @@ fun DesignScoreCardScreen(
             // 3. Change background's opengl state. SHADER USING AGSL
             IconButton(
                 onClick = {
+                    scoreCardViewModel.updateBackgroundState(ImageColorState.IMAGE)
                     photoPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
@@ -187,6 +201,7 @@ fun DesignScoreCardScreen(
             IconButton(
                 onClick = {
                     scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
+                    showScoreCardColorPicker = true
                 }
             ) {
                 Icon(
@@ -361,3 +376,69 @@ fun DesignScoreCardPreview() {
         )
 }
 
+@Composable
+fun ModalSheetForColorSelection(
+    colorScheme: ColorScheme,
+    onColorSelected: (Color) -> Unit = {},
+    curSelection: ImageColor,
+){
+    val colors = listOf(
+        colorScheme.primary,
+        colorScheme.onPrimary,
+        colorScheme.primaryContainer,
+        colorScheme.onPrimaryContainer,
+        colorScheme.secondary,
+        colorScheme.onSecondary,
+        colorScheme.secondaryContainer,
+        colorScheme.onSecondaryContainer,
+        colorScheme.tertiary,
+        colorScheme.onTertiary,
+        colorScheme.tertiaryContainer,
+        colorScheme.onTertiaryContainer,
+        colorScheme.error,
+        colorScheme.onError,
+        colorScheme.errorContainer
+    )
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(5),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(colors.size) { index ->
+            val color = colors[index]
+            Surface(
+                shape = CircleShape,
+                color = color,
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(
+                        width = 5.dp,
+                        color =
+                        when(color){
+                            curSelection.color -> LightPrimary
+                            curSelection.color2 -> LightSecondary
+                            else -> Color.Transparent
+                        },
+                        shape = CircleShape
+                    )
+                    .clickable { onColorSelected(color) }
+            ) {}
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ModalSheetForColorSelectionPreview() {
+    ModalSheetForColorSelection(
+        colorScheme = MaterialTheme.colorScheme,
+        curSelection = ImageColor(
+            color = MaterialTheme.colorScheme.primary,
+            image = ByteArray(0),
+            color2 = MaterialTheme.colorScheme.secondary,
+            state = ImageColorState.COLOR2
+        )
+    )
+}

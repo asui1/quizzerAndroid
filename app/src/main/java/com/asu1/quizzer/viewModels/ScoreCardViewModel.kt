@@ -18,6 +18,23 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = ScoreCard()
     }
 
+    fun onColorSelection(color: androidx.compose.ui.graphics.Color){
+        val currentBackground = _scoreCard.value.background
+
+        if (currentBackground.color == color) {
+            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = androidx.compose.ui.graphics.Color.Transparent))
+        } else if (currentBackground.color2 == color) {
+            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = androidx.compose.ui.graphics.Color.Transparent))
+        } else {
+            if (currentBackground.color == androidx.compose.ui.graphics.Color.Transparent) {
+                _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
+            } else if (currentBackground.color2 == androidx.compose.ui.graphics.Color.Transparent) {
+                _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
+            }
+        }
+
+    }
+
     fun updateBackgroundImage(image: ByteArray){
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(image = image, state = ImageColorState.IMAGE))
     }
