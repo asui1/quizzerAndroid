@@ -79,6 +79,7 @@ fun QuizBuilderScreen(navController: NavController,
     val padding = screenWidthHalf - 150.dp
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
+    val initialIndex by quizLayoutViewModel.initIndex.observeAsState(0)
 
     LaunchedEffect(snapLayoutInfoProvider) {
         snapshotFlow { snapLayoutInfoProvider.firstVisibleItemIndex }
@@ -87,6 +88,12 @@ fun QuizBuilderScreen(navController: NavController,
                 Logger().debug("Current Index : $index")
             }
     }
+
+    LaunchedEffect(initialIndex) {
+        snapLayoutInfoProvider.scrollToItem(initialIndex)
+    }
+
+
 
     fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
         NavMultiClickPreventer.navigate(navController,

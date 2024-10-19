@@ -242,6 +242,12 @@ class MainActivity : ComponentActivity() {
                 searchViewModel.toastShown()
             }
         })
+        quizLayoutViewModel.showToast.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                quizLayoutViewModel.toastShown()
+            }
+        })
 
     }
 }

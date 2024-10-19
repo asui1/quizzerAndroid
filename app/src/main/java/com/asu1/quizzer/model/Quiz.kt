@@ -1,9 +1,13 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.ui.geometry.Offset
+import com.google.gson.Gson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.Base64
 
 enum class QuizType(val value: Int) {
     QUIZ1(0),
@@ -28,7 +32,7 @@ abstract class Quiz(
 
     abstract fun initViewState()
     abstract fun validateQuiz() : Pair<String, Boolean>
-    abstract fun changeToJson() : Json
+    abstract fun changeToJson() : String
     abstract fun load(data: String)
 }
 
@@ -83,8 +87,23 @@ data class Quiz1(
         return Pair("", true)
     }
 
-    override fun changeToJson(): Json {
-        TODO("Not yet implemented")
+    override fun changeToJson(): String {
+        val quiz1Json = Quiz1Json(
+            layoutType = layoutType.value,
+            body = Quiz1Body(
+                bodyType = bodyType.value,
+                image = image?.let { Base64.getEncoder().encodeToString(it) },
+                bodyText = bodyText,
+                shuffleAnswers = shuffleAnswers,
+                maxAnswerSelection = maxAnswerSelection,
+                answers = answers,
+                ans = ans,
+                question = question,
+                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
+                youtubeStartTime = youtubeStartTime.takeIf { it != 0 }
+            )
+        )
+        return Json.encodeToString(quiz1Json)
     }
 
     override fun load(data: String) {
@@ -136,8 +155,20 @@ data class Quiz2(
         return Pair("", true)
     }
 
-    override fun changeToJson(): Json {
-        TODO("Not yet implemented")
+    override fun changeToJson(): String {
+        val quiz2Json = Quiz2Json(
+            layoutType = layoutType.value,
+            body = Quiz2Body(
+                centerDate = listOf(centerDate.year, centerDate.monthValue, 1),
+                yearRange = yearRange,
+                answerDate = answerDate.map { listOf(it.year, it.monthValue, it.dayOfMonth) },
+                maxAnswerSelection = maxAnswerSelection,
+                answers = answers,
+                ans = listOf(),
+                question = question
+            )
+        )
+        return Json.encodeToString(quiz2Json)
     }
 
     override fun load(data: String) {
@@ -183,9 +214,18 @@ data class Quiz3(
         return Pair("", true)
     }
 
-    override fun changeToJson(): Json {
-        TODO("Not yet implemented")
-    }
+    override fun changeToJson(): String {
+        val quiz3Json = Quiz3Json(
+            layoutType = layoutType.value,
+            body = Quiz3Body(
+                layoutType = layoutType.value,
+                maxAnswerSelection = 1,
+                answers = answers,
+                ans = listOf(),
+                question = question
+            )
+        )
+        return Json.encodeToString(quiz3Json)    }
 
     override fun load(data: String) {
         TODO("Not yet implemented")
@@ -228,8 +268,20 @@ data class Quiz4(
         return Pair("", true)
     }
 
-    override fun changeToJson(): Json {
-        TODO("Not yet implemented")
+    override fun changeToJson(): String {
+        val quiz4Json = Quiz4Json(
+            layoutType = layoutType.value,
+            body = Quiz4Body(
+                connectionAnswers = connectionAnswers,
+                connectionAnswerIndex = connectionAnswerIndex,
+                layoutType = layoutType.value,
+                maxAnswerSelection = 1,
+                answers = answers,
+                ans = listOf(),
+                question = question
+            )
+        )
+        return Json.encodeToString(quiz4Json)
     }
 
     override fun load(data: String) {

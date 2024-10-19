@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
@@ -94,6 +95,8 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizData = MutableStateFlow(QuizData())
     val quizData: StateFlow<QuizData> = _quizData.asStateFlow()
 
+    private val _showToast = MutableLiveData<String?>()
+    val showToast: LiveData<String?> get() = _showToast
 
     private val _quizzes = MutableLiveData<List<Quiz>>(emptyList())
     val quizzes: LiveData<List<Quiz>> get() = _quizzes
@@ -104,10 +107,64 @@ class QuizLayoutViewModel : ViewModel() {
     private val _step = MutableLiveData<LayoutSteps>(LayoutSteps.POLICY)
     val step: LiveData<LayoutSteps> get() = _step
 
+    private val _initIndex = MutableLiveData(0)
+    val initIndex: LiveData<Int> get() = _initIndex
+
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
         _quizData.value = _quizData.value.copy(creator = email ?: "GUEST")
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
         _policyAgreement.value = false
+        _initIndex.value = 0
+        _step.value = LayoutSteps.POLICY
+    }
+
+    fun tryUpload(navController: NavController, scoreCardViewModel: ScoreCardViewModel) {
+        if(!validateQuizLayout()){
+            return
+        }
+        uploadQuizLayout(scoreCardViewModel)
+        TODO ("Upload Quiz Layout to server")
+    }
+
+    fun uploadQuizLayout(scoreCardViewModel: ScoreCardViewModel) {
+
+        TODO ("Upload Quiz Layout to server")
+    }
+
+    fun validateQuizLayout(): Boolean {
+        if(_quizData.value.title.isEmpty()) {
+            _showToast.value = "Title cannot be empty"
+            return false
+        }
+        if(_quizzes.value!!.isEmpty()) {
+            _showToast.value = "Quiz cannot be empty"
+            return false
+        }
+        for(quiz in _quizzes.value!!){
+            val check = quiz.validateQuiz()
+            if(!check.second){
+                _showToast.value = check.first
+                updateInitIndex(_quizzes.value!!.indexOf(quiz))
+                return false
+            }
+        }
+        return true
+    }
+
+    fun saveQuizLayout() {
+        TODO ("Save Quiz Layout as JSON")
+    }
+
+    fun updateInitIndex(index: Int) {
+        if(index > quizzes.value!!.size){
+            _initIndex.value = quizzes.value!!.size
+            return
+        }
+        _initIndex.value = index
+    }
+
+    fun toastShown() {
+        _showToast.value = null
     }
 
     fun updatePolicyAgreement(agreement: Boolean) {
