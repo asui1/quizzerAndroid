@@ -48,7 +48,7 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
     }
 
     fun updateCenterDate(date: YearMonth){
-        _quiz2State.value = _quiz2State.value.copy(centerDate = date)
+        _quiz2State.value = _quiz2State.value.copy(centerDate = date, answerDate = mutableSetOf(), userAnswerDate = mutableSetOf())
     }
 
     fun updateDate(date: LocalDate){

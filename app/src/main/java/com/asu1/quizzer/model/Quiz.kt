@@ -1,6 +1,7 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.ui.geometry.Offset
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -26,6 +27,9 @@ abstract class Quiz(
     }
 
     abstract fun initViewState()
+    abstract fun validateQuiz() : Pair<String, Boolean>
+    abstract fun changeToJson() : Json
+    abstract fun load(data: String)
 }
 
 enum class BodyType(val value: Int) {
@@ -62,6 +66,31 @@ data class Quiz1(
         userAns = MutableList(answers.size) { false }
         validateBody()
     }
+
+    override fun validateQuiz(): Pair<String, Boolean> {
+        if(question == ""){
+            return Pair("Question cannot be empty", false)
+        }
+        if(answers.contains("")){
+            return Pair("Answers cannot be empty", false)
+        }
+        if(ans.contains(true).not()){
+            return Pair("Correct answer not selected", false)
+        }
+        if(ans.count { it } > maxAnswerSelection){
+            return Pair("More than $maxAnswerSelection correct answers selected", false)
+        }
+        return Pair("", true)
+    }
+
+    override fun changeToJson(): Json {
+        TODO("Not yet implemented")
+    }
+
+    override fun load(data: String) {
+        TODO("Not yet implemented")
+    }
+
     fun validateBody() {
         if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
             bodyType = BodyType.NONE
@@ -96,6 +125,24 @@ data class Quiz2(
     override fun initViewState() {
         userAnswerDate = mutableSetOf()
     }
+
+    override fun validateQuiz(): Pair<String, Boolean> {
+        if(question == ""){
+            return Pair("Question cannot be empty", false)
+        }
+        if(answerDate.isEmpty()){
+            return Pair("Answer date cannot be empty", false)
+        }
+        return Pair("", true)
+    }
+
+    override fun changeToJson(): Json {
+        TODO("Not yet implemented")
+    }
+
+    override fun load(data: String) {
+        TODO("Not yet implemented")
+    }
 }
 
 val sampleQuiz2 = Quiz2(
@@ -125,6 +172,24 @@ data class Quiz3(
             }.shuffled()).toMutableList()
         }
     }
+
+    override fun validateQuiz(): Pair<String, Boolean> {
+        if(question == ""){
+            return Pair("Question cannot be empty", false)
+        }
+        if(answers.contains("")){
+            return Pair("Answer cannot be empty", false)
+        }
+        return Pair("", true)
+    }
+
+    override fun changeToJson(): Json {
+        TODO("Not yet implemented")
+    }
+
+    override fun load(data: String) {
+        TODO("Not yet implemented")
+    }
 }
 
 val sampleQuiz3 = Quiz3(
@@ -148,6 +213,27 @@ data class Quiz4(
     }
     override fun initViewState() {
         userConnectionIndex = MutableList(answers.size) { null }
+    }
+
+    override fun validateQuiz(): Pair<String, Boolean> {
+        if(question == ""){
+            return Pair("Question cannot be empty", false)
+        }
+        if(answers.contains("") || connectionAnswers.contains("")){
+            return Pair("Answer cannot be empty", false)
+        }
+        if(connectionAnswerIndex.none { it != null }){
+            return Pair("At least one connection must be made", false)
+        }
+        return Pair("", true)
+    }
+
+    override fun changeToJson(): Json {
+        TODO("Not yet implemented")
+    }
+
+    override fun load(data: String) {
+        TODO("Not yet implemented")
     }
 }
 
