@@ -3,6 +3,7 @@ package com.asu1.quizzer.screens
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,8 +51,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -131,11 +135,6 @@ fun DesignScoreCardScreen(
                 Text(
                     text = scoreCard.title,
                     style = MaterialTheme.typography.headlineMedium,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = scoreCard.creator,
-                    style = MaterialTheme.typography.labelSmall,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 ScoreCardComposable(
@@ -309,15 +308,23 @@ fun ScoreCardComposable(
         modifier = Modifier
             .size(width = width, height = height)
             .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(8.dp),
+                width = 3.dp,
+                color = scoreCard.colorScheme.outline,
+                shape = RoundedCornerShape(16.dp)
             )
-            .then(scoreCard.background.asBackgroundModifierForScoreCard(
-                shaderOption = scoreCard.shaderType,
-                time = time
-            ))
     ) {
+        Image(
+            painter = ColorPainter(Color.White),
+            contentDescription = "Background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
+                .then(scoreCard.background.asBackgroundModifierForScoreCard(
+                    shaderOption = scoreCard.shaderType,
+                    time = time
+                ))
+
+        )
         Text(
             text = scoreCard.score.toString(),
             style = TextStyle(
@@ -326,6 +333,7 @@ fun ScoreCardComposable(
                 color = scoreCard.colorScheme.error,
             ),
             modifier = Modifier
+                .zIndex(2f)
                 .offset(x = offsetX - xSize/2, y = offsetY - ySize/2)
                 .onGloballyPositioned { coordinates ->
                     xSize = density.run { coordinates.size.width.toDp() }
@@ -344,8 +352,10 @@ fun ScoreCardComposable(
                 }
         )
 
+        // Dot for resizing text
         Box(
             modifier = Modifier
+                .zIndex(1f)
                 .offset(
                     x = offsetX + xSize/2 - dotSize / 2,
                     y = offsetY + ySize/2 - dotSize / 2

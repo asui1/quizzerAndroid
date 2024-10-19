@@ -3,18 +3,31 @@ package com.asu1.quizzer.model
 import androidx.compose.material3.ColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.basicShader
-import com.asu1.quizzer.util.customShader
+import com.asu1.quizzer.util.leftBottomShader
+import com.asu1.quizzer.util.bottomShader
+import com.asu1.quizzer.util.centerShader
+import com.asu1.quizzer.util.horizontalWaveShader
+import com.asu1.quizzer.util.repeatShader
+import com.asu1.quizzer.util.verticalWaveShader
 
 enum class ShaderType(val shaderName: String) {
     Brush1("No Shader"),
-    Brush2("Forth and Back"),
-    Brush3("Wave");
+    Brush2("Left Bottom"),
+    Brush3("Bottom"),
+    Brush4("Center"),
+    Brush5("Repeat"),
+    Brush6("Vertical Wave"),
+    Brush7("Horizontal Wave");
 
     fun getShader(): String {
         return when(this){
             Brush1 -> basicShader
-            Brush2 -> customShader
-            Brush3 -> basicShader
+            Brush2 -> leftBottomShader
+            Brush3 -> bottomShader
+            Brush4 -> centerShader
+            Brush5 -> repeatShader
+            Brush6 -> verticalWaveShader
+            Brush7 -> horizontalWaveShader
         }
     }
 }

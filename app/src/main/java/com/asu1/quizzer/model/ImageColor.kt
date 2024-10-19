@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asImageBitmap
@@ -76,7 +77,7 @@ data class ImageColor(
                     )
                     Modifier.graphicsLayer {
                         shader.setFloatUniform("resolution", size.width, size.height)
-                        if(shaderOption == ShaderType.Brush2) {
+                        if(shaderOption != ShaderType.Brush1) {
                             shader.setFloatUniform("time", time)
                         }
                         shader.setColorUniform(
