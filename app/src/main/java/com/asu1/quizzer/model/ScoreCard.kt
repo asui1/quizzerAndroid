@@ -1,23 +1,26 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.material3.ColorScheme
+import com.asu1.quizzer.data.ShaderTypeSerializer
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.basicShader
-import com.asu1.quizzer.util.leftBottomShader
 import com.asu1.quizzer.util.bottomShader
 import com.asu1.quizzer.util.centerShader
 import com.asu1.quizzer.util.horizontalWaveShader
+import com.asu1.quizzer.util.leftBottomShader
 import com.asu1.quizzer.util.repeatShader
 import com.asu1.quizzer.util.verticalWaveShader
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
-enum class ShaderType(val shaderName: String) {
-    Brush1("No Shader"),
-    Brush2("Left Bottom"),
-    Brush3("Bottom"),
-    Brush4("Center"),
-    Brush5("Repeat"),
-    Brush6("Vertical Wave"),
-    Brush7("Horizontal Wave");
+enum class ShaderType(val shaderName: String, val index: Int) {
+    Brush1("No Shader", 0),
+    Brush2("Left Bottom", 1),
+    Brush3("Bottom", 2),
+    Brush4("Center", 3),
+    Brush5("Repeat", 4),
+    Brush6("Vertical Wave", 5),
+    Brush7("Horizontal Wave", 6);
 
     fun getShader(): String {
         return when(this){
@@ -32,6 +35,7 @@ enum class ShaderType(val shaderName: String) {
     }
 }
 
+@Serializable
 data class ScoreCard (
     var title: String = "",
     var creator: String = "",
@@ -41,11 +45,24 @@ data class ScoreCard (
     var xRatio: Float = 0.5f,
     var yRatio: Float = 0.5f,
     var imageStateval : Int = 0,
-    var colorScheme: ColorScheme = LightColorScheme,
-    var shaderType: ShaderType = ShaderType.Brush1,
+    @Contextual var colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ShaderTypeSerializer::class) var shaderType: ShaderType = ShaderType.Brush1,
 ){
-    fun toJson(): String {
-        TODO("Not yet Implemented")
-    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ScoreCard) return false
 
+        if (title != other.title) return false
+        if (creator != other.creator) return false
+        if (score != other.score) return false
+        if (background != other.background) return false
+        if (size != other.size) return false
+        if (xRatio != other.xRatio) return false
+        if (yRatio != other.yRatio) return false
+        if (imageStateval != other.imageStateval) return false
+        if (colorScheme != other.colorScheme) return false
+        if (shaderType != other.shaderType) return false
+
+        return true
+    }
 }

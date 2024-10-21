@@ -342,9 +342,15 @@ class QuizLayoutViewModel : ViewModel() {
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
     }
 
-    fun changeToJson(): String {
-        TODO("Change QuizLayoutViewModel to JSON")
-        return ""
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is QuizLayoutViewModel) return false
+
+        if (_quizTheme.value != other._quizTheme.value) return false
+        if (_quizData.value != other._quizData.value) return false
+        if (_quizzes.value != other._quizzes.value) return false
+
+        return true
     }
 }
 

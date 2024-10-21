@@ -28,10 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.Quiz4
-import com.asu1.quizzer.model.sampleQuiz3
 import com.asu1.quizzer.model.sampleQuiz4
 import com.asu1.quizzer.viewModels.QuizTheme
-import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable

@@ -9,8 +9,8 @@ import com.asu1.quizzer.data.Quiz3Body
 import com.asu1.quizzer.data.Quiz3Json
 import com.asu1.quizzer.data.Quiz4Body
 import com.asu1.quizzer.data.Quiz4Json
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.asu1.quizzer.data.QuizJson
+import com.asu1.quizzer.data.quizzerJson
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Base64
@@ -38,7 +38,7 @@ abstract class Quiz(
 
     abstract fun initViewState()
     abstract fun validateQuiz() : Pair<String, Boolean>
-    abstract fun changeToJson() : String
+    abstract fun changeToJson() : QuizJson
     abstract fun load(data: String)
 }
 
@@ -93,7 +93,7 @@ data class Quiz1(
         return Pair("", true)
     }
 
-    override fun changeToJson(): String {
+    override fun changeToJson(): QuizJson {
         val quiz1Json = Quiz1Json(
             layoutType = layoutType.value,
             body = Quiz1Body(
@@ -109,11 +109,11 @@ data class Quiz1(
                 youtubeStartTime = youtubeStartTime.takeIf { it != 0 }
             )
         )
-        return Json.encodeToString(quiz1Json)
+        return quiz1Json
     }
 
     override fun load(data: String) {
-        val quiz1Json = Json.decodeFromString<Quiz1Json>(data)
+        val quiz1Json = quizzerJson.decodeFromString<Quiz1Json>(data)
         val body = quiz1Json.body
 
         bodyType = BodyType.values().first { it.value == body.bodyType }
@@ -152,7 +152,6 @@ data class Quiz1(
         if (bodyText != other.bodyText) return false
         if (youtubeId != other.youtubeId) return false
         if (youtubeStartTime != other.youtubeStartTime) return false
-        if (shuffledAnswers != other.shuffledAnswers) return false
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
@@ -196,7 +195,7 @@ data class Quiz2(
         return Pair("", true)
     }
 
-    override fun changeToJson(): String {
+    override fun changeToJson(): QuizJson {
         val quiz2Json = Quiz2Json(
             layoutType = layoutType.value,
             body = Quiz2Body(
@@ -209,11 +208,11 @@ data class Quiz2(
                 question = question
             )
         )
-        return Json.encodeToString(quiz2Json)
+        return quiz2Json
     }
 
     override fun load(data: String) {
-        val quiz2Json = Json.decodeFromString<Quiz2Json>(data)
+        val quiz2Json = quizzerJson.decodeFromString<Quiz2Json>(data)
         val body = quiz2Json.body
 
         centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1])
@@ -279,7 +278,7 @@ data class Quiz3(
         return Pair("", true)
     }
 
-    override fun changeToJson(): String {
+    override fun changeToJson(): QuizJson {
         val quiz3Json = Quiz3Json(
             layoutType = layoutType.value,
             body = Quiz3Body(
@@ -290,10 +289,12 @@ data class Quiz3(
                 question = question
             )
         )
-        return Json.encodeToString(quiz3Json)    }
+        return quiz3Json
+    }
+
 
     override fun load(data: String) {
-        val quiz3Json = Json.decodeFromString<Quiz3Json>(data)
+        val quiz3Json = quizzerJson.decodeFromString<Quiz3Json>(data)
         val body = quiz3Json.body
 
         answers = body.answers.toMutableList()
@@ -349,7 +350,7 @@ data class Quiz4(
         return Pair("", true)
     }
 
-    override fun changeToJson(): String {
+    override fun changeToJson(): QuizJson {
         val quiz4Json = Quiz4Json(
             layoutType = layoutType.value,
             body = Quiz4Body(
@@ -362,11 +363,11 @@ data class Quiz4(
                 question = question
             )
         )
-        return Json.encodeToString(quiz4Json)
+        return quiz4Json
     }
 
     override fun load(data: String) {
-        val quiz4Json = Json.decodeFromString<Quiz4Json>(data)
+        val quiz4Json = quizzerJson.decodeFromString<Quiz4Json>(data)
         val body = quiz4Json.body
 
         connectionAnswers = body.connectionAnswers.toMutableList()
