@@ -4,7 +4,6 @@ First aim to make app launchable without some features that are not essential.
 - Implement Save and Upload QuizLayout.
 1. Validate Check for empty fields.
 -> For each quiz class, they need fun validationCheck() to check if they are valid. Also, implement fun check() to get whether they are right or wrong.
-
 2. Change Item format to json format. -> Need to match format with flutter. Make dummy data for some items.
 3. Upload to server.
 4. Get response from server.
@@ -23,6 +22,8 @@ Generate Random ColorScheme should have a value from 0 to 5 to show how strong r
 
 ----------------
 TODO For servers.
+- Change Data Models.
+Change Previous QuizLayout to QuizLayout + QuizTheme + ScoreCard.
 
 - Register Nickname Dup check.
 Current code when checking duplicate nicknames, it gets partial match. ABC and AB are considered same. This should be fixed.

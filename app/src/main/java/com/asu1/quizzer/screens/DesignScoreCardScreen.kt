@@ -157,8 +157,7 @@ fun DesignScoreCardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = {
-                        /*TODO*/
-                        // Save Quiz and navigate back to home when upload successful
+                        quizLayoutViewModel.tryUpload(navController, scoreCard)
                     },
                     modifier = Modifier
                         .size(width = screenWidth * 0.6f, height = 48.dp)

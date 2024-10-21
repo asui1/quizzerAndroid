@@ -59,11 +59,13 @@ fun QuizLayoutSetTextStyle(
             textStyle = bodyStyle,
             updateTextStyle = updateStyle,
             targetSelector = 1,
+            colorScheme = colorScheme,
         )
         TextStyleRowOpener(
             textStyle = answerStyle,
             updateTextStyle = updateStyle,
             targetSelector = 2,
+            colorScheme = colorScheme,
         )
     }
 }

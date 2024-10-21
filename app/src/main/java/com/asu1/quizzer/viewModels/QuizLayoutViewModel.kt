@@ -6,9 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.asu1.quizzer.data.ColorSchemeSerializer
+import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.screens.quizlayout.borders
@@ -28,13 +31,15 @@ import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class QuizTheme(
     var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
     var questionTextStyle: List<Int> = listOf(0, 0, 1, 0),
     var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
     var answerTextStyle: List<Int> = listOf(0, 0, 0, 2),
-    var colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) val colorScheme: ColorScheme = LightColorScheme,
 )
 
 data class QuizData(
@@ -111,17 +116,20 @@ class QuizLayoutViewModel : ViewModel() {
         _step.value = LayoutSteps.POLICY
     }
 
-    fun tryUpload(navController: NavController, scoreCardViewModel: ScoreCardViewModel) {
+    fun tryUpload(navController: NavController, scoreCard: ScoreCard) {
         if(!validateQuizLayout()){
+            navController.popBackStack()
             return
         }
-        uploadQuizLayout(scoreCardViewModel)
+        uploadQuizLayout(scoreCard)
     }
 
-    fun uploadQuizLayout(scoreCardViewModel: ScoreCardViewModel) {
+    fun uploadQuizLayout(scoreCard: ScoreCard) {
+        val jsoned = toJson(scoreCard)
+        Logger().debug(jsoned.toString())
 
 
-        TODO ("Upload Quiz Layout to server")
+
     }
 
     fun validateQuizLayout(): Boolean {
