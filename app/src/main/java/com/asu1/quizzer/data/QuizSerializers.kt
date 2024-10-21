@@ -5,6 +5,8 @@ import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -19,18 +21,20 @@ val quizSerializersModule = SerializersModule {
         subclass(Quiz4Json::class)
     }
 }
-val quizzerJson = Json {
+val json = Json {
     serializersModule = quizSerializersModule
     ignoreUnknownKeys = true
 }
 
 @Serializable
-abstract class QuizJson {
+@Polymorphic
+sealed class QuizJson {
     abstract val layoutType: Int
     abstract fun load() : Quiz
 }
 
 @Serializable
+@SerialName("Quiz1Json")
 data class Quiz1Json(
     override val layoutType: Int,
     val body: Quiz1Body
@@ -58,6 +62,7 @@ data class Quiz1Body(
 )
 
 @Serializable
+@SerialName("Quiz2Json")
 data class Quiz2Json(
     override val layoutType: Int,
     val body: Quiz2Body
@@ -81,6 +86,7 @@ data class Quiz2Body(
 )
 
 @Serializable
+@SerialName("Quiz3Json")
 data class Quiz3Json(
     override val layoutType: Int,
     val body: Quiz3Body
@@ -102,6 +108,7 @@ data class Quiz3Body(
 )
 
 @Serializable
+@SerialName("Quiz4Json")
 data class Quiz4Json(
     override val layoutType: Int,
     val body: Quiz4Body

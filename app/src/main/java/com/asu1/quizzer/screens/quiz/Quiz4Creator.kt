@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,8 @@ import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 @Composable
 fun Quiz4Creator(
@@ -116,6 +119,7 @@ fun Quiz4Creator(
                             detectDragGestures(
                                 onDragStart = {
                                     startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
+
                                     endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
                                     quiz.updateConnection(index, null)
                                     initOffset = null
@@ -123,8 +127,7 @@ fun Quiz4Creator(
                                 },
                                 onDragEnd = {
                                     isDragging = false
-                                    //TODO : 가장 가까운 점을 찾아서 quizState에 업데이트.
-                                    val connectionIndex = quiz.updateConnection(index, endOffset)
+                                    quiz.updateConnection(index, endOffset)
                                     startOffset = Offset(0f, 0f)
                                     endOffset = Offset(0f, 0f)
                                 },
@@ -197,7 +200,6 @@ fun Quiz4Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
-                        Logger().debug(boxPosition.toString())
                         focusRequesters = focusRequesters.toMutableList().also {
                             it.add(FocusRequester())
                             it.add(FocusRequester())

@@ -79,10 +79,10 @@ fun PreviewGetTextStyle(){
 
 fun getColor(colorScheme: ColorScheme, color: Int): List<Color?> {
     return when (color) {
-        0 -> listOf(colorScheme.background, colorScheme.primary)
-        1 -> listOf(colorScheme.background, colorScheme.secondary)
-        2 -> listOf(colorScheme.background, colorScheme.tertiary)
-        3 -> listOf(colorScheme.background, colorScheme.onSurface)
+        0 -> listOf(null, colorScheme.primary)
+        1 -> listOf(null, colorScheme.secondary)
+        2 -> listOf(null, colorScheme.tertiary)
+        3 -> listOf(null, colorScheme.onSurface)
         4 -> listOf(colorScheme.primary, colorScheme.onPrimary)
         5 -> listOf(colorScheme.secondary, colorScheme.onSecondary)
         6 -> listOf(colorScheme.tertiary, colorScheme.onTertiary)

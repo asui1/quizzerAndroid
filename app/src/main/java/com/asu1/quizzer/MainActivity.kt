@@ -178,7 +178,8 @@ class MainActivity : ComponentActivity() {
                                     onMoveToScoringScreen = {
                                         scoreCardViewModel.updateScoreCard(quizLayoutViewModel.quizData.value, quizLayoutViewModel.quizTheme.value.colorScheme)
                                         NavMultiClickPreventer.navigate(navController, Route.DesignScoreCard)
-                                    }
+                                    },
+                                    scoreCardViewModel = scoreCardViewModel
                                 )
                             }
                             composable<Route.QuizCaller> (

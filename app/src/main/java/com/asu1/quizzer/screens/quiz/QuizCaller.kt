@@ -14,6 +14,7 @@ import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.QuizType
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel

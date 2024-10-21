@@ -10,7 +10,7 @@ import com.asu1.quizzer.data.Quiz3Json
 import com.asu1.quizzer.data.Quiz4Body
 import com.asu1.quizzer.data.Quiz4Json
 import com.asu1.quizzer.data.QuizJson
-import com.asu1.quizzer.data.quizzerJson
+import com.asu1.quizzer.data.json
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Base64
@@ -113,7 +113,7 @@ data class Quiz1(
     }
 
     override fun load(data: String) {
-        val quiz1Json = quizzerJson.decodeFromString<Quiz1Json>(data)
+        val quiz1Json = json.decodeFromString<Quiz1Json>(data)
         val body = quiz1Json.body
 
         bodyType = BodyType.values().first { it.value == body.bodyType }
@@ -212,7 +212,7 @@ data class Quiz2(
     }
 
     override fun load(data: String) {
-        val quiz2Json = quizzerJson.decodeFromString<Quiz2Json>(data)
+        val quiz2Json = json.decodeFromString<Quiz2Json>(data)
         val body = quiz2Json.body
 
         centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1])
@@ -294,7 +294,7 @@ data class Quiz3(
 
 
     override fun load(data: String) {
-        val quiz3Json = quizzerJson.decodeFromString<Quiz3Json>(data)
+        val quiz3Json = json.decodeFromString<Quiz3Json>(data)
         val body = quiz3Json.body
 
         answers = body.answers.toMutableList()
@@ -367,7 +367,7 @@ data class Quiz4(
     }
 
     override fun load(data: String) {
-        val quiz4Json = quizzerJson.decodeFromString<Quiz4Json>(data)
+        val quiz4Json = json.decodeFromString<Quiz4Json>(data)
         val body = quiz4Json.body
 
         connectionAnswers = body.connectionAnswers.toMutableList()
@@ -389,6 +389,15 @@ data class Quiz4(
         if (layoutType != other.layoutType) return false
 
         return true
+    }
+    fun updateOffset(index: Int, offset: Offset, isStart: Boolean){
+        dotPairOffsets = dotPairOffsets.toMutableList().apply {
+            set(index, if(isStart){
+                Pair(offset, get(index).second)
+            }else{
+                Pair(get(index).first, offset)
+            })
+        }
     }
 }
 

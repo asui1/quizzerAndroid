@@ -33,7 +33,9 @@ fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
         titleImage = quizData.value.image ?: byteArrayOf(),
         uuid = quizData.value.uuid!!,
         tags = quizData.value.tags,
-        quizzes = quizzes.value?.map { it.changeToJson() } ?: emptyList()
+        quizzes = quizzes.value?.map {
+            it.changeToJson()
+        } ?: emptyList()
     )
     return quizDataSerializer
 }

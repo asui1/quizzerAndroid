@@ -1,18 +1,33 @@
 package com.asu1.quizzer.viewModels.quizModels
 
 import androidx.compose.ui.geometry.Offset
+import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     private val _quiz4State = MutableStateFlow(Quiz4())
     val quiz4State: StateFlow<Quiz4> = _quiz4State.asStateFlow()
 
+    private val stateUpdateChannel = Channel<(Quiz4) -> Quiz4>(Channel.UNLIMITED)
+
     init {
         resetQuiz()
+        processStateUpdates()
+    }
+
+    private fun processStateUpdates() {
+        viewModelScope.launch {
+            for (update in stateUpdateChannel) {
+                _quiz4State.value = update(_quiz4State.value)
+            }
+        }
     }
 
     override fun viewerInit() {
@@ -24,6 +39,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     }
 
     override fun resetQuiz() {
+        Logger().debug("Resetting quiz")
         _quiz4State.value = Quiz4()
     }
 
@@ -128,13 +144,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         if(index >= _quiz4State.value.answers.size){
             return
         }
-        _quiz4State.value = _quiz4State.value.copy(dotPairOffsets = _quiz4State.value.dotPairOffsets.toMutableList().apply {
-            if(isLeft){
-                set(index, Pair(offset, get(index).second))
-            }else{
-                set(index, Pair(get(index).first, offset))
-            }
-        })
+        _quiz4State.value.updateOffset(index, offset, isLeft)
     }
 
     fun updateConnection(curIndex: Int, offset: Offset?){

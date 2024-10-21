@@ -1,7 +1,7 @@
 package com.asu1.quizzer
 
 import androidx.compose.ui.graphics.Color
-import com.asu1.quizzer.data.quizzerJson
+import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz1
@@ -25,7 +25,7 @@ class SaveLoadTests {
 
     @Test
     fun quiz1SaveTest(){
-        val json = quizzerJson.encodeToString(quiz1.changeToJson())
+        val json = json.encodeToString(quiz1.changeToJson())
         val quiz12 = Quiz1()
         quiz12.load(json)
         println(quiz1)
@@ -36,7 +36,7 @@ class SaveLoadTests {
 
     @Test
     fun quiz2SaveTest(){
-        val json = quizzerJson.encodeToString(quiz2.changeToJson())
+        val json = json.encodeToString(quiz2.changeToJson())
         val quiz22 = Quiz2()
         quiz22.load(json)
         assertEquals(quiz2, quiz22)
@@ -44,7 +44,7 @@ class SaveLoadTests {
 
     @Test
     fun quiz3SaveTest(){
-        val json = quizzerJson.encodeToString(quiz3.changeToJson())
+        val json = json.encodeToString(quiz3.changeToJson())
         val quiz32 = Quiz3()
         quiz32.load(json)
         assertEquals(quiz3, quiz32)
@@ -53,7 +53,7 @@ class SaveLoadTests {
     @Test
     fun quiz4SaveTest(){
 
-        val json = quizzerJson.encodeToString(quiz4.changeToJson())
+        val json = json.encodeToString(quiz4.changeToJson())
         val quiz42 = Quiz4()
         quiz42.load(json)
         assertEquals(quiz4, quiz42)

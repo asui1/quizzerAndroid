@@ -107,8 +107,9 @@ fun TextStyleRowOpener(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth().
+                    background(colorScheme.background),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     GetTextStyle(
                         text = text,

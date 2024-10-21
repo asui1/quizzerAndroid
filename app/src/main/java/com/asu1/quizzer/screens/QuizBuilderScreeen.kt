@@ -25,6 +25,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -47,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,6 +65,7 @@ import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.ScoreCardViewModel
 
 val bodyHeight = 600.dp
 
@@ -69,6 +73,7 @@ val bodyHeight = 600.dp
 fun QuizBuilderScreen(navController: NavController,
                       quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
                       onMoveToScoringScreen: () -> Unit = {},
+                      scoreCardViewModel: ScoreCardViewModel = viewModel(),
 ) {
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
@@ -80,16 +85,18 @@ fun QuizBuilderScreen(navController: NavController,
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val initialIndex by quizLayoutViewModel.initIndex.observeAsState(0)
+    val context = LocalContext.current
 
     LaunchedEffect(snapLayoutInfoProvider) {
         snapshotFlow { snapLayoutInfoProvider.firstVisibleItemIndex }
             .collect { index ->
                 curIndex = index
+                quizLayoutViewModel.updateInitIndex(curIndex)
                 Logger().debug("Current Index : $index")
             }
     }
 
-    LaunchedEffect(initialIndex) {
+    LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
     }
 
@@ -151,12 +158,28 @@ fun QuizBuilderScreen(navController: NavController,
 
         Scaffold(
             topBar = {
-                RowWithAppIconAndName(
-                    showBackButton = true,
-                    onBackPressed = {
-                        navController.popBackStack()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    RowWithAppIconAndName(
+                        showBackButton = true,
+                        onBackPressed = {
+                            navController.popBackStack()
+                        }
+                    )
+                    IconButton(
+                        onClick = {
+                            TODO("Implement Load Local.")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FileDownload,
+                            contentDescription = "Load Local Save"
+                        )
                     }
-                )
+                }
             },
             bottomBar = {
                 QuizBuilderBottomBar(
@@ -167,6 +190,9 @@ fun QuizBuilderScreen(navController: NavController,
                     },
                     onProceed = {
                         onMoveToScoringScreen()
+                    },
+                    onLocalSave = {
+                        quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
                     }
                 )
             },
@@ -319,6 +345,7 @@ fun QuizEditIconsRow(
 fun QuizBuilderBottomBar(
     onPreview: () -> Unit = {},
     onProceed: () -> Unit = {},
+    onLocalSave: () -> Unit = {},
 ){
     Row(
         modifier = Modifier
@@ -327,6 +354,16 @@ fun QuizBuilderBottomBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ){
+        IconButton(
+            onClick = {
+                onLocalSave()
+            }
+        ){
+            Icon(
+                imageVector = Icons.Default.Save,
+                contentDescription = "Save Local."
+            )
+        }
         TextButton(
             onClick = {
                 onPreview()

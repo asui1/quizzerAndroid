@@ -1,5 +1,6 @@
 package com.asu1.quizzer.viewModels
 
+import android.content.Context
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
@@ -32,6 +33,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
 
 @Serializable
 data class QuizTheme(
@@ -127,9 +131,15 @@ class QuizLayoutViewModel : ViewModel() {
     fun uploadQuizLayout(scoreCard: ScoreCard) {
         val jsoned = toJson(scoreCard)
         Logger().debug(jsoned.toString())
+    }
 
-
-
+    fun saveLocal(context: Context, scoreCard: ScoreCard) {
+        val jsoned = Json.encodeToString(toJson(scoreCard))
+        val fileName = "${quizData.value.uuid}.json"
+        val file = File(context.filesDir, fileName)
+        file.writeText(jsoned)
+        Logger().debug("Saved to ${file.absolutePath}")
+        Logger().debug("Saved JSON: $jsoned")
     }
 
     fun validateQuizLayout(): Boolean {
@@ -156,7 +166,7 @@ class QuizLayoutViewModel : ViewModel() {
         TODO ("Save Quiz Layout as JSON")
     }
 
-    private fun updateInitIndex(index: Int) {
+    fun updateInitIndex(index: Int) {
         if(index > quizzes.value!!.size){
             _initIndex.value = quizzes.value!!.size
             return
