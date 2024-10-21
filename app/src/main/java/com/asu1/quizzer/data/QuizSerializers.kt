@@ -1,12 +1,18 @@
-package com.asu1.quizzer.model
+package com.asu1.quizzer.data
 
 import kotlinx.serialization.Serializable
 
 @Serializable
+abstract class QuizJson {
+    abstract val layoutType: Int
+}
+
+@Serializable
 data class Quiz1Json(
-    val layoutType: Int,
+    override val layoutType: Int,
     val body: Quiz1Body
-)
+) : QuizJson()
+
 
 @Serializable
 data class Quiz1Body(
@@ -24,9 +30,9 @@ data class Quiz1Body(
 
 @Serializable
 data class Quiz2Json(
-    val layoutType: Int,
+    override val layoutType: Int,
     val body: Quiz2Body
-)
+) : QuizJson()
 
 @Serializable
 data class Quiz2Body(
@@ -41,9 +47,9 @@ data class Quiz2Body(
 
 @Serializable
 data class Quiz3Json(
-    val layoutType: Int,
+    override val layoutType: Int,
     val body: Quiz3Body
-)
+) : QuizJson()
 
 @Serializable
 data class Quiz3Body(
@@ -56,9 +62,9 @@ data class Quiz3Body(
 
 @Serializable
 data class Quiz4Json(
-    val layoutType: Int,
+    override val layoutType: Int,
     val body: Quiz4Body
-)
+) : QuizJson()
 
 @Serializable
 data class Quiz4Body(

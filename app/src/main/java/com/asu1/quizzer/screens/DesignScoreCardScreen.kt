@@ -75,7 +75,6 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.ui.theme.LightPrimary
 import com.asu1.quizzer.ui.theme.LightSecondary
 import com.asu1.quizzer.ui.theme.ongle_yunue
@@ -446,7 +445,7 @@ fun ModalSheetForColorSelectionPreview() {
         colorScheme = MaterialTheme.colorScheme,
         curSelection = ImageColor(
             color = MaterialTheme.colorScheme.primary,
-            image = ByteArray(0),
+            imageData = ByteArray(0),
             color2 = MaterialTheme.colorScheme.secondary,
             state = ImageColorState.COLOR2
         )

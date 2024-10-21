@@ -1,9 +1,7 @@
 package com.asu1.quizzer.viewModels
 
-import android.app.Application
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,10 +9,6 @@ import androidx.navigation.NavController
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.screens.quizlayout.borders
@@ -34,7 +28,6 @@ import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDate
 
 data class QuizTheme(
     var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
@@ -123,10 +116,10 @@ class QuizLayoutViewModel : ViewModel() {
             return
         }
         uploadQuizLayout(scoreCardViewModel)
-        TODO ("Upload Quiz Layout to server")
     }
 
     fun uploadQuizLayout(scoreCardViewModel: ScoreCardViewModel) {
+
 
         TODO ("Upload Quiz Layout to server")
     }
@@ -155,7 +148,7 @@ class QuizLayoutViewModel : ViewModel() {
         TODO ("Save Quiz Layout as JSON")
     }
 
-    fun updateInitIndex(index: Int) {
+    private fun updateInitIndex(index: Int) {
         if(index > quizzes.value!!.size){
             _initIndex.value = quizzes.value!!.size
             return
@@ -240,7 +233,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun setColorScheme(colorScheme: ColorScheme) {
-        _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme, backgroundImage = ImageColor(colorScheme.surface, _quizTheme.value.backgroundImage.image, _quizTheme.value.backgroundImage.color2, _quizTheme.value.backgroundImage.state))
+        _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme, backgroundImage = ImageColor(colorScheme.surface, _quizTheme.value.backgroundImage.imageData, _quizTheme.value.backgroundImage.color2, _quizTheme.value.backgroundImage.state))
     }
 
     fun updateTextStyle(targetSelector: Int, indexSelector: Int, isIncrease: Boolean) {
@@ -347,6 +340,11 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun updateColorScheme(colorScheme: ColorScheme) {
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
+    }
+
+    fun changeToJson(): String {
+        TODO("Change QuizLayoutViewModel to JSON")
+        return ""
     }
 }
 

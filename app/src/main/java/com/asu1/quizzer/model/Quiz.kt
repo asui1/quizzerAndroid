@@ -1,8 +1,14 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.ui.geometry.Offset
-import com.google.gson.Gson
-import kotlinx.serialization.Serializable
+import com.asu1.quizzer.data.Quiz1Body
+import com.asu1.quizzer.data.Quiz1Json
+import com.asu1.quizzer.data.Quiz2Body
+import com.asu1.quizzer.data.Quiz2Json
+import com.asu1.quizzer.data.Quiz3Body
+import com.asu1.quizzer.data.Quiz3Json
+import com.asu1.quizzer.data.Quiz4Body
+import com.asu1.quizzer.data.Quiz4Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
@@ -107,9 +113,21 @@ data class Quiz1(
     }
 
     override fun load(data: String) {
-        TODO("Not yet implemented")
-    }
+        val quiz1Json = Json.decodeFromString<Quiz1Json>(data)
+        val body = quiz1Json.body
 
+        bodyType = BodyType.values().first { it.value == body.bodyType }
+        image = body.image?.let { Base64.getDecoder().decode(it) }
+        bodyText = body.bodyText
+        shuffleAnswers = body.shuffleAnswers
+        maxAnswerSelection = body.maxAnswerSelection
+        answers = body.answers.toMutableList()
+        ans = body.ans.toMutableList()
+        question = body.question
+        youtubeId = body.youtubeId ?: ""
+        youtubeStartTime = body.youtubeStartTime ?: 0
+        initViewState()
+    }
     fun validateBody() {
         if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
             bodyType = BodyType.NONE
@@ -117,6 +135,29 @@ data class Quiz1(
         if(bodyType == BodyType.IMAGE && image == null){
             bodyType = BodyType.NONE
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Quiz1) return false
+
+        if (bodyType != other.bodyType) return false
+        if (image != null) {
+            if (other.image == null) return false
+            if (!image.contentEquals(other.image)) return false
+        } else if (other.image != null) return false
+        if (ans != other.ans) return false
+        if (shuffleAnswers != other.shuffleAnswers) return false
+        if (maxAnswerSelection != other.maxAnswerSelection) return false
+        if (bodyText != other.bodyText) return false
+        if (youtubeId != other.youtubeId) return false
+        if (youtubeStartTime != other.youtubeStartTime) return false
+        if (shuffledAnswers != other.shuffledAnswers) return false
+        if (answers != other.answers) return false
+        if (question != other.question) return false
+        if (layoutType != other.layoutType) return false
+
+        return true
     }
 }
 
@@ -172,7 +213,31 @@ data class Quiz2(
     }
 
     override fun load(data: String) {
-        TODO("Not yet implemented")
+        val quiz2Json = Json.decodeFromString<Quiz2Json>(data)
+        val body = quiz2Json.body
+
+        centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1])
+        yearRange = body.yearRange
+        answerDate = body.answerDate.map { LocalDate.of(it[0], it[1], it[2]) }.toMutableSet()
+        maxAnswerSelection = body.maxAnswerSelection
+        answers = body.answers.toMutableList()
+        question = body.question
+        initViewState()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Quiz2) return false
+
+        if (maxAnswerSelection != other.maxAnswerSelection) return false
+        if (centerDate != other.centerDate) return false
+        if (yearRange != other.yearRange) return false
+        if (answerDate != other.answerDate) return false
+        if (answers != other.answers) return false
+        if (question != other.question) return false
+        if (layoutType != other.layoutType) return false
+
+        return true
     }
 }
 
@@ -228,7 +293,23 @@ data class Quiz3(
         return Json.encodeToString(quiz3Json)    }
 
     override fun load(data: String) {
-        TODO("Not yet implemented")
+        val quiz3Json = Json.decodeFromString<Quiz3Json>(data)
+        val body = quiz3Json.body
+
+        answers = body.answers.toMutableList()
+        question = body.question
+        initViewState()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Quiz3) return false
+
+        if (answers != other.answers) return false
+        if (question != other.question) return false
+        if (layoutType != other.layoutType) return false
+
+        return true
     }
 }
 
@@ -285,7 +366,28 @@ data class Quiz4(
     }
 
     override fun load(data: String) {
-        TODO("Not yet implemented")
+        val quiz4Json = Json.decodeFromString<Quiz4Json>(data)
+        val body = quiz4Json.body
+
+        connectionAnswers = body.connectionAnswers.toMutableList()
+        connectionAnswerIndex = body.connectionAnswerIndex.toMutableList()
+        answers = body.answers.toMutableList()
+        question = body.question
+
+        initViewState()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Quiz4) return false
+
+        if (connectionAnswers != other.connectionAnswers) return false
+        if (connectionAnswerIndex != other.connectionAnswerIndex) return false
+        if (answers != other.answers) return false
+        if (question != other.question) return false
+        if (layoutType != other.layoutType) return false
+
+        return true
     }
 }
 

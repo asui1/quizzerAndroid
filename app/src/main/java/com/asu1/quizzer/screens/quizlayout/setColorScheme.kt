@@ -91,7 +91,7 @@ fun QuizLayoutSetColorScheme(
     quizImage: ByteArray? = null,
     onColorUpdate: (String, Color) -> Unit = {_, _ -> },
     onColorSchemeUpdate: (ColorScheme) -> Unit = { },
-    backgroundImage: ImageColor = ImageColor( color = Color.White, image = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
+    backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundImageUpdate: (ImageColor) -> Unit = { },
     proceed: () -> Unit) {
     val colorStrings = listOf(
@@ -254,7 +254,7 @@ fun BackgroundRow(
                             onImageSelected(
                                 ImageColor(
                                     color = background.color,
-                                    image = background.image,
+                                    imageData = background.imageData,
                                     color2 = background.color2,
                                     state = ImageColorState.COLOR
                                 )
@@ -266,7 +266,7 @@ fun BackgroundRow(
                             onImageSelected(
                                 ImageColor(
                                     color = background.color,
-                                    image = background.image,
+                                    imageData = background.imageData,
                                     color2 = background.color2,
                                     state = ImageColorState.COLOR
                                 )
@@ -283,7 +283,7 @@ fun BackgroundRow(
                             onImageSelected(
                                 ImageColor(
                                     color = background.color,
-                                    image = background.image,
+                                    imageData = background.imageData,
                                     color2 = background.color2,
                                     state = ImageColorState.IMAGE
                                 )
@@ -301,7 +301,7 @@ fun BackgroundRow(
                                     onImageSelected(
                                         ImageColor(
                                             color = color,
-                                            image = selectedColor.image,
+                                            imageData = selectedColor.imageData,
                                             color2 = selectedColor.color2,
                                             state = ImageColorState.COLOR
                                         )
@@ -320,12 +320,12 @@ fun BackgroundRow(
                             // Image Picker (Placeholder)
                             Spacer(modifier = Modifier.height(24.dp))
                             ImageGetter(
-                                image = selectedColor.image,
+                                image = selectedColor.imageData,
                                 onImageUpdate = { byteArray ->
                                     onImageSelected(
                                         ImageColor(
                                             color = selectedColor.color,
-                                            image = byteArray,
+                                            imageData = byteArray,
                                             color2 = selectedColor.color2,
                                             state = ImageColorState.IMAGE
                                         )
@@ -335,7 +335,7 @@ fun BackgroundRow(
                                     onImageSelected(
                                         ImageColor(
                                             color = selectedColor.color,
-                                            image = ByteArray(0),
+                                            imageData = ByteArray(0),
                                             color2 = selectedColor.color2,
                                             state = ImageColorState.IMAGE
                                         )

@@ -10,7 +10,6 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asImageBitmap
@@ -20,25 +19,41 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import com.asu1.quizzer.data.ColorSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
 
 //State 0 -> Color, State 1 -> Color1 + Color2, State 2 -> Image
+@Serializable
 enum class ImageColorState {
     COLOR, COLOR2, IMAGE
 }
 
-
+@Serializable
 data class ImageColor(
-    val color: Color,
-    val image: ByteArray,
-    val color2: Color,
+    @Serializable(with = ColorSerializer::class) val color: Color,
+    val imageData: ByteArray,
+    @Serializable(with = ColorSerializer::class) val color2: Color,
     val state: ImageColorState,
 ) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ImageColor) return false
+
+        if (color != other.color) return false
+        if (!imageData.contentEquals(other.imageData)) return false
+        if (color2 != other.color2) return false
+        if (state != other.state) return false
+
+        return true
+    }
+
     fun getAsImage(): Painter {
         return when(state) {
             ImageColorState.COLOR -> ColorPainter(color)
             ImageColorState.COLOR2 -> ColorPainter(color2)
-            ImageColorState.IMAGE -> if (image.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+            ImageColorState.IMAGE -> if (imageData.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
                 BitmapPainter(bitmap.asImageBitmap())
             } else {
                 ColorPainter(color)
@@ -49,8 +64,8 @@ data class ImageColor(
         return when(state) {
             ImageColorState.COLOR -> Modifier.background(color)
             ImageColorState.COLOR2 -> Modifier.background(color2)
-            ImageColorState.IMAGE -> if (image.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+            ImageColorState.IMAGE -> if (imageData.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
                 Modifier.paint(BitmapPainter(bitmap.asImageBitmap()))
             } else {
                 Modifier.background(color)
@@ -92,14 +107,20 @@ data class ImageColor(
                     }
                 }
             }
-            ImageColorState.IMAGE -> if (image.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+            ImageColorState.IMAGE -> if (imageData.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
                 Modifier.paint(BitmapPainter(bitmap.asImageBitmap()),
                     contentScale = ContentScale.FillBounds
                     )
             } else {
                 Modifier.background(color)
             }
+        }
+    }
+    fun getAsJson(): Json {
+        return Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
         }
     }
 }

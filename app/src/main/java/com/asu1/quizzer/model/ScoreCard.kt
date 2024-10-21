@@ -44,5 +44,8 @@ data class ScoreCard (
     var colorScheme: ColorScheme = LightColorScheme,
     var shaderType: ShaderType = ShaderType.Brush1,
 ){
+    fun toJson(): String {
+        TODO("Not yet Implemented")
+    }
 
 }

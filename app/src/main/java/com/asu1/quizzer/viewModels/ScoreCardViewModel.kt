@@ -36,7 +36,7 @@ class ScoreCardViewModel : ViewModel() {
     }
 
     fun updateBackgroundImage(image: ByteArray){
-        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(image = image, state = ImageColorState.IMAGE))
+        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE))
     }
 
     fun updateScoreCard(quizData: QuizData, colorScheme: ColorScheme){
@@ -50,7 +50,7 @@ class ScoreCardViewModel : ViewModel() {
                 colorScheme = colorScheme,
                 background = ImageColor(
                     color = colorScheme.primary,
-                    image = imageColor.image,
+                    imageData = imageColor.imageData,
                     color2 = colorScheme.secondary,
                     state = imageColor.state
                 )
