@@ -5,12 +5,18 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Observer
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -45,6 +51,11 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import androidx.navigation.compose.composable
+import com.asu1.quizzer.data.loadQuizData
+import com.asu1.quizzer.screens.quizlayout.LoadItems
+import com.asu1.quizzer.viewModels.QuizLoadViewModel
+
 
 class MainActivity : ComponentActivity() {
     private val inquiryViewModel: InquiryViewModel by viewModels()
@@ -56,24 +67,28 @@ class MainActivity : ComponentActivity() {
     private val searchViewModel: SearchViewModel by viewModels()
     private val quizLayoutViewModel: QuizLayoutViewModel by viewModels()
     private val scoreCardViewModel: ScoreCardViewModel by viewModels()
+    private val quizLoadViewModel: QuizLoadViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Logger().debug("MainActivity: onCreate")
         super.onCreate(savedInstanceState)
 
         setContent {
+
+
             Box(Modifier.safeDrawingPadding()) {
 
                 QuizzerAndroidTheme {
                     Surface(
                         color = MaterialTheme.colorScheme.background
                     ) {
+                        val context = LocalContext.current
                         val navController = rememberNavController()
                         val colorScheme = MaterialTheme.colorScheme
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
                         )
-                        Logger().debug("MainActivity: NavHost")
+
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -98,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                             colorScheme
                                         )
                                         scoreCardViewModel.resetScoreCard()
+                                        quizLoadViewModel.reset()
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.CreateQuizLayout
@@ -165,8 +181,13 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) {
-                                val userData = userViewModel.userData.value
-                                QuizLayoutBuilderScreen(navController, quizLayoutViewModel, userData)
+                                QuizLayoutBuilderScreen(navController, quizLayoutViewModel,
+                                    navigateToQuizLoad = {
+                                        quizLoadViewModel.loadLocalQuiz(context = context)
+                                        NavMultiClickPreventer.navigate(navController, Route.LoadLocalQuiz)
+                                    },
+                                    scoreCardViewModel = scoreCardViewModel,
+                                )
                             }
                             composable<Route.QuizBuilder>(
                                 enterTransition = enterFromRightTransition(),
@@ -179,7 +200,11 @@ class MainActivity : ComponentActivity() {
                                         scoreCardViewModel.updateScoreCard(quizLayoutViewModel.quizData.value, quizLayoutViewModel.quizTheme.value.colorScheme)
                                         NavMultiClickPreventer.navigate(navController, Route.DesignScoreCard)
                                     },
-                                    scoreCardViewModel = scoreCardViewModel
+                                    scoreCardViewModel = scoreCardViewModel,
+                                    navigateToQuizLoad = {
+                                        quizLoadViewModel.loadLocalQuiz(context = context)
+                                        NavMultiClickPreventer.navigate(navController, Route.LoadLocalQuiz)
+                                    }
                                 )
                             }
                             composable<Route.QuizCaller> (
@@ -210,10 +235,25 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 DesignScoreCardScreen(navController, quizLayoutViewModel, scoreCardViewModel, onUpload = {
-                                    //TODO implement upload function at quizLayoutViewModel using ScoreCardViewModel contents
                                 })
                             }
-                        }
+                            composable<Route.LoadLocalQuiz>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                LoadItems(
+                                    navController = navController,
+                                    quizLoadViewModel = quizLoadViewModel
+                                ) { quizData, quizTheme, scoreCard ->
+                                    quizLayoutViewModel.loadQuizData(quizData, quizTheme
+                                    ) { quizLoadViewModel.loadComplete()
+                                    }
+                                    scoreCardViewModel.loadScoreCard(scoreCard)
+                                }
+                            }
+                       }
 
                     }
                 }

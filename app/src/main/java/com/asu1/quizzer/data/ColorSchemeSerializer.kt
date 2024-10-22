@@ -3,6 +3,8 @@ package com.asu1.quizzer.data
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.asu1.quizzer.ui.theme.DarkColorScheme
+import com.asu1.quizzer.ui.theme.LightColorScheme
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -15,9 +17,10 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
     override val descriptor: SerialDescriptor = JsonObject.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: ColorScheme) {
+        val brightness = if (isColorLight(value.background)) "Brightness.light" else "Brightness.dark"
         val json = JsonObject(
             mapOf(
-                "brightness" to JsonPrimitive("Brightness.light"), // Assuming brightness is always light
+                "brightness" to JsonPrimitive(brightness),
                 "primary" to JsonPrimitive(value.primary.toArgb().toHexString()),
                 "onPrimary" to JsonPrimitive(value.onPrimary.toArgb().toHexString()),
                 "primaryContainer" to JsonPrimitive(value.primaryContainer.toArgb().toHexString()),
@@ -69,33 +72,39 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
 
     override fun deserialize(decoder: Decoder): ColorScheme {
         val json = decoder.decodeSerializableValue(JsonObject.serializer())
-        return ColorScheme(
-            primary = Color(json["primary"]!!.jsonPrimitive.content.toColorInt()),
-            onPrimary = Color(json["onPrimary"]!!.jsonPrimitive.content.toColorInt()),
-            primaryContainer = Color(json["primaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            onPrimaryContainer = Color(json["onPrimaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            secondary = Color(json["secondary"]!!.jsonPrimitive.content.toColorInt()),
-            onSecondary = Color(json["onSecondary"]!!.jsonPrimitive.content.toColorInt()),
-            secondaryContainer = Color(json["secondaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            onSecondaryContainer = Color(json["onSecondaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            tertiary = Color(json["tertiary"]!!.jsonPrimitive.content.toColorInt()),
-            onTertiary = Color(json["onTertiary"]!!.jsonPrimitive.content.toColorInt()),
-            tertiaryContainer = Color(json["tertiaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            onTertiaryContainer = Color(json["onTertiaryContainer"]!!.jsonPrimitive.content.toColorInt()),
-            error = Color(json["error"]!!.jsonPrimitive.content.toColorInt()),
-            onError = Color(json["onError"]!!.jsonPrimitive.content.toColorInt()),
-            errorContainer = Color(json["errorContainer"]!!.jsonPrimitive.content.toColorInt()),
-            onErrorContainer = Color(json["onErrorContainer"]!!.jsonPrimitive.content.toColorInt()),
-            surface = Color(json["surface"]!!.jsonPrimitive.content.toColorInt()),
-            onSurface = Color(json["onSurface"]!!.jsonPrimitive.content.toColorInt()),
-            surfaceVariant = Color(json["surfaceVariant"]!!.jsonPrimitive.content.toColorInt()),
-            onSurfaceVariant = Color(json["onSurfaceVariant"]!!.jsonPrimitive.content.toColorInt()),
-            outline = Color(json["outline"]!!.jsonPrimitive.content.toColorInt()),
-            outlineVariant = Color(json["outlineVariant"]!!.jsonPrimitive.content.toColorInt()),
-            scrim = Color(json["scrim"]!!.jsonPrimitive.content.toColorInt()),
-            inverseSurface = Color(json["inverseSurface"]!!.jsonPrimitive.content.toColorInt()),
-            inversePrimary = Color(json["inversePrimary"]!!.jsonPrimitive.content.toColorInt()),
-            surfaceTint = Color(json["surfaceTint"]!!.jsonPrimitive.content.toColorInt()),
+        val brightness = json["brightness"]?.jsonPrimitive?.content
+        val baseColorScheme = if(brightness == "Brightness.dark"){
+            DarkColorScheme
+        }else{
+            LightColorScheme
+        }
+        return baseColorScheme.copy(
+            primary = json["primary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.primary,
+            onPrimary = json["onPrimary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onPrimary,
+            primaryContainer = json["primaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.primaryContainer,
+            onPrimaryContainer = json["onPrimaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onPrimaryContainer,
+            secondary = json["secondary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.secondary,
+            onSecondary = json["onSecondary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSecondary,
+            secondaryContainer = json["secondaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.secondaryContainer,
+            onSecondaryContainer = json["onSecondaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSecondaryContainer,
+            tertiary = json["tertiary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.tertiary,
+            onTertiary = json["onTertiary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onTertiary,
+            tertiaryContainer = json["tertiaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.tertiaryContainer,
+            onTertiaryContainer = json["onTertiaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onTertiaryContainer,
+            error = json["error"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.error,
+            onError = json["onError"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onError,
+            errorContainer = json["errorContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.errorContainer,
+            onErrorContainer = json["onErrorContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onErrorContainer,
+            surface = json["surface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surface,
+            onSurface = json["onSurface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSurface,
+            surfaceVariant = json["surfaceVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surfaceVariant,
+            onSurfaceVariant = json["onSurfaceVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSurfaceVariant,
+            outline = json["outline"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.outline,
+            outlineVariant = json["outlineVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.outlineVariant,
+            scrim = json["scrim"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.scrim,
+            inverseSurface = json["inverseSurface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.inverseSurface,
+            inversePrimary = json["inversePrimary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.inversePrimary,
+            surfaceTint = json["surfaceTint"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surfaceTint
         )
     }
 
@@ -155,6 +164,11 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
             inversePrimary = inversePrimary,
             surfaceTint = surfaceTint
         )
+    }
+
+    private fun isColorLight(color: Color): Boolean {
+        val darkness = 1 - (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue)
+        return darkness < 0.5
     }
 
     private fun Int.toHexString() = "#${Integer.toHexString(this)}"

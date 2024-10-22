@@ -74,6 +74,7 @@ fun QuizBuilderScreen(navController: NavController,
                       quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
                       onMoveToScoringScreen: () -> Unit = {},
                       scoreCardViewModel: ScoreCardViewModel = viewModel(),
+                      navigateToQuizLoad: () -> Unit = {},
 ) {
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
@@ -171,7 +172,7 @@ fun QuizBuilderScreen(navController: NavController,
                     )
                     IconButton(
                         onClick = {
-                            TODO("Implement Load Local.")
+                            navigateToQuizLoad()
                         }
                     ) {
                         Icon(

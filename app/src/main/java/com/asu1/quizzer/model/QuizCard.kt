@@ -20,8 +20,8 @@ data class QuizCard(
 ) {
     constructor(
         title: String,
-        tags: List<String>,
         creator: String,
+        tags: List<String>,
         titleImageByte: ByteArray?,
         counts: Int
     ) : this(UUID.randomUUID().toString(), title, tags, creator, titleImageByte, counts)

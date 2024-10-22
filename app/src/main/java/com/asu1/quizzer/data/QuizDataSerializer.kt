@@ -16,6 +16,7 @@ data class QuizDataSerializer(
     val uuid: String,
     val tags: Set<String> = emptySet(),
     val quizzes: List<QuizJson>,
+    val description: String,
 )
 
 @Serializable
@@ -35,7 +36,8 @@ fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
         tags = quizData.value.tags,
         quizzes = quizzes.value?.map {
             it.changeToJson()
-        } ?: emptyList()
+        } ?: emptyList(),
+        description = quizData.value.description
     )
     return quizDataSerializer
 }
@@ -58,7 +60,9 @@ fun QuizLayoutViewModel.loadQuizData(json: String) {
     this.quizData.value.image = quizDataSerializer.titleImage
     this.quizData.value.uuid = quizDataSerializer.uuid
     this.quizData.value.tags = quizDataSerializer.tags
+    this.quizData.value.description = quizDataSerializer.description
     quizDataSerializer.quizzes.map{
         this.addQuiz(it.load())
     }
 }
+

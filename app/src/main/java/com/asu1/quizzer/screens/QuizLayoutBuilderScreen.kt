@@ -2,6 +2,7 @@ package com.asu1.quizzer.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,8 +33,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,13 +57,15 @@ import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizLayoutBuilderScreen(navController: NavController,
                             quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-                            userData: UserViewModel.UserDatas?,
+                            navigateToQuizLoad: () -> Unit = {},
+                            scoreCardViewModel: ScoreCardViewModel = viewModel(),
 ) {
     val quizData by quizLayoutViewModel.quizData.collectAsState()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
@@ -78,6 +85,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         LayoutSteps.TITLE -> quizData.title.isNotEmpty()
         else -> true
     }
+    val context = LocalContext.current
 
     BackHandler {
         if(step > LayoutSteps.TITLE) {
@@ -130,7 +138,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 totalSteps = 6,
                 currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
                 layoutSteps = layoutSteps,
-                showExitDialog = { showExitDialog = true }
+                showExitDialog = { showExitDialog = true },
+                navigateToQuizLoad = { navigateToQuizLoad() }
             )
         }
     ) {paddingValue ->
@@ -212,6 +221,18 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
+                            quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
+                        }
+                    ){
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Save Local."
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = {
                             proceed()
                         },
                         enabled = enabled,
@@ -235,7 +256,6 @@ fun QuizLayoutBuilderScreenPreview() {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             QuizLayoutBuilderScreen(
                 navController = rememberNavController(),
-                userData = UserViewModel.UserDatas("", "", "", setOf(""))
             )
         }
     }
@@ -286,7 +306,8 @@ fun StepProgressBar(
     layoutSteps: List<String>,
     completedColor: Color = MaterialTheme.colorScheme.primary,
     pendingColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-    showExitDialog: () -> Unit = {}
+    showExitDialog: () -> Unit = {},
+    navigateToQuizLoad: () -> Unit = {},
 ) {
 
     Column(
@@ -294,12 +315,28 @@ fun StepProgressBar(
             .fillMaxWidth()
     )
     {
-        RowWithAppIconAndName(
-            showBackButton = true,
-            onBackPressed = {
-                showExitDialog()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            RowWithAppIconAndName(
+                showBackButton = true,
+                onBackPressed = {
+                    showExitDialog()
+                }
+            )
+            IconButton(
+                onClick = {
+                    navigateToQuizLoad()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FileDownload,
+                    contentDescription = "Load Local Save"
+                )
             }
-        )
+        }
         Text(
             text = currentStep.toString()+ ". " + layoutSteps[currentStep - 1],
             style = MaterialTheme.typography.headlineSmall,

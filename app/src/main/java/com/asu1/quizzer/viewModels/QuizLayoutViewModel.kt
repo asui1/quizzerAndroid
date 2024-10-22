@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
+import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
@@ -112,6 +113,21 @@ class QuizLayoutViewModel : ViewModel() {
     private val _initIndex = MutableLiveData(0)
     val initIndex: LiveData<Int> get() = _initIndex
 
+    fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme, loadDone: () -> Unit) {
+        _quizData.value = QuizData(
+            title = quizData.title,
+            image = quizData.titleImage,
+            description = quizData.description,
+            tags = quizData.tags,
+            shuffleQuestions = quizData.shuffleQuestions,
+            creator = quizData.creator,
+            uuid = quizData.uuid
+        )
+        _quizTheme.value = quizTheme
+        _step.value = LayoutSteps.THEME
+        loadDone()
+    }
+
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
         _quizData.value = _quizData.value.copy(creator = email ?: "GUEST")
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
@@ -135,9 +151,10 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun saveLocal(context: Context, scoreCard: ScoreCard) {
         val jsoned = Json.encodeToString(toJson(scoreCard))
-        val fileName = "${quizData.value.uuid}.json"
+        val fileName = "${quizData.value.uuid}_quizSave.json"
         val file = File(context.filesDir, fileName)
         file.writeText(jsoned)
+        _showToast.value = "${quizData.value.title} saved"
         Logger().debug("Saved to ${file.absolutePath}")
         Logger().debug("Saved JSON: $jsoned")
     }

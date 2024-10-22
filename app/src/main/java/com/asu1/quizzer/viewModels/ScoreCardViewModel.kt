@@ -2,6 +2,7 @@ package com.asu1.quizzer.viewModels
 
 import androidx.compose.material3.ColorScheme
 import androidx.lifecycle.ViewModel
+import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
@@ -13,6 +14,14 @@ import kotlinx.coroutines.flow.asStateFlow
 class ScoreCardViewModel : ViewModel() {
     private val _scoreCard = MutableStateFlow(ScoreCard())
     val scoreCard: StateFlow<ScoreCard> = _scoreCard.asStateFlow()
+
+    fun loadScoreCard(data: String) {
+        _scoreCard.value = json.decodeFromString(data)
+    }
+
+    fun loadScoreCard(scoreCard: ScoreCard) {
+        _scoreCard.value = scoreCard
+    }
 
     fun resetScoreCard() {
         _scoreCard.value = ScoreCard()

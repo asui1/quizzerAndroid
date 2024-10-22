@@ -258,11 +258,14 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
-    val imageBitmap: ImageBitmap = quizCard.image?.let { byteArray ->
-        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
-    } ?: loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
-        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
-    }
+    val imageBitmap: ImageBitmap =
+        if(quizCard.image == null || quizCard.image.size < 100){
+            loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
+                BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
+            }
+        }else{
+            BitmapFactory.decodeByteArray(quizCard.image, 0, quizCard.image.size).asImageBitmap()
+        }
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),

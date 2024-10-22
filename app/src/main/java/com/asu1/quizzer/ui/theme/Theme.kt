@@ -42,7 +42,7 @@ val LightColorScheme = lightColorScheme(
     scrim = LightScrim
 )
 
-private val DarkColorScheme = darkColorScheme(
+val DarkColorScheme = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
     secondary = DarkSecondary,
