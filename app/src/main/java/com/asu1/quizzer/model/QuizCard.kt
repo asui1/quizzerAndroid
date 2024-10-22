@@ -17,6 +17,8 @@ data class QuizCard(
     val image: ByteArray?,
     @SerializedName("count")
     val count: Int,
+    @SerializedName("description")
+    val description: String = ""
 ) {
     constructor(
         title: String,

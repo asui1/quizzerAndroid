@@ -39,8 +39,9 @@ class QuizCardDeserializer : JsonDeserializer<QuizCard> {
         val image = Base64.decode(imageString, Base64.DEFAULT)
         val imageOrNull = if (image.size < 5) null else image
         val count = jsonObject.get("count").asInt
+        val description = if (jsonObject.has("description")) jsonObject.get("description").asString else ""
 
-        return QuizCard(id, title, tags, creator, imageOrNull, count)
+        return QuizCard(id, title, tags, creator, imageOrNull, count, description)
     }
 }
 

@@ -9,15 +9,9 @@ sealed interface Route {
     @Serializable
     data object Home : Route
     @Serializable
-    data object Ranks : Route
-    @Serializable
-    data object Statistics : Route
-    @Serializable
     data object Setting : Route
     @Serializable
     data object Search : Route
-    @Serializable
-    data object Trends : Route
     @Serializable
     data object Login : Route
     @Serializable
@@ -40,5 +34,7 @@ sealed interface Route {
     data object DesignScoreCard: Route
     @Serializable
     data object LoadLocalQuiz: Route
+    @Serializable
+    data object LoadUserQuiz: Route
 }
 

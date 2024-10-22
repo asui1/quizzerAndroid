@@ -47,6 +47,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import kotlin.math.max
 
 @Composable
 fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -214,6 +215,16 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                         )
                     }
                 }
+                Text(
+                    text = quizCard.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    minLines = 7,
+                    maxLines = 7,
+                )
+                Text(
+                    text = "Solved: ${quizCard.count}",
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }

@@ -1,13 +1,19 @@
 package com.asu1.quizzer.viewModels
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.json
+import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCards
+import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,9 +28,36 @@ class QuizLoadViewModel: ViewModel() {
     private val _loadComplete = MutableStateFlow(false)
     val loadComplete: StateFlow<Boolean> = _loadComplete.asStateFlow()
 
+    private val _myQuizList = MutableStateFlow<MutableList<QuizCard>?>(null)
+    val myQuizList: StateFlow<MutableList<QuizCard>?> = _myQuizList.asStateFlow()
+
+    private val _showToast = MutableLiveData<String?>()
+    val showToast: LiveData<String?> get() = _showToast
+
     fun reset(){
         _quizList.value = null
         _loadComplete.value = false
+        _myQuizList.value = null
+    }
+
+    fun loadUserQuiz(email: String){
+        if(email.isEmpty()) return
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getMyQuiz(email)
+                if(response.isSuccessful){
+                    val quizCards = response.body()?.quizCards
+                    _myQuizList.value = quizCards as MutableList<QuizCard>?
+                }
+                else{
+                    _showToast.value = "Search No Response"
+                }
+            }
+            catch (e: Exception){
+                Logger().debug("Search Failed: $e")
+                _showToast.value = "Search Failed"
+            }
+        }
     }
 
     fun loadComplete(){
@@ -47,6 +80,10 @@ class QuizLoadViewModel: ViewModel() {
         }
     }
 
+    fun deleteMyQuiz(index: Int){
+        TODO("SEND DELETE REQUEST TO SERVER")
+    }
+
     fun loadLocalQuiz(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val directory = context.filesDir
@@ -67,6 +104,9 @@ class QuizLoadViewModel: ViewModel() {
             }
         }
     }
+    fun toastShown() {
+        _showToast.value = null
+    }
 
     fun setTest(){
         val quiz = QuizLayoutSerializer(
@@ -80,5 +120,14 @@ class QuizLoadViewModel: ViewModel() {
             scoreCard = ScoreCard()
         )
         _quizList.value = mutableListOf(quiz, quiz, quiz)
+        val quizCard = QuizCard(
+            id = "1",
+            title = "Quiz 1",
+            tags = listOf("tag1", "tag2", "tag2"),
+            creator = "Creator",
+            image = null,
+            count = 0
+        )
+        _myQuizList.value = mutableListOf(quizCard, quizCard, quizCard)
     }
 }

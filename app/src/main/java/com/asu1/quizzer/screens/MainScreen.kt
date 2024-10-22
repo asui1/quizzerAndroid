@@ -74,8 +74,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -105,6 +107,7 @@ fun MainScreen(
     inquiryViewModel: InquiryViewModel = viewModel(),
     loginActivityState: LoginActivityState,
     navigateToQuizLayoutBuilder: () -> Unit = {},
+    navigateToMyQuizzes: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -116,7 +119,7 @@ fun MainScreen(
     val bottomBarSelection by quizCardMainViewModel.bottomBarSelection.observeAsState(0)
 
     LaunchedEffect(Unit){
-//        mainActivityState.updateQuizCards()
+//        quizCardMainViewModel.fetchQuizCards("ko")
     }
 
     BackHandler {
@@ -152,6 +155,7 @@ fun MainScreen(
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                     logOut = { loginActivityState.logout() },
                     signOut = { email -> signOutViewModel.sendSignout(email) },
+                    navigateToMyQuizzes = { navigateToMyQuizzes() }
                 )
             },
             content = {
@@ -392,6 +396,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                   onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
                   logOut: () -> Unit = { },
                   signOut: (String) -> Unit = { },
+                  navigateToMyQuizzes: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val nickname = userData?.nickname
@@ -485,7 +490,35 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                     }
 
                 }
+                Row(modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    UserProfilePic(userData, onClick = {
+                        scope.launch {
+                            if (isUserLoggedIn) {
+                                //TODO LATER for profile pic fix and user tags setting
+                            } else {
+                                NavMultiClickPreventer.navigate(navController, Route.Login)
+                            }
+                        }
+                    })
+                    Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
+                    IconButton(onClick = {
+                        if (isUserLoggedIn) {
+                            showLogoutDialog = true
+                        } else {
+                            NavMultiClickPreventer.navigate(navController, Route.Login)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
+                            contentDescription = if (isUserLoggedIn) "Logout" else "Login"
+                        )
+                    }
 
+                }
             }
             Box(
                 modifier = Modifier
@@ -493,11 +526,52 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    if(isUserLoggedIn) {
+                        TextButton(
+                            onClick = {
+                                navigateToMyQuizzes()
+                            },
+                        ) {
+                            Text(
+                                "My Quizzes",
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                        TextButton(
+                            onClick = {},
+                        ) {
+                            Text(
+                                "Profile",
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.padding(16.dp),
+                                style = TextStyle(
+                                    textDecoration = TextDecoration.LineThrough,
+                                )
+                            )
+                        }
+                        TextButton(
+                            onClick = {},
+                        ) {
+                            Text(
+                                "Settings",
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.padding(16.dp),
+                                style = TextStyle(
+                                    textDecoration = TextDecoration.LineThrough,
+                                )
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = {
                         showInquiry = true
                     },
-                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
                             stringResource(R.string.inquiry),
@@ -510,7 +584,6 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         TextButton(onClick = {
                             showSignOut = true
                         },
-                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(
                                 stringResource(R.string.sign_out),

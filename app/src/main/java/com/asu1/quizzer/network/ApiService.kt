@@ -37,4 +37,7 @@ interface ApiService {
 
     @GET("searchQuiz2")
     suspend fun searchQuiz(@Query("search") search: String): Response<QuizCardList>
+
+    @GET("getMyQuiz")
+    suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
 }

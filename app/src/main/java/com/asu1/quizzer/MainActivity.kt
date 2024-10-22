@@ -54,6 +54,7 @@ import com.asu1.quizzer.viewModels.UserViewModel
 import androidx.navigation.compose.composable
 import com.asu1.quizzer.data.loadQuizData
 import com.asu1.quizzer.screens.quizlayout.LoadItems
+import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 
 
@@ -107,28 +108,28 @@ class MainActivity : ComponentActivity() {
                                     inquiryViewModel = inquiryViewModel,
                                     loginActivityState = loginActivityState,
                                     navigateToQuizLayoutBuilder = {
-                                        quizLayoutViewModel.resetQuizLayout()
-                                        quizLayoutViewModel.initQuizLayout(
-                                            userViewModel.userData.value?.email,
-                                            colorScheme
-                                        )
-                                        scoreCardViewModel.resetScoreCard()
-                                        quizLoadViewModel.reset()
-                                        NavMultiClickPreventer.navigate(
-                                            navController,
-                                            Route.CreateQuizLayout
-                                        )
+                                        if(userViewModel.userData.value?.email == null) {
+                                            userViewModel.setToast("Please login first")
+                                            NavMultiClickPreventer.navigate(navController, Route.Login)
+                                        } else {
+                                            quizLayoutViewModel.resetQuizLayout()
+                                            quizLayoutViewModel.initQuizLayout(
+                                                userViewModel.userData.value?.email,
+                                                colorScheme
+                                            )
+                                            scoreCardViewModel.resetScoreCard()
+                                            quizLoadViewModel.reset()
+                                            NavMultiClickPreventer.navigate(
+                                                navController,
+                                                Route.CreateQuizLayout
+                                            )
+                                        }
                                     },
+                                    navigateToMyQuizzes = {
+                                        quizLoadViewModel.loadUserQuiz(userViewModel.userData.value?.email ?: "")
+                                        NavMultiClickPreventer.navigate(navController, Route.LoadLocalQuiz)
+                                    }
                                 )
-                            }
-                            composable<Route.Trends> {
-                                //TODO
-                            }
-                            composable<Route.Statistics> {
-                                //TODO
-                            }
-                            composable<Route.Setting> {
-                                //TODO
                             }
                             composable<Route.Search>(
                                 enterTransition = enterFromRightTransition(),
@@ -253,7 +254,18 @@ class MainActivity : ComponentActivity() {
                                     scoreCardViewModel.loadScoreCard(scoreCard)
                                 }
                             }
-                       }
+                            composable<Route.LoadUserQuiz>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                LoadMyQuiz(
+                                    navController = navController,
+                                    quizLoadViewModel = quizLoadViewModel,
+                                )
+                            }
+                        }
 
                     }
                 }
@@ -287,6 +299,12 @@ class MainActivity : ComponentActivity() {
             message?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
                 quizLayoutViewModel.toastShown()
+            }
+        })
+        quizLoadViewModel.showToast.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                quizLoadViewModel.toastShown()
             }
         })
 

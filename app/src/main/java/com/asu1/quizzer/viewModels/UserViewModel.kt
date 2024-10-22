@@ -74,6 +74,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         _showToast.value = null
     }
 
+    fun setToast(message: String) {
+        _showToast.value = message
+    }
+
     data class UserDatas(
         val email: String?,
         val nickname: String?,
