@@ -263,6 +263,7 @@ class MainActivity : ComponentActivity() {
                                 LoadMyQuiz(
                                     navController = navController,
                                     quizLoadViewModel = quizLoadViewModel,
+                                    email = userViewModel.userData.value?.email ?: ""
                                 )
                             }
                         }

@@ -40,4 +40,7 @@ interface ApiService {
 
     @GET("myQuiz")
     suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
+
+    @DELETE("deleteQuiz")
+    suspend fun deleteQuiz(@Query("uuid") email: String, @Query("email") quizId: String): Response<Void>
 }

@@ -28,8 +28,8 @@ class QuizLoadViewModel: ViewModel() {
     private val _loadComplete = MutableStateFlow(false)
     val loadComplete: StateFlow<Boolean> = _loadComplete.asStateFlow()
 
-    private val _myQuizList = MutableStateFlow<MutableList<QuizCard>?>(null)
-    val myQuizList: StateFlow<MutableList<QuizCard>?> = _myQuizList.asStateFlow()
+    private val _myQuizList = MutableLiveData<MutableList<QuizCard>?>(null)
+    val myQuizList: LiveData<MutableList<QuizCard>?> = _myQuizList
 
     private val _showToast = MutableLiveData<String?>()
     val showToast: LiveData<String?> get() = _showToast
@@ -76,15 +76,40 @@ class QuizLoadViewModel: ViewModel() {
                 val file = File("${quiz.quizData.uuid}_quizSave.json")
                 if (file.exists()) {
                     file.delete()
-                    _quizList.value?.removeAt(index)
-                    _quizList.value = _quizList.value
+                    val updatedList = _quizList.value?.toMutableList()
+                    updatedList?.removeAt(index)
+                    _quizList.value = updatedList
                 }
             }
         }
     }
 
-    fun deleteMyQuiz(index: Int){
-        TODO("SEND DELETE REQUEST TO SERVER")
+    fun deleteMyQuiz(index: Int, email: String){
+        if(_myQuizList.value == null) return
+        if(index < 0 || index >= _myQuizList.value!!.size) return
+        viewModelScope.launch {
+            val quiz = _myQuizList.value?.get(index)
+
+            if (quiz != null) {
+                Logger().debug("SENDING DELETE REQUEST")
+//                val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
+                val response = RetrofitInstance.api.deleteQuiz(quiz.id, quiz.creator)
+                Logger().debug("Response: $response")
+                if(response.isSuccessful){
+                    val updatedList = _myQuizList.value?.toMutableList()
+                    updatedList?.removeAt(index)
+                    _myQuizList.value = updatedList
+                    Logger().debug("Delete At Index: $index")
+                    _showToast.value = "Delete Successful"
+                }
+                else{
+                    _showToast.value = "Delete Failed"
+                }
+            }
+            else{
+                _showToast.value = "Delete Failed"
+            }
+        }
     }
 
     fun loadLocalQuiz(context: Context) {

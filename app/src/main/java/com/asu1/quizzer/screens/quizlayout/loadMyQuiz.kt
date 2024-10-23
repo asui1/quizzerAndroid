@@ -35,6 +35,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
@@ -46,8 +47,9 @@ fun LoadMyQuiz(
     navController: NavController,
     quizLoadViewModel: QuizLoadViewModel = viewModel(),
     onLoadQuiz: () -> Unit = {},
+    email: String = "",
 ) {
-    val quizList by quizLoadViewModel.myQuizList.collectAsState()
+    val quizList by quizLoadViewModel.myQuizList.observeAsState()
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     var deleteIndex by remember { mutableStateOf(-1) }
@@ -162,10 +164,12 @@ fun LoadMyQuiz(
             titleResource = R.string.delete_save,
             messageResource = R.string.delete_save_body,
             onContinue = {
+                val uuid = quizList?.get(deleteIndex)?.id ?: ""
                 scope.launch {
-                    quizLoadViewModel.deleteMyQuiz(deleteIndex)
+                    showDialog = false
+                    dismissStates[uuid]?.reset()
+                    quizLoadViewModel.deleteMyQuiz(deleteIndex, email)
                 }
-                showDialog = false
             },
             onContinueResource = R.string.delete,
             onCancel = {
