@@ -51,7 +51,7 @@ fun LoadMyQuiz(
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     var deleteIndex by remember { mutableStateOf(-1) }
-    var dismissState: DismissState? by remember { mutableStateOf(null) }
+    val dismissStates = remember { mutableStateMapOf<String, DismissState>() }
 
     Scaffold(
         topBar = {
@@ -107,20 +107,22 @@ fun LoadMyQuiz(
                     } else {
                         items(quizList!!.size) { index ->
                             val quizCard = quizList!![index]
-                            dismissState = rememberDismissState(
-                                confirmStateChange = {
-                                    if (it == DismissValue.DismissedToStart) {
-                                        deleteIndex = index
-                                        showDialog = true
+                            val currentDismissState = dismissStates.getOrPut(quizCard.id) {
+                                rememberDismissState(
+                                    confirmStateChange = {
+                                        if (it == DismissValue.DismissedToStart) {
+                                            deleteIndex = index
+                                            showDialog = true
+                                        }
+                                        true
                                     }
-                                    true
-                                }
-                            )
+                                )
+                            }
                             SwipeToDismiss(
-                                state = dismissState!!,
+                                state = currentDismissState,
                                 directions = setOf(DismissDirection.EndToStart),
                                 background = {
-                                    val color = when (dismissState!!.dismissDirection) {
+                                    val color = when (currentDismissState.dismissDirection) {
                                         DismissDirection.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
                                         else -> Color.Transparent
                                     }
@@ -166,9 +168,10 @@ fun LoadMyQuiz(
                 showDialog = false
             },
             onContinueResource = R.string.delete,
-            onCancel = { showDialog = false
+            onCancel = {
                 scope.launch {
-                    dismissState?.reset()
+                    showDialog = false
+                    dismissStates[quizList!![deleteIndex].id]?.reset()
                 }
             },
             onCancelResource = R.string.cancel

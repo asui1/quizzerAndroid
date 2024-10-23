@@ -214,7 +214,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun setQuizTitle(title: String) {
-        _quizData.value = _quizData.value.copy(title = title)
+        _quizData.value = _quizData.value.copy(title = title, uuid = null)
     }
 
     fun setQuizImage(image: ByteArray) {

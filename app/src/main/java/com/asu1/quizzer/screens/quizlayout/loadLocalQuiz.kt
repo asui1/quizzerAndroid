@@ -52,7 +52,7 @@ fun LoadItems(
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     var deleteIndex by remember { mutableStateOf(-1) }
-    var dismissState: DismissState? by remember { mutableStateOf(null) }
+    val dismissStates = remember { mutableStateMapOf<String, DismissState>() }
 
     LaunchedEffect(loadComplete) {
         if (loadComplete) {
@@ -120,20 +120,22 @@ fun LoadItems(
                                 image = quizData.titleImage,
                                 count = 0,
                             )
-                            dismissState = rememberDismissState(
-                                confirmStateChange = {
-                                    if (it == DismissValue.DismissedToStart) {
-                                        deleteIndex = index
-                                        showDialog = true
+                            val currentDismissState = dismissStates.getOrPut(quizCard.id) {
+                                rememberDismissState(
+                                    confirmStateChange = {
+                                        if (it == DismissValue.DismissedToStart) {
+                                            deleteIndex = index
+                                            showDialog = true
+                                        }
+                                        true
                                     }
-                                    true
-                                }
-                            )
+                                )
+                            }
                             SwipeToDismiss(
-                                state = dismissState!!,
+                                state = currentDismissState,
                                 directions = setOf(DismissDirection.EndToStart),
                                 background = {
-                                    val color = when (dismissState!!.dismissDirection) {
+                                    val color = when (currentDismissState.dismissDirection) {
                                         DismissDirection.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
                                         else -> Color.Transparent
                                     }
@@ -185,7 +187,7 @@ fun LoadItems(
             onContinueResource = R.string.delete,
             onCancel = { showDialog = false
                 scope.launch {
-                    dismissState?.reset()
+                    dismissStates[quizList!![deleteIndex].quizData.uuid]?.reset()
                 }
             },
             onCancelResource = R.string.cancel
