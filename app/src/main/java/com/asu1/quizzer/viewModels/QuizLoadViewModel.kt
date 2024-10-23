@@ -45,9 +45,12 @@ class QuizLoadViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getMyQuiz(email)
+                Logger().debug("Response: $response")
                 if(response.isSuccessful){
+                    Logger().debug("Response Body: ${response.body()}")
                     val quizCards = response.body()?.quizCards
                     _myQuizList.value = quizCards as MutableList<QuizCard>?
+                    Logger().debug(_myQuizList.value.toString())
                 }
                 else{
                     _showToast.value = "Search No Response"

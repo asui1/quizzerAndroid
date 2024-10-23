@@ -4,9 +4,11 @@ import QuizCardHorizontal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,15 +55,20 @@ fun LoadMyQuiz(
 
     Scaffold(
         topBar = {
-            Row(
-
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Top
             ) {
-
                 RowWithAppIconAndName(
                     showBackButton = true,
                     onBackPressed = {
                         navController.popBackStack()
                     }
+                )
+                Text(
+                    text = "My Quizzes",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
         }
@@ -90,13 +97,6 @@ fun LoadMyQuiz(
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    item {
-                        Text(
-                            text = "Load Quiz",
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                        Spacer(modifier = Modifier.padding(8.dp))
-                    }
                     if (quizList!!.isEmpty()) {
                         item {
                             Text(

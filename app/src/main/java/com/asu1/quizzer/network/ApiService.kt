@@ -17,27 +17,27 @@ interface ApiService {
     @GET("version")
     suspend fun getVersion(): Response<VersionResponse>
 
-    @GET("GetRecommendations2")
+    @GET("recommendations")
     suspend fun getRecommendations(@Query("language") language: String): Response<Recommendations>
 
-    @GET("login2")
+    @GET("login")
     suspend fun login(@Query("email") email: String): Response<UserInfo>
 
-    @POST("UserRequest")
+    @POST("userRequest")
     suspend fun userRequest(@Body request: UserRequest): Response<Void>
 
-    @DELETE("DeleteUser")
+    @DELETE("signout")
     suspend fun deleteUser(@Query("email") email: String): Response<Void>
 
-    @GET("CheckDuplicateNickname")
+    @GET("nicknameCheck")
     suspend fun checkDuplicateNickname(@Query("nickname") nickname: String): Response<Void>
 
-    @POST("createUser")
+    @POST("register")
     suspend fun register(@Body userInfo: UserRegister): Response<Void>
 
-    @GET("searchQuiz2")
+    @GET("searchQuiz")
     suspend fun searchQuiz(@Query("search") search: String): Response<QuizCardList>
 
-    @GET("getMyQuiz")
+    @GET("myQuiz")
     suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
 }

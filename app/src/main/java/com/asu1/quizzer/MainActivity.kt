@@ -127,7 +127,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     navigateToMyQuizzes = {
                                         quizLoadViewModel.loadUserQuiz(userViewModel.userData.value?.email ?: "")
-                                        NavMultiClickPreventer.navigate(navController, Route.LoadLocalQuiz)
+                                        NavMultiClickPreventer.navigate(navController, Route.LoadUserQuiz)
                                     }
                                 )
                             }
