@@ -233,7 +233,7 @@ fun TagSetting(navController: NavHostController, registerViewModel: RegisterView
                 TagSetter(
                     tags = tags,
                     onClick = {
-                        registerViewModel.addTag(it)
+                        registerViewModel.removeTag(it)
                     },
                     focusRequester = focusRequester,
                 )

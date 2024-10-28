@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,7 @@ import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 
 
 @Composable
@@ -396,6 +398,13 @@ fun Quiz1AnswerSelection(
     maxAnswerSelectionValue: String,
     maxAnswerSelectionValueChange: (String) -> Unit
 ){
+    var textFieldValue by remember { mutableStateOf(maxAnswerSelectionValue) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(maxAnswerSelectionValue) {
+        textFieldValue = maxAnswerSelectionValue
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -405,12 +414,20 @@ fun Quiz1AnswerSelection(
         TextField(
             modifier = Modifier.width(60.dp)
                 .padding(start = 8.dp),
-            value = maxAnswerSelectionValue,
-            onValueChange = maxAnswerSelectionValueChange,
+            value = textFieldValue,
+            onValueChange = {it ->
+                textFieldValue = it
+            },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
-            )
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    maxAnswerSelectionValueChange(textFieldValue)
+                }
+            ),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text("Shuffle\nAnswers?")

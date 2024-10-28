@@ -1,5 +1,6 @@
 package com.asu1.quizzer.network
 
+import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.Recommendations
 import com.asu1.quizzer.model.UserInfo
@@ -43,4 +44,10 @@ interface ApiService {
 
     @DELETE("deleteQuiz")
     suspend fun deleteQuiz(@Query("uuid") email: String, @Query("email") quizId: String): Response<Void>
+    
+    @POST("addQuiz")
+    suspend fun addQuiz(@Body quizLayoutSerializer: QuizLayoutSerializer): Response<Void>
+
+    @GET("quizData")
+    suspend fun getQuizData(@Query("uuid") uuid: String): Response<QuizLayoutSerializer>
 }

@@ -131,14 +131,9 @@ fun DesignScoreCardScreen(
                     .fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = scoreCard.title,
-                    style = MaterialTheme.typography.headlineMedium,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 ScoreCardComposable(
-                    width = screenWidth * 0.7f,
-                    height = screenHeight * 0.7f,
+                    width = screenWidth * 0.8f,
+                    height = screenHeight * 0.8f,
                     scoreCard = scoreCard,
                     onUpdateRatio = { x, y ->
                         scoreCardViewModel.updateRatio(x, y)
@@ -146,11 +141,6 @@ fun DesignScoreCardScreen(
                     onUpdateSize = { size ->
                         scoreCardViewModel.updateSize(size)
                     }
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Solver",
-                    style = MaterialTheme.typography.labelSmall,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 RowWithShares()
@@ -322,6 +312,20 @@ fun ScoreCardComposable(
                     time = time
                 ))
 
+        )
+        Text(
+            text = scoreCard.title,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 8.dp)
+        )
+        Text(
+            text = "Solver",
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 28.dp)
         )
         Text(
             text = scoreCard.score.toString(),
