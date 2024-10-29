@@ -10,6 +10,14 @@ abstract class BaseQuizViewModel<T : Quiz> : ViewModel() {
     protected val _quizState = MutableStateFlow<T?>(null)
     val quizState: StateFlow<T?> = _quizState.asStateFlow()
 
+    fun setPoint(point: Int){
+        _quizState.value?.point = point
+    }
+
+    fun getPoint(): Int{
+        return _quizState.value?.point ?: 0
+    }
+
     abstract fun loadQuiz(quiz: T)
     abstract fun resetQuiz()
     abstract fun updateAnswerAt(index: Int, answer: String)

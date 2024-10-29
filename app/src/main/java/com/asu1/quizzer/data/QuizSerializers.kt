@@ -58,6 +58,7 @@ data class Quiz1Body(
     val ans: List<Boolean>,
     val question: String,
     val youtubeId: String?,
+    val points: Int,
     val youtubeStartTime: Int?
 )
 
@@ -82,6 +83,7 @@ data class Quiz2Body(
     val maxAnswerSelection: Int,
     val answers: List<String>,
     val ans: List<Boolean>,
+    val points: Int,
     val question: String
 )
 
@@ -104,6 +106,7 @@ data class Quiz3Body(
     val maxAnswerSelection: Int,
     val answers: List<String>,
     val ans: List<Boolean>,
+    val points: Int,
     val question: String
 )
 
@@ -128,5 +131,6 @@ data class Quiz4Body(
     val maxAnswerSelection: Int,
     val answers: List<String>,
     val ans: List<Boolean>,
+    val points: Int,
     val question: String
 )

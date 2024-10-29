@@ -50,6 +50,8 @@ import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.core.text.isDigitsOnly
+import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 
 
 @Composable
@@ -59,7 +61,7 @@ fun Quiz1Creator(
 ) {
     val quiz1State by quiz.quiz1State.collectAsState()
     var showBodyDialog by remember { mutableStateOf(false) }
-    var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 1) { FocusRequester() }) }
+    var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 2) { FocusRequester() }) }
 
     if (showBodyDialog) {
         BodyTypeDialog(
@@ -89,13 +91,15 @@ fun Quiz1Creator(
                 .fillMaxWidth()
         ) {
             item {
-                MyTextField(
-                    value = quiz1State.question,
-                    onValueChange = {quiz.updateQuestion(it)},
-                    focusRequester = focusRequesters[0],
-                    onNext = {
-                        focusRequesters[1].requestFocus()
-                    }
+                QuestionTextFieldWithPoints(
+                    question = quiz1State.question,
+                onQuestionChange =  {quiz.updateQuestion(it)},
+                point = quiz1State.point,
+                onPointChange = { quiz.setPoint(it) },
+                onNext = {
+                    focusRequesters[2].requestFocus()
+                },
+                focusRequesters = focusRequesters
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -131,12 +135,12 @@ fun Quiz1Creator(
                         }
                         quiz.removeAnswerAt(index)
                     },
-                    focusRequester = focusRequesters[index+1],
+                    focusRequester = focusRequesters[index+2],
                     onNext = {
                         if(index == quiz1State.answers.size-1){
                             focusRequesters[0].requestFocus()
                         } else {
-                            focusRequesters[index+2].requestFocus()
+                            focusRequesters[index+3].requestFocus()
                         }
                     },
                     isLast = index == quiz1State.answers.size-1,
@@ -175,6 +179,29 @@ fun Quiz1Creator(
         )
     }
 
+}
+
+@Composable
+fun PointSetter(){
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text("Points")
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Points") }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PointSetterPreview() {
+    QuizzerAndroidTheme {
+        PointSetter()
+    }
 }
 
 @Composable
@@ -221,7 +248,6 @@ fun Quiz1BodyBuilder(
     onYoutubeUpdate: (String, Int) -> Unit,
     onRemoveBody: () -> Unit = {},
 ){
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -243,7 +269,7 @@ fun Quiz1BodyBuilder(
         }
         when(bodyState){
             BodyType.NONE -> {
-                Button(
+                TextButton(
                     onClick = onAddBody,
                 ) {
                     Text("Add Body")
@@ -358,7 +384,7 @@ fun AnswerTextField(
             keyboardActions = KeyboardActions(
                 onNext = {
                     onNext()
-                }
+                },
             ),
         )
         IconButton(
@@ -382,7 +408,7 @@ fun AddAnswer(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ){
-        Button(
+        TextButton(
             onClick = onClick,
             modifier = Modifier.width(200.dp)
         ) {
@@ -416,7 +442,13 @@ fun Quiz1AnswerSelection(
                 .padding(start = 8.dp),
             value = textFieldValue,
             onValueChange = {it ->
-                textFieldValue = it
+                if(it.isEmpty()){
+                    textFieldValue = it
+                }
+                else if(it.isDigitsOnly()){
+                    textFieldValue = it
+                    maxAnswerSelectionValueChange(it)
+                }
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,

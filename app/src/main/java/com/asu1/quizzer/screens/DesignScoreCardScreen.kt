@@ -305,28 +305,34 @@ fun ScoreCardComposable(
             painter = ColorPainter(Color.White),
             contentDescription = "Background",
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .clip(RoundedCornerShape(16.dp))
-                .then(scoreCard.background.asBackgroundModifierForScoreCard(
-                    shaderOption = scoreCard.shaderType,
-                    time = time
-                ))
+                .then(
+                    scoreCard.background.asBackgroundModifierForScoreCard(
+                        shaderOption = scoreCard.shaderType,
+                        time = time
+                    )
+                )
 
         )
-        Text(
-            text = scoreCard.title,
-            style = MaterialTheme.typography.headlineMedium,
+        Column(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 8.dp)
-        )
-        Text(
-            text = "Solver",
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 28.dp)
-        )
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            Text(
+                text = scoreCard.title,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = "Solver",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
         Text(
             text = scoreCard.score.toString(),
             style = TextStyle(
@@ -336,7 +342,7 @@ fun ScoreCardComposable(
             ),
             modifier = Modifier
                 .zIndex(2f)
-                .offset(x = offsetX - xSize/2, y = offsetY - ySize/2)
+                .offset(x = offsetX - xSize / 2, y = offsetY - ySize / 2)
                 .onGloballyPositioned { coordinates ->
                     xSize = density.run { coordinates.size.width.toDp() }
                     ySize = density.run { coordinates.size.height.toDp() }
@@ -359,8 +365,8 @@ fun ScoreCardComposable(
             modifier = Modifier
                 .zIndex(1f)
                 .offset(
-                    x = offsetX + xSize/2 - dotSize / 2,
-                    y = offsetY + ySize/2 - dotSize / 2
+                    x = offsetX + xSize / 2 - dotSize / 2,
+                    y = offsetY + ySize / 2 - dotSize / 2
                 )
                 .size(dotSize)
                 .background(scoreCard.colorScheme.error, CircleShape)
@@ -368,7 +374,7 @@ fun ScoreCardComposable(
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
                         change.consume()
-                        val newSize = textSize + dragAmount.x/1000 + dragAmount.y/1000
+                        val newSize = textSize + dragAmount.x / 1000 + dragAmount.y / 1000
                         textSize = newSize
                         onUpdateSize(textSize)
                     }
@@ -420,23 +426,33 @@ fun ModalSheetForColorSelection(
     ) {
         items(colors.size) { index ->
             val color = colors[index]
-            Surface(
-                shape = CircleShape,
-                color = color,
+            Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .border(
-                        width = 5.dp,
-                        color =
-                        when(color){
-                            curSelection.color -> LightPrimary
-                            curSelection.color2 -> LightSecondary
-                            else -> Color.Transparent
-                        },
-                        shape = CircleShape
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = color,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .border(
+                            width = 5.dp,
+                            color = Color.Transparent,
+                            shape = CircleShape
+                        )
+                        .clickable { onColorSelected(color) }
+                ) {}
+                if (color == curSelection.color || color == curSelection.color2) {
+                    Text(
+                        text = if (color == curSelection.color) "1" else "2",
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .background(Color.Black, CircleShape)
+                            .padding(4.dp)
                     )
-                    .clickable { onColorSelected(color) }
-            ) {}
+                }
+            }
         }
     }
 }

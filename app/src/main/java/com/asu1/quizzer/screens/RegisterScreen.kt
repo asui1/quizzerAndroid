@@ -153,7 +153,7 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                     )
                     TextField(
                         value = nickname,
-                        onValueChange = { nickname = it },
+                        onValueChange = { if(it.length <= 12) nickname = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
@@ -162,9 +162,10 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = {
-                                registerViewModel.setNickName(nickname)
+                                if(nickname.length <= 12) registerViewModel.setNickName(nickname)
                             }
-                        )
+                        ),
+                        supportingText = { Text(text = "Length: ${nickname.length}/12") }
                     )
                 }
                 Button(
