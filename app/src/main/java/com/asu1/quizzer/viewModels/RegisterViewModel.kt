@@ -28,8 +28,15 @@ class RegisterViewModel : ViewModel() {
     private val _photoUri = MutableLiveData<String?>()
     val photoUri: LiveData<String?> get() = _photoUri
 
+    private val _isError = MutableLiveData<Boolean>(false)
+    val isError: LiveData<Boolean> get() = _isError
+
     init{
         reset()
+    }
+
+    fun undoError(){
+        _isError.postValue(false)
     }
 
     fun reset(){

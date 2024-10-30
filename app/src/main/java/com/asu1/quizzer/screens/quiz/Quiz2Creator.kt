@@ -22,6 +22,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -40,9 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -57,8 +61,14 @@ fun Quiz2Creator(
     onSave: (Quiz) -> Unit
 ){
     val quiz2State by quiz.quiz2State.collectAsState()
-    val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
+    val focusRequester1 by remember { mutableStateOf(FocusRequester()) }
+    val focusRequester2 by remember { mutableStateOf(FocusRequester()) }
+    val focusRequester3 by remember { mutableStateOf(FocusRequester()) }
+    var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
+
+    LaunchedEffect(quiz2State.centerDate){
+        currentMonth = quiz2State.centerDate
+    }
 
     Box(
         modifier = Modifier
@@ -72,27 +82,16 @@ fun Quiz2Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                MyTextField(
-                    value = quiz2State.question,
-                    onValueChange = { quiz.updateQuestion(it) },
-                    imeAction = ImeAction.Done,
-                    focusRequester = focusRequester,
+                QuestionTextFieldWithPoints(
+                    question = quiz2State.question,
+                    onQuestionChange =  {quiz.updateQuestion(it)},
+                    point = quiz2State.point,
+                    onPointChange = { quiz.setPoint(it) },
                     onNext = {
-                        focusManager.clearFocus()
-                    }
+                        focusRequester3.requestFocus()
+                    },
+                    focusRequesters = listOf(focusRequester1, focusRequester2)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                key(quiz2State.centerDate, quiz2State.uuid, "creator"){
-                    CalendarWithFocusDates(
-                        focusDates = quiz2State.answerDate,
-                        onDateClick = { date ->
-                            quiz.updateDate(date)
-                        },
-                        currentMonth = quiz2State.centerDate,
-                    )
-                }
             }
             item{
                 Spacer(modifier = Modifier.height(8.dp))
@@ -103,9 +102,28 @@ fun Quiz2Creator(
                     yearMonth = quiz2State.centerDate,
                     onYearMonthChange = {
                         quiz.updateCenterDate(it)
-                    }
+                    },
+                    modifier = Modifier.focusRequester(focusRequester3)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+            }
+            item {
+                key(quiz2State.centerDate, quiz2State.uuid, "creator"){
+                    CalendarWithFocusDates(
+                        focusDates = quiz2State.answerDate,
+                        onDateClick = { date ->
+                            quiz.updateDate(date)
+                            currentMonth = YearMonth.of(date.year, date.month)
+                        },
+                        currentMonth = currentMonth,
+                    )
+                }
+            }
+            item{
+                Text(
+                    "Answers"
+                )
+                Spacer(modifier = Modifier.height(4.dp))
             }
             items(quiz2State.answerDate.size){index ->
                 Text(text = quiz2State.answerDate.elementAt(index).toString())
@@ -122,7 +140,8 @@ fun Quiz2Creator(
 }
 
 @Composable
-fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {}){
+fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {},
+                      modifier: Modifier = Modifier,){
     val months = 1..12
     var expanded by remember { mutableStateOf(false) }
     var year by remember { mutableStateOf(yearMonth.year.toString()) }
@@ -139,7 +158,7 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                 year = it
             },
             label = { Text("Year : ") },
-            modifier = Modifier.weight(1f)
+            modifier = modifier.weight(1f)
                 .onFocusChanged { focusState ->
                     if(!focusState.isFocused){
                         onYearMonthChange(YearMonth.of(year.toInt(), yearMonth.month))
@@ -184,7 +203,7 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                                     .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
                                     .padding(8.dp)
                                     .fillMaxWidth()
-                        ) },
+                            ) },
                     )
                 }
             }

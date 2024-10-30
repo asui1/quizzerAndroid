@@ -13,6 +13,7 @@ data class LoginActivityState(
     val userData: State<UserViewModel.UserDatas?>,
     val login: (String, String) -> Unit,
     val logout: () -> Unit,
+    val signout: (String) -> Unit,
 )
 
 //KEEP STATE FOR LOGIN ACTIVITY TO USE USERVIEWMODEL AS ANDROIDVIEWMODEL
@@ -28,5 +29,6 @@ fun rememberLoginActivityState(
         userData = rememberUpdatedState(userData),
         login = { email, photoUri -> userViewModel.logIn(email, photoUri) },
         logout = { userViewModel.logOut() },
+        signout = {email -> userViewModel.signout(email) },
     )
 }

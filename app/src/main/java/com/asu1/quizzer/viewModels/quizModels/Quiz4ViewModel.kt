@@ -2,18 +2,19 @@ package com.asu1.quizzer.viewModels.quizModels
 
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     private val _quiz4State = MutableStateFlow(Quiz4())
-    val quiz4State: StateFlow<Quiz4> = _quiz4State.asStateFlow()
+    val quiz4State: StateFlow<Quiz4> get() = _quiz4State.asStateFlow()
 
     private val stateUpdateChannel = Channel<(Quiz4) -> Quiz4>(Channel.UNLIMITED)
 
@@ -35,6 +36,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     }
 
     override fun loadQuiz(quiz: Quiz4) {
+        quiz.initViewState()
         _quiz4State.value = quiz
     }
 
@@ -190,5 +192,32 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
             }
         }
         return -1
+    }
+    override fun updateBodyState(bodyType: BodyType){
+        _quiz4State.value = _quiz4State.value.copy(bodyType = bodyType)
+    }
+
+    override fun updateBodyText(bodyText: String){
+        _quiz4State.value = _quiz4State.value.copy(bodyText = bodyText)
+    }
+
+    override fun updateBodyImage(image: ByteArray){
+        _quiz4State.value = _quiz4State.value.copy(bodyImage = image)
+    }
+
+    override fun updateBodyYoutube(youtubeId: String, startTime: Int){
+        if(youtubeId == "DELETE"){
+            _quiz4State.value = _quiz4State.value.copy(youtubeId = "", youtubeStartTime = 0)
+            return
+        }
+        if(youtubeId == ""){
+            return
+        }
+        _quiz4State.value = _quiz4State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+    }
+    override fun setPoint(point: Int){
+        _quiz4State.update{
+            it.copy(point = point)
+        }
     }
 }

@@ -29,7 +29,7 @@ val scoreCard = ScoreCard(
 )
 val quiz1 = Quiz1(
     bodyType = BodyType.NONE,
-    image = byteArrayOf(),
+    bodyImage = byteArrayOf(),
     bodyText = "",
     shuffleAnswers = false,
     maxAnswerSelection = 1,

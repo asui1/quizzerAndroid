@@ -1,14 +1,16 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     private val _quiz3State = MutableStateFlow(Quiz3())
-    val quiz3State: StateFlow<Quiz3> = _quiz3State.asStateFlow()
+    val quiz3State: StateFlow<Quiz3> get() = _quiz3State.asStateFlow()
 
     init {
         resetQuiz()
@@ -19,6 +21,7 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun loadQuiz(quiz: Quiz3) {
+        quiz.initViewState()
         _quiz3State.value = quiz
     }
 
@@ -69,4 +72,32 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
         })
         Logger().debug("switchShuffledAnswers from: $from to: $to")
     }
+    override fun updateBodyState(bodyType: BodyType){
+        _quiz3State.value = _quiz3State.value.copy(bodyType = bodyType)
+    }
+
+    override fun updateBodyText(bodyText: String){
+        _quiz3State.value = _quiz3State.value.copy(bodyText = bodyText)
+    }
+
+    override fun updateBodyImage(image: ByteArray){
+        _quiz3State.value = _quiz3State.value.copy(bodyImage = image)
+    }
+
+    override fun updateBodyYoutube(youtubeId: String, startTime: Int){
+        if(youtubeId == "DELETE"){
+            _quiz3State.value = _quiz3State.value.copy(youtubeId = "", youtubeStartTime = 0)
+            return
+        }
+        if(youtubeId == ""){
+            return
+        }
+        _quiz3State.value = _quiz3State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+    }
+    override fun setPoint(point: Int){
+        _quiz3State.update{
+            it.copy(point = point)
+        }
+    }
+
 }

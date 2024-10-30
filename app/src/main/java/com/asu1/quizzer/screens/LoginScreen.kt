@@ -198,6 +198,7 @@ fun getLoginActivityState(): LoginActivityState {
         userData = rememberSaveable()  { mutableStateOf(userDataTest) },
         login = { _, _ -> },
         logout = { },
+        signout = { },
     )
 }
 

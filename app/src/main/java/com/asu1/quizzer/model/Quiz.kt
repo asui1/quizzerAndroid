@@ -11,6 +11,7 @@ import com.asu1.quizzer.data.Quiz4Body
 import com.asu1.quizzer.data.Quiz4Json
 import com.asu1.quizzer.data.QuizJson
 import com.asu1.quizzer.data.json
+import com.asu1.quizzer.util.Logger
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Base64
@@ -28,6 +29,11 @@ abstract class Quiz(
     val uuid: String = java.util.UUID.randomUUID().toString(),
     open var point: Int = 5,
     open val layoutType: QuizType = QuizType.QUIZ1,
+    open var bodyType: BodyType = BodyType.NONE,
+    open var bodyText: String = "",
+    open var bodyImage: ByteArray? = null,
+    open var youtubeId: String = "",
+    open var youtubeStartTime: Int = 0,
 ) {
     operator fun get(index: Int): String {
         return answers[index]
@@ -52,21 +58,23 @@ enum class BodyType(val value: Int) {
 
 //BASIC MULTIPLE CHOICE QUIZ
 data class Quiz1(
-    var bodyType: BodyType = BodyType.NONE,
-    var image: ByteArray? = null,
     var ans: MutableList<Boolean> = mutableListOf(false, false, false, false, false),
     var shuffleAnswers: Boolean = false,
     var maxAnswerSelection: Int = 1,
-    var bodyText: String = "",
-    var youtubeId: String = "",
-    var youtubeStartTime: Int = 0,
     var userAns: MutableList<Boolean> = mutableListOf(false, false, false, false, false),
     var shuffledAnswers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ1,
+    override var bodyType: BodyType = BodyType.NONE,
+    override var bodyText: String = "",
+    override var bodyImage: ByteArray? = null,
+    override var youtubeId: String = "",
+    override var youtubeStartTime: Int = 0,
+    override var point: Int = 5,
 ) : Quiz(answers, question){
     override fun initViewState() {
+        Logger().debug("Init view state Quiz1")
         shuffledAnswers = if(shuffleAnswers){
             answers.toMutableList().also {
                 it.shuffle()
@@ -99,7 +107,7 @@ data class Quiz1(
             layoutType = layoutType.value,
             body = Quiz1Body(
                 bodyType = bodyType.value,
-                image = image?.let { Base64.getEncoder().encodeToString(it) },
+                image = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
                 shuffleAnswers = shuffleAnswers,
                 maxAnswerSelection = maxAnswerSelection,
@@ -118,8 +126,8 @@ data class Quiz1(
         val quiz1Json = json.decodeFromString<Quiz1Json>(data)
         val body = quiz1Json.body
 
-        bodyType = BodyType.values().first { it.value == body.bodyType }
-        image = body.image?.let { Base64.getDecoder().decode(it) }
+        bodyType = BodyType.entries.first { it.value == body.bodyType }
+        bodyImage = body.image?.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         shuffleAnswers = body.shuffleAnswers
         maxAnswerSelection = body.maxAnswerSelection
@@ -130,11 +138,12 @@ data class Quiz1(
         youtubeStartTime = body.youtubeStartTime ?: 0
         initViewState()
     }
+
     fun validateBody() {
         if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
             bodyType = BodyType.NONE
         }
-        if(bodyType == BodyType.IMAGE && image == null){
+        if(bodyType == BodyType.IMAGE && bodyImage == null){
             bodyType = BodyType.NONE
         }
     }
@@ -144,10 +153,10 @@ data class Quiz1(
         if (other !is Quiz1) return false
 
         if (bodyType != other.bodyType) return false
-        if (image != null) {
-            if (other.image == null) return false
-            if (!image.contentEquals(other.image)) return false
-        } else if (other.image != null) return false
+        if (bodyImage != null) {
+            if (other.bodyImage == null) return false
+            if (!bodyImage.contentEquals(other.bodyImage)) return false
+        } else if (other.bodyImage != null) return false
         if (ans != other.ans) return false
         if (shuffleAnswers != other.shuffleAnswers) return false
         if (maxAnswerSelection != other.maxAnswerSelection) return false
@@ -157,8 +166,26 @@ data class Quiz1(
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
-
+        if (userAns != other.userAns) return false
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = ans.hashCode()
+        result = 31 * result + shuffleAnswers.hashCode()
+        result = 31 * result + maxAnswerSelection
+        result = 31 * result + userAns.hashCode()
+        result = 31 * result + shuffledAnswers.hashCode()
+        result = 31 * result + answers.hashCode()
+        result = 31 * result + question.hashCode()
+        result = 31 * result + layoutType.hashCode()
+        result = 31 * result + bodyType.hashCode()
+        result = 31 * result + bodyText.hashCode()
+        result = 31 * result + (bodyImage?.contentHashCode() ?: 0)
+        result = 31 * result + youtubeId.hashCode()
+        result = 31 * result + youtubeStartTime
+        result = 31 * result + point
+        return result
     }
 }
 
@@ -169,7 +196,7 @@ val sampleQuiz1 = Quiz1(
     userAns = mutableListOf(false, false, false, false),
     ans = mutableListOf(true, false, false, false),
     bodyText = "This is a sample question",
-    bodyType = BodyType.TEXT
+    bodyType = BodyType.TEXT,
 )
 
 //SELECTING DATE FROM CALENDAR
@@ -182,6 +209,7 @@ data class Quiz2(
     override var answers: MutableList<String> = mutableListOf(),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ2,
+    override var point: Int = 5,
 ): Quiz(answers, question){
     override fun initViewState() {
         userAnswerDate = mutableSetOf()
@@ -238,6 +266,8 @@ data class Quiz2(
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
+        if (userAnswerDate != other.userAnswerDate) return false
+        if (point != other.point) return false
 
         return true
     }
@@ -258,10 +288,16 @@ val sampleQuiz2 = Quiz2(
 
 //ORDERING QUESTIONS
 data class Quiz3(
-    var shuffledAnswers: MutableList<String> = mutableListOf("", "", "", "", ""),
+    var shuffledAnswers: MutableList<String> = mutableListOf("1", "2", "3", "4", "5"),
     override var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ3,
+    override var bodyType: BodyType = BodyType.NONE,
+    override var bodyText: String = "",
+    override var bodyImage: ByteArray? = null,
+    override var youtubeId: String = "",
+    override var youtubeStartTime: Int = 0,
+    override var point: Int = 5,
 ): Quiz(answers, question){
     override fun initViewState() {
         if (answers.isNotEmpty()) {
@@ -313,6 +349,13 @@ data class Quiz3(
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
+        if (shuffledAnswers != other.shuffledAnswers) return false
+        if (bodyType != other.bodyType) return false
+        if (bodyText != other.bodyText) return false
+        if (!bodyImage.contentEquals(other.bodyImage)) return false
+        if (youtubeId != other.youtubeId) return false
+        if (youtubeStartTime != other.youtubeStartTime) return false
+        if (point != other.point) return false
 
         return true
     }
@@ -333,6 +376,12 @@ data class Quiz4(
     override var answers: MutableList<String> = mutableListOf("", "", "", ""),
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ4,
+    override var bodyType: BodyType = BodyType.NONE,
+    override var bodyText: String = "",
+    override var bodyImage: ByteArray? = null,
+    override var youtubeId: String = "",
+    override var youtubeStartTime: Int = 0,
+    override var point: Int = 5,
 ): Quiz(answers, question){
     init {
         // Additional initialization logic if needed
@@ -392,6 +441,14 @@ data class Quiz4(
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
+        if (bodyType != other.bodyType) return false
+        if (bodyText != other.bodyText) return false
+        if (!bodyImage.contentEquals(other.bodyImage)) return false
+        if (youtubeId != other.youtubeId) return false
+        if (youtubeStartTime != other.youtubeStartTime) return false
+        if (point != other.point) return false
+        if (userConnectionIndex != other.userConnectionIndex) return false
+        if (dotPairOffsets != other.dotPairOffsets) return false
 
         return true
     }

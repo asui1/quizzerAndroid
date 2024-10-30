@@ -49,7 +49,6 @@ import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.RegisterViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
-import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import androidx.navigation.compose.composable
 import com.asu1.quizzer.data.loadQuizData
@@ -62,7 +61,6 @@ class MainActivity : ComponentActivity() {
     private val inquiryViewModel: InquiryViewModel by viewModels()
     private val mainViewModel: MainViewModel by viewModels()
     private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
-    private val signOutViewModel: SignOutViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
     private val registerViewModel: RegisterViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
@@ -104,7 +102,6 @@ class MainActivity : ComponentActivity() {
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
-                                    signOutViewModel = signOutViewModel,
                                     inquiryViewModel = inquiryViewModel,
                                     loginActivityState = loginActivityState,
                                     navigateToQuizLayoutBuilder = {

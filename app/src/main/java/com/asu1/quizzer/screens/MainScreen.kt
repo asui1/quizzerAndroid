@@ -94,7 +94,6 @@ import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
-import com.asu1.quizzer.viewModels.SignOutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,7 +102,6 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     navController: NavController,
     quizCardMainViewModel: QuizCardMainViewModel = viewModel(),
-    signOutViewModel: SignOutViewModel = viewModel(),
     inquiryViewModel: InquiryViewModel = viewModel(),
     loginActivityState: LoginActivityState,
     navigateToQuizLayoutBuilder: () -> Unit = {},
@@ -154,7 +152,7 @@ fun MainScreen(
                     userData = userData,
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                     logOut = { loginActivityState.logout() },
-                    signOut = { email -> signOutViewModel.sendSignout(email) },
+                    signOut = { email -> loginActivityState.signout(email) },
                     navigateToMyQuizzes = { navigateToMyQuizzes() }
                 )
             },

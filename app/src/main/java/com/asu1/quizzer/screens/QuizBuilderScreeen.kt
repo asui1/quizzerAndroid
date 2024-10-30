@@ -218,7 +218,7 @@ fun QuizBuilderScreen(navController: NavController,
                     items(quizzes.size) {
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
-                            modifier = Modifier.pointerInput(Unit) { detectTapGestures {} }
+                            modifier = Modifier
                                 .size(width = 292.dp, height = bodyHeight)
                                 .border(
                                     width = 2.dp,
@@ -229,8 +229,7 @@ fun QuizBuilderScreen(navController: NavController,
                             QuizViewer(
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
-                                updateUserInput = { newQuiz ->
-                                },
+                                updateUserInput = { },
                                 isPreview = true,
                             )
                         }

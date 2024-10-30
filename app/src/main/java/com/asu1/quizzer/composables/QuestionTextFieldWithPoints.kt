@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -34,7 +35,7 @@ fun QuestionTextFieldWithPoints(
     onNext: () -> Unit = {},
     focusRequesters: List<FocusRequester> = listOf(FocusRequester(), FocusRequester())
 ) {
-    var textFieldValue by remember { mutableStateOf(point.toString()) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(point.toString())) }
     
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -58,12 +59,12 @@ fun QuestionTextFieldWithPoints(
             value = textFieldValue,
             maxLines = 1,
             onValueChange = {it ->
-                if(it.isEmpty()){
+                if(it.text.isEmpty()){
                     textFieldValue = it
                 }
-                else if(it.isDigitsOnly()){
+                else if(it.text.isDigitsOnly()){
                     textFieldValue = it
-                    onPointChange(it.toInt())
+                    onPointChange(it.text.toInt())
                 }
             },
             keyboardOptions = KeyboardOptions.Default.copy(

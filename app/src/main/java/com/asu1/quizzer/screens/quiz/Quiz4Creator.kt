@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.util.Logger
@@ -61,7 +62,7 @@ fun Quiz4Creator(
     var initOffset by remember { mutableStateOf<Offset?>(null) }
     var isDragging by remember { mutableStateOf(true) }
     val color = MaterialTheme.colorScheme.primary
-    var focusRequesters = List(quizState.answers.size * 2 + 1) { FocusRequester() }
+    var focusRequesters = List(quizState.answers.size * 2 + 2) { FocusRequester() }
     val focusManager = LocalFocusManager.current
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
     val dotSizeDp = 20.dp
@@ -86,13 +87,15 @@ fun Quiz4Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                MyTextField(
-                    value = quizState.question,
-                    onValueChange = { quiz.updateQuestion(it) },
-                    focusRequester = FocusRequester(),
+                QuestionTextFieldWithPoints(
+                    question = quizState.question,
+                    onQuestionChange =  {quiz.updateQuestion(it)},
+                    point = quizState.point,
+                    onPointChange = { quiz.setPoint(it) },
                     onNext = {
-                        focusRequesters[1].requestFocus()
+                        focusRequesters[2].requestFocus()
                     },
+                    focusRequesters = focusRequesters
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -104,9 +107,9 @@ fun Quiz4Creator(
                     MyTextField(
                         value = quizState.answers[index],
                         onValueChange = { quiz.updateAnswerAt(index, it) },
-                        focusRequester = focusRequesters[index * 2 + 1],
+                        focusRequester = focusRequesters[index * 2 + 2],
                         onNext = {
-                            focusRequesters[index * 2 + 2].requestFocus()
+                            focusRequesters[index * 2 + 3].requestFocus()
                         },
                         modifier = Modifier.weight(1f),
                         label = "Answer ${index + 1}"
@@ -160,7 +163,7 @@ fun Quiz4Creator(
                     MyTextField(
                         value = quizState.connectionAnswers[index],
                         onValueChange = { quiz.updateConnectionAnswer(index, it) },
-                        focusRequester = focusRequesters[index * 2 + 2],
+                        focusRequester = focusRequesters[index * 2 + 3],
                         imeAction = if(index == quizState.answers.size - 1) {
                             ImeAction.Done
                         } else {
@@ -170,7 +173,7 @@ fun Quiz4Creator(
                             if(index == quizState.answers.size - 1) {
                                 focusManager.clearFocus()
                             } else {
-                                focusRequesters[index * 2 + 3].requestFocus()
+                                focusRequesters[index * 2 + 4].requestFocus()
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -178,12 +181,12 @@ fun Quiz4Creator(
                     )
                     IconButton(
                         onClick = {
-                            if(focusRequesters.size <= 7){
+                            if(focusRequesters.size <= 8){
                                 return@IconButton
                             }
                             focusRequesters = focusRequesters.toMutableList().also {
-                                it.removeAt(index * 2 + 1)
-                                it.removeAt(index * 2 + 1)
+                                it.removeAt(index * 2 + 2)
+                                it.removeAt(index * 2 + 2)
                             }
                             quiz.removeAnswerAt(index)
                         }

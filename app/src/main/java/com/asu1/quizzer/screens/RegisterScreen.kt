@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -118,8 +119,9 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
     // Nickname Input UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    var nickname by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf(TextFieldValue(text = "")) }
     val registerStep by registerViewModel.registerStep.observeAsState()
+    val isError by registerViewModel.isError.observeAsState(false)
 
     LaunchedEffect(registerStep) {
         Logger().printBackStack(navController)
@@ -153,7 +155,18 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                     )
                     TextField(
                         value = nickname,
-                        onValueChange = { if(it.length <= 12) nickname = it },
+                        onValueChange = {textfieldvalue ->
+                            if(textfieldvalue.text.length <= 12) {
+                                nickname = textfieldvalue
+                                registerViewModel.undoError()
+                            }
+                        },
+                        isError = isError,
+                        label = {
+                            if(isError) Text(text = "Duplicate Nickname", color = MaterialTheme.colorScheme.error)
+                            else
+                            Text(text = "Nickname")
+                                },
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
@@ -162,14 +175,14 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = {
-                                if(nickname.length <= 12) registerViewModel.setNickName(nickname)
+                                if(nickname.text.length <= 12) registerViewModel.setNickName(nickname.text)
                             }
                         ),
-                        supportingText = { Text(text = "Length: ${nickname.length}/12") }
+                        supportingText = { Text(text = "Length: ${nickname.text.length}/12") }
                     )
                 }
                 Button(
-                    onClick = { registerViewModel.setNickName(nickname) },
+                    onClick = { registerViewModel.setNickName(nickname.text) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

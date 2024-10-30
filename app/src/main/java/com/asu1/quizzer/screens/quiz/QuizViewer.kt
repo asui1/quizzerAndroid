@@ -33,16 +33,22 @@ fun QuizViewer(
     }
     when(quiz){
         is Quiz1 -> {
+            Logger().debug("QuizViewer Quiz1")
             val quiz1ViewModel: Quiz1ViewModel = viewModel(
-                key = quiz.uuid
+                key = quiz.uuid + "Quiz1" + isPreview
             )
             quiz1ViewModel.loadQuiz(quiz)
+            //여기서는 UserAns를 수정할 수 있음.
             Quiz1Viewer(
                 quiz = quiz1ViewModel,
+                toggleUserAns = {
+                    quiz1ViewModel.toggleUserAnsAt(it)
+                },
                 quizTheme = quizTheme,
                 onExit = {
                     updateQuiz(it)
-                }
+                },
+                key = quiz.uuid + "Quiz1" + isPreview
             )
         }
         is Quiz2 -> {

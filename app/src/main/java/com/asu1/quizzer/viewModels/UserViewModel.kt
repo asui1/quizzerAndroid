@@ -63,6 +63,24 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun signout(email: String){
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.deleteUser(email)
+                if(response.isSuccessful){
+                    _showToast.postValue("User Deleted")
+                    logOut()
+                }
+                else{
+                    _showToast.postValue("Failed to Delete User")
+                }
+            }
+            catch (e: Exception){
+                _showToast.postValue("Failed to Delete User")
+            }
+        }
+    }
+
     fun logOut() {
         _userData.value = null
         sharedPreferencesHelper.clearUserLoginInfo()

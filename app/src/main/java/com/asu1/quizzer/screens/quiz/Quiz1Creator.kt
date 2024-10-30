@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,6 +51,7 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.core.text.isDigitsOnly
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
+import com.asu1.quizzer.composables.QuizBodyBuilder
 
 
 @Composable
@@ -60,26 +60,7 @@ fun Quiz1Creator(
     onSave: (Quiz) -> Unit
 ) {
     val quiz1State by quiz.quiz1State.collectAsState()
-    var showBodyDialog by remember { mutableStateOf(false) }
     var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 2) { FocusRequester() }) }
-
-    if (showBodyDialog) {
-        BodyTypeDialog(
-            onDismissRequest = { showBodyDialog = false },
-            onTextSelected = {
-                quiz.updateBodyState(BodyType.TEXT)
-                showBodyDialog = false
-            },
-            onImageSelected = {
-                quiz.updateBodyState(BodyType.IMAGE)
-                showBodyDialog = false
-            },
-            onYoutubeSelected = {
-                quiz.updateBodyState(BodyType.YOUTUBE)
-                showBodyDialog = false
-            }
-        )
-    }
 
     Box(
         modifier = Modifier
@@ -104,12 +85,12 @@ fun Quiz1Creator(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                Quiz1BodyBuilder(
+                QuizBodyBuilder(
                     bodyState = quiz1State.bodyType,
-                    onAddBody = { showBodyDialog = true },
+                    updateBody = { quiz.updateBodyState(it) },
                     bodyText = quiz1State.bodyText,
                     onBodyTextChange = { quiz.updateBodyText(it) },
-                    imageBytes = quiz1State.image,
+                    imageBytes = quiz1State.bodyImage,
                     onImageSelected = { quiz.updateBodyImage(it) },
                     youtubeId = quiz1State.youtubeId,
                     youtubeStartTime = quiz1State.youtubeStartTime,
@@ -235,121 +216,7 @@ fun MyTextField(
 
 
 
-@Composable
-fun Quiz1BodyBuilder(
-    bodyState: BodyType,
-    onAddBody: () -> Unit,
-    bodyText: String,
-    onBodyTextChange: (String) -> Unit,
-    imageBytes: ByteArray?,
-    onImageSelected: (ByteArray) -> Unit,
-    youtubeId: String,
-    youtubeStartTime: Int,
-    onYoutubeUpdate: (String, Int) -> Unit,
-    onRemoveBody: () -> Unit = {},
-){
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        if(bodyState != BodyType.NONE) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = onRemoveBody,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.RemoveCircleOutline,
-                        contentDescription = "Delete Body"
-                    )
-                }
-            }
-        }
-        when(bodyState){
-            BodyType.NONE -> {
-                TextButton(
-                    onClick = onAddBody,
-                ) {
-                    Text("Add Body")
-                }
-            }
-            BodyType.TEXT -> {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = bodyText,
-                    onValueChange = {it ->
-                        onBodyTextChange(it)
-                    },
-                    label = { Text("Body Text") }
-                )
-            }
-            BodyType.IMAGE -> {
-                ImageGetter(
-                    image = imageBytes ?: ByteArray(0),
-                    onImageUpdate = onImageSelected,
-                    onImageDelete = { onImageSelected(ByteArray(0)) },
-                    width = 200.dp,
-                    height = 200.dp
-                )
-            }
-            BodyType.YOUTUBE -> {
-                YoutubeLinkInput(
-                    youtubeId = youtubeId,
-                    startTime = youtubeStartTime,
-                    onYoutubeUpdate = onYoutubeUpdate
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun BodyPreviews() {
-    QuizzerAndroidTheme {
-        Column(){
-            Quiz1BodyBuilder(
-                bodyState = BodyType.TEXT,
-                onAddBody = {},
-                bodyText = "Body Text",
-                onBodyTextChange = {},
-                imageBytes = null,
-                onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
-                onYoutubeUpdate = { _, _ -> }
-            )
-            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
-            Quiz1BodyBuilder(
-                bodyState = BodyType.IMAGE,
-                onAddBody = {},
-                bodyText = "Body Text",
-                onBodyTextChange = {},
-                imageBytes = null,
-                onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
-                onYoutubeUpdate = { _, _ -> }
-            )
-            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
-            Quiz1BodyBuilder(
-                bodyState = BodyType.YOUTUBE,
-                onAddBody = {},
-                bodyText = "Body Text",
-                onBodyTextChange = {},
-                imageBytes = null,
-                onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
-                onYoutubeUpdate = { _, _ -> }
-            )
-        }
-
-    }
-}
 @Composable
 fun AnswerTextField(
     value: String,
@@ -472,37 +339,7 @@ fun Quiz1AnswerSelection(
     }
 }
 
-@Composable
-fun BodyTypeDialog(
-    onDismissRequest: () -> Unit,
-    onTextSelected: () -> Unit,
-    onImageSelected: () -> Unit,
-    onYoutubeSelected: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text("Select Body Type") },
-        text = {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                TextButton(onClick = onTextSelected) {
-                    Text("Text")
-                }
-                TextButton(onClick = onImageSelected) {
-                    Text("Image")
-                }
-                TextButton(onClick = onYoutubeSelected) {
-                    Text("Youtube")
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = {}
-    )
-}
+
 
 @Preview(showBackground = true)
 @Composable
@@ -510,19 +347,6 @@ fun Quiz1Preview() {
     QuizzerAndroidTheme {
         Quiz1Creator(
             onSave = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BodyDialogPreview() {
-    QuizzerAndroidTheme {
-        BodyTypeDialog(
-            onDismissRequest = {},
-            onTextSelected = {},
-            onImageSelected = {},
-            onYoutubeSelected = {}
         )
     }
 }
