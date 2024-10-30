@@ -42,7 +42,14 @@ abstract class Quiz(
     operator fun set(index: Int, value: String) {
         answers[index] = value
     }
-
+    fun validateBody() {
+        if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
+            bodyType = BodyType.NONE
+        }
+        if(bodyType == BodyType.IMAGE && bodyImage == null){
+            bodyType = BodyType.NONE
+        }
+    }
     abstract fun initViewState()
     abstract fun validateQuiz() : Pair<String, Boolean>
     abstract fun changeToJson() : QuizJson
@@ -107,7 +114,7 @@ data class Quiz1(
             layoutType = layoutType.value,
             body = Quiz1Body(
                 bodyType = bodyType.value,
-                image = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
                 shuffleAnswers = shuffleAnswers,
                 maxAnswerSelection = maxAnswerSelection,
@@ -127,7 +134,7 @@ data class Quiz1(
         val body = quiz1Json.body
 
         bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.image?.let { Base64.getDecoder().decode(it) }
+        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         shuffleAnswers = body.shuffleAnswers
         maxAnswerSelection = body.maxAnswerSelection
@@ -139,14 +146,7 @@ data class Quiz1(
         initViewState()
     }
 
-    fun validateBody() {
-        if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
-            bodyType = BodyType.NONE
-        }
-        if(bodyType == BodyType.IMAGE && bodyImage == null){
-            bodyType = BodyType.NONE
-        }
-    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -213,6 +213,7 @@ data class Quiz2(
 ): Quiz(answers, question){
     override fun initViewState() {
         userAnswerDate = mutableSetOf()
+        validateBody()
     }
 
     override fun validateQuiz(): Pair<String, Boolean> {
@@ -252,6 +253,7 @@ data class Quiz2(
         maxAnswerSelection = body.maxAnswerSelection
         answers = body.answers.toMutableList()
         question = body.question
+        point = body.points
         initViewState()
     }
 
@@ -305,6 +307,7 @@ data class Quiz3(
                 answer + "Q!Z2${index + 1}"
             }.shuffled()).toMutableList()
         }
+        validateBody()
     }
 
     override fun validateQuiz(): Pair<String, Boolean> {
@@ -326,7 +329,12 @@ data class Quiz3(
                 answers = answers,
                 ans = listOf(),
                 points = point,
-                question = question
+                question = question,
+                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyText = bodyText,
+                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
+                youtubeStartTime = youtubeStartTime.takeIf { it != 0 },
+                bodyType = bodyType.value
             )
         )
         return quiz3Json
@@ -339,6 +347,13 @@ data class Quiz3(
 
         answers = body.answers.toMutableList()
         question = body.question
+        bodyType = BodyType.entries.first { it.value == body.bodyType }
+        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
+        bodyText = body.bodyText
+        youtubeId = body.youtubeId ?: ""
+        youtubeStartTime = body.youtubeStartTime ?: 0
+        point = body.points
+
         initViewState()
     }
 
@@ -388,6 +403,7 @@ data class Quiz4(
     }
     override fun initViewState() {
         userConnectionIndex = MutableList(answers.size) { null }
+        validateBody()
     }
 
     override fun validateQuiz(): Pair<String, Boolean> {
@@ -414,7 +430,12 @@ data class Quiz4(
                 answers = answers,
                 ans = listOf(),
                 points = point,
-                question = question
+                question = question,
+                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyText = bodyText,
+                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
+                youtubeStartTime = youtubeStartTime.takeIf { it != 0 },
+                bodyType = bodyType.value
             )
         )
         return quiz4Json
@@ -428,6 +449,12 @@ data class Quiz4(
         connectionAnswerIndex = body.connectionAnswerIndex.toMutableList()
         answers = body.answers.toMutableList()
         question = body.question
+        bodyType = BodyType.entries.first { it.value == body.bodyType }
+        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
+        bodyText = body.bodyText
+        youtubeId = body.youtubeId ?: ""
+        youtubeStartTime = body.youtubeStartTime ?: 0
+        point = body.points
 
         initViewState()
     }

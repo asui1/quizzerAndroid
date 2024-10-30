@@ -44,7 +44,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
+import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
@@ -98,6 +100,24 @@ fun Quiz4Creator(
                     focusRequesters = focusRequesters
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                QuizBodyBuilder(
+                    bodyState = quizState.bodyType,
+                    updateBody = { quiz.updateBodyState(it) },
+                    bodyText = quizState.bodyText,
+                    onBodyTextChange = { quiz.updateBodyText(it) },
+                    imageBytes = quizState.bodyImage,
+                    onImageSelected = { quiz.updateBodyImage(it) },
+                    youtubeId = quizState.youtubeId,
+                    youtubeStartTime = quizState.youtubeStartTime,
+                    onYoutubeUpdate = { id, time ->
+                        quiz.updateBodyYoutube(id, time)
+                    },
+                    onRemoveBody = {
+                        quiz.updateBodyState(BodyType.NONE)
+                    }
+                )
             }
             items(quizState.answers.size) { index ->
                 Row(

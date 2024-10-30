@@ -104,8 +104,6 @@ fun QuizBodyBuilder(
                     image = imageBytes ?: ByteArray(0),
                     onImageUpdate = onImageSelected,
                     onImageDelete = { onImageSelected(ByteArray(0)) },
-                    width = 200.dp,
-                    height = 200.dp
                 )
             }
             BodyType.YOUTUBE -> {

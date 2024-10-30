@@ -28,7 +28,7 @@ fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageC
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Set Quiz Image",
+            text = "Set Quiz Image (80 kb)",
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.size(16.dp))

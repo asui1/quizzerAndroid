@@ -45,7 +45,7 @@ fun Quiz3Viewer(
     onExit: (Quiz3) -> Unit = {},
 ) {
     val view = LocalView.current
-    val quiz3State by quiz.quiz3State.collectAsState()
+    val quizState by quiz.quiz3State.collectAsState()
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         // Update the list
@@ -55,7 +55,7 @@ fun Quiz3Viewer(
 
     DisposableEffect(Unit) {
         onDispose {
-            onExit(quiz3State)
+            onExit(quizState)
         }
     }
 
@@ -67,7 +67,7 @@ fun Quiz3Viewer(
     ) {
         item {
             GetTextStyle(
-                quiz3State.question,
+                quizState.question,
                 quizTheme.questionTextStyle,
                 quizTheme.colorScheme,
                 modifier = Modifier.fillMaxWidth()
@@ -75,16 +75,23 @@ fun Quiz3Viewer(
             Spacer(modifier = Modifier.height(16.dp))
         }
         item{
+            BuildBody(
+                quizState = quizState,
+                quizTheme = quizTheme
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item{
             GetTextStyle(
-                quiz3State.shuffledAnswers[0],
+                quizState.shuffledAnswers[0],
                 quizTheme.bodyTextStyle,
                 quizTheme.colorScheme,
                 modifier = Modifier.fillMaxWidth().padding(8.dp)
             )
         }
-        items(quiz3State.shuffledAnswers.size -1, key = { quiz3State.shuffledAnswers[it + 1] }) {
-            ReorderableItem(reorderableLazyListState, key = quiz3State.shuffledAnswers[it + 1]) { isDragging ->
-                val item = quiz3State.shuffledAnswers[it + 1].replace(Regex("Q!Z2\\d+$"), "")
+        items(quizState.shuffledAnswers.size -1, key = { quizState.shuffledAnswers[it + 1] }) {
+            ReorderableItem(reorderableLazyListState, key = quizState.shuffledAnswers[it + 1]) { isDragging ->
+                val item = quizState.shuffledAnswers[it + 1].replace(Regex("Q!Z2\\d+$"), "")
                 val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "")
 
                 Surface(shadowElevation = elevation) {
@@ -127,7 +134,7 @@ fun Quiz3Viewer(
                 }
             }
         }
-        items(quiz3State.shuffledAnswers.size - 1){
+        items(quizState.shuffledAnswers.size - 1){
 
         }
     }

@@ -44,7 +44,7 @@ data class QuizTheme(
     var questionTextStyle: List<Int> = listOf(0, 0, 1, 0),
     var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
     var answerTextStyle: List<Int> = listOf(0, 0, 0, 2),
-    @Serializable(with = ColorSchemeSerializer::class) val colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
 )
 
 data class QuizData(
@@ -218,6 +218,10 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun setQuizImage(image: ByteArray) {
+        if(image.size > 80000){
+            _showToast.value = "Image size too large"
+            return
+        }
         _quizData.value = _quizData.value.copy(image = image)
     }
 

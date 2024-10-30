@@ -35,18 +35,21 @@ import com.asu1.quizzer.util.launchPhotoPicker
 import loadImageAsByteArray
 
 @Composable
-fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp = 100.dp, height: Dp = 100.dp) {
-    val size = min(width, height)
+fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null) {
+
     val context = LocalContext.current
-    val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
+    val photoPickerLauncher = launchPhotoPicker(context, width, height) { byteArray ->
         onImageUpdate(byteArray)
     }
 
+    val localWidth = width ?: 200.dp
+    val localHeight = height ?: 200.dp
+    val size = min(localWidth, localHeight)
 
     Box(
         modifier = Modifier
-            .width(width)
-            .height(height)
+            .width(localWidth)
+            .height(localHeight)
             .clickable {
                 photoPickerLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)

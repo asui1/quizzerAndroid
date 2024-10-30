@@ -14,12 +14,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import java.io.ByteArrayOutputStream
 
 @Composable
 fun launchPhotoPicker(
     context: Context,
-    onPhotoPicked: (ByteArray) -> Unit
+    width: Dp? = null,
+    height: Dp? = null,
+    onPhotoPicked: (ByteArray) -> Unit,
 ): ActivityResultLauncher<PickVisualMediaRequest> {
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -28,8 +32,8 @@ fun launchPhotoPicker(
                 val byteArray = uriToByteArray(
                     context = context,
                     uri = uri,
-                    maxWidth = 400,
-                    maxHeight = 400
+                    maxWidth = width,
+                    maxHeight = height,
                 )
                 if (byteArray != null) {
                     onPhotoPicked(byteArray)
@@ -44,35 +48,50 @@ fun loadImageFromDrawable(context: Context, drawableId: Int): ImageBitmap {
     return bitmap.asImageBitmap()
 }
 
-fun uriToByteArray(context: Context, uri: Uri, maxWidth: Int, maxHeight: Int): ByteArray? {
+fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): ByteArray? {
     return context.contentResolver.openInputStream(uri)?.use { inputStream ->
         val originalBitmap = BitmapFactory.decodeStream(inputStream)
         val resizedBitmap = resizeBitmap(originalBitmap, maxWidth, maxHeight)
         val buffer = ByteArrayOutputStream()
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            resizedBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 85, buffer)
+            resizedBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, buffer)
         }
         else {
-            resizedBitmap.compress(Bitmap.CompressFormat.WEBP, 85, buffer)
+            resizedBitmap.compress(Bitmap.CompressFormat.WEBP, 100, buffer)
         }
         buffer.toByteArray()
     }
 }
 
-fun resizeBitmap(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
+fun resizeBitmap(bitmap: Bitmap, maxWidth: Dp?, maxHeight: Dp?): Bitmap {
+    if(maxWidth == null || maxHeight == null) {
+        return bitmap
+    }
     val width = bitmap.width
     val height = bitmap.height
-    val aspectRatio = width.toFloat() / height.toFloat()
     val newWidth: Int
     val newHeight: Int
 
-    if (width > height) {
-        newWidth = maxWidth
-        newHeight = (maxWidth / aspectRatio).toInt()
+    val titleSize = 200
+    val aspectRatio = maxWidth / maxHeight
+    Logger().debug("Aspect Ratio: $aspectRatio")
+
+    if (width > height * aspectRatio) {
+        newWidth = (height * aspectRatio).toInt()
+        newHeight = height
     } else {
-        newHeight = maxHeight
-        newWidth = (maxHeight * aspectRatio).toInt()
+        newWidth = width
+        newHeight = (width / aspectRatio).toInt()
     }
 
-    return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+    val xOffset = (width - newWidth) / 2
+    val yOffset = (height - newHeight) / 2
+    Logger().debug("Resizing Bitmap: $width x $height -> $newWidth x $newHeight")
+    val changedBitmap = Bitmap.createBitmap(bitmap, xOffset, yOffset, newWidth, newHeight)
+    if(maxWidth == 200.dp) {
+        return Bitmap.createScaledBitmap(changedBitmap, titleSize, titleSize, true)
+    }
+    else{
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+    }
 }

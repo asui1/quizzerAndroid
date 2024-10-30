@@ -38,7 +38,7 @@ fun Quiz4Viewer(
     quizTheme: QuizTheme = QuizTheme(),
     onExit: (Quiz4) -> Unit = {},
 ) {
-    val quiz4State by quiz.quiz4State.collectAsState()
+    val quizState by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }
@@ -53,7 +53,7 @@ fun Quiz4Viewer(
 
     DisposableEffect(Unit) {
         onDispose {
-            onExit(quiz4State)
+            onExit(quizState)
         }
     }
 
@@ -72,20 +72,27 @@ fun Quiz4Viewer(
         ) {
             item {
                 GetTextStyle(
-                    quiz4State.question,
+                    quizState.question,
                     quizTheme.questionTextStyle,
                     quizTheme.colorScheme,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            items(quiz4State.answers.size) { index ->
+            item{
+                BuildBody(
+                    quizState = quizState,
+                    quizTheme = quizTheme
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            items(quizState.answers.size) { index ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ){
                     GetTextStyle(
-                        quiz4State.answers[index],
+                        quizState.answers[index],
                         quizTheme.bodyTextStyle,
                         quizTheme.colorScheme,
                         modifier = Modifier.weight(1f)
@@ -97,8 +104,8 @@ fun Quiz4Viewer(
                         pointerEvent = { it ->
                             detectDragGestures(
                                 onDragStart = {
-                                    startOffset = quiz4State.dotPairOffsets[index].first ?: Offset(0f, 0f)
-                                    endOffset = quiz4State.dotPairOffsets[index].second ?: Offset(0f, 0f)
+                                    startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
+                                    endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
                                     quiz.updateUserConnection(index, null)
                                     initOffset = null
                                     isDragging = true
@@ -136,7 +143,7 @@ fun Quiz4Viewer(
                         moveOffset = moveOffset,
                         )
                     GetTextStyle(
-                        quiz4State.connectionAnswers[index],
+                        quizState.connectionAnswers[index],
                         quizTheme.bodyTextStyle,
                         quizTheme.colorScheme,
                         modifier = Modifier.weight(1f)
@@ -146,8 +153,8 @@ fun Quiz4Viewer(
             }
         }
         DrawLines(
-            dotOffsets = quiz4State.dotPairOffsets,
-            connections = quiz4State.userConnectionIndex
+            dotOffsets = quizState.dotPairOffsets,
+            connections = quizState.userConnectionIndex
         )
         if(isDragging) {
             Canvas(modifier = Modifier.fillMaxSize()) {

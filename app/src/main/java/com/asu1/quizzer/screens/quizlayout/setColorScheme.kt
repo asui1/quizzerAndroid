@@ -341,8 +341,6 @@ fun BackgroundRow(
                                         )
                                     )
                                 },
-                                width = 200.dp,
-                                height = 200.dp
                             )
                         }
                     }

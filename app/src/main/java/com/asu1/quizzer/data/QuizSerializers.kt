@@ -49,17 +49,17 @@ data class Quiz1Json(
 
 @Serializable
 data class Quiz1Body(
-    val bodyType: Int,
-    val image: String?,
-    val bodyText: String,
     val shuffleAnswers: Boolean,
     val maxAnswerSelection: Int,
     val answers: List<String>,
     val ans: List<Boolean>,
     val question: String,
+    val bodyImage: String?,
+    val bodyText: String,
+    val bodyType: Int,
     val youtubeId: String?,
+    val youtubeStartTime: Int?,
     val points: Int,
-    val youtubeStartTime: Int?
 )
 
 @Serializable
@@ -107,7 +107,12 @@ data class Quiz3Body(
     val answers: List<String>,
     val ans: List<Boolean>,
     val points: Int,
-    val question: String
+    val question: String,
+    val bodyImage: String?,
+    val bodyText: String,
+    val bodyType: Int,
+    val youtubeId: String?,
+    val youtubeStartTime: Int?,
 )
 
 @Serializable
@@ -132,5 +137,10 @@ data class Quiz4Body(
     val answers: List<String>,
     val ans: List<Boolean>,
     val points: Int,
-    val question: String
+    val question: String,
+    val bodyImage: String?,
+    val bodyText: String,
+    val bodyType: Int,
+    val youtubeId: String?,
+    val youtubeStartTime: Int?,
 )

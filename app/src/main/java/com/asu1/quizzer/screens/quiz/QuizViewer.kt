@@ -35,7 +35,7 @@ fun QuizViewer(
         is Quiz1 -> {
             Logger().debug("QuizViewer Quiz1")
             val quiz1ViewModel: Quiz1ViewModel = viewModel(
-                key = quiz.uuid + "Quiz1" + isPreview
+                key = quiz.uuid
             )
             quiz1ViewModel.loadQuiz(quiz)
             //여기서는 UserAns를 수정할 수 있음.
@@ -48,11 +48,12 @@ fun QuizViewer(
                 onExit = {
                     updateQuiz(it)
                 },
-                key = quiz.uuid + "Quiz1" + isPreview
             )
         }
         is Quiz2 -> {
-            val quiz2ViewModel: Quiz2ViewModel = viewModel()
+            val quiz2ViewModel: Quiz2ViewModel = viewModel(
+                key = quiz.uuid
+            )
             quiz2ViewModel.loadQuiz(quiz)
             Quiz2Viewer(
                 quiz = quiz2ViewModel,
@@ -63,7 +64,9 @@ fun QuizViewer(
             )
         }
         is Quiz3 -> {
-            val quiz3ViewModel: Quiz3ViewModel = viewModel()
+            val quiz3ViewModel: Quiz3ViewModel = viewModel(
+                key = quiz.uuid
+            )
             quiz3ViewModel.loadQuiz(quiz)
             Quiz3Viewer(
                 quiz = quiz3ViewModel,
@@ -74,7 +77,9 @@ fun QuizViewer(
             )
         }
         is Quiz4 -> {
-            val quiz4ViewModel: Quiz4ViewModel = viewModel()
+            val quiz4ViewModel: Quiz4ViewModel = viewModel(
+                key = quiz.uuid
+            )
             quiz4ViewModel.loadQuiz(quiz)
             Quiz4Viewer(
                 quiz = quiz4ViewModel,

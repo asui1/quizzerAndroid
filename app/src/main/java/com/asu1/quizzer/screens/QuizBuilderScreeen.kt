@@ -67,7 +67,7 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 
-val bodyHeight = 600.dp
+val bodyHeight = 550.dp
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -160,7 +160,8 @@ fun QuizBuilderScreen(navController: NavController,
         Scaffold(
             topBar = {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .background(color = colorScheme.primaryContainer),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ){
@@ -219,7 +220,7 @@ fun QuizBuilderScreen(navController: NavController,
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
-                                .size(width = 292.dp, height = bodyHeight)
+                                .size(width = 280.dp, height = bodyHeight)
                                 .border(
                                     width = 2.dp,
                                     color = Color.Gray,
@@ -251,6 +252,9 @@ fun QuizBuilderScreen(navController: NavController,
                     curIndex = curIndex,
                     totalQuizzes = quizzes.size,
                     editCurrentQuiz = {
+                        if(curIndex >= quizzes.size){
+                            return@QuizEditIconsRow
+                        }
                         moveToQuizCaller(
                             loadIndex = curIndex,
                             quizType = quizzes[curIndex].layoutType,
@@ -260,6 +264,10 @@ fun QuizBuilderScreen(navController: NavController,
                     addQuiz = {
                         showNewQuizDialog = true
                     }
+                )
+                Text(
+                    "Too many/big images might not be uploaded.",
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
@@ -294,7 +302,7 @@ fun QuizEditIconsRow(
     val curIndexText = if(totalQuizzes == 0) 0 else if(totalQuizzes == curIndex) curIndex else curIndex + 1
     Row(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically

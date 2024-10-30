@@ -97,7 +97,7 @@ fun DesignScoreCardScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
-    val photoPickerLauncher = launchPhotoPicker(context) { byteArray ->
+    val photoPickerLauncher = launchPhotoPicker(context, screenWidth * 0.8f, screenHeight * 0.8f) { byteArray ->
         scoreCardViewModel.updateBackgroundImage(byteArray)
     }
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
@@ -302,7 +302,7 @@ fun ScoreCardComposable(
             )
     ) {
         Image(
-            painter = ColorPainter(Color.White),
+            painter = ColorPainter(Color.Transparent),
             contentDescription = "Background",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier

@@ -33,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
+import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 
@@ -71,6 +73,24 @@ fun Quiz3Creator(
                     focusRequesters = focusRequesters
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                QuizBodyBuilder(
+                    bodyState = quiz3State.bodyType,
+                    updateBody = { quiz.updateBodyState(it) },
+                    bodyText = quiz3State.bodyText,
+                    onBodyTextChange = { quiz.updateBodyText(it) },
+                    imageBytes = quiz3State.bodyImage,
+                    onImageSelected = { quiz.updateBodyImage(it) },
+                    youtubeId = quiz3State.youtubeId,
+                    youtubeStartTime = quiz3State.youtubeStartTime,
+                    onYoutubeUpdate = { id, time ->
+                        quiz.updateBodyYoutube(id, time)
+                    },
+                    onRemoveBody = {
+                        quiz.updateBodyState(BodyType.NONE)
+                    }
+                )
             }
             item{
                 TextField(
