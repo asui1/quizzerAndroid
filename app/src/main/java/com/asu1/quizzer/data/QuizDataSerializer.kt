@@ -3,6 +3,8 @@ package com.asu1.quizzer.data
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -26,8 +28,12 @@ data class QuizLayoutSerializer(
     val scoreCard: ScoreCard
 )
 
-fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
-    if(quizData.value.uuid == null) this.generateUUIDWithTitle()
+suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
+    if (quizData.value.uuid == null) {
+        withContext(Dispatchers.Default) {
+            generateUUIDWithTitle()
+        }
+    }
     val quizDataSerializer = QuizDataSerializer(
         title = quizData.value.title,
         creator = quizData.value.creator,
@@ -42,7 +48,7 @@ fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
     return quizDataSerializer
 }
 
-fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializer {
+suspend fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializer {
     val quizLayoutSerializer = QuizLayoutSerializer(
         quizData = quizDataToJson(),
         quizTheme = quizTheme.value,

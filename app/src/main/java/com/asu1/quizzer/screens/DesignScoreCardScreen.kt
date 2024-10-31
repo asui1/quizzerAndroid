@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.material.icons.filled.Facebook
+import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -48,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,11 +69,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.ColorPicker
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
@@ -82,6 +87,7 @@ import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,6 +108,8 @@ fun DesignScoreCardScreen(
     }
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
     var showDropdownMenu by remember { mutableStateOf(false) }
+    var showTextColorPicker by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     MaterialTheme(
         colorScheme = scoreCard.colorScheme
@@ -121,6 +129,20 @@ fun DesignScoreCardScreen(
                             scoreCardViewModel.onColorSelection(color)
                         },
                         curSelection = scoreCard.background,
+                    )
+                }
+            }
+            if(showTextColorPicker){
+                Dialog(
+                    onDismissRequest = {
+                        showTextColorPicker = false
+                    }
+                ) {
+                    TextColorPickerModalSheet(
+                        initialColor = scoreCard.textColor,
+                        onColorSelected = { color ->
+                            scoreCardViewModel.updateTextColor(color)
+                        }
                     )
                 }
             }
@@ -147,7 +169,9 @@ fun DesignScoreCardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = {
-                        quizLayoutViewModel.tryUpload(navController, scoreCard)
+                        scope.launch {
+                            quizLayoutViewModel.tryUpload(navController, scoreCard)
+                        }
                     },
                     modifier = Modifier
                         .size(width = screenWidth * 0.6f, height = 48.dp)
@@ -166,11 +190,17 @@ fun DesignScoreCardScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             modifier = Modifier.fillMaxSize()
         ){
-            //TODO
-            // Buttons should have following contents.
-            // 1. Set background as image
-            // 2. Set background's color using primary/secondary/tertiary Colors.
-            // 3. Change background's opengl state. SHADER USING AGSL
+            IconButton(
+                onClick = {
+                    showTextColorPicker = true
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FormatColorText,
+                    contentDescription = "Text Color",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
             IconButton(
                 onClick = {
                     scoreCardViewModel.updateBackgroundState(ImageColorState.IMAGE)
@@ -181,7 +211,7 @@ fun DesignScoreCardScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.ImageSearch,
-                    contentDescription = "Close",
+                    contentDescription = "Set background image",
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -193,7 +223,7 @@ fun DesignScoreCardScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Colorize,
-                    contentDescription = "Close",
+                    contentDescription = "Set gradient color",
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -205,7 +235,7 @@ fun DesignScoreCardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Animation,
-                        contentDescription = "Close",
+                        contentDescription = "Set shader",
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -319,16 +349,18 @@ fun ScoreCardComposable(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
             Text(
                 text = scoreCard.title,
+                color = scoreCard.textColor,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
                 text = "Solver",
+                color = scoreCard.textColor,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.End)
             )
@@ -338,7 +370,7 @@ fun ScoreCardComposable(
             style = TextStyle(
                 fontFamily = ongle_yunue,
                 fontSize = (400 * textSize).sp,
-                color = scoreCard.colorScheme.error,
+                color = scoreCard.textColor,
             ),
             modifier = Modifier
                 .zIndex(2f)
@@ -369,7 +401,7 @@ fun ScoreCardComposable(
                     y = offsetY + ySize / 2 - dotSize / 2
                 )
                 .size(dotSize)
-                .background(scoreCard.colorScheme.error, CircleShape)
+                .background(scoreCard.textColor, CircleShape)
                 .zIndex(1f)
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
@@ -469,4 +501,25 @@ fun ModalSheetForColorSelectionPreview() {
             state = ImageColorState.COLOR2
         )
     )
+}
+
+@Composable
+fun TextColorPickerModalSheet(
+    initialColor: Color,
+    onColorSelected: (Color) -> Unit
+){
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp)
+    ){
+        ColorPicker(
+            initialColor = initialColor,
+            onColorSelected = { color ->
+                onColorSelected(color)
+            }
+        )
+    }
 }

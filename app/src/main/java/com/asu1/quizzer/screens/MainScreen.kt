@@ -72,6 +72,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -282,7 +283,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 }
                 IconButton(
                     onClick = { navigateToQuizLayoutBuilder() },
-                    modifier = Modifier.weight(1.5f),
+                modifier = Modifier.weight(1.5f).testTag("MainScreenCreateQuiz"),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )

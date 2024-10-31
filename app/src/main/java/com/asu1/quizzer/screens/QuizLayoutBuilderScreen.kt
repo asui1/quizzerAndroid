@@ -32,11 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +61,7 @@ import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +89,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         else -> true
     }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     BackHandler {
         if(step > LayoutSteps.TITLE) {
@@ -221,7 +225,9 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
-                            quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
+                            scope.launch{
+                                quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
+                            }
                         }
                     ){
                         Icon(
@@ -236,6 +242,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             proceed()
                         },
                         enabled = enabled,
+                        modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -276,7 +283,8 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
         TextButton(onClick = {onAgree()},
             modifier = Modifier
                 .fillMaxWidth()
-                .imePadding(),
+                .imePadding()
+                .testTag("QuizLayoutBuilderAgreePolicyButton"),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer

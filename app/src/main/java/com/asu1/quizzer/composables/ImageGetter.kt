@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,7 +37,6 @@ import loadImageAsByteArray
 
 @Composable
 fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null) {
-
     val context = LocalContext.current
     val photoPickerLauncher = launchPhotoPicker(context, width, height) { byteArray ->
         onImageUpdate(byteArray)
@@ -54,7 +54,8 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
                 photoPickerLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
-            },
+            }
+            .testTag("ImageGetterBoxGetImage"),
         contentAlignment = Alignment.Center
     ) {
         if (image.isEmpty()) {

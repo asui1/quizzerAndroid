@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -51,6 +52,7 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("QuizLayoutBuilderDescriptionTextField")
                 .focusRequester(focusRequester),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next

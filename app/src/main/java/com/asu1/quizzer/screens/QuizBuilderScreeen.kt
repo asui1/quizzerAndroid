@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -66,6 +67,7 @@ import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import kotlinx.coroutines.launch
 
 val bodyHeight = 550.dp
 
@@ -87,6 +89,7 @@ fun QuizBuilderScreen(navController: NavController,
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val initialIndex by quizLayoutViewModel.initIndex.observeAsState(0)
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(snapLayoutInfoProvider) {
         snapshotFlow { snapLayoutInfoProvider.firstVisibleItemIndex }
@@ -194,7 +197,12 @@ fun QuizBuilderScreen(navController: NavController,
                         onMoveToScoringScreen()
                     },
                     onLocalSave = {
-                        quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
+                        scope.launch {
+                            quizLayoutViewModel.saveLocal(
+                                context,
+                                scoreCardViewModel.scoreCard.value
+                            )
+                        }
                     }
                 )
             },

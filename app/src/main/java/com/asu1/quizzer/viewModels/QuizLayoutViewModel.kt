@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
@@ -14,8 +15,10 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
+import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
@@ -33,6 +36,7 @@ import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -136,7 +140,7 @@ class QuizLayoutViewModel : ViewModel() {
         _step.value = LayoutSteps.POLICY
     }
 
-    fun tryUpload(navController: NavController, scoreCard: ScoreCard) {
+    suspend fun tryUpload(navController: NavController, scoreCard: ScoreCard) {
         if(!validateQuizLayout()){
             navController.popBackStack()
             return
@@ -144,12 +148,26 @@ class QuizLayoutViewModel : ViewModel() {
         uploadQuizLayout(scoreCard)
     }
 
-    fun uploadQuizLayout(scoreCard: ScoreCard) {
-        val jsoned = toJson(scoreCard)
-        Logger().debug(jsoned.toString())
+    private suspend fun uploadQuizLayout(scoreCard: ScoreCard) {
+        viewModelScope.launch {
+            try {
+                val jsoned = toJson(scoreCard)
+                Logger().debug(jsoned.toString())
+                val response = RetrofitInstance.api.addQuiz(jsoned)
+                if(response.isSuccessful){
+                    _showToast.postValue("Quiz uploaded successfully")
+                }
+                else{
+                    _showToast.postValue("Failed to upload quiz")
+                }
+            }
+            catch (e: Exception){
+                _showToast.postValue("Failed to upload quiz")
+            }
+        }
     }
 
-    fun saveLocal(context: Context, scoreCard: ScoreCard) {
+    suspend fun saveLocal(context: Context, scoreCard: ScoreCard) {
         val jsoned = Json.encodeToString(toJson(scoreCard))
         val fileName = "${quizData.value.uuid}_quizSave.json"
         val file = File(context.filesDir, fileName)
