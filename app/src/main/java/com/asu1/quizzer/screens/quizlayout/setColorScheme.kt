@@ -2,11 +2,13 @@ package com.asu1.quizzer.screens.quizlayout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -31,11 +34,13 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
@@ -43,7 +48,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -371,31 +379,122 @@ fun GenerateColorScheme(
     primaryColor: Color = MaterialTheme.colorScheme.primary,
 ){
     val isTitleImageSet = quizImage != null
+    var selectedLevel by remember { mutableIntStateOf(2) }
+    val levels = 5
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        IconButtonWithDisable(imageVector = Icons.Default.Autorenew, text = "Gen with\nTitle Image", onClick = {
+    Column(
 
-            val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
-            val titleImageColorScheme = randomDynamicColorScheme(seedColor)
-            setColorScheme(titleImageColorScheme)
-        }, enabled = isTitleImageSet)
-        IconButtonWithDisable(imageVector = Icons.Default.Autorenew, text = "Gen with\nPrimary Color", onClick = {
-            val primaryColorScheme = randomDynamicColorScheme(primaryColor)
-            setColorScheme(primaryColorScheme)
-        }, enabled = true)
+    )
+    {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            IconButtonWithDisable(
+                imageVector = Icons.Default.Autorenew,
+                text = "Gen with\nTitle Image",
+                onClick = {
+
+                    val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
+                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, selectedLevel)
+                    setColorScheme(titleImageColorScheme)
+                },
+                enabled = isTitleImageSet
+            )
+            IconButtonWithDisable(
+                imageVector = Icons.Default.Autorenew,
+                text = "Gen with\nPrimary Color",
+                onClick = {
+                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, selectedLevel)
+                    setColorScheme(primaryColorScheme)
+                },
+                enabled = true
+            )
+        }
+        LevelSelector(
+            onUpdateLevel = { level ->
+                selectedLevel = level
+            },
+            selectedLevel = selectedLevel,
+            levels = levels
+        )
     }
 }
 
-fun randomDynamicColorScheme(seedColor: Color): ColorScheme {
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun LevelSelector(
+    start: String = "Weak\nRandom",
+    end: String = "Strong\nRandom",
+    onUpdateLevel: (Int) -> Unit = {},
+    selectedLevel: Int = 1,
+    levels: Int = 4,
+){
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .pointerInput(Unit) {
+                detectDragGestures { change, _ ->
+                    val newLevel = (change.position.x / (size.width / levels)).toInt() + 1
+                    if (newLevel in 0..levels) {
+                        onUpdateLevel(newLevel)
+                    }
+                }
+            }
+    ) {
+        Text(text = start,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Box(
+            modifier = Modifier
+                .height(24.dp)
+                .weight(1f)
+                .background(Color.Gray)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(fraction = selectedLevel / levels.toFloat())
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = end,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+fun randomDynamicColorScheme(seedColor: Color, randomStrength: Int = 2): ColorScheme {
     val isDark = seedColor.luminance() < 0.5
+    val style = when (randomStrength) {
+        0 -> PaletteStyle.TonalSpot
+        1 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral).random()
+        2 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral, PaletteStyle.Vibrant).random()
+        3 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral, PaletteStyle.Vibrant, PaletteStyle.Expressive).random()
+        4 -> PaletteStyle.entries.toTypedArray().random()
+        else -> PaletteStyle.entries.toTypedArray().random()
+    }
+
+    val contrast = when (randomStrength) {
+        0 -> Contrast.Default.value
+        1 -> listOf(Contrast.Default.value, Contrast.Medium.value).random()
+        2 -> listOf(Contrast.Default.value, Contrast.Medium.value, Contrast.High.value).random()
+        3 -> listOf(Contrast.Default.value, Contrast.Medium.value, Contrast.High.value, Contrast.Reduced.value).random()
+        4 -> Contrast.entries.toTypedArray().random().value
+        else -> Contrast.entries.toTypedArray().random().value
+    }
     return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
-        style = PaletteStyle.entries.toTypedArray().random(),
-        contrastLevel = Contrast.entries.toTypedArray().random().value,
+        style = style,
+        contrastLevel = contrast,
     )
 }
 
