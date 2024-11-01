@@ -18,7 +18,7 @@ import java.time.YearMonth
 val scoreCard = ScoreCard(
     title = "페이커 퀴즈",
     solver = "Guest",
-    score = 100,
+    score = 100f,
     background = ImageColor(Color.Red, byteArrayOf(), Color.Blue, ImageColorState.COLOR),
     size = 0.3f,
     xRatio = 0.5f,

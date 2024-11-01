@@ -3,6 +3,7 @@ package com.asu1.quizzer
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
@@ -27,7 +28,13 @@ import androidx.compose.ui.test.GestureScope
 import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.performGesture
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.action.ViewActions.click
+import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.getPhotoPickerLauncher
+import com.asu1.quizzer.util.uriToByteArray
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
 val quizData = QuizData(
     title = "Quiz Test Title",
@@ -74,7 +81,6 @@ class MyComposeTest {
 
     @Test
     fun testAppLaunchAndStabilize() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
         composeTestRule.waitForIdle()
 
         waitUntilTag("MainScreenCreateQuiz")
@@ -101,11 +107,6 @@ class MyComposeTest {
         clickOnTag("QuizLayoutBuilderProceedButton")
         onIdle()
 
-        //SET IMAGE
-        composeTestRule.onNodeWithTag("ImageGetterBoxGetImage").performClick()
-        onIdle()
-        waitFor(500)
-
         // Mock ActivityResultRegistry
         val mockRegistry = object : ActivityResultRegistry() {
             override fun <I : Any?, O : Any?> onLaunch(
@@ -120,20 +121,34 @@ class MyComposeTest {
             }
         }
 
+        val activity = composeTestRule.activity
+        val quizLayoutViewModel = ViewModelProvider(activity).get(QuizLayoutViewModel::class.java)
+        val context = activity.applicationContext
+
+
         // Register the image picker with the mock registry
         val launcher = mockRegistry.register("key", ActivityResultContracts.PickVisualMedia()) { result: Uri? ->
             // Handle the result here
             if (result != null) {
-                // Perform actions with the selected image Uri
-                // For example, update the UI or save the Uri
+                val byteArray = uriToByteArray(
+                    context = context,
+                    uri = result,
+                    maxWidth = 200.dp,
+                    maxHeight = 200.dp,
+                )
+                if(byteArray != null){
+                    Logger().debug("Image Picked")
+                    quizLayoutViewModel.setQuizImage(byteArray)
+                }
             }
         }
-
-        // Launch the image picker
-        composeTestRule.onNodeWithTag("ImageGetterBoxGetImage").performClick()
         launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         onIdle()
-        waitFor(5000)
+
+        onIdle()
+        waitFor(3000)
+        onIdle()
+        waitFor(3000)
         //SET COLOR
         //SET TEXTSTYLE
 

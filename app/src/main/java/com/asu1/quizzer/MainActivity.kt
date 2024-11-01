@@ -106,10 +106,10 @@ class MainActivity : ComponentActivity() {
                                     inquiryViewModel = inquiryViewModel,
                                     loginActivityState = loginActivityState,
                                     navigateToQuizLayoutBuilder = {
-                                        if(userViewModel.userData.value?.email == null) {
-                                            userViewModel.setToast("Please login first")
-                                            NavMultiClickPreventer.navigate(navController, Route.Login)
-                                        } else {
+//                                        if(userViewModel.userData.value?.email == null) {
+//                                            userViewModel.setToast("Please login first")
+//                                            NavMultiClickPreventer.navigate(navController, Route.Login)
+//                                        } else {
                                             quizLayoutViewModel.resetQuizLayout()
                                             quizLayoutViewModel.initQuizLayout(
                                                 userViewModel.userData.value?.email,
@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
                                                 navController,
                                                 Route.CreateQuizLayout
                                             )
-                                        }
+//                                        }
                                     },
                                     navigateToMyQuizzes = {
                                         quizLoadViewModel.loadUserQuiz(userViewModel.userData.value?.email ?: "")
