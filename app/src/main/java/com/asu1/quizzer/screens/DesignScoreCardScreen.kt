@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -76,6 +77,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ColorPicker
+import com.asu1.quizzer.composables.ScoreCardBackground
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
@@ -305,6 +307,7 @@ fun ScoreCardComposable(
     scoreCard: ScoreCard,
     onUpdateRatio: (Float, Float) -> Unit,
     onUpdateSize: (Float) -> Unit,
+    isDesignScoreCard: Boolean = true,
 ){
     var xSize by remember { mutableStateOf(0.dp) }
     var ySize by remember { mutableStateOf(0.dp) }
@@ -321,7 +324,11 @@ fun ScoreCardComposable(
             }
         }
     }
-
+    val formattedScore = if (scoreCard.score % 1 == 0f) {
+        scoreCard.score.toInt().toString()
+    } else {
+        scoreCard.score.toString()
+    }
     Box(
         modifier = Modifier
             .size(width = width, height = height)
@@ -331,20 +338,9 @@ fun ScoreCardComposable(
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
-        Image(
-            painter = ColorPainter(Color.Transparent),
-            contentDescription = "Background",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp))
-                .then(
-                    scoreCard.background.asBackgroundModifierForScoreCard(
-                        shaderOption = scoreCard.shaderType,
-                        time = time
-                    )
-                )
-
+        ScoreCardBackground(
+            scoreCard = scoreCard,
+            time = time
         )
         Column(
             modifier = Modifier
@@ -359,14 +355,14 @@ fun ScoreCardComposable(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
-                text = "Solver",
+                text = scoreCard.solver,
                 color = scoreCard.textColor,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.End)
             )
         }
         Text(
-            text = scoreCard.score.toString(),
+            text = formattedScore,
             style = TextStyle(
                 fontFamily = ongle_yunue,
                 fontSize = (400 * textSize).sp,
@@ -380,6 +376,7 @@ fun ScoreCardComposable(
                     ySize = density.run { coordinates.size.height.toDp() }
                 }
                 .pointerInput(Unit) {
+                    if(!isDesignScoreCard) return@pointerInput
                     detectDragGestures { change, dragAmount ->
                         change.consume()
                         offsetX += dragAmount.x.toDp()
@@ -393,25 +390,27 @@ fun ScoreCardComposable(
         )
 
         // Dot for resizing text
-        Box(
-            modifier = Modifier
-                .zIndex(1f)
-                .offset(
-                    x = offsetX + xSize / 2 - dotSize / 2,
-                    y = offsetY + ySize / 2 - dotSize / 2
-                )
-                .size(dotSize)
-                .background(scoreCard.textColor, CircleShape)
-                .zIndex(1f)
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        val newSize = textSize + dragAmount.x / 1000 + dragAmount.y / 1000
-                        textSize = newSize
-                        onUpdateSize(textSize)
+        if(isDesignScoreCard) {
+            Box(
+                modifier = Modifier
+                    .zIndex(1f)
+                    .offset(
+                        x = offsetX + xSize / 2 - dotSize / 2,
+                        y = offsetY + ySize / 2 - dotSize / 2
+                    )
+                    .size(dotSize)
+                    .background(scoreCard.textColor, CircleShape)
+                    .zIndex(1f)
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            val newSize = textSize + dragAmount.x / 1000 + dragAmount.y / 1000
+                            textSize = newSize
+                            onUpdateSize(textSize)
+                        }
                     }
-                }
-        )
+            )
+        }
     }
 }
 

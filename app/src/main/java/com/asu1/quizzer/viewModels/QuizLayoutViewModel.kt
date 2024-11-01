@@ -41,6 +41,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.util.Locale
 
 @Serializable
 data class QuizTheme(
@@ -116,6 +117,31 @@ class QuizLayoutViewModel : ViewModel() {
 
     private val _initIndex = MutableLiveData(0)
     val initIndex: LiveData<Int> get() = _initIndex
+
+    private val _score = MutableLiveData<Float?>(null)
+    val score: LiveData<Float?> get() = _score
+
+    private val _correction = MutableLiveData<List<Boolean>>(emptyList())
+    val correction: LiveData<List<Boolean>> get() = _correction
+
+    fun gradeQuiz(){
+        var totalScore = 0f
+        var currentScore = 0f
+        var corrections = quizzes.value!!.map { false }
+        for(quiz in quizzes.value!!){
+            if(quiz.gradeQuiz()){
+                currentScore += quiz.point
+                corrections = corrections.toMutableList().apply {
+                    set(quizzes.value!!.indexOf(quiz), true)
+                }
+            }
+            totalScore += quiz.point
+        }
+        val percentageScore = (currentScore / totalScore) * 100
+        _correction.value = corrections
+        _score.value = String.format(Locale.getDefault(), "%.2f", percentageScore).toFloat()
+        //TODO: SEND SCORE TO SERVER AND GET PERCENTAGE OF RESULT.
+    }
 
     fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme, loadDone: () -> Unit) {
         _quizData.value = QuizData(

@@ -54,6 +54,7 @@ abstract class Quiz(
     abstract fun validateQuiz() : Pair<String, Boolean>
     abstract fun changeToJson() : QuizJson
     abstract fun load(data: String)
+    abstract fun gradeQuiz(): Boolean
 }
 
 enum class BodyType(val value: Int) {
@@ -187,6 +188,10 @@ data class Quiz1(
         result = 31 * result + point
         return result
     }
+
+    override fun gradeQuiz(): Boolean {
+        return ans == userAns
+    }
 }
 
 val sampleQuiz1 = Quiz1(
@@ -272,6 +277,10 @@ data class Quiz2(
         if (point != other.point) return false
 
         return true
+    }
+
+    override fun gradeQuiz(): Boolean {
+        return answerDate == userAnswerDate
     }
 }
 
@@ -373,6 +382,10 @@ data class Quiz3(
         if (point != other.point) return false
 
         return true
+    }
+
+    override fun gradeQuiz(): Boolean {
+        return answers == shuffledAnswers
     }
 }
 
@@ -487,6 +500,10 @@ data class Quiz4(
                 Pair(get(index).first, offset)
             })
         }
+    }
+
+    override fun gradeQuiz(): Boolean {
+        return connectionAnswerIndex == userConnectionIndex
     }
 }
 

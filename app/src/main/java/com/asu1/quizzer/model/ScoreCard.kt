@@ -13,6 +13,7 @@ import com.asu1.quizzer.util.repeatShader
 import com.asu1.quizzer.util.verticalWaveShader
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
 enum class ShaderType(val shaderName: String, val index: Int) {
     Brush1("No Shader", 0),
@@ -38,9 +39,10 @@ enum class ShaderType(val shaderName: String, val index: Int) {
 
 @Serializable
 data class ScoreCard (
+    var quizUuid: String? = null,
     var title: String = "",
-    var creator: String = "",
-    var score: Int = 100,
+    var solver: String = "Nickname",
+    var score: Float = 100f,
     var background: ImageColor = ImageColor(LightColorScheme.primary, ByteArray(0), LightColorScheme.secondary, ImageColorState.COLOR2),
     var size: Float = 0.3f,
     var xRatio: Float = 0.5f,
@@ -55,7 +57,7 @@ data class ScoreCard (
         if (other !is ScoreCard) return false
 
         if (title != other.title) return false
-        if (creator != other.creator) return false
+        if (solver != other.solver) return false
         if (score != other.score) return false
         if (background != other.background) return false
         if (size != other.size) return false
@@ -65,6 +67,7 @@ data class ScoreCard (
         if (colorScheme != other.colorScheme) return false
         if (shaderType != other.shaderType) return false
         if (textColor != other.textColor) return false
+        if (quizUuid != other.quizUuid) return false
 
         return true
     }

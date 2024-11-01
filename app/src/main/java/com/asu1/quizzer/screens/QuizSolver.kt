@@ -3,11 +3,16 @@ package com.asu1.quizzer.screens
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +35,7 @@ fun QuizSolver(
     navController: NavController,
     quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
     initIndex: Int = 0,
+    navigateToScoreCard: () -> Unit = {},
 ) {
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
@@ -71,11 +77,45 @@ fun QuizSolver(
                             },
                             isPreview = false,
                         )
+                        Text(
+                            text = "${quizzes[it].point} points",
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        )
+                        Text(
+                            text = "${it + 1}/${quizzes.size}",
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        )
                     }
                 }
                 item {
-                    //ANSWER SCREEN, Button to Move to Scoring Screen
+                    QuizSubmit(
+                        onSubmit = {
+                            navigateToScoreCard()
+                        }
+                    )
                 }
+            }
+        }
+    }
+}
+
+//ANSWER SCREEN, Button to Move to Scoring Screen
+@Composable
+fun QuizSubmit(
+    onSubmit: () -> Unit = {}
+){
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "End of Quiz.\nDo you want to submit your answers?")
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onSubmit) {
+                Text(text = "Submit")
             }
         }
     }

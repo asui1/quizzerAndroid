@@ -52,6 +52,7 @@ import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import androidx.navigation.compose.composable
 import com.asu1.quizzer.data.loadQuizData
+import com.asu1.quizzer.screens.ScoringScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -224,7 +225,15 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
                                 val loadIndex = backStackEntry.toRoute<Route.QuizSolver>().initIndex
-                                QuizSolver(navController, quizLayoutViewModel, loadIndex)
+                                QuizSolver(navController, quizLayoutViewModel, loadIndex,
+                                    navigateToScoreCard = {
+                                        quizLayoutViewModel.gradeQuiz()
+                                        NavMultiClickPreventer.navigate(navController, Route.ScoringScreen){
+                                            popUpTo(Route.Home) { inclusive = true }
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                )
                             }
                             composable<Route.DesignScoreCard>(
                                 enterTransition = enterFromRightTransition(),
@@ -263,6 +272,19 @@ class MainActivity : ComponentActivity() {
                                     email = userViewModel.userData.value?.email ?: ""
                                 )
                             }
+                            composable<Route.ScoringScreen>(
+                                enterTransition = enterFromRightTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFromRightTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                ScoringScreen(
+                                    navController = navController,
+                                    quizLayoutViewModel = quizLayoutViewModel,
+                                    scoreCardViewModel = scoreCardViewModel,
+                                )
+                            }
+
                         }
 
                     }

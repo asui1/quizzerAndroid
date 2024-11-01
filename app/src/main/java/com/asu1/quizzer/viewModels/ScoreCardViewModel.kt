@@ -59,7 +59,7 @@ class ScoreCardViewModel : ViewModel() {
         if (currentColorScheme != colorScheme) {
             _scoreCard.value = _scoreCard.value.copy(
                 title = quizData.title,
-                creator = quizData.creator,
+                solver = quizData.creator,
                 colorScheme = colorScheme,
                 background = ImageColor(
                     color = colorScheme.primary,
@@ -71,7 +71,7 @@ class ScoreCardViewModel : ViewModel() {
         } else {
             _scoreCard.value = _scoreCard.value.copy(
                 title = quizData.title,
-                creator = quizData.creator,
+                solver = quizData.creator,
                 colorScheme = colorScheme
             )
         }
@@ -89,7 +89,7 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(state = imageColorState))
     }
 
-    fun updateScore(score: Int){
+    fun updateScore(score: Float){
         _scoreCard.value = _scoreCard.value.copy(score = score)
     }
 
