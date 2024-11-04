@@ -49,6 +49,7 @@ import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.core.text.isDigitsOnly
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
@@ -125,6 +126,7 @@ fun Quiz1Creator(
                         }
                     },
                     isLast = index == quiz1State.answers.size-1,
+                    key = "QuizAnswerTextField$index"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -194,10 +196,12 @@ fun MyTextField(
     onNext: () -> Unit = {},
     modifier: Modifier = Modifier.fillMaxWidth(),
     label: String = "Question",
+    key: String = "",
 ){
     TextField(
-        modifier = modifier.
-        focusRequester(focusRequester),
+        modifier = modifier
+            .testTag(key)
+            .focusRequester(focusRequester),
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
@@ -227,6 +231,7 @@ fun AnswerTextField(
     focusRequester: FocusRequester,
     onNext: () -> Unit = {},
     isLast: Boolean = false,
+    key: String = "",
 ){
     Row(
         modifier = Modifier
@@ -235,13 +240,15 @@ fun AnswerTextField(
 
     ) {
         Checkbox(
+            modifier = Modifier.testTag(key+"Checkbox"),
             checked = answerCheck,
             onCheckedChange = {
                 toggleAnswer()
             },
         )
         TextField(
-            modifier = Modifier.focusRequester(focusRequester),
+            modifier = Modifier.focusRequester(focusRequester)
+                .testTag(key+"TextField"),
             value = value,
             onValueChange = onValueChange,
             label = { Text("Answer") },
@@ -278,6 +285,7 @@ fun AddAnswer(
         TextButton(
             onClick = onClick,
             modifier = Modifier.width(200.dp)
+                .testTag("QuizCreatorAddAnswerButton")
         ) {
             Text("Add Answer")
         }
@@ -306,7 +314,8 @@ fun Quiz1AnswerSelection(
         Text("Max. Answer\nSelectable")
         TextField(
             modifier = Modifier.width(60.dp)
-                .padding(start = 8.dp),
+                .padding(start = 8.dp)
+                .testTag("QuizMaxAnswerSelectionTextField"),
             value = textFieldValue,
             onValueChange = {it ->
                 if(it.isEmpty()){

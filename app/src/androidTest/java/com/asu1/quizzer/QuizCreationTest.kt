@@ -1,6 +1,7 @@
 package com.asu1.quizzer
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -27,14 +28,17 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.GestureScope
 import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.performGesture
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.action.ViewActions.click
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.getPhotoPickerLauncher
 import com.asu1.quizzer.util.uriToByteArray
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import kotlin.reflect.KClass
 
 val quizData = QuizData(
     title = "Quiz Test Title",
@@ -46,123 +50,111 @@ val quizData = QuizData(
     uuid = null
 )
 val titleImage: Int = R.drawable.question1
+val primaryColors: List<String> = listOf(
+    "FFBBDEFB", // Light Blue
+    "FFFFCDD2", // Light Red
+    "FFC8E6C9", // Light Green
+    "FFFFF9C4", // Light Yellow
+    "FFE1BEE7", // Light Purple
+    "FFFFE0B2", // Light Orange
+    "FFB3E5FC", // Light Cyan
+    "FFD7CCC8", // Light Brown
+    "FFB2DFDB", // Light Teal
+    "FFFFF3E0"  // Light Amber
+)
+val questionTextStyle : List<Int> = listOf(1, 0, 0)
+val bodyTextStyle : List<Int> = listOf(0, 1, 0)
+val answerTextStyle : List<Int> = listOf(0, 0, 1)
 
 class MyComposeTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    fun waitUntilTag(tag: String) {
-        composeTestRule.waitUntil(timeoutMillis = 10000) {
-            composeTestRule.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty()
-        }
-    }
-
-    fun waitFor(millis: Long) {
-        Thread.sleep(millis)
-    }
-
-    fun clickOnTag(tag: String) {
-        composeTestRule.onNodeWithTag(tag).performClick()
-    }
-
-    fun inputTextOnTag(tag: String, text: String) {
-        composeTestRule.onNodeWithTag(tag).performTextInput(text)
-    }
-
-    fun enterTextsOnTag(tag: String, texts: List<String>, withIme: Boolean) {
-        texts.forEach {
-            composeTestRule.onNodeWithTag(tag).performTextInput(it)
-            if(withIme) {
-                composeTestRule.onNodeWithTag(tag).performImeAction()
-            }
-            onIdle()
-        }
-    }
+    private val testUtils = QuizLayoutTestUtils(composeTestRule)
 
     @Test
     fun testAppLaunchAndStabilize() {
         composeTestRule.waitForIdle()
 
-        waitUntilTag("MainScreenCreateQuiz")
-        waitFor(2000)
-        clickOnTag("MainScreenCreateQuiz")
-        waitUntilTag("QuizLayoutBuilderAgreePolicyButton")
-        clickOnTag("QuizLayoutBuilderAgreePolicyButton")
-        waitUntilTag("QuizLayoutTitleTextField")
-        inputTextOnTag("QuizLayoutTitleTextField", quizData.title)
-        onIdle()
-        waitFor(1000)
-        clickOnTag("QuizLayoutBuilderProceedButton")
-        onIdle()
-        inputTextOnTag("QuizLayoutBuilderDescriptionTextField", quizData.description)
-        onIdle()
-        waitFor(1000)
-        clickOnTag("QuizLayoutBuilderProceedButton")
-        onIdle()
+        //Move to Create Quiz Layout
+        testUtils.waitUntilTag("MainScreenCreateQuiz")
+        testUtils.waitFor(2000)
+        testUtils.clickOnTag("MainScreenCreateQuiz")
+
+        //AGREE POLICY
+        testUtils.waitUntilTag("QuizLayoutBuilderAgreePolicyButton")
+        testUtils.clickOnTag("QuizLayoutBuilderAgreePolicyButton")
+
+        //SET TITLE
+        testUtils.waitUntilTag("QuizLayoutTitleTextField")
+        testUtils.inputTextOnTag("QuizLayoutTitleTextField", quizData.title)
+        testUtils.waitFor(1000)
+
+        //Set Quiz Description
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", quizData.description)
+        testUtils.waitFor(1000)
 
         //SET TAGS
-        enterTextsOnTag("TagSetterTextField", quizData.tags.toList(), true)
-        onIdle()
-        waitFor(1000)
-        clickOnTag("QuizLayoutBuilderProceedButton")
-        onIdle()
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.enterTextsOnTag("TagSetterTextField", quizData.tags.toList(), true)
+        testUtils.waitFor(1000)
 
-        // Mock ActivityResultRegistry
-        val mockRegistry = object : ActivityResultRegistry() {
-            override fun <I : Any?, O : Any?> onLaunch(
-                requestCode: Int,
-                contract: ActivityResultContract<I, O>,
-                input: I,
-                options: ActivityOptionsCompat?
-            ) {
-                // Simulate the result of the image picker
-                val result = Uri.parse("android.resource://com.asu1.quizzer/${R.drawable.question1}")
-                dispatchResult(requestCode, result as O)
-            }
-        }
-
+        //SET IMAGE
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         val activity = composeTestRule.activity
-        val quizLayoutViewModel = ViewModelProvider(activity).get(QuizLayoutViewModel::class.java)
+        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
         val context = activity.applicationContext
-
-
-        // Register the image picker with the mock registry
-        val launcher = mockRegistry.register("key", ActivityResultContracts.PickVisualMedia()) { result: Uri? ->
-            // Handle the result here
-            if (result != null) {
-                val byteArray = uriToByteArray(
-                    context = context,
-                    uri = result,
-                    maxWidth = 200.dp,
-                    maxHeight = 200.dp,
-                )
-                if(byteArray != null){
-                    Logger().debug("Image Picked")
-                    quizLayoutViewModel.setQuizImage(byteArray)
-                }
-            }
-        }
-        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        testUtils.setImage(context, titleImage, onImagePicked = { image ->
+            quizLayoutViewModel.setQuizImage(image)
+        })
         onIdle()
+        testUtils.waitFor(1000)
 
-        onIdle()
-        waitFor(3000)
-        onIdle()
-        waitFor(3000)
-        //SET COLOR
-        //SET TEXTSTYLE
+        // composeRule.onNode(hasContentDescription("Description of the image")).assertExists()
+        // replace tags test to contentDescription
+
+        //Set ColorScheme
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color")
+        val primaryColor = primaryColors.random()
+        testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimary Color", primaryColor, true)
+        testUtils.waitFor(1000)
+        testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color", true)
+        testUtils.waitFor(1000)
+        testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
+        testUtils.waitFor(1000)
+
+        // NEED TESTING FROM HERE
+        //Set TextStyles
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.setTextStyle(questionTextStyle, "setTextStyleQuestion")
+        testUtils.setTextStyle(bodyTextStyle, "setTextStyleBody")
+        testUtils.setTextStyle(answerTextStyle, "setTextStyleAnswer")
+        testUtils.waitFor(1000)
 
         //QUIZ BUILDER
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.waitFor(2000)
+
         //ADD QUIZ1
+//        testUtils.addQuiz1(quiz1)
+
         //ADD QUIZ2
+//        testUtils.addQuiz2(quiz2)
+
         //ADD QUIZ3
+        testUtils.addQuiz3(quiz3)
+
         //ADD QUIZ4
+        testUtils.addQuiz4(quiz4)
 
         //DESIGN SCORECARD
         //UPLOAD
 
-        waitFor(5000)
+        testUtils.waitFor(5000)
 
 
     }
+
+
 }

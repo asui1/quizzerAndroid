@@ -19,11 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit) {
+fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit,
+            key: String = "",
+            ) {
     var accumulatedDrag by remember { mutableStateOf(0f) }
     val dragThreshold = 100f // Set your desired drag threshold here
 
@@ -50,14 +53,19 @@ fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevio
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = { onPrevious(currentIndex) }) {
+        IconButton(
+            modifier = Modifier.testTag("${key}FlipperPrevious"),
+            onClick = { onPrevious(currentIndex) }
+        ) {
             Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "Previous")
         }
         Text(
             text = items[currentIndex].toString(),
             style = MaterialTheme.typography.bodyLarge
         )
-        IconButton(onClick = { onNext(currentIndex) }) {
+        IconButton(
+            modifier = Modifier.testTag("${key}FlipperNext"),
+            onClick = { onNext(currentIndex) }) {
             Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Next")
         }
     }

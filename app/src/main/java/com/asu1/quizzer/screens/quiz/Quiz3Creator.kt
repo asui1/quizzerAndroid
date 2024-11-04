@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -25,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,7 @@ import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 
 @Composable
@@ -49,6 +53,7 @@ fun Quiz3Creator(
     val quiz3State by quiz.quiz3State.collectAsState()
     var focusRequesters by remember { mutableStateOf(List(quiz3State.answers.size + 2) { FocusRequester() }) }
     val focusManager = LocalFocusManager.current
+    val listState = rememberLazyListState()
 
     Box(
         modifier = Modifier
@@ -56,6 +61,7 @@ fun Quiz3Creator(
             .padding(16.dp)
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -96,7 +102,8 @@ fun Quiz3Creator(
                 TextField(
                     value = quiz3State.answers[0],
                     modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth()
-                        .focusRequester(focusRequesters[2]),
+                        .focusRequester(focusRequesters[2])
+                        .testTag("QuizAnswerTextField0"),
                     onValueChange = { quiz.updateAnswerAt(0, it) },
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -117,7 +124,8 @@ fun Quiz3Creator(
                 TextField(
                     value = quiz3State.answers[newIndex],
                     modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth()
-                        .focusRequester(focusRequesters[newIndex+2]),
+                        .focusRequester(focusRequesters[newIndex+2])
+                        .testTag("QuizAnswerTextField${newIndex}"),
                     onValueChange = { quiz.updateAnswerAt(newIndex, it) },
                     trailingIcon = {
                         IconButton(
@@ -143,7 +151,10 @@ fun Quiz3Creator(
                     keyboardActions = KeyboardActions(
                         onNext = {
                             if(!isLast){
-                                focusRequesters[newIndex+3].requestFocus()
+                                Logger().debug("Focus to next answer ${newIndex+3}, ${focusRequesters.size}")
+                                // TODO : Remove FocusRequesters and replace with FocusManager
+                                focusManager.moveFocus(FocusDirection.Down)
+//                                focusRequesters[newIndex+3].requestFocus()
                             }
                         },
                         onDone = {
@@ -155,6 +166,7 @@ fun Quiz3Creator(
             item{
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
+                    modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
                     onClick = {
                         focusRequesters = focusRequesters.toMutableList().also {
                             it.add(FocusRequester())

@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +31,8 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 @Composable
 fun ColorPicker(
     initialColor: Color,
-    onColorSelected: (Color) -> Unit
+    testTag: String = "",
+    onColorSelected: (Color) -> Unit,
 ) {
     val controller = rememberColorPickerController()
     var localColor by remember { mutableStateOf(Color.Red) }
@@ -48,12 +50,12 @@ fun ColorPicker(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(horizontal = 16.dp)
     ) {
         HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(450.dp),
+                .height(300.dp),
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
                 val color: Color = colorEnvelope.color
@@ -65,12 +67,11 @@ fun ColorPicker(
         BrightnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
                 .height(35.dp)
                 .background(Color.White), // Ensure background color is set correctly
         controller = controller,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         TextField(
             value = argbValue,
             onValueChange = { newValue ->
@@ -88,7 +89,7 @@ fun ColorPicker(
                 }
             },
             label = { Text("ARGB Value") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(testTag),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Ascii,
                 imeAction = ImeAction.Done

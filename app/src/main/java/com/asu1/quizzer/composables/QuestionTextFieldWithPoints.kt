@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -48,12 +49,14 @@ fun QuestionTextFieldWithPoints(
             onNext = {
                 focusRequesters[1].requestFocus()
             },
-            modifier = Modifier.weight(5f)
+            modifier = Modifier.weight(5f),
+            key = "QuizQuestionTextField",
         )
         TextField(
             label = { Text("Points") },
             modifier = Modifier.width(80.dp)
                 .align(Alignment.CenterVertically)
+                .testTag("QuizPointTextField")
                 .focusRequester(focusRequesters[1])
                 .padding(start = 8.dp),
             value = textFieldValue,

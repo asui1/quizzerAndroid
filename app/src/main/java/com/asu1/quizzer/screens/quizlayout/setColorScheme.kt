@@ -3,6 +3,7 @@ package com.asu1.quizzer.screens.quizlayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -138,6 +140,7 @@ fun QuizLayoutSetColorScheme(
             state = listState,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 8.dp)
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
             item {
@@ -173,7 +176,9 @@ fun QuizLayoutSetColorScheme(
                         coroutineScope.launch {
                             listState.animateScrollToItem(index + 2)
                         }
-                    }
+                    },
+                    buttonTestTag = "QuizLayoutSetColorSchemeButton$colorName",
+                    colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextField$colorName"
                 )
             }
         }
@@ -402,7 +407,8 @@ fun GenerateColorScheme(
                     val titleImageColorScheme = randomDynamicColorScheme(seedColor, selectedLevel)
                     setColorScheme(titleImageColorScheme)
                 },
-                enabled = isTitleImageSet
+                enabled = isTitleImageSet,
+                testTag = "QuizLayoutBuilderColorSchemeGenWithTitleImage"
             )
             IconButtonWithDisable(
                 imageVector = Icons.Default.Autorenew,
@@ -411,7 +417,8 @@ fun GenerateColorScheme(
                     val primaryColorScheme = randomDynamicColorScheme(primaryColor, selectedLevel)
                     setColorScheme(primaryColorScheme)
                 },
-                enabled = true
+                enabled = true,
+                testTag = "QuizLayoutBuilderColorSchemeGenWithPrimaryColor"
             )
         }
         LevelSelector(
@@ -433,6 +440,8 @@ fun LevelSelector(
     selectedLevel: Int = 1,
     levels: Int = 4,
 ){
+    val barLevel = selectedLevel * 2 + 1
+    val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -442,7 +451,7 @@ fun LevelSelector(
             .padding(16.dp)
             .pointerInput(Unit) {
                 detectDragGestures { change, _ ->
-                    val newLevel = (change.position.x / (size.width / levels)).toInt() + 1
+                    val newLevel = (change.position.x / (size.width / levels)).toInt()
                     if (newLevel in 0..levels) {
                         onUpdateLevel(newLevel)
                     }
@@ -453,17 +462,23 @@ fun LevelSelector(
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Box(
-            modifier = Modifier
-                .height(24.dp)
-                .weight(1f)
-                .background(Color.Gray)
-        ) {
+        for(i in 0 until levels * 2){
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(fraction = selectedLevel / levels.toFloat())
-                    .background(MaterialTheme.colorScheme.primary)
+                    .height(24.dp)
+                    .weight(1f)
+                    .background(
+                        if(i < barLevel) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.4f
+                        ),
+                    )
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource
+                    ) {
+                        onUpdateLevel(i / 2)
+                    }
             )
         }
         Spacer(modifier = Modifier.width(4.dp))
@@ -499,12 +514,13 @@ fun randomDynamicColorScheme(seedColor: Color, randomStrength: Int = 2): ColorSc
 }
 
 @Composable
-fun IconButtonWithDisable(imageVector: ImageVector, text: String, onClick: () -> Unit, enabled: Boolean){
+fun IconButtonWithDisable(imageVector: ImageVector, text: String, onClick: () -> Unit, enabled: Boolean, testTag: String = "") {
 
     Box(
         modifier = Modifier
             .clickable(enabled = enabled, onClick = onClick)
             .background(color = MaterialTheme.colorScheme.surface)
+            .testTag(testTag)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -529,6 +545,8 @@ fun ColorPickerRowOpener(
     imageColor: Color,
     onColorSelected: (Color) -> Unit,
     onOpen: () -> Unit,
+    buttonTestTag: String = "",
+    colorSchemeTextFieldTestTag: String = "",
 ) {
     var isOpen by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf(imageColor) }
@@ -549,6 +567,7 @@ fun ColorPickerRowOpener(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag(buttonTestTag)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -583,7 +602,8 @@ fun ColorPickerRowOpener(
                         onColorSelected = { color ->
                             selectedColor = color
                             onColorSelected(color)
-                        }
+                        },
+                        testTag = colorSchemeTextFieldTestTag
                     )
                 }
             }

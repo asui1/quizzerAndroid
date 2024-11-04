@@ -38,6 +38,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -132,7 +133,8 @@ fun Quiz4Creator(
                             focusRequesters[index * 2 + 3].requestFocus()
                         },
                         modifier = Modifier.weight(1f),
-                        label = "Answer ${index + 1}"
+                        label = "Answer ${index + 1}",
+                        key = "QuizCreatorAnswerLeftTextField$index"
                     )
                     DraggableDot(
                         setOffset = {offset ->
@@ -169,6 +171,7 @@ fun Quiz4Creator(
                         dotSize = dotSizeDp,
                         padding = paddingDp,
                         moveOffset = moveOffset,
+                        key = "QuizCreatorLeftDot$index"
                     )
                     Spacer(modifier = Modifier.width(60.dp))
                     DraggableDot(
@@ -179,6 +182,7 @@ fun Quiz4Creator(
                         dotSize = dotSizeDp,
                         padding = paddingDp,
                         moveOffset = moveOffset,
+                        key = "QuizCreatorRightDot$index"
                     )
                     MyTextField(
                         value = quizState.connectionAnswers[index],
@@ -197,7 +201,8 @@ fun Quiz4Creator(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        label = "Answer ${index + 1}"
+                        label = "Answer ${index + 1}",
+                        key = "QuizCreatorAnswerRightTextField$index"
                     )
                     IconButton(
                         onClick = {
@@ -222,6 +227,7 @@ fun Quiz4Creator(
             item{
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
+                    modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
                     onClick = {
                         focusRequesters = focusRequesters.toMutableList().also {
                             it.add(FocusRequester())
@@ -260,7 +266,8 @@ fun DraggableDot(
     boxPosition: Offset = Offset.Zero,
     dotSize: Dp = 20.dp,
     padding: Dp = 4.dp,
-    moveOffset: Float = 0f
+    moveOffset: Float = 0f,
+    key: String = "",
 ) {
 
     Box(
@@ -282,6 +289,7 @@ fun DraggableDot(
                 )
                 setOffset(relativeOffset)
             }
+            .testTag(key)
     )
 }
 

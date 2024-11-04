@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -143,6 +144,7 @@ fun QuizBuilderScreen(navController: NavController,
                                 contentDescription = "Question Type ${index + 1}",
                                 modifier = Modifier
                                     .size(width = 100.dp, height = 300.dp)
+                                    .testTag("QuizBuilderScreenNewQuizDialogImage$index")
                                     .clickable{
                                         showNewQuizDialog = false
                                         moveToQuizCaller(
@@ -286,6 +288,7 @@ fun QuizBuilderScreen(navController: NavController,
 @Composable
 fun NewQuizAdd(
     showDialog: (Boolean) -> Unit = {},
+    key: String = "QuizBuilderScreenNewQuizAdd",
 ){
     Box(
         contentAlignment = Alignment.Center,
@@ -293,7 +296,9 @@ fun NewQuizAdd(
             .size(width = 300.dp, height = bodyHeight)
             .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
     ) {
-        FloatingActionButton(onClick = { showDialog(true) }) {
+        FloatingActionButton(
+            modifier = Modifier.testTag(key),
+            onClick = { showDialog(true) }) {
             Text("+")
         }
     }
@@ -345,6 +350,7 @@ fun QuizEditIconsRow(
         }
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
+            modifier = Modifier.testTag("QuizBuilderScreenAddQuizIconButton"),
             onClick = {
                 addQuiz()
             }

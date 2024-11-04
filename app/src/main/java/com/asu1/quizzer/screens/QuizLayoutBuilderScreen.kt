@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -145,114 +146,113 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 showExitDialog = { showExitDialog = true },
                 navigateToQuizLoad = { navigateToQuizLoad() }
             )
-        }
-    ) {paddingValue ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValue)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Column {
-                when(step.ordinal) {
-                    0 -> {}
-                    1 -> {
-                        QuizLayoutTitle(
-                            title = quizData.title,
-                            onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
-                            proceed = {proceed()},
-                        )
-                    }
-                    2 ->{
-                        QuizLayoutSetDescription(
-                            quizDescription = quizData.description,
-                            onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
-                            proceed = {proceed()}
-                        )
-                    }
-                    3 -> {
-                        QuizLayoutSetTags(
-                            quizTags = quizData.tags,
-                            onTagChange = { quizLayoutViewModel.updateTag(it) },
-                            proceed = {proceed()})
-                    }
-                    4 -> {
-                        QuizLayoutSetTitleImage(
-                            quizTitleImage = quizData.image,
-                            onImageChange = { quizLayoutViewModel.setQuizImage(it) },
-                            proceed = {proceed()})
-                    }
-                    5 -> {
-                        // Set Color Setting
-                        QuizLayoutSetColorScheme(
-                            colorScheme = quizTheme.colorScheme,
-                            onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
-                            onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
-                            backgroundImage = quizTheme.backgroundImage,
-                            onBackgroundImageUpdate = { quizLayoutViewModel.setBackgroundImage(it) },
-                            proceed = {proceed()})
-                    }
-                    6 -> {
-                        QuizLayoutSetTextStyle(
-                            questionStyle = quizTheme.questionTextStyle,
-                            bodyStyle = quizTheme.bodyTextStyle,
-                            answerStyle = quizTheme.answerTextStyle,
-                            updateStyle = { targetSelector, index, isIncrease ->
-                                quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
-                            },
-                            colorScheme = quizTheme.colorScheme,
-                            proceed = {proceed()})
-                        // Set Text Setting
-                    }
+        },
+        bottomBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding()
+                    .padding(16.dp))
+            {
+                IconButton(onClick = { if(step.ordinal > 1){
+                    quizLayoutViewModel.updateStep(step - 1)
+                }},
+                    enabled = step.ordinal > 1,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Move Back"
+                    )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .imePadding()
-                        .padding(16.dp))
-                {
-                    IconButton(onClick = { if(step.ordinal > 1){
-                        quizLayoutViewModel.updateStep(step - 1)
-                    }},
-                        enabled = step.ordinal > 1,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = "Move Back"
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        onClick = {
-                            scope.launch{
-                                quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
-                            }
+                IconButton(
+                    onClick = {
+                        scope.launch{
+                            quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
                         }
-                    ){
-                        Icon(
-                            imageVector = Icons.Default.Save,
-                            contentDescription = "Save Local."
-                        )
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        onClick = {
-                            proceed()
-                        },
-                        enabled = enabled,
-                        modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                            contentDescription = "Move Forward"
-                        )
-                    }
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Save,
+                        contentDescription = "Save Local."
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = {
+                        proceed()
+                    },
+                    enabled = enabled,
+                    modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        contentDescription = "Move Forward"
+                    )
                 }
             }
         }
-
+    ) {paddingValue ->
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(paddingValue)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            when(step.ordinal) {
+                0 -> {}
+                1 -> {
+                    QuizLayoutTitle(
+                        title = quizData.title,
+                        onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
+                        proceed = {proceed()},
+                    )
+                }
+                2 ->{
+                    QuizLayoutSetDescription(
+                        quizDescription = quizData.description,
+                        onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
+                        proceed = {proceed()}
+                    )
+                }
+                3 -> {
+                    QuizLayoutSetTags(
+                        quizTags = quizData.tags,
+                        onTagChange = { quizLayoutViewModel.updateTag(it) },
+                        proceed = {proceed()})
+                }
+                4 -> {
+                    QuizLayoutSetTitleImage(
+                        quizTitleImage = quizData.image,
+                        onImageChange = { quizLayoutViewModel.setQuizImage(it) },
+                        proceed = {proceed()})
+                }
+                5 -> {
+                    // Set Color Setting
+                    QuizLayoutSetColorScheme(
+                        colorScheme = quizTheme.colorScheme,
+                        onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
+                        onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
+                        backgroundImage = quizTheme.backgroundImage,
+                        onBackgroundImageUpdate = { quizLayoutViewModel.setBackgroundImage(it) },
+                        proceed = {proceed()})
+                }
+                6 -> {
+                    QuizLayoutSetTextStyle(
+                        questionStyle = quizTheme.questionTextStyle,
+                        bodyStyle = quizTheme.bodyTextStyle,
+                        answerStyle = quizTheme.answerTextStyle,
+                        updateStyle = { targetSelector, index, isIncrease ->
+                            quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
+                        },
+                        colorScheme = quizTheme.colorScheme,
+                        proceed = {proceed()})
+                    // Set Text Setting
+                }
+            }
+        }
     }
 }
 

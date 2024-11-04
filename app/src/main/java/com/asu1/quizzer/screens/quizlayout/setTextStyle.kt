@@ -54,18 +54,21 @@ fun QuizLayoutSetTextStyle(
             updateTextStyle = updateStyle,
             targetSelector = 0,
             colorScheme = colorScheme,
+            key = "setTextStyleQuestion",
         )
         TextStyleRowOpener(
             textStyle = bodyStyle,
             updateTextStyle = updateStyle,
             targetSelector = 1,
             colorScheme = colorScheme,
+            key = "setTextStyleBody",
         )
         TextStyleRowOpener(
             textStyle = answerStyle,
             updateTextStyle = updateStyle,
             targetSelector = 2,
             colorScheme = colorScheme,
+            key = "setTextStyleAnswer",
         )
     }
 }
@@ -76,6 +79,7 @@ fun TextStyleRowOpener(
     updateTextStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
     targetSelector: Int,
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
+    key: String = "",
     ) {
     var isOpen by remember { mutableStateOf(true) }
     val text = when(targetSelector){
@@ -138,7 +142,8 @@ fun TextStyleRowOpener(
                         },
                         onPrevious = {
                             updateTextStyle(targetSelector, 0, false)
-                        }
+                        },
+                        key = key+"Font"
                     )
                     Flipper(
                         items = colors,
@@ -148,7 +153,8 @@ fun TextStyleRowOpener(
                         },
                         onPrevious = {
                             updateTextStyle(targetSelector, 1, false)
-                        }
+                        },
+                        key = key+"Color"
                     )
                     Flipper(
                         items = borders,
@@ -158,7 +164,8 @@ fun TextStyleRowOpener(
                         },
                         onPrevious = {
                             updateTextStyle(targetSelector, 2, false)
-                        }
+                        },
+                        key = key+"Border"
                     )
                 }
             }
