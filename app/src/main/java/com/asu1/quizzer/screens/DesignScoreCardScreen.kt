@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
+import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.FormatColorText
@@ -64,6 +65,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -99,7 +101,6 @@ fun DesignScoreCardScreen(
     scoreCardViewModel: ScoreCardViewModel = viewModel(),
     onUpload: () -> Unit = { }
 ) {
-    //TODO ADD VIEWMODEL FOR SCORECARD
     val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -108,7 +109,8 @@ fun DesignScoreCardScreen(
     val photoPickerLauncher = launchPhotoPicker(context, screenWidth * 0.8f, screenHeight * 0.8f) { byteArray ->
         scoreCardViewModel.updateBackgroundImage(byteArray)
     }
-    var showScoreCardColorPicker by remember { mutableStateOf(false) }
+    var showScoreCardColorPicker1 by remember { mutableStateOf(false) }
+    var showScoreCardColorPicker2 by remember { mutableStateOf(false) }
     var showDropdownMenu by remember { mutableStateOf(false) }
     var showTextColorPicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -119,18 +121,33 @@ fun DesignScoreCardScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if(showScoreCardColorPicker){
-                ModalBottomSheet(
+            if(showScoreCardColorPicker1){
+                Dialog(
                     onDismissRequest = {
-                        showScoreCardColorPicker = false
+                        showScoreCardColorPicker1 = false
                     }
                 ) {
-                    ModalSheetForColorSelection(
-                        colorScheme = scoreCard.colorScheme,
+                    TextColorPickerModalSheet(
+                        initialColor = scoreCard.background.color,
                         onColorSelected = { color ->
-                            scoreCardViewModel.onColorSelection(color)
+                            scoreCardViewModel.updateColor1(color)
                         },
-                        curSelection = scoreCard.background,
+                        text = "Select Color1"
+                    )
+                }
+            }
+            if(showScoreCardColorPicker2){
+                Dialog(
+                    onDismissRequest = {
+                        showScoreCardColorPicker2 = false
+                    }
+                ) {
+                    TextColorPickerModalSheet(
+                        initialColor = scoreCard.background.color2,
+                        onColorSelected = { color ->
+                            scoreCardViewModel.updateColor2(color)
+                        },
+                        text = "Select Color1"
                     )
                 }
             }
@@ -144,7 +161,8 @@ fun DesignScoreCardScreen(
                         initialColor = scoreCard.textColor,
                         onColorSelected = { color ->
                             scoreCardViewModel.updateTextColor(color)
-                        }
+                        },
+                        text = "Select Text Color"
                     )
                 }
             }
@@ -220,17 +238,30 @@ fun DesignScoreCardScreen(
             IconButton(
                 onClick = {
                     scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
-                    showScoreCardColorPicker = true
+                    showScoreCardColorPicker1 = true
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Colorize,
+                    imageVector = Icons.Default.ColorLens,
+                    contentDescription = "Set gradient color",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            IconButton(
+                onClick = {
+                    scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
+                    showScoreCardColorPicker2 = true
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ColorLens,
                     contentDescription = "Set gradient color",
                     modifier = Modifier.size(32.dp)
                 )
             }
             Box(){
                 IconButton(
+                    modifier = Modifier.testTag("DesignScoreCardShaderButton"),
                     onClick = {
                         showDropdownMenu = true
                     },
@@ -247,6 +278,7 @@ fun DesignScoreCardScreen(
                 ) {
                     ShaderType.entries.forEach { shader ->
                         DropdownMenuItem(
+                            modifier = Modifier.testTag("DesignScoreCardShaderButton${shader.shaderName}"),
                             text = { Text(text = shader.shaderName,
                                 color = if (shader == scoreCard.shaderType) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                             ) },
@@ -357,7 +389,7 @@ fun ScoreCardComposable(
             Text(
                 text = scoreCard.solver,
                 color = scoreCard.textColor,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.End)
             )
         }
@@ -505,15 +537,22 @@ fun ModalSheetForColorSelectionPreview() {
 @Composable
 fun TextColorPickerModalSheet(
     initialColor: Color,
-    onColorSelected: (Color) -> Unit
+    onColorSelected: (Color) -> Unit,
+    text: String = "",
 ){
-    Box(
+    Column(
         modifier = Modifier
             .wrapContentSize()
             .background(Color.White, shape = RoundedCornerShape(16.dp))
             .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
     ){
+        Text(
+            text = text ,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         ColorPicker(
             initialColor = initialColor,
             onColorSelected = { color ->
@@ -521,4 +560,14 @@ fun TextColorPickerModalSheet(
             }
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TextColorPickerModalSheetPreview() {
+    TextColorPickerModalSheet(
+        initialColor = Color.Black,
+        onColorSelected = { },
+        text = "Select Text Color"
+    )
 }

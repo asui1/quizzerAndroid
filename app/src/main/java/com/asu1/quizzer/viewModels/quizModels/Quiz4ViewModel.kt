@@ -146,6 +146,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         if(index >= _quiz4State.value.answers.size){
             return
         }
+        Logger().debug(_quiz4State.value.dotPairOffsets.toString())
         _quiz4State.value.updateOffset(index, offset, isLeft)
     }
 
@@ -177,6 +178,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
 
     fun getClosestDotIndex(offset: Offset): Int {
         val referDistance = 3000f
+        Logger().debug("TO CHECK CLOSEST DOT: $offset")
         for (i in quiz4State.value.dotPairOffsets.indices) {
             val rightDot = quiz4State.value.dotPairOffsets[i].second
             if (rightDot != null) {

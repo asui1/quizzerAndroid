@@ -70,7 +70,7 @@ import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import kotlinx.coroutines.launch
 
-val bodyHeight = 550.dp
+val bodyHeight = 500.dp
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -224,7 +224,7 @@ fun QuizBuilderScreen(navController: NavController,
                     state = snapLayoutInfoProvider,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = padding, end = padding),
+                        .padding(start = padding, end = padding, top = 8.dp),
                 ) {
                     items(quizzes.size) {
                         Spacer(modifier = Modifier.width(4.dp))
@@ -394,6 +394,7 @@ fun QuizBuilderBottomBar(
             Text("Preview")
         }
         IconButton(
+            modifier = Modifier.testTag("QuizBuilderScreenProceedButton"),
             onClick = {
                 onProceed()
             }

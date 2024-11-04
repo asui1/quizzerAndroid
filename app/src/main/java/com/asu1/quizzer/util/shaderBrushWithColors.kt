@@ -24,11 +24,12 @@ val leftBottomShader = """
     
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float minValue  = distance(uv, float2(0, 1)) + abs(sin(time*0.5));
+        float minValue  = (distance(uv, float2(0, 1)) + abs(sin(time*0.3))) / 2.414 * 0.9;
         return mix(color, color2, minValue);
     }
 """.trimIndent()
 
+// sin 0~1 distance: 0 ~ 1.414
 
 @Language("AGSL")
 val bottomShader = """
@@ -39,7 +40,7 @@ val bottomShader = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float wave = uv.y + abs(sin(time*0.5));
+        float wave = (uv.y + abs(sin(time*0.3)))/2 * 0.9;
         return mix(color, color2, wave);
 }
 """.trimIndent()
@@ -53,10 +54,11 @@ val centerShader = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float wave = distance(uv, float2(0.5, 0.5)) * 2 + abs(sin(time*0.5));
+        float wave = (distance(uv, float2(0.5, 0.5)) * 2 + abs(sin(time*0.3))) / 1.7 * 0.9;
         return mix(color, color2, wave);
     }
 """.trimIndent()
+// 0 ~ 0.7071
 
 @Language("AGSL")
 val repeatShader = """
@@ -67,7 +69,7 @@ val repeatShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.5)) * 0.9;
+            float wave = abs(sin(time*0.3)) * 0.9;
             return mix(color, color2, wave);
         }
 """.trimIndent()
@@ -81,7 +83,7 @@ val verticalWaveShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.5 + uv.y * 1.5708));
+            float wave = abs(sin(time*0.3 + uv.y * 1.5708))  * 0.9;
             return mix(color, color2, wave);
         }
 """.trimIndent()
@@ -95,7 +97,7 @@ val horizontalWaveShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.5 + uv.x * 1.5708));
+            float wave = abs(sin(time*0.3 + uv.x * 1.5708))  * 0.9;
             return mix(color, color2, wave);
         }
 """.trimIndent()

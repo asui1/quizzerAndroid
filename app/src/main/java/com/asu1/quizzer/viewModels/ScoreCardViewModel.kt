@@ -31,6 +31,16 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = _scoreCard.value.copy(textColor = color)
     }
 
+    fun updateColor1(color: androidx.compose.ui.graphics.Color){
+        val currentBackground = _scoreCard.value.background
+        _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
+    }
+
+    fun updateColor2(color: androidx.compose.ui.graphics.Color){
+        val currentBackground = _scoreCard.value.background
+        _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
+    }
+
     fun onColorSelection(color: androidx.compose.ui.graphics.Color){
         val currentBackground = _scoreCard.value.background
 

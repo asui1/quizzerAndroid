@@ -38,6 +38,7 @@ import androidx.test.espresso.action.ViewActions.click
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.UserViewModel
 import kotlin.reflect.KClass
 
 val quizData = QuizData(
@@ -65,6 +66,14 @@ val primaryColors: List<String> = listOf(
 val questionTextStyle : List<Int> = listOf(1, 0, 0)
 val bodyTextStyle : List<Int> = listOf(0, 1, 0)
 val answerTextStyle : List<Int> = listOf(0, 0, 1)
+val shaders: List<String> = listOf(
+    "Left Bottom",
+    "Bottom",
+    "Center",
+    "Repeat",
+    "Vertical Wave",
+    "Horizontal Wave"
+)
 
 class MyComposeTest {
     @get:Rule
@@ -74,10 +83,18 @@ class MyComposeTest {
     @Test
     fun testAppLaunchAndStabilize() {
         composeTestRule.waitForIdle()
+        val activity = composeTestRule.activity
+        val context = activity.applicationContext
 
         //Move to Create Quiz Layout
         testUtils.waitUntilTag("MainScreenCreateQuiz")
-        testUtils.waitFor(2000)
+        testUtils.waitFor(1500)
+
+        //LOGIN
+        val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
+        userViewModel.logIn("whwkd122@gmail.com", "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c")
+        onIdle()
+        testUtils.waitFor(1500)
         testUtils.clickOnTag("MainScreenCreateQuiz")
 
         //AGREE POLICY
@@ -101,9 +118,7 @@ class MyComposeTest {
 
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        val activity = composeTestRule.activity
         val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
-        val context = activity.applicationContext
         testUtils.setImage(context, titleImage, onImagePicked = { image ->
             quizLayoutViewModel.setQuizImage(image)
         })
@@ -149,10 +164,16 @@ class MyComposeTest {
         testUtils.addQuiz4(quiz4)
 
         //DESIGN SCORECARD
+        testUtils.clickOnTag("QuizBuilderScreenProceedButton")
+        testUtils.waitFor(500)
+        testUtils.clickOnTag("DesignScoreCardShaderButton")
+        testUtils.waitFor(500)
+        val shader = shaders.random()
+        testUtils.clickOnTag("DesignScoreCardShaderButton$shader", useUnmergedTree = true)
+
         //UPLOAD
 
         testUtils.waitFor(5000)
-
 
     }
 

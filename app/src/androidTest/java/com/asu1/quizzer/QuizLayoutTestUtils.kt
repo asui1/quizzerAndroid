@@ -34,7 +34,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addQuizInit(quiz: Quiz, quizType: Int, clickAddAnswerNTimes: Int = 0){
         clickOnTag("QuizBuilderScreenAddQuizIconButton")
         clickOnTag("QuizBuilderScreenNewQuizDialogImage${quizType}", true)
-        waitFor(500)
+        waitFor(200)
         for(i in 0 until clickAddAnswerNTimes){
             clickOnTag("QuizCreatorAddAnswerButton", checkFocus = true)
         }
@@ -94,14 +94,23 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             }
         }
         for(i in 0 until quiz.answers.size){
-            composeTestRule.onNodeWithTag("StartItemTag").performTouchInput {
+            composeTestRule.onNodeWithTag("QuizCreatorLeftDot$i").performTouchInput {
                 val startPosition = this.center
-                val endPosition = composeTestRule.onNodeWithTag("EndItemTag").fetchSemanticsNode().boundsInRoot.center
-                swipe(startPosition, endPosition)
+                val startPositionRoot = composeTestRule.onNodeWithTag("QuizCreatorLeftDot$i")
+                    .fetchSemanticsNode()
+                    .positionInRoot
+                val endPosition = composeTestRule.onNodeWithTag("QuizCreatorRightDot${quiz.connectionAnswerIndex[i]}")
+                    .fetchSemanticsNode()
+                    .positionInRoot
+                Logger().debug("Start Position: $startPosition, End Position: $endPosition, Start Position Root: $startPositionRoot")
+                swipe(startPosition, endPosition-startPositionRoot,
+                    durationMillis = 1000
+                )
             }
             onIdle()
         }
         clickOnTag("QuizCreatorSaveButton")
+        waitFor(1000)
     }
 
     fun setImage(context: Context, image: Int, onImagePicked: (ByteArray) -> Unit = {}) {
@@ -161,7 +170,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         onIdle()
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performScrollTo()
-            waitFor(500)
+            waitFor(200)
             onIdle()
         }
         composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performClick()
