@@ -137,10 +137,10 @@ class MyComposeTest {
         testUtils.waitFor(2000)
 
         //ADD QUIZ1
-//        testUtils.addQuiz1(quiz1)
+        testUtils.addQuiz1(quiz1)
 
         //ADD QUIZ2
-//        testUtils.addQuiz2(quiz2)
+        testUtils.addQuiz2(quiz2)
 
         //ADD QUIZ3
         testUtils.addQuiz3(quiz3)

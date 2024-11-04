@@ -33,9 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +63,7 @@ fun Quiz1Creator(
     onSave: (Quiz) -> Unit
 ) {
     val quiz1State by quiz.quiz1State.collectAsState()
-    var focusRequesters by remember { mutableStateOf(List(quiz1State.answers.size + 2) { FocusRequester() }) }
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
@@ -75,13 +77,13 @@ fun Quiz1Creator(
             item {
                 QuestionTextFieldWithPoints(
                     question = quiz1State.question,
-                onQuestionChange =  {quiz.updateQuestion(it)},
-                point = quiz1State.point,
-                onPointChange = { quiz.setPoint(it) },
-                onNext = {
-                    focusRequesters[2].requestFocus()
-                },
-                focusRequesters = focusRequesters
+                    onQuestionChange =  {quiz.updateQuestion(it)},
+                    point = quiz1State.point,
+                    onPointChange = { quiz.setPoint(it) },
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    focusManager = focusManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -112,18 +114,10 @@ fun Quiz1Creator(
                         quiz.toggleAnsAt(index)
                     },
                     deleteAnswer = {
-                        focusRequesters = focusRequesters.toMutableList().also {
-                            it.removeAt(index+1)
-                        }
                         quiz.removeAnswerAt(index)
                     },
-                    focusRequester = focusRequesters[index+2],
                     onNext = {
-                        if(index == quiz1State.answers.size-1){
-                            focusRequesters[0].requestFocus()
-                        } else {
-                            focusRequesters[index+3].requestFocus()
-                        }
+                        focusManager.moveFocus(FocusDirection.Down)
                     },
                     isLast = index == quiz1State.answers.size-1,
                     key = "QuizAnswerTextField$index"
@@ -134,9 +128,6 @@ fun Quiz1Creator(
                 Spacer(modifier = Modifier.height(8.dp))
                 AddAnswer(
                     onClick = {
-                        focusRequesters = focusRequesters.toMutableList().also {
-                            it.add(FocusRequester())
-                        }
                         quiz.addAnswer()
                     }
                 )
@@ -192,7 +183,6 @@ fun MyTextField(
     value: String,
     onValueChange: (String) -> Unit,
     imeAction : ImeAction = ImeAction.Next,
-    focusRequester: FocusRequester,
     onNext: () -> Unit = {},
     modifier: Modifier = Modifier.fillMaxWidth(),
     label: String = "Question",
@@ -200,8 +190,7 @@ fun MyTextField(
 ){
     TextField(
         modifier = modifier
-            .testTag(key)
-            .focusRequester(focusRequester),
+            .testTag(key),
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
@@ -228,7 +217,6 @@ fun AnswerTextField(
     answerCheck: Boolean,
     toggleAnswer: () -> Unit,
     deleteAnswer: () -> Unit,
-    focusRequester: FocusRequester,
     onNext: () -> Unit = {},
     isLast: Boolean = false,
     key: String = "",
@@ -247,7 +235,7 @@ fun AnswerTextField(
             },
         )
         TextField(
-            modifier = Modifier.focusRequester(focusRequester)
+            modifier = Modifier
                 .testTag(key+"TextField"),
             value = value,
             onValueChange = onValueChange,

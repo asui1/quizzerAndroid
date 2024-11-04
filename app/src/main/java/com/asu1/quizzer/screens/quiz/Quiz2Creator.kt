@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -62,10 +63,8 @@ fun Quiz2Creator(
     onSave: (Quiz) -> Unit
 ){
     val quiz2State by quiz.quiz2State.collectAsState()
-    val focusRequester1 by remember { mutableStateOf(FocusRequester()) }
-    val focusRequester2 by remember { mutableStateOf(FocusRequester()) }
-    val focusRequester3 by remember { mutableStateOf(FocusRequester()) }
     var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(quiz2State.centerDate){
         currentMonth = quiz2State.centerDate
@@ -89,9 +88,9 @@ fun Quiz2Creator(
                     point = quiz2State.point,
                     onPointChange = { quiz.setPoint(it) },
                     onNext = {
-                        focusRequester3.requestFocus()
+                        focusManager.moveFocus(FocusDirection.Down)
                     },
-                    focusRequesters = listOf(focusRequester1, focusRequester2)
+                    focusManager = focusManager,
                 )
             }
             item{
@@ -104,7 +103,6 @@ fun Quiz2Creator(
                     onYearMonthChange = {
                         quiz.updateCenterDate(it)
                     },
-                    modifier = Modifier.focusRequester(focusRequester3)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
@@ -65,7 +66,6 @@ fun Quiz4Creator(
     var initOffset by remember { mutableStateOf<Offset?>(null) }
     var isDragging by remember { mutableStateOf(true) }
     val color = MaterialTheme.colorScheme.primary
-    var focusRequesters = List(quizState.answers.size * 2 + 2) { FocusRequester() }
     val focusManager = LocalFocusManager.current
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
     val dotSizeDp = 20.dp
@@ -96,9 +96,10 @@ fun Quiz4Creator(
                     point = quizState.point,
                     onPointChange = { quiz.setPoint(it) },
                     onNext = {
-                        focusRequesters[2].requestFocus()
+                        focusManager.moveFocus(FocusDirection.Down)
+                        focusManager.moveFocus(FocusDirection.Left)
                     },
-                    focusRequesters = focusRequesters
+                    focusManager = focusManager
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -128,9 +129,8 @@ fun Quiz4Creator(
                     MyTextField(
                         value = quizState.answers[index],
                         onValueChange = { quiz.updateAnswerAt(index, it) },
-                        focusRequester = focusRequesters[index * 2 + 2],
                         onNext = {
-                            focusRequesters[index * 2 + 3].requestFocus()
+                            focusManager.moveFocus(FocusDirection.Right)
                         },
                         modifier = Modifier.weight(1f),
                         label = "Answer ${index + 1}",
@@ -187,7 +187,6 @@ fun Quiz4Creator(
                     MyTextField(
                         value = quizState.connectionAnswers[index],
                         onValueChange = { quiz.updateConnectionAnswer(index, it) },
-                        focusRequester = focusRequesters[index * 2 + 3],
                         imeAction = if(index == quizState.answers.size - 1) {
                             ImeAction.Done
                         } else {
@@ -197,7 +196,8 @@ fun Quiz4Creator(
                             if(index == quizState.answers.size - 1) {
                                 focusManager.clearFocus()
                             } else {
-                                focusRequesters[index * 2 + 4].requestFocus()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                focusManager.moveFocus(FocusDirection.Left)
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -206,13 +206,6 @@ fun Quiz4Creator(
                     )
                     IconButton(
                         onClick = {
-                            if(focusRequesters.size <= 8){
-                                return@IconButton
-                            }
-                            focusRequesters = focusRequesters.toMutableList().also {
-                                it.removeAt(index * 2 + 2)
-                                it.removeAt(index * 2 + 2)
-                            }
                             quiz.removeAnswerAt(index)
                         }
                     ) {
@@ -229,10 +222,6 @@ fun Quiz4Creator(
                 IconButton(
                     modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
                     onClick = {
-                        focusRequesters = focusRequesters.toMutableList().also {
-                            it.add(FocusRequester())
-                            it.add(FocusRequester())
-                        }
                         quiz.addAnswer()
                     }
                 ) {

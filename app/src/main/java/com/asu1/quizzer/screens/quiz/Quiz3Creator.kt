@@ -48,10 +48,7 @@ fun Quiz3Creator(
     quiz: Quiz3ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ){
-    //TODO : 텍스트 필드들에 대한 키보드 타입 설정.
-
     val quiz3State by quiz.quiz3State.collectAsState()
-    var focusRequesters by remember { mutableStateOf(List(quiz3State.answers.size + 2) { FocusRequester() }) }
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
 
@@ -74,9 +71,9 @@ fun Quiz3Creator(
                     point = quiz3State.point,
                     onPointChange = { quiz.setPoint(it) },
                     onNext = {
-                        focusRequesters[2].requestFocus()
+                        focusManager.moveFocus(FocusDirection.Down)
                     },
-                    focusRequesters = focusRequesters
+                    focusManager = focusManager
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -102,13 +99,12 @@ fun Quiz3Creator(
                 TextField(
                     value = quiz3State.answers[0],
                     modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth()
-                        .focusRequester(focusRequesters[2])
                         .testTag("QuizAnswerTextField0"),
                     onValueChange = { quiz.updateAnswerAt(0, it) },
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            focusRequesters[3].requestFocus()
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                 )
@@ -124,18 +120,11 @@ fun Quiz3Creator(
                 TextField(
                     value = quiz3State.answers[newIndex],
                     modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth()
-                        .focusRequester(focusRequesters[newIndex+2])
                         .testTag("QuizAnswerTextField${newIndex}"),
                     onValueChange = { quiz.updateAnswerAt(newIndex, it) },
                     trailingIcon = {
                         IconButton(
                             onClick = {
-                                if(focusRequesters.size <= 5){
-                                    return@IconButton
-                                }
-                                focusRequesters = focusRequesters.toMutableList().also {
-                                    it.removeAt(newIndex+2)
-                                }
                                 quiz.removeAnswerAt(newIndex)
                             }
                         ) {
@@ -151,10 +140,7 @@ fun Quiz3Creator(
                     keyboardActions = KeyboardActions(
                         onNext = {
                             if(!isLast){
-                                Logger().debug("Focus to next answer ${newIndex+3}, ${focusRequesters.size}")
-                                // TODO : Remove FocusRequesters and replace with FocusManager
                                 focusManager.moveFocus(FocusDirection.Down)
-//                                focusRequesters[newIndex+3].requestFocus()
                             }
                         },
                         onDone = {
@@ -168,9 +154,6 @@ fun Quiz3Creator(
                 IconButton(
                     modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
                     onClick = {
-                        focusRequesters = focusRequesters.toMutableList().also {
-                            it.add(FocusRequester())
-                        }
                         quiz.addAnswer()
                     }
                 ) {
