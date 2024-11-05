@@ -34,11 +34,13 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
 val quizData = QuizData(
@@ -63,6 +65,45 @@ val primaryColors: List<String> = listOf(
     "FFB2DFDB", // Light Teal
     "FFFFF3E0"  // Light Amber
 )
+val gradientColors1: List<String> = listOf(
+    "FF266489",
+    "FF8e4954",
+    "FF326940",
+    "FFede68c",
+    "FF784f83",
+    "FFffdeac",
+    "FFbbe9ff",
+    "FFffdbcc",
+    "FF006a66",
+    "ffffdf99",
+)
+
+val gradientColors2: List<String> = listOf(
+    "FF64597b",
+    "FF785831",
+    "FF3a656e",
+    "FFc1ecd5",
+    "FF82524e",
+    "FFd0eabf",
+    "FFe2dfff",
+    "FFede4a9",
+    "FF49607b",
+    "FFcbebc6",
+)
+
+val textColors: List<String> = listOf(
+    "FFFFFFFF",
+    "FFFFFFFF",
+    "FFFFFFFF",
+    "FF1e1c00",
+    "ffffffff",
+    "FF281900",
+    "FF001f29",
+    "FF351000",
+    "ffffffff",
+    "ff251a00",
+)
+
 val questionTextStyle : List<Int> = listOf(1, 0, 0)
 val bodyTextStyle : List<Int> = listOf(0, 1, 0)
 val answerTextStyle : List<Int> = listOf(0, 0, 1)
@@ -94,7 +135,7 @@ class MyComposeTest {
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
         userViewModel.logIn("whwkd122@gmail.com", "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c")
         onIdle()
-        testUtils.waitFor(1500)
+        testUtils.waitFor(2000)
         testUtils.clickOnTag("MainScreenCreateQuiz")
 
         //AGREE POLICY
@@ -131,7 +172,8 @@ class MyComposeTest {
         //Set ColorScheme
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color")
-        val primaryColor = primaryColors.random()
+        val colorInt = Random.nextInt(primaryColors.size)
+        val primaryColor = primaryColors[colorInt]
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimary Color", primaryColor, true)
         testUtils.waitFor(1000)
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color", true)
@@ -167,24 +209,39 @@ class MyComposeTest {
         testUtils.clickOnTag("QuizBuilderScreenProceedButton")
         testUtils.waitFor(500)
 
+        testUtils.clickOnTag("DesignScoreCardSetTextColorButton")
+        testUtils.waitFor(200)
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", textColors[colorInt], true)
+        testUtils.waitFor(200)
+        Espresso.pressBack()
+        onIdle()
+
+        testUtils.waitUntilTag("DesignScoreCardSetColor1Button")
+        onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor1Button")
         testUtils.waitFor(200)
-        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", "FF0000", true)
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors1[colorInt], true)
         testUtils.waitFor(200)
-        composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
-        testUtils.waitFor(200)
+        Espresso.pressBack()
+        onIdle()
 
+        testUtils.waitUntilTag("DesignScoreCardSetColor2Button")
+        onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor2Button")
         testUtils.waitFor(200)
-        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", "FF0000", true)
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors2[colorInt], true)
         testUtils.waitFor(200)
-        composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
-        testUtils.waitFor(200)
+        Espresso.pressBack()
+        onIdle()
 
+        testUtils.waitUntilTag("DesignScoreCardShaderButton")
+        onIdle()
         testUtils.clickOnTag("DesignScoreCardShaderButton")
         testUtils.waitFor(500)
         val shader = shaders.random()
         testUtils.clickOnTag("DesignScoreCardShaderButton$shader", useUnmergedTree = true)
+        onIdle()
+        testUtils.waitFor(2000)
 
         //UPLOAD
 

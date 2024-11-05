@@ -2,6 +2,7 @@ package com.asu1.quizzer.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
@@ -26,23 +27,8 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
     val fontFamily = getFontFamily(style[0])
     val color = style[1]
     val borderStyle = style[2]
-    var (backgroundColor, contentColor) = getColor(colorScheme, color)
-    if(backgroundColor == null) backgroundColor = Color.Transparent
-    if(contentColor == null) contentColor = Color.Black
-    val borderModifier = when (borderStyle) {
-        1 -> Modifier.drawBehind {
-            val strokeWidth = 2.dp.toPx()
-            val y = size.height - strokeWidth / 2
-            drawLine(
-                color = colorScheme.outline,
-                start = Offset(0f, y),
-                end = Offset(size.width, y),
-                strokeWidth = strokeWidth
-            )
-        }
-        2 -> Modifier.border(width = 2.dp, brush = SolidColor(colorScheme.outline), shape = RoundedCornerShape(4.dp))
-        else -> Modifier
-    }
+    val (backgroundColor, contentColor) = getColor(colorScheme, color)
+    val borderModifier = Modifier.getBorder(borderStyle)
 
     val fontSize = when(style[3]){
         0 -> 24.sp // question
@@ -77,18 +63,44 @@ fun PreviewGetTextStyle(){
     }
 }
 
-fun getColor(colorScheme: ColorScheme, color: Int): List<Color?> {
+fun Modifier.getBorder(borderStyle: Int): Modifier {
+    return when (borderStyle) {
+        1 -> this.then(Modifier.drawBehind {
+            val strokeWidth = 2.dp.toPx()
+            val y = size.height - strokeWidth / 2
+            drawLine(
+                color = Color.Black,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = strokeWidth
+            )
+        })
+        2 -> this.then(Modifier.border(width = 2.dp, brush = SolidColor(Color.Black), shape = RoundedCornerShape(4.dp)))
+        else -> this
+    }
+}
+
+fun getColor(colorScheme: ColorScheme, color: Int): List<Color> {
     return when (color) {
-        0 -> listOf(null, colorScheme.primary)
-        1 -> listOf(null, colorScheme.secondary)
-        2 -> listOf(null, colorScheme.tertiary)
-        3 -> listOf(null, colorScheme.onSurface)
-        4 -> listOf(colorScheme.primary, colorScheme.onPrimary)
-        5 -> listOf(colorScheme.secondary, colorScheme.onSecondary)
-        6 -> listOf(colorScheme.tertiary, colorScheme.onTertiary)
-        7 -> listOf(colorScheme.primaryContainer, colorScheme.onPrimaryContainer)
-        8 -> listOf(colorScheme.secondaryContainer, colorScheme.onSecondaryContainer)
-        9 -> listOf(colorScheme.tertiaryContainer, colorScheme.onTertiaryContainer)
+        0 -> listOf(Color.Transparent, colorScheme.primary)
+        1 -> listOf(Color.Transparent, colorScheme.secondary)
+        2 -> listOf(Color.Transparent, colorScheme.tertiary)
+        3 -> listOf(Color.Transparent, colorScheme.onSurface)
+        4 -> listOf(Color.Transparent, colorScheme.error)
+        5 -> listOf(colorScheme.primaryContainer, colorScheme.onPrimaryContainer)
+        6 -> listOf(colorScheme.secondaryContainer, colorScheme.onSecondaryContainer)
+        7 -> listOf(colorScheme.tertiaryContainer, colorScheme.onTertiaryContainer)
+        8 -> listOf(colorScheme.errorContainer, colorScheme.onErrorContainer)
+        9 -> listOf(colorScheme.surfaceDim, colorScheme.onSurface)
         else -> listOf(colorScheme.background, colorScheme.primary)
     }
+}
+
+fun Color.invert(): Color {
+    return Color(
+        red = 1f - this.red,
+        green = 1f - this.green,
+        blue = 1f - this.blue,
+        alpha = this.alpha
+    )
 }

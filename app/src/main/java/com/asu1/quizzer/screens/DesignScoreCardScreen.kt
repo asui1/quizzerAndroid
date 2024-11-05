@@ -204,6 +204,7 @@ fun DesignScoreCardScreen(
             modifier = Modifier.fillMaxSize()
         ){
             IconButton(
+                modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
                 onClick = {
                     showTextColorPicker = true
                 }

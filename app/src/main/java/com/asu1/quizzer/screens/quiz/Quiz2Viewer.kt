@@ -54,10 +54,12 @@ fun Quiz2Viewer(
                     },
                     currentMonth = quiz2State.centerDate,
                     colorScheme = quizTheme.colorScheme,
+                    bodyTextStyle = quizTheme.bodyTextStyle,
                 )
             }
         }
         item{
+            Spacer(modifier = Modifier.height(8.dp))
             GetTextStyle("Selected Answers", quizTheme.bodyTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
