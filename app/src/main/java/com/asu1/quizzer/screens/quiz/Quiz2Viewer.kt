@@ -53,6 +53,7 @@ fun Quiz2Viewer(
                         quiz.updateUserAnswerDate(date)
                     },
                     currentMonth = quiz2State.centerDate,
+                    colorScheme = quizTheme.colorScheme,
                 )
             }
         }

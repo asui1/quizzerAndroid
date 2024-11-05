@@ -237,7 +237,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
                         backgroundImage = quizTheme.backgroundImage,
                         onBackgroundImageUpdate = { quizLayoutViewModel.setBackgroundImage(it) },
-                        proceed = {proceed()})
+                    )
                 }
                 6 -> {
                     QuizLayoutSetTextStyle(

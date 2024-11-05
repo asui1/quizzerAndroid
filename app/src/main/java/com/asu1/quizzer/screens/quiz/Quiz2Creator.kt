@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -115,6 +117,7 @@ fun Quiz2Creator(
                             currentMonth = YearMonth.of(date.year, date.month)
                         },
                         currentMonth = currentMonth,
+                        colorScheme = MaterialTheme.colorScheme
                     )
                 }
             }
@@ -222,6 +225,7 @@ fun CalendarWithFocusDates(
     onDateClick: (LocalDate) -> Unit,
     currentMonth: YearMonth = YearMonth.now(),
     yearRange: Int = 10,
+    colorScheme: ColorScheme,
 ) {
     val startMonth = currentMonth.minusYears(yearRange.toLong()) // Adjust as needed
     val endMonth = currentMonth.plusYears(yearRange.toLong()) // Adjust as needed
@@ -241,7 +245,7 @@ fun CalendarWithFocusDates(
         state = state,
         dayContent = {it ->
             val isSelected = focusDates.contains(it.date)
-            Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick)
+            Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick, colorScheme)
         },
         monthHeader = { month ->
             Column() {
@@ -273,7 +277,7 @@ fun CalendarWithFocusDates(
 }
 
 @Composable
-fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateClick: (LocalDate) -> Unit) {
+fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateClick: (LocalDate) -> Unit, colorScheme: ColorScheme) {
     val isInCurrentMonth = day.date.month == currentMonth.month
     val alpha = if (isInCurrentMonth) 1f else 0.5f
     val color = when (day.date.dayOfWeek) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -59,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ColorPicker
+import com.asu1.quizzer.composables.ColorSchemeSheet
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
@@ -103,35 +106,11 @@ fun QuizLayoutSetColorScheme(
     onColorSchemeUpdate: (ColorScheme) -> Unit = { },
     backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundImageUpdate: (ImageColor) -> Unit = { },
-    proceed: () -> Unit) {
-    val colorStrings = listOf(
-        "Primary Color",
-        "Secondary Color",
-        "Territory Color",
-        "onPrimary Color",
-        "onSecondary Color",
-        "onTerritory Color",
-        "Error Color",
-        "onError Color"
-    )
-    var colorSchemeState =
-        listOf(
-            colorScheme.primary,
-            colorScheme.secondary,
-            colorScheme.tertiary,
-            colorScheme.onPrimary,
-            colorScheme.onSecondary,
-            colorScheme.onTertiary,
-            colorScheme.error,
-            colorScheme.onError
-        )
-
+    ) {
+    val colorSchemeState = colorScheme.primary
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(colorScheme) {
-        colorSchemeState = updateColorSchemeState(colorScheme)
-    }
+    var selectedLevel by remember { mutableIntStateOf(2) }
 
     MaterialTheme(
         colorScheme = colorScheme
@@ -140,6 +119,7 @@ fun QuizLayoutSetColorScheme(
             state = listState,
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
                 .padding(horizontal = 8.dp)
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
@@ -148,6 +128,10 @@ fun QuizLayoutSetColorScheme(
                     quizImage = quizImage,
                     setColorScheme = onColorSchemeUpdate,
                     primaryColor = colorScheme.primary,
+                    selectedLevel = selectedLevel,
+                    onUpdateLevel = { level ->
+                        selectedLevel = level
+                    }
                 )
             }
             item{
@@ -164,21 +148,31 @@ fun QuizLayoutSetColorScheme(
                     }
                 )
             }
-            items(colorStrings.size) { index ->
-                val colorName = colorStrings[index]
+            item{
+                val colorName = "Primary Color"
                 ColorPickerRowOpener(
                     text = colorName,
-                    imageColor = colorSchemeState[index],
+                    imageColor = colorSchemeState,
                     onColorSelected = {color ->
                         onColorUpdate(colorName, color)
                     },
                     onOpen = {
                         coroutineScope.launch {
-                            listState.animateScrollToItem(index + 2)
+                            listState.animateScrollToItem(2)
                         }
                     },
                     buttonTestTag = "QuizLayoutSetColorSchemeButton$colorName",
                     colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextField$colorName"
+                )
+            }
+            item{
+                Text(
+                    text = "Colors : ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
+                ColorSchemeSheet(
+                    colorScheme = colorScheme
                 )
             }
         }
@@ -382,10 +376,12 @@ fun GenerateColorScheme(
     quizImage: ByteArray? = byteArrayOf(),
     setColorScheme: (ColorScheme) -> Unit = {},
     primaryColor: Color = MaterialTheme.colorScheme.primary,
+    selectedLevel: Int = 2,
+    onUpdateLevel: (Int) -> Unit = {},
 ){
     val isTitleImageSet = quizImage != null
-    var selectedLevel by remember { mutableIntStateOf(2) }
     val levels = 5
+    val isDark = isSystemInDarkTheme()
 
     Column(
 
@@ -404,7 +400,7 @@ fun GenerateColorScheme(
                 onClick = {
 
                     val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
-                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, selectedLevel)
+                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, selectedLevel, isDark)
                     setColorScheme(titleImageColorScheme)
                 },
                 enabled = isTitleImageSet,
@@ -414,7 +410,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = "Gen with\nPrimary Color",
                 onClick = {
-                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, selectedLevel)
+                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, selectedLevel, isDark)
                     setColorScheme(primaryColorScheme)
                 },
                 enabled = true,
@@ -423,7 +419,7 @@ fun GenerateColorScheme(
         }
         LevelSelector(
             onUpdateLevel = { level ->
-                selectedLevel = level
+                onUpdateLevel(level)
             },
             selectedLevel = selectedLevel,
             levels = levels
@@ -488,8 +484,7 @@ fun LevelSelector(
     }
 }
 
-fun randomDynamicColorScheme(seedColor: Color, randomStrength: Int = 2): ColorScheme {
-    val isDark = seedColor.luminance() < 0.5
+fun randomDynamicColorScheme(seedColor: Color, randomStrength: Int = 2, isDark: Boolean): ColorScheme {
     val style = when (randomStrength) {
         0 -> PaletteStyle.TonalSpot
         1 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral).random()
@@ -616,7 +611,6 @@ fun ColorPickerRowOpener(
 fun QuizLayoutSetColorSchemePreview() {
     QuizzerAndroidTheme {
         QuizLayoutSetColorScheme(
-            proceed = {},
         )
     }
 }

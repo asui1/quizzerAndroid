@@ -15,7 +15,6 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
@@ -24,6 +23,7 @@ import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.withSurfaceColor
 import com.asu1.quizzer.util.withErrorColor
 import com.asu1.quizzer.util.withOnErrorColor
 import com.asu1.quizzer.util.withOnPrimaryColor
@@ -296,7 +296,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun setBackgroundImage(imageColor: ImageColor) {
-        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor)
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor, colorScheme = _quizTheme.value.colorScheme.withSurfaceColor(imageColor.color))
     }
 
     fun setColorScheme(name: String, color: Color){

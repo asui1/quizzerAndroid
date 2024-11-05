@@ -31,7 +31,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
     if(contentColor == null) contentColor = Color.Black
     val borderModifier = when (borderStyle) {
         1 -> Modifier.drawBehind {
-            val strokeWidth = 4.dp.toPx()
+            val strokeWidth = 2.dp.toPx()
             val y = size.height - strokeWidth / 2
             drawLine(
                 color = colorScheme.outline,

@@ -10,11 +10,11 @@ val basicShader = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution;
-        float minValue = distance(uv, float2(0.0, 1.0));
+        float minValue = distance(uv, float2(0.0, 1.0)) / 1.414 * 0.8 + 0.1;
         return mix(color, color2, minValue);
     }
     """.trimIndent()
-
+// 0 ~ 1.414 -> 0.1 ~ 0.9
 @Language("AGSL")
 val leftBottomShader = """
     uniform float2 resolution;
@@ -24,7 +24,7 @@ val leftBottomShader = """
     
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float minValue  = (distance(uv, float2(0, 1)) + abs(sin(time*0.3))) / 2.414 * 0.9;
+        float minValue  = (distance(uv, float2(0, 1)) + abs(sin(time*0.3))) / 2.414 * 0.8 + 0.1;
         return mix(color, color2, minValue);
     }
 """.trimIndent()
@@ -40,7 +40,7 @@ val bottomShader = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float wave = (uv.y + abs(sin(time*0.3)))/2 * 0.9;
+        float wave = (uv.y + abs(sin(time*0.3)))/2 * 0.8 + 0.1;
         return mix(color, color2, wave);
 }
 """.trimIndent()
@@ -54,7 +54,7 @@ val centerShader = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution.xy;
-        float wave = (distance(uv, float2(0.5, 0.5)) * 2 + abs(sin(time*0.3))) / 1.7 * 0.9;
+        float wave = (distance(uv, float2(0.5, 0.5)) * 2 + abs(sin(time*0.3))) / 1.7 * 0.8 + 0.1;
         return mix(color, color2, wave);
     }
 """.trimIndent()
@@ -69,7 +69,7 @@ val repeatShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.3)) * 0.9;
+            float wave = abs(sin(time*0.3)) * 0.8 + 0.1;
             return mix(color, color2, wave);
         }
 """.trimIndent()
@@ -83,7 +83,7 @@ val verticalWaveShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.3 + uv.y * 1.5708))  * 0.9;
+            float wave = abs(sin(time*0.3 + uv.y * 1.5708))  * 0.8 + 0.1;
             return mix(color, color2, wave);
         }
 """.trimIndent()
@@ -97,7 +97,7 @@ val horizontalWaveShader = """
 
         half4 main(in float2 fragCoord){
             float2 uv = fragCoord / resolution.xy;
-            float wave = abs(sin(time*0.3 + uv.x * 1.5708))  * 0.9;
+            float wave = abs(sin(time*0.3 + uv.x * 1.5708))  * 0.8 + 0.1;
             return mix(color, color2, wave);
         }
 """.trimIndent()

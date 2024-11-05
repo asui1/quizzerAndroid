@@ -166,6 +166,21 @@ class MyComposeTest {
         //DESIGN SCORECARD
         testUtils.clickOnTag("QuizBuilderScreenProceedButton")
         testUtils.waitFor(500)
+
+        testUtils.clickOnTag("DesignScoreCardSetColor1Button")
+        testUtils.waitFor(200)
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", "FF0000", true)
+        testUtils.waitFor(200)
+        composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
+        testUtils.waitFor(200)
+
+        testUtils.clickOnTag("DesignScoreCardSetColor2Button")
+        testUtils.waitFor(200)
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", "FF0000", true)
+        testUtils.waitFor(200)
+        composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
+        testUtils.waitFor(200)
+
         testUtils.clickOnTag("DesignScoreCardShaderButton")
         testUtils.waitFor(500)
         val shader = shaders.random()

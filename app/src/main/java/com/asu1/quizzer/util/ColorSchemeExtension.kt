@@ -91,6 +91,12 @@ fun ColorScheme.withOnTertiaryContainerColor(newOnTertiaryContainerColor: Color)
     )
 }
 
+fun ColorScheme.withSurfaceColor(newSurfaceColor: Color): ColorScheme {
+    return this.copy(
+        surface = newSurfaceColor
+    )
+}
+
 fun calculateSeedColor(bitmap: ImageBitmap): Color {
     val suitableColors = bitmap.themeColors(fallback = Color.Blue)
     return suitableColors.first()

@@ -3,7 +3,6 @@ package com.asu1.quizzer.screens
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.ImageSearch
@@ -43,7 +40,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,11 +52,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -73,6 +66,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -84,8 +78,6 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.ui.theme.LightPrimary
-import com.asu1.quizzer.ui.theme.LightSecondary
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -125,7 +117,8 @@ fun DesignScoreCardScreen(
                 Dialog(
                     onDismissRequest = {
                         showScoreCardColorPicker1 = false
-                    }
+                    },
+                    properties = DialogProperties(dismissOnBackPress = true)
                 ) {
                     TextColorPickerModalSheet(
                         initialColor = scoreCard.background.color,
@@ -147,7 +140,7 @@ fun DesignScoreCardScreen(
                         onColorSelected = { color ->
                             scoreCardViewModel.updateColor2(color)
                         },
-                        text = "Select Color1"
+                        text = "Select Color2"
                     )
                 }
             }
@@ -236,6 +229,7 @@ fun DesignScoreCardScreen(
                 )
             }
             IconButton(
+                modifier = Modifier.testTag("DesignScoreCardSetColor1Button"),
                 onClick = {
                     scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
                     showScoreCardColorPicker1 = true
@@ -248,6 +242,7 @@ fun DesignScoreCardScreen(
                 )
             }
             IconButton(
+                modifier = Modifier.testTag("DesignScoreCardSetColor2Button"),
                 onClick = {
                     scoreCardViewModel.updateBackgroundState(ImageColorState.COLOR2)
                     showScoreCardColorPicker2 = true
@@ -457,82 +452,6 @@ fun DesignScoreCardPreview() {
         )
 }
 
-@Composable
-fun ModalSheetForColorSelection(
-    colorScheme: ColorScheme,
-    onColorSelected: (Color) -> Unit = {},
-    curSelection: ImageColor,
-){
-    val colors = listOf(
-        colorScheme.primary,
-        colorScheme.onPrimary,
-        colorScheme.primaryContainer,
-        colorScheme.onPrimaryContainer,
-        colorScheme.secondary,
-        colorScheme.onSecondary,
-        colorScheme.secondaryContainer,
-        colorScheme.onSecondaryContainer,
-        colorScheme.tertiary,
-        colorScheme.onTertiary,
-        colorScheme.tertiaryContainer,
-        colorScheme.onTertiaryContainer,
-        colorScheme.error,
-        colorScheme.onError,
-        colorScheme.errorContainer
-    )
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(5),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        items(colors.size) { index ->
-            val color = colors[index]
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = color,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .border(
-                            width = 5.dp,
-                            color = Color.Transparent,
-                            shape = CircleShape
-                        )
-                        .clickable { onColorSelected(color) }
-                ) {}
-                if (color == curSelection.color || color == curSelection.color2) {
-                    Text(
-                        text = if (color == curSelection.color) "1" else "2",
-                        color = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .background(Color.Black, CircleShape)
-                            .padding(4.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ModalSheetForColorSelectionPreview() {
-    ModalSheetForColorSelection(
-        colorScheme = MaterialTheme.colorScheme,
-        curSelection = ImageColor(
-            color = MaterialTheme.colorScheme.primary,
-            imageData = ByteArray(0),
-            color2 = MaterialTheme.colorScheme.secondary,
-            state = ImageColorState.COLOR2
-        )
-    )
-}
 
 @Composable
 fun TextColorPickerModalSheet(
@@ -557,7 +476,8 @@ fun TextColorPickerModalSheet(
             initialColor = initialColor,
             onColorSelected = { color ->
                 onColorSelected(color)
-            }
+            },
+            testTag = "DesignScoreCardTextColorPicker"
         )
     }
 }
