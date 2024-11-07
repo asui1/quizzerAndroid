@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import kotlinx.coroutines.launch
+import java.util.Base64
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -117,7 +118,7 @@ fun LoadItems(
                                 title = quizData.title,
                                 creator = quizData.creator,
                                 tags = quizData.tags.toList(),
-                                image = quizData.titleImage,
+                                image = Base64.getDecoder().decode(quizData.titleImage),
                                 count = 0,
                             )
                             val currentDismissState = dismissStates.getOrPut(quizCard.id) {

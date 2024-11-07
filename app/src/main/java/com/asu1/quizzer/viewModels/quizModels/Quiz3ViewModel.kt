@@ -70,7 +70,6 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
             set(from, get(to))
             set(to, temp)
         })
-        Logger().debug("switchShuffledAnswers from: $from to: $to")
     }
     override fun updateBodyState(bodyType: BodyType){
         _quiz3State.value = _quiz3State.value.copy(bodyType = bodyType)

@@ -27,13 +27,11 @@ fun QuizViewer(
 ) {
     fun updateQuiz(quiz: Quiz){
         if(!isPreview){
-            Logger().debug("QuizViewer ${quiz.layoutType}")
             updateUserInput(quiz)
         }
     }
     when(quiz){
         is Quiz1 -> {
-            Logger().debug("QuizViewer Quiz1")
             val quiz1ViewModel: Quiz1ViewModel = viewModel(
                 key = quiz.uuid
             )

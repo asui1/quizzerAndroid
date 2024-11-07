@@ -112,6 +112,7 @@ dependencies {
     implementation("com.google.ar.sceneform:rendering:1.17.1")
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1")
     implementation("com.kizitonwose.calendar:compose:2.6.0")
     implementation("sh.calvin.reorderable:reorderable:2.3.3")

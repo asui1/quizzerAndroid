@@ -102,7 +102,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                 val endPosition = composeTestRule.onNodeWithTag("QuizCreatorRightDot${quiz.connectionAnswerIndex[i]}")
                     .fetchSemanticsNode()
                     .positionInRoot
-                Logger().debug("Start Position: $startPosition, End Position: $endPosition, Start Position Root: $startPositionRoot")
                 swipe(startPosition, endPosition-startPositionRoot,
                     durationMillis = 1000
                 )
@@ -135,7 +134,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                     maxHeight = 200.dp,
                 )
                 if(byteArray != null){
-                    Logger().debug("Image Picked")
                     onImagePicked(byteArray)
                 }
             }
@@ -187,7 +185,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         onIdle()
         if(withIme) {
             onIdle()
-            waitFor(1000)
+            waitFor(200)
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
         }

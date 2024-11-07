@@ -97,7 +97,6 @@ fun QuizBuilderScreen(navController: NavController,
             .collect { index ->
                 curIndex = index
                 quizLayoutViewModel.updateInitIndex(curIndex)
-                Logger().debug("Current Index : $index")
             }
     }
 

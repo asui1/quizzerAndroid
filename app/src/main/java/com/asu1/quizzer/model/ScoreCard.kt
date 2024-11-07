@@ -2,6 +2,7 @@ package com.asu1.quizzer.model
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.ShaderTypeSerializer
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.basicShader
@@ -49,7 +50,7 @@ data class ScoreCard (
     var yRatio: Float = 0.5f,
     var imageStateval : Int = 0,
     @Contextual var textColor: Color = Color.Black,
-    @Contextual var colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
     @Serializable(with = ShaderTypeSerializer::class) var shaderType: ShaderType = ShaderType.Brush1,
 ){
     override fun equals(other: Any?): Boolean {

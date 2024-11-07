@@ -3,8 +3,10 @@ package com.asu1.quizzer.data
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
 import com.asu1.quizzer.ui.theme.DarkColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -69,7 +71,14 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         )
         encoder.encodeSerializableValue(JsonObject.serializer(), json)
     }
-
+    private fun String.toColor(): Color{
+        val value = this.substring(1, 9).toLong(16)
+        return Color(value.toInt())
+    }
+    fun stringToColor(colorString: String): Color {
+        val value = colorString.substring(1, 9).toLong(16)
+        return Color(value.toInt())
+    }
     override fun deserialize(decoder: Decoder): ColorScheme {
         val json = decoder.decodeSerializableValue(JsonObject.serializer())
         val brightness = json["brightness"]?.jsonPrimitive?.content
@@ -78,33 +87,39 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         }else{
             LightColorScheme
         }
+        val hex = JsonPrimitive(baseColorScheme.primary.toArgb().toHexString())
+        Logger().debug("ColorSchemeSerializer ${hex}")
+        val colorHex = json["primary"]?.jsonPrimitive?.content
+        Logger().debug("ColorSchemeSerializer1 ${colorHex}")
+        val color = stringToColor(colorHex!!)
+        Logger().debug("ColorSchemeSerializer2 ${color}")
         return baseColorScheme.copy(
-            primary = json["primary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.primary,
-            onPrimary = json["onPrimary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onPrimary,
-            primaryContainer = json["primaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.primaryContainer,
-            onPrimaryContainer = json["onPrimaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onPrimaryContainer,
-            secondary = json["secondary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.secondary,
-            onSecondary = json["onSecondary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSecondary,
-            secondaryContainer = json["secondaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.secondaryContainer,
-            onSecondaryContainer = json["onSecondaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSecondaryContainer,
-            tertiary = json["tertiary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.tertiary,
-            onTertiary = json["onTertiary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onTertiary,
-            tertiaryContainer = json["tertiaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.tertiaryContainer,
-            onTertiaryContainer = json["onTertiaryContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onTertiaryContainer,
-            error = json["error"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.error,
-            onError = json["onError"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onError,
-            errorContainer = json["errorContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.errorContainer,
-            onErrorContainer = json["onErrorContainer"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onErrorContainer,
-            surface = json["surface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surface,
-            onSurface = json["onSurface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSurface,
-            surfaceVariant = json["surfaceVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surfaceVariant,
-            onSurfaceVariant = json["onSurfaceVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.onSurfaceVariant,
-            outline = json["outline"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.outline,
-            outlineVariant = json["outlineVariant"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.outlineVariant,
-            scrim = json["scrim"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.scrim,
-            inverseSurface = json["inverseSurface"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.inverseSurface,
-            inversePrimary = json["inversePrimary"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.inversePrimary,
-            surfaceTint = json["surfaceTint"]?.jsonPrimitive?.content?.toColorInt()?.let { Color(it) } ?: baseColorScheme.surfaceTint
+            primary = json["primary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.primary,
+            onPrimary = json["onPrimary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onPrimary,
+            primaryContainer = json["primaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.primaryContainer,
+            onPrimaryContainer = json["onPrimaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onPrimaryContainer,
+            secondary = json["secondary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.secondary,
+            onSecondary = json["onSecondary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onSecondary,
+            secondaryContainer = json["secondaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.secondaryContainer,
+            onSecondaryContainer = json["onSecondaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onSecondaryContainer,
+            tertiary = json["tertiary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.tertiary,
+            onTertiary = json["onTertiary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onTertiary,
+            tertiaryContainer = json["tertiaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.tertiaryContainer,
+            onTertiaryContainer = json["onTertiaryContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onTertiaryContainer,
+            error = json["error"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.error,
+            onError = json["onError"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onError,
+            errorContainer = json["errorContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.errorContainer,
+            onErrorContainer = json["onErrorContainer"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onErrorContainer,
+            surface = json["surface"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.surface,
+            onSurface = json["onSurface"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onSurface,
+            surfaceVariant = json["surfaceVariant"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.surfaceVariant,
+            onSurfaceVariant = json["onSurfaceVariant"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onSurfaceVariant,
+            outline = json["outline"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.outline,
+            outlineVariant = json["outlineVariant"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.outlineVariant,
+            scrim = json["scrim"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.scrim,
+            inverseSurface = json["inverseSurface"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.inverseSurface,
+            inversePrimary = json["inversePrimary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.inversePrimary,
+            surfaceTint = json["surfaceTint"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.surfaceTint
         )
     }
 

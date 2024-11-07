@@ -44,10 +44,12 @@ interface ApiService {
 
     @DELETE("deleteQuiz")
     suspend fun deleteQuiz(@Query("uuid") email: String, @Query("email") quizId: String): Response<Void>
-    
+
+    @UseKotlinxSerialization
     @POST("addQuiz")
     suspend fun addQuiz(@Body quizLayoutSerializer: QuizLayoutSerializer): Response<Void>
 
+    @UseKotlinxSerialization
     @GET("quizData")
     suspend fun getQuizData(@Query("uuid") uuid: String): Response<QuizLayoutSerializer>
 }

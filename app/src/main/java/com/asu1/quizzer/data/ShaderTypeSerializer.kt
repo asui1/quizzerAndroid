@@ -1,6 +1,7 @@
 package com.asu1.quizzer.data
 
 import com.asu1.quizzer.model.ShaderType
+import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -14,9 +15,14 @@ object ShaderTypeSerializer : KSerializer<ShaderType> {
     override fun serialize(encoder: Encoder, value: ShaderType) {
         encoder.encodeInt(value.index)
     }
-
+    fun removePrefixAndConvertToInt(text: String): Int {
+        return text.removePrefix("Brush").toInt()
+    }
     override fun deserialize(decoder: Decoder): ShaderType {
-        val index = decoder.decodeInt()
-        return ShaderType.values().first { it.index == index }
+        val text = decoder.decodeString()
+        Logger().debug("ShaderTypeSerializer Text: $text")
+        val index = removePrefixAndConvertToInt(text) -1
+        Logger().debug("ShaderTypeSerializer Index: $index")
+        return ShaderType.entries.first { it.index == index }
     }
 }

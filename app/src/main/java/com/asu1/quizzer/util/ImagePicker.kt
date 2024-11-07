@@ -74,7 +74,6 @@ fun resizeBitmap(bitmap: Bitmap, maxWidth: Dp?, maxHeight: Dp?): Bitmap {
 
     val titleSize = 200
     val aspectRatio = maxWidth / maxHeight
-    Logger().debug("Aspect Ratio: $aspectRatio")
 
     if (width > height * aspectRatio) {
         newWidth = (height * aspectRatio).toInt()
@@ -86,7 +85,6 @@ fun resizeBitmap(bitmap: Bitmap, maxWidth: Dp?, maxHeight: Dp?): Bitmap {
 
     val xOffset = (width - newWidth) / 2
     val yOffset = (height - newHeight) / 2
-    Logger().debug("Resizing Bitmap: $width x $height -> $newWidth x $newHeight")
     val changedBitmap = Bitmap.createBitmap(bitmap, xOffset, yOffset, newWidth, newHeight)
     if(maxWidth == 200.dp) {
         return Bitmap.createScaledBitmap(changedBitmap, titleSize, titleSize, true)

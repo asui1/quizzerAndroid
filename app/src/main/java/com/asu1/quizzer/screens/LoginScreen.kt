@@ -58,7 +58,6 @@ fun handleSignIn(result: GetCredentialResponse, login: (String, String) -> Unit)
                         GoogleIdTokenCredential.createFrom(credential.data)
 
                     val email = googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-                    Logger().debug("Email: $email")
                     if(email == null) {
                         Log.e("Quizzer", "Received an invalid google id token response")
                         return

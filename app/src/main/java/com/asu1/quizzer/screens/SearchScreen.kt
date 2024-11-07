@@ -53,7 +53,8 @@ import com.asu1.quizzer.viewModels.SearchViewModel
 import loadImageAsByteArray
 
 @Composable
-fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel()) {
+fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
+                 onQuizClick: (quizId: String) -> Unit = {}) {
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
     var searchText by remember {mutableStateOf(TextFieldValue(""))}
@@ -66,6 +67,7 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
     Scaffold(
         topBar = {
             SearchTopBar(
+                navController = navController,
                 searchText = searchText,
                 onSearchTextChanged = { searchText = it },
                 search = { searchViewModel.search(it) },
@@ -98,7 +100,7 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
                     } else {
                         QuizCardHorizontalList(
                             quizCards = searchResult!!,
-                            onClick = { /* Handle click */ }
+                            onClick = { onQuizClick(it) }
                         )
                     }
                 }
@@ -136,6 +138,7 @@ fun PreviewSearchScreen(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
+    navController: NavHostController,
     searchText: TextFieldValue,
     onSearchTextChanged: (TextFieldValue) -> Unit,
     search: (searchText: String) -> Unit,
@@ -143,8 +146,6 @@ fun SearchTopBar(
     onTextFieldFocused: () -> Unit,
     onTextFieldUnfocused: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     TopAppBar(
         modifier = Modifier.height(80.dp),
         colors = TopAppBarDefaults.topAppBarColors(
@@ -204,7 +205,7 @@ fun SearchTopBar(
                 modifier = Modifier.fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = { (context as? Activity)?.finish() }) {
+                IconButton(onClick = { navController.popBackStack() }) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }

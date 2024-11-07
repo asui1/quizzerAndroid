@@ -75,7 +75,6 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
                 return@update state
             }
             userAns[index] = !userAns[index]
-            Logger().debug(userAns.toString())
             state.shuffledAnswers
             state.copy(userAns = userAns)
         }

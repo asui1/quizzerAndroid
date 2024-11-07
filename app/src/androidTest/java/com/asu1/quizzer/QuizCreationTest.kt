@@ -145,26 +145,26 @@ class MyComposeTest {
         //SET TITLE
         testUtils.waitUntilTag("QuizLayoutTitleTextField")
         testUtils.inputTextOnTag("QuizLayoutTitleTextField", quizData.title)
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         //Set Quiz Description
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", quizData.description)
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         //SET TAGS
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.enterTextsOnTag("TagSetterTextField", quizData.tags.toList(), true)
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
-        testUtils.setImage(context, titleImage, onImagePicked = { image ->
-            quizLayoutViewModel.setQuizImage(image)
-        })
+//        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
+//        testUtils.setImage(context, titleImage, onImagePicked = { image ->
+//            quizLayoutViewModel.setQuizImage(image)
+//        })
         onIdle()
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         // composeRule.onNode(hasContentDescription("Description of the image")).assertExists()
         // replace tags test to contentDescription
@@ -175,11 +175,11 @@ class MyComposeTest {
         val colorInt = Random.nextInt(primaryColors.size)
         val primaryColor = primaryColors[colorInt]
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimary Color", primaryColor, true)
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color", true)
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         // NEED TESTING FROM HERE
         //Set TextStyles
@@ -187,11 +187,11 @@ class MyComposeTest {
         testUtils.setTextStyle(questionTextStyle, "setTextStyleQuestion")
         testUtils.setTextStyle(bodyTextStyle, "setTextStyleBody")
         testUtils.setTextStyle(answerTextStyle, "setTextStyleAnswer")
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
         //QUIZ BUILDER
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.waitFor(2000)
+        testUtils.waitFor(1000)
 
         //ADD QUIZ1
         testUtils.addQuiz1(quiz1)
@@ -241,13 +241,17 @@ class MyComposeTest {
         val shader = shaders.random()
         testUtils.clickOnTag("DesignScoreCardShaderButton$shader", useUnmergedTree = true)
         onIdle()
-        testUtils.waitFor(2000)
+        testUtils.waitFor(300)
 
         //UPLOAD
-
+        testUtils.clickOnTag("DesignScoreCardUploadButton")
+        onIdle()
         testUtils.waitFor(5000)
+        onIdle()
+
+        onIdle()
+        testUtils.waitFor(5000)
+        onIdle()
 
     }
-
-
 }

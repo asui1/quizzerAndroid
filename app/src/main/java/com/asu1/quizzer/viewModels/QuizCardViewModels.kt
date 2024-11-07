@@ -57,7 +57,6 @@ class QuizCardMainViewModel : ViewModel() {
 
                 val response = RetrofitInstance.api.getRecommendations(language)
                 if (response.isSuccessful && response.body() != null) {
-                    Logger().debug("Quiz cards fetched successfully")
                     _quizCards.value =
                         QuizCards(
                             QuizCardsWithTag("Most Viewed", response.body()!!.mostViewed),
@@ -67,7 +66,6 @@ class QuizCardMainViewModel : ViewModel() {
 
                     _quizCardUpdated.postValue(true)
                 } else {
-                    Logger().debug("Quiz cards fetch failed")
                     _quizCards.value  =
                         QuizCards(
                             QuizCardsWithTag("Most Viewed", emptyList()),
@@ -77,7 +75,6 @@ class QuizCardMainViewModel : ViewModel() {
                     _quizCardUpdated.postValue(true)
                 }
             } catch (e: Exception) {
-                Logger().debug("Quiz cards fetch failed: $e")
                 _quizCards.value =
                     QuizCards(
                         QuizCardsWithTag("Most Viewed", emptyList()),

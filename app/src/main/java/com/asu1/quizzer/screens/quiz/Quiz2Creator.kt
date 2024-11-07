@@ -206,7 +206,6 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                             expanded = false
                         },
                         text = {
-                            Logger().debug(key+"Month${month}")
                             Text(
                                 text = month.toString(),
                                 textAlign = TextAlign.Center,

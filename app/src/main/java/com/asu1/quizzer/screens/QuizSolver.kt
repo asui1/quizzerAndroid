@@ -89,6 +89,7 @@ fun QuizSolver(
                 }
                 item {
                     QuizSubmit(
+                        modifier = Modifier.fillParentMaxSize(),
                         onSubmit = {
                             navigateToScoreCard()
                         }
@@ -102,10 +103,11 @@ fun QuizSolver(
 //ANSWER SCREEN, Button to Move to Scoring Screen
 @Composable
 fun QuizSubmit(
+    modifier: Modifier = Modifier,
     onSubmit: () -> Unit = {}
 ){
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Column(

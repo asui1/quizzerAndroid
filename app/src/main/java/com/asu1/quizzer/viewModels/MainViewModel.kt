@@ -42,7 +42,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val connectivityManager = getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork
         val activeNetwork = connectivityManager.getNetworkCapabilities(network)
-        Logger().debug("Internet Check run")
         _isInternetAvailable.postValue(
             activeNetwork != null && (
                     activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
@@ -64,7 +63,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 Logger().debug("Latest version: ${response.body()?.latestVersion}")
                 if(response.isSuccessful && response.body() != null && response.body()?.latestVersion != null){
                     if(isUpdateNeeded(response.body()!!.latestVersion, currentVersion)){
-                        Logger().debug("Update is available")
                         _isUpdateAvailable.postValue(true)
                     }
                     else

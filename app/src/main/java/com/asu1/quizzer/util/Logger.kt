@@ -32,6 +32,16 @@ class Logger {
             debug("Error accessing back stack: ${e.message}")
         }
     }
+    fun debugFull(input: String) {
+        if (isDebug) {
+            val maxLogSize = 1000
+            for (i in 0..input.length / maxLogSize) {
+                val start = i * maxLogSize
+                val end = if ((i + 1) * maxLogSize > input.length) input.length else (i + 1) * maxLogSize
+                Log.d(tag, input.substring(start, end))
+            }
+        }
+    }
 }
 
 

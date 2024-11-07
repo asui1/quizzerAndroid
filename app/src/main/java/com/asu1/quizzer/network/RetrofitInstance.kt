@@ -1,12 +1,16 @@
 package com.asu1.quizzer.network
 
+import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,10 +46,15 @@ object RetrofitInstance {
         .registerTypeAdapter(object : TypeToken<List<QuizCard>>() {}.type, QuizCardListDeserializer())
         .create()
 
+    val gsonConverterFactory = GsonConverterFactory.create(gson)
+    val contentType = "application/json".toMediaType()
+    @OptIn(ExperimentalSerializationApi::class)
+    val kotlinxSerializationConverterFactory = json.asConverterFactory(contentType)
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://quizzer.co.kr/api/quizzerServer/")
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(CustomConverterFactory(gsonConverterFactory, kotlinxSerializationConverterFactory))
             .client(client)
             .build()
     }

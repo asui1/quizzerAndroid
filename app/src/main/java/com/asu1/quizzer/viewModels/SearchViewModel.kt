@@ -36,7 +36,6 @@ class SearchViewModel : ViewModel() {
                 }
             }
             catch (e: Exception){
-                Logger().debug("Search Failed: $e")
                 _showToast.postValue("Search Failed")
             }
         }

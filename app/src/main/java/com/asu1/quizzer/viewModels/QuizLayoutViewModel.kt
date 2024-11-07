@@ -10,14 +10,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
+import com.asu1.quizzer.data.loadQuizData
 import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
@@ -33,14 +36,17 @@ import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
 import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.util.Base64
 import java.util.Locale
 
 @Serializable
@@ -54,7 +60,7 @@ data class QuizTheme(
 
 data class QuizData(
     var title: String = "",
-    var image: ByteArray? = null,
+    var image: ByteArray = byteArrayOf(),
     var description: String = "",
     var tags: Set<String> = emptySet(),
     var shuffleQuestions: Boolean = false,
@@ -112,7 +118,7 @@ class QuizLayoutViewModel : ViewModel() {
     private val _policyAgreement = MutableLiveData(false)
     val policyAgreement: LiveData<Boolean> get() = _policyAgreement
 
-    private val _step = MutableLiveData<LayoutSteps>(LayoutSteps.POLICY)
+    private val _step = MutableLiveData(LayoutSteps.POLICY)
     val step: LiveData<LayoutSteps> get() = _step
 
     private val _initIndex = MutableLiveData(0)
@@ -143,18 +149,63 @@ class QuizLayoutViewModel : ViewModel() {
         //TODO: SEND SCORE TO SERVER AND GET PERCENTAGE OF RESULT.
     }
 
+    fun loadQuiz(quizId: String, scoreCardViewModel: ScoreCardViewModel, onDone: () -> Unit) {
+        val thisViewModel = this
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                Logger().debugFull("Get Quiz : $quizId")
+                val response = RetrofitInstance.api.getQuizData(quizId)
+                withContext(Dispatchers.IO) {
+                    if (response.isSuccessful) {
+                        _showToast.postValue("Quiz loaded successfully")
+                        scoreCardViewModel.loadScoreCard(response.body()!!.scoreCard)
+                        Logger().debug("scoreCardViewModel loaded successfully")
+                        withContext(Dispatchers.Main) {
+                            Logger().debug(response.body()!!.quizData.quizzes.size.toString())
+                            thisViewModel.loadQuizData(
+                                response.body()!!.quizData,
+                                response.body()!!.quizTheme,
+                                onDone
+                            )
+                        }
+                    } else {
+                        val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
+                        Logger().debug("Failed to load quiz: $errorMessage")
+                        _showToast.postValue("Failed to load quiz")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Logger().debug("Failed to load quiz: $e")
+                    _showToast.postValue("Failed to load quiz")
+                }
+            }
+        }
+    }
+
     fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme, loadDone: () -> Unit) {
         _quizData.value = QuizData(
             title = quizData.title,
-            image = quizData.titleImage,
+            image = Base64.getDecoder().decode(quizData.titleImage),
             description = quizData.description,
             tags = quizData.tags,
             shuffleQuestions = quizData.shuffleQuestions,
             creator = quizData.creator,
             uuid = quizData.uuid
         )
+        val quiz = mutableListOf<Quiz>()
+        for(quizJson in quizData.quizzes){
+            Logger().debug("Loading Quiz : $quizJson")
+            val curQuiz = quizJson.toQuiz()
+            if(curQuiz is Quiz4){
+                Logger().debug("Quiz4 Loaded : ${curQuiz.connectionAnswers}")
+            }
+            Logger().debug("Quiz Loaded : ${curQuiz.question}")
+            quiz.add(curQuiz)
+        }
+        _quizzes.value = quiz
         _quizTheme.value = quizTheme
-        _step.value = LayoutSteps.THEME
+        _step.postValue(LayoutSteps.THEME)
         loadDone()
     }
 
@@ -166,29 +217,35 @@ class QuizLayoutViewModel : ViewModel() {
         _step.value = LayoutSteps.POLICY
     }
 
-    suspend fun tryUpload(navController: NavController, scoreCard: ScoreCard) {
+    suspend fun tryUpload(navController: NavController, scoreCard: ScoreCard, onUpload: () -> Unit) {
         if(!validateQuizLayout()){
             navController.popBackStack()
             return
         }
-        uploadQuizLayout(scoreCard)
+        Logger().debug("Uploading Quiz")
+        uploadQuizLayout(scoreCard, onUpload)
     }
 
-    private suspend fun uploadQuizLayout(scoreCard: ScoreCard) {
-        viewModelScope.launch {
+    private suspend fun uploadQuizLayout(scoreCard: ScoreCard, onUpload: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val jsoned = toJson(scoreCard)
-                Logger().debug(jsoned.toString())
+                Logger().debugFull("JSONED STRING : $jsoned")
                 val response = RetrofitInstance.api.addQuiz(jsoned)
-                if(response.isSuccessful){
-                    _showToast.postValue("Quiz uploaded successfully")
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        _showToast.postValue("Quiz uploaded successfully")
+                        onUpload()
+                    } else {
+                        val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
+                        Logger().debug("Failed to upload quiz: $errorMessage")
+                        _showToast.postValue("Failed to upload quiz")
+                    }
                 }
-                else{
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
                     _showToast.postValue("Failed to upload quiz")
                 }
-            }
-            catch (e: Exception){
-                _showToast.postValue("Failed to upload quiz")
             }
         }
     }
@@ -199,8 +256,6 @@ class QuizLayoutViewModel : ViewModel() {
         val file = File(context.filesDir, fileName)
         file.writeText(jsoned)
         _showToast.value = "${quizData.value.title} saved"
-        Logger().debug("Saved to ${file.absolutePath}")
-        Logger().debug("Saved JSON: $jsoned")
     }
 
     fun validateQuizLayout(): Boolean {
@@ -249,7 +304,6 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun resetQuizLayout() {
-        Logger().debug("resetQuizLayout")
         _quizTheme.value = QuizTheme()
         _quizData.value = QuizData()
         _quizzes.value = emptyList()

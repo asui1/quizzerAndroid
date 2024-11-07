@@ -183,12 +183,13 @@ fun DesignScoreCardScreen(
                 Button(
                     onClick = {
                         scope.launch {
-                            quizLayoutViewModel.tryUpload(navController, scoreCard)
+                            quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
                         }
                     },
                     modifier = Modifier
                         .size(width = screenWidth * 0.6f, height = 48.dp)
                         .padding(8.dp)
+                        .testTag("DesignScoreCardUploadButton")
                 ) {
                     Text(
                         text = "Upload",

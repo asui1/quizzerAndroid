@@ -25,9 +25,7 @@ fun InitializationScreen(navHostController: NavHostController, initViewModel: Ma
     val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState()
     val hasCheckedUpdate = remember { mutableStateOf(false) }
 
-    Logger().debug("InitializationScreen: isInternetAvailable: $isInternetAvailable")
     if (isInternetAvailable == true){
-        Logger().debug("InitializationScreen: isUpdateAvailable: $isUpdateAvailable")
         when (isUpdateAvailable) {
             null -> {
                 if (!hasCheckedUpdate.value) {
@@ -41,7 +39,6 @@ fun InitializationScreen(navHostController: NavHostController, initViewModel: Ma
                 onCancel = { initViewModel.finishApp() },
             )
             else -> {
-                Logger().debug("InitializationScreen: Navigating to Home")
                 NavMultiClickPreventer.navigate(navHostController,Route.Home) {
                     popUpTo(navHostController.graph.startDestinationId) {
                         inclusive = true

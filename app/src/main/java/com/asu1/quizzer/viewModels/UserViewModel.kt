@@ -47,7 +47,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val response = RetrofitInstance.api.login(email)
             val nickname = response.body()?.nickname ?: ""
-            Logger().debug("Nickname: $nickname, Email: $email, UrlToImage: $urlToImage")
             if(response.isSuccessful){
                 val userTags = response.body()?.tags ?: emptySet()
                 _userData.value = UserDatas(email, nickname, urlToImage, userTags)

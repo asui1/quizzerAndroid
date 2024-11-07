@@ -1,14 +1,6 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.ui.geometry.Offset
-import com.asu1.quizzer.data.Quiz1Body
-import com.asu1.quizzer.data.Quiz1Json
-import com.asu1.quizzer.data.Quiz2Body
-import com.asu1.quizzer.data.Quiz2Json
-import com.asu1.quizzer.data.Quiz3Body
-import com.asu1.quizzer.data.Quiz3Json
-import com.asu1.quizzer.data.Quiz4Body
-import com.asu1.quizzer.data.Quiz4Json
 import com.asu1.quizzer.data.QuizJson
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.util.Logger
@@ -31,7 +23,7 @@ abstract class Quiz(
     open val layoutType: QuizType = QuizType.QUIZ1,
     open var bodyType: BodyType = BodyType.NONE,
     open var bodyText: String = "",
-    open var bodyImage: ByteArray? = null,
+    open var bodyImage: ByteArray = byteArrayOf(),
     open var youtubeId: String = "",
     open var youtubeStartTime: Int = 0,
 ) {
@@ -46,7 +38,7 @@ abstract class Quiz(
         if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
             bodyType = BodyType.NONE
         }
-        if(bodyType == BodyType.IMAGE && bodyImage == null){
+        if(bodyType == BodyType.IMAGE && bodyImage.size < 5){
             bodyType = BodyType.NONE
         }
     }
@@ -76,13 +68,12 @@ data class Quiz1(
     override var layoutType: QuizType = QuizType.QUIZ1,
     override var bodyType: BodyType = BodyType.NONE,
     override var bodyText: String = "",
-    override var bodyImage: ByteArray? = null,
+    override var bodyImage: ByteArray = byteArrayOf(),
     override var youtubeId: String = "",
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ) : Quiz(answers, question){
     override fun initViewState() {
-        Logger().debug("Init view state Quiz1")
         shuffledAnswers = if(shuffleAnswers){
             answers.toMutableList().also {
                 it.shuffle()
@@ -111,11 +102,10 @@ data class Quiz1(
     }
 
     override fun changeToJson(): QuizJson {
-        val quiz1Json = Quiz1Json(
-            layoutType = layoutType.value,
-            body = Quiz1Body(
+        val quiz1Json = QuizJson.Quiz1Json(
+            body = QuizJson.Quiz1Body(
                 bodyType = bodyType.value,
-                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
                 shuffleAnswers = shuffleAnswers,
                 maxAnswerSelection = maxAnswerSelection,
@@ -123,19 +113,19 @@ data class Quiz1(
                 ans = ans,
                 question = question,
                 points = point,
-                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
-                youtubeStartTime = youtubeStartTime.takeIf { it != 0 }
+                youtubeId = youtubeId,
+                youtubeStartTime = youtubeStartTime
             )
         )
         return quiz1Json
     }
 
     override fun load(data: String) {
-        val quiz1Json = json.decodeFromString<Quiz1Json>(data)
+        val quiz1Json = json.decodeFromString<QuizJson.Quiz1Json>(data)
         val body = quiz1Json.body
 
         bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
+        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         shuffleAnswers = body.shuffleAnswers
         maxAnswerSelection = body.maxAnswerSelection
@@ -154,10 +144,7 @@ data class Quiz1(
         if (other !is Quiz1) return false
 
         if (bodyType != other.bodyType) return false
-        if (bodyImage != null) {
-            if (other.bodyImage == null) return false
-            if (!bodyImage.contentEquals(other.bodyImage)) return false
-        } else if (other.bodyImage != null) return false
+        if (!bodyImage.contentEquals(other.bodyImage)) return false
         if (ans != other.ans) return false
         if (shuffleAnswers != other.shuffleAnswers) return false
         if (maxAnswerSelection != other.maxAnswerSelection) return false
@@ -232,9 +219,8 @@ data class Quiz2(
     }
 
     override fun changeToJson(): QuizJson {
-        val quiz2Json = Quiz2Json(
-            layoutType = layoutType.value,
-            body = Quiz2Body(
+        val quiz2Json = QuizJson.Quiz2Json(
+            body = QuizJson.Quiz2Body(
                 centerDate = listOf(centerDate.year, centerDate.monthValue, 1),
                 yearRange = yearRange,
                 answerDate = answerDate.map { listOf(it.year, it.monthValue, it.dayOfMonth) },
@@ -249,7 +235,7 @@ data class Quiz2(
     }
 
     override fun load(data: String) {
-        val quiz2Json = json.decodeFromString<Quiz2Json>(data)
+        val quiz2Json = json.decodeFromString<QuizJson.Quiz2Json>(data)
         val body = quiz2Json.body
 
         centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1])
@@ -305,7 +291,7 @@ data class Quiz3(
     override var layoutType: QuizType = QuizType.QUIZ3,
     override var bodyType: BodyType = BodyType.NONE,
     override var bodyText: String = "",
-    override var bodyImage: ByteArray? = null,
+    override var bodyImage: ByteArray = byteArrayOf(),
     override var youtubeId: String = "",
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
@@ -330,19 +316,18 @@ data class Quiz3(
     }
 
     override fun changeToJson(): QuizJson {
-        val quiz3Json = Quiz3Json(
-            layoutType = layoutType.value,
-            body = Quiz3Body(
+        val quiz3Json = QuizJson.Quiz3Json(
+            body = QuizJson.Quiz3Body(
                 layoutType = layoutType.value,
                 maxAnswerSelection = 1,
                 answers = answers,
                 ans = listOf(),
                 points = point,
                 question = question,
-                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
-                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
-                youtubeStartTime = youtubeStartTime.takeIf { it != 0 },
+                youtubeId = youtubeId,
+                youtubeStartTime = youtubeStartTime,
                 bodyType = bodyType.value
             )
         )
@@ -351,16 +336,16 @@ data class Quiz3(
 
 
     override fun load(data: String) {
-        val quiz3Json = json.decodeFromString<Quiz3Json>(data)
+        val quiz3Json = json.decodeFromString<QuizJson.Quiz3Json>(data)
         val body = quiz3Json.body
 
         answers = body.answers.toMutableList()
         question = body.question
         bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
+        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         youtubeId = body.youtubeId ?: ""
-        youtubeStartTime = body.youtubeStartTime ?: 0
+        youtubeStartTime = body.youtubeStartTime
         point = body.points
 
         initViewState()
@@ -406,7 +391,7 @@ data class Quiz4(
     override var layoutType: QuizType = QuizType.QUIZ4,
     override var bodyType: BodyType = BodyType.NONE,
     override var bodyText: String = "",
-    override var bodyImage: ByteArray? = null,
+    override var bodyImage: ByteArray = byteArrayOf(),
     override var youtubeId: String = "",
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
@@ -433,9 +418,8 @@ data class Quiz4(
     }
 
     override fun changeToJson(): QuizJson {
-        val quiz4Json = Quiz4Json(
-            layoutType = layoutType.value,
-            body = Quiz4Body(
+        val quiz4Json = QuizJson.Quiz4Json(
+            body = QuizJson.Quiz4Body(
                 connectionAnswers = connectionAnswers,
                 connectionAnswerIndex = connectionAnswerIndex,
                 layoutType = layoutType.value,
@@ -444,10 +428,10 @@ data class Quiz4(
                 ans = listOf(),
                 points = point,
                 question = question,
-                bodyImage = bodyImage?.let { Base64.getEncoder().encodeToString(it) },
+                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
-                youtubeId = youtubeId.takeIf { it.isNotEmpty() },
-                youtubeStartTime = youtubeStartTime.takeIf { it != 0 },
+                youtubeId = youtubeId,
+                youtubeStartTime = youtubeStartTime,
                 bodyType = bodyType.value
             )
         )
@@ -455,7 +439,7 @@ data class Quiz4(
     }
 
     override fun load(data: String) {
-        val quiz4Json = json.decodeFromString<Quiz4Json>(data)
+        val quiz4Json = json.decodeFromString<QuizJson.Quiz4Json>(data)
         val body = quiz4Json.body
 
         connectionAnswers = body.connectionAnswers.toMutableList()
@@ -463,7 +447,7 @@ data class Quiz4(
         answers = body.answers.toMutableList()
         question = body.question
         bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage?.let { Base64.getDecoder().decode(it) }
+        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         youtubeId = body.youtubeId ?: ""
         youtubeStartTime = body.youtubeStartTime ?: 0

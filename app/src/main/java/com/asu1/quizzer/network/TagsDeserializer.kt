@@ -29,7 +29,6 @@ class QuizCardListDeserializer : JsonDeserializer<List<QuizCard>> {
 class QuizCardDeserializer : JsonDeserializer<QuizCard> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): QuizCard {
         val jsonObject = json.asJsonObject
-        Logger().debug("Deserializing QuizCard: $jsonObject")
 
         val id = jsonObject.get("id").asString
         val title = jsonObject.get("title").asString

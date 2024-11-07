@@ -2,6 +2,7 @@ package com.asu1.quizzer.screens.quiz
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,11 +71,9 @@ fun Quiz1Viewer(
         items(quizState.userAns.size){ index ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-//                    .clickable {
-//                        Logger().debug("Clicked on Answer: ${index}")
-////                        quiz.toggleUserAnsAt(index)
-//                    }
+                modifier = Modifier.fillMaxWidth().clickable {
+                        quiz.toggleUserAnsAt(index)
+                    }
             ){
                 Checkbox(
                     checked = quizState.userAns[index],
