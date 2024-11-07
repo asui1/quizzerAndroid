@@ -20,9 +20,7 @@ object ShaderTypeSerializer : KSerializer<ShaderType> {
     }
     override fun deserialize(decoder: Decoder): ShaderType {
         val text = decoder.decodeString()
-        Logger().debug("ShaderTypeSerializer Text: $text")
         val index = removePrefixAndConvertToInt(text) -1
-        Logger().debug("ShaderTypeSerializer Index: $index")
         return ShaderType.entries.first { it.index == index }
     }
 }

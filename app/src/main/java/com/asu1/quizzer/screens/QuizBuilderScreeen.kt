@@ -79,7 +79,7 @@ fun QuizBuilderScreen(navController: NavController,
                       scoreCardViewModel: ScoreCardViewModel = viewModel(),
                       navigateToQuizLoad: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
+    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }

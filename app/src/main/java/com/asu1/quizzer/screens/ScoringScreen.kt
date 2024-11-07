@@ -52,6 +52,7 @@ fun ScoringScreen(
                 .fillMaxSize()
         ) {
             Spacer(modifier = Modifier.weight(1f))
+            // TODO MAKE PAGER WITH SCORECARD: 1. SCORE / 2. nth answer CORRECT/WRONG / 3. Percentage of result.
             ScoreCardComposable(
                 width = screenWidth * 0.8f,
                 height = screenHeight * 0.8f,

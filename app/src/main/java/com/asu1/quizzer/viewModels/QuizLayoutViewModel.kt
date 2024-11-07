@@ -15,7 +15,11 @@ import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.Quiz1
+import com.asu1.quizzer.model.Quiz2
+import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
+import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
@@ -112,8 +116,8 @@ class QuizLayoutViewModel : ViewModel() {
     private val _showToast = MutableLiveData<String?>()
     val showToast: LiveData<String?> get() = _showToast
 
-    private val _quizzes = MutableLiveData<List<Quiz>>(emptyList())
-    val quizzes: LiveData<List<Quiz>> get() = _quizzes
+    private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
+    val quizzes: StateFlow<List<Quiz>> get() = _quizzes.asStateFlow()
 
     private val _policyAgreement = MutableLiveData(false)
     val policyAgreement: LiveData<Boolean> get() = _policyAgreement
@@ -136,10 +140,14 @@ class QuizLayoutViewModel : ViewModel() {
         var corrections = quizzes.value!!.map { false }
         for(quiz in quizzes.value!!){
             if(quiz.gradeQuiz()){
+                Logger().debug("Quiz ${quizzes.value!!.indexOf(quiz)} is correct")
                 currentScore += quiz.point
                 corrections = corrections.toMutableList().apply {
                     set(quizzes.value!!.indexOf(quiz), true)
                 }
+            }
+            else{
+                Logger().debug("Quiz ${quizzes.value!!.indexOf(quiz)} is wrong")
             }
             totalScore += quiz.point
         }
@@ -157,11 +165,8 @@ class QuizLayoutViewModel : ViewModel() {
                 val response = RetrofitInstance.api.getQuizData(quizId)
                 withContext(Dispatchers.IO) {
                     if (response.isSuccessful) {
-                        _showToast.postValue("Quiz loaded successfully")
                         scoreCardViewModel.loadScoreCard(response.body()!!.scoreCard)
-                        Logger().debug("scoreCardViewModel loaded successfully")
                         withContext(Dispatchers.Main) {
-                            Logger().debug(response.body()!!.quizData.quizzes.size.toString())
                             thisViewModel.loadQuizData(
                                 response.body()!!.quizData,
                                 response.body()!!.quizTheme,
@@ -176,7 +181,6 @@ class QuizLayoutViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Logger().debug("Failed to load quiz: $e")
                     _showToast.postValue("Failed to load quiz")
                 }
             }
@@ -195,12 +199,7 @@ class QuizLayoutViewModel : ViewModel() {
         )
         val quiz = mutableListOf<Quiz>()
         for(quizJson in quizData.quizzes){
-            Logger().debug("Loading Quiz : $quizJson")
             val curQuiz = quizJson.toQuiz()
-            if(curQuiz is Quiz4){
-                Logger().debug("Quiz4 Loaded : ${curQuiz.connectionAnswers}")
-            }
-            Logger().debug("Quiz Loaded : ${curQuiz.question}")
             quiz.add(curQuiz)
         }
         _quizzes.value = quiz
@@ -222,7 +221,6 @@ class QuizLayoutViewModel : ViewModel() {
             navController.popBackStack()
             return
         }
-        Logger().debug("Uploading Quiz")
         uploadQuizLayout(scoreCard, onUpload)
     }
 
@@ -230,7 +228,6 @@ class QuizLayoutViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val jsoned = toJson(scoreCard)
-                Logger().debugFull("JSONED STRING : $jsoned")
                 val response = RetrofitInstance.api.addQuiz(jsoned)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
@@ -292,6 +289,10 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun toastShown() {
         _showToast.value = null
+    }
+
+    fun sendToast(message: String){
+        _showToast.value = message
     }
 
     fun updatePolicyAgreement(agreement: Boolean) {
@@ -467,7 +468,41 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateUserAnswer(quiz: Quiz, index: Int) {
+    fun updateUserAnswer(quiz: Quiz, index: Int){
+        when(quiz){
+            is Quiz1 -> updateUserAnswer(quiz, index)
+            is Quiz2 -> updateUserAnswer(quiz, index)
+            is Quiz3 -> updateUserAnswer(quiz, index)
+            is Quiz4 -> updateUserAnswer(quiz, index)
+        }
+    }
+
+    fun updateUserAnswer(quiz: Quiz1, index: Int) {
+        if (index >= 0 && index < _quizzes.value!!.size) {
+            val quizzes = _quizzes.value!!.toMutableList()
+            quizzes[index] = quiz
+            _quizzes.value = quizzes
+        }
+    }
+
+    fun updateUserAnswer(quiz: Quiz2, index: Int) {
+        if (index >= 0 && index < _quizzes.value!!.size) {
+            val quizzes = _quizzes.value!!.toMutableList()
+            quizzes.removeAt(index)
+            quizzes.add(index, quiz)
+            _quizzes.value = quizzes
+        }
+    }
+
+    fun updateUserAnswer(quiz: Quiz3, index: Int) {
+        if (index >= 0 && index < _quizzes.value!!.size) {
+            val quizzes = _quizzes.value!!.toMutableList()
+            quizzes[index] = quiz
+            _quizzes.value = quizzes
+        }
+    }
+
+    fun updateUserAnswer(quiz: Quiz4, index: Int) {
         if (index >= 0 && index < _quizzes.value!!.size) {
             val quizzes = _quizzes.value!!.toMutableList()
             quizzes[index] = quiz

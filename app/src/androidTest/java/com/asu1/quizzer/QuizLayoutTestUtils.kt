@@ -28,6 +28,7 @@ import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
 import okhttp3.internal.wait
+import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
@@ -46,7 +47,9 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addQuiz1(quiz: Quiz1){
         addQuizInit(quiz, 0)
         for(i in 0 until quiz.answers.size){
-            clickOnTag("QuizAnswerTextField${i}Checkbox", checkFocus = true)
+            if(quiz.ans[i]){
+                clickOnTag("QuizAnswerTextField${i}Checkbox", checkFocus = true)
+            }
             inputTextOnTag("QuizAnswerTextField${i}TextField", quiz.answers[i], checkFocus = true, withIme = true)
         }
         waitFor(500)
@@ -143,10 +146,12 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun setTextStyle(textStyle: List<Int>, targetTag: String){
-        for(i in 0 until textStyle[0]){
+        val randomFont = Random.nextInt(0, 5)
+        val randomColor = Random.nextInt(0, 10)
+        for(i in 0 until randomFont){
             clickOnTag(targetTag + "FontFlipperNext", checkFocus = true)
         }
-        for(i in 0 until textStyle[1]){
+        for(i in 0 until randomColor){
             clickOnTag(targetTag + "ColorFlipperNext", checkFocus = true)
         }
         for(i in 0 until textStyle[2]){

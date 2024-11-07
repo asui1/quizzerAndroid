@@ -99,28 +99,3 @@ val quiz4 = Quiz4(
     ),
     question =  "페이커가 플레이한 챔피언과 연관이 있는 선수를 연결하세요."
 )
-
-fun getQuizLayoutViewModelSample(): QuizLayoutViewModel{
-    val quizLayoutViewModel = QuizLayoutViewModel()
-    quizLayoutViewModel.setBackgroundImage(ImageColor(
-        color = Color(0xFF000000),
-        imageData = byteArrayOf(),
-        color2 = Color(0xFFFFFFFF),
-        state = ImageColorState.COLOR
-    ))
-    quizLayoutViewModel.updateShuffleQuestions(false)
-    quizLayoutViewModel.quizData.value.title = "페이커 퀴즈"
-    quizLayoutViewModel.quizTheme.value.colorScheme = LightColorScheme
-    quizLayoutViewModel.quizData.value.creator = "아슈"
-    quizLayoutViewModel.quizData.value.image = byteArrayOf()
-    quizLayoutViewModel.quizData.value.uuid = "4f06ce3e-86c0-549b-be5e-94e58d75ed14"
-    quizLayoutViewModel.quizTheme.value.questionTextStyle = listOf(0, 0, 1, 0)
-    quizLayoutViewModel.quizTheme.value.bodyTextStyle = listOf(0, 0, 2, 1)
-    quizLayoutViewModel.quizTheme.value.answerTextStyle = listOf(0, 0, 0, 2)
-    quizLayoutViewModel.quizData.value.tags = mutableSetOf("페이커", "퀴즈", "테스트", "아슈")
-    quizLayoutViewModel.addQuiz(quiz1)
-    quizLayoutViewModel.addQuiz(quiz2)
-    quizLayoutViewModel.addQuiz(quiz3)
-    quizLayoutViewModel.addQuiz(quiz4)
-    return quizLayoutViewModel
-}

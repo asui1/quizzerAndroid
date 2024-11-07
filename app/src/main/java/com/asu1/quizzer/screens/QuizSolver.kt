@@ -37,7 +37,7 @@ fun QuizSolver(
     initIndex: Int = 0,
     navigateToScoreCard: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
+    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
     val quizData by quizLayoutViewModel.quizData.collectAsState()
     val snapLayoutInfoProvider = rememberLazyListState()

@@ -155,6 +155,7 @@ data class Quiz1(
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
         if (userAns != other.userAns) return false
+        if (uuid != other.uuid) return false
         return true
     }
 
@@ -177,7 +178,14 @@ data class Quiz1(
     }
 
     override fun gradeQuiz(): Boolean {
-        return ans == userAns
+        Logger().debug("Answer: $ans")
+        Logger().debug("UserAnswer: $userAns")
+        for(i in ans.indices){
+            if(ans[i] != userAns[i]){
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -261,12 +269,20 @@ data class Quiz2(
         if (layoutType != other.layoutType) return false
         if (userAnswerDate != other.userAnswerDate) return false
         if (point != other.point) return false
+        if (uuid != other.uuid) return false
 
         return true
     }
 
     override fun gradeQuiz(): Boolean {
-        return answerDate == userAnswerDate
+        Logger().debug("AnswerDate: $answerDate")
+        Logger().debug("UserAnswerDate: $userAnswerDate")
+        for( i in answerDate){
+            if(userAnswerDate.contains(i).not()){
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -365,12 +381,26 @@ data class Quiz3(
         if (youtubeId != other.youtubeId) return false
         if (youtubeStartTime != other.youtubeStartTime) return false
         if (point != other.point) return false
+        if (uuid != other.uuid) return false
 
         return true
     }
 
     override fun gradeQuiz(): Boolean {
-        return answers == shuffledAnswers
+        Logger().debug("Answer: $answers")
+        Logger().debug("ShuffledAnswer: $shuffledAnswers")
+        for(i in answers.indices){
+            val curAnswer = if(i != 0){
+                shuffledAnswers[i].replace(Regex("Q!Z2\\d+$"), "")
+
+            } else{
+                shuffledAnswers[i]
+            }
+            if(answers[i] != curAnswer){
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -473,6 +503,7 @@ data class Quiz4(
         if (point != other.point) return false
         if (userConnectionIndex != other.userConnectionIndex) return false
         if (dotPairOffsets != other.dotPairOffsets) return false
+        if (uuid != other.uuid) return false
 
         return true
     }
@@ -487,7 +518,14 @@ data class Quiz4(
     }
 
     override fun gradeQuiz(): Boolean {
-        return connectionAnswerIndex == userConnectionIndex
+        Logger().debug("ConnectionAnswer: $connectionAnswerIndex")
+        Logger().debug("UserConnectionAnswer: $userConnectionIndex")
+        for(i in connectionAnswerIndex.indices){
+            if(connectionAnswerIndex[i] != userConnectionIndex[i]){
+                return false
+            }
+        }
+        return true
     }
 }
 

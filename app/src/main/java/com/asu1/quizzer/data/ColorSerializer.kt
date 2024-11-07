@@ -21,9 +21,7 @@ object ColorSerializer : KSerializer<Color> {
 
     override fun deserialize(decoder: Decoder): Color {
         val longValue = decoder.decodeLong()
-        Logger().debug("ColorSerializer LongValue: $longValue")
         val color = stringToColor(longValue.toString())
-        Logger().debug("ColorSerializer Color: $color")
         return color
     }
 }

@@ -25,11 +25,11 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 @Composable
 fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex:Int, quizType: QuizType, insertIndex: Int, navController: NavHostController) {
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
 
-    val quiz: Quiz? = if (loadIndex != -1 && (quizLayoutViewModel.quizzes.value?.size
-            ?: 0) > loadIndex
+    val quiz: Quiz? = if (loadIndex != -1 && quizzes.size > loadIndex
     ) {
-        quizLayoutViewModel.quizzes.value?.get(loadIndex)
+        quizzes[loadIndex]
     } else {
         null
     }

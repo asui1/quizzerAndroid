@@ -45,7 +45,7 @@ import kotlin.reflect.KClass
 
 val quizData = QuizData(
     title = "Quiz Test Title",
-    image = null,
+    image = byteArrayOf(),
     description = "This is description for Testing Quiz",
     tags= setOf("Test", "Quiz", "아슈"),
     shuffleQuestions = false,
@@ -104,9 +104,9 @@ val textColors: List<String> = listOf(
     "ff251a00",
 )
 
-val questionTextStyle : List<Int> = listOf(1, 0, 0)
-val bodyTextStyle : List<Int> = listOf(0, 1, 0)
-val answerTextStyle : List<Int> = listOf(0, 0, 1)
+val questionTextStyle : List<Int> = listOf(0, 0, 0)
+val bodyTextStyle : List<Int> = listOf(0, 0, 0)
+val answerTextStyle : List<Int> = listOf(0, 0, 0)
 val shaders: List<String> = listOf(
     "Left Bottom",
     "Bottom",

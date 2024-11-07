@@ -45,12 +45,9 @@ class QuizLoadViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getMyQuiz(email)
-                Logger().debug("Response: $response")
                 if(response.isSuccessful){
-                    Logger().debug("Response Body: ${response.body()}")
                     val quizCards = response.body()?.quizCards
                     _myQuizList.value = quizCards as MutableList<QuizCard>?
-                    Logger().debug(_myQuizList.value.toString())
                 }
                 else{
                     _showToast.value = "Search No Response"
@@ -94,7 +91,6 @@ class QuizLoadViewModel: ViewModel() {
                 Logger().debug("SENDING DELETE REQUEST")
 //                val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
                 val response = RetrofitInstance.api.deleteQuiz(quiz.id, quiz.creator)
-                Logger().debug("Response: $response")
                 if(response.isSuccessful){
                     val updatedList = _myQuizList.value?.toMutableList()
                     updatedList?.removeAt(index)

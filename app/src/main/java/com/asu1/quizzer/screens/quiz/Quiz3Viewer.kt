@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quiz
 
+import android.os.Build
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -43,6 +44,7 @@ import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import java.lang.Thread.sleep
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -53,20 +55,19 @@ fun Quiz3Viewer(
 ) {
     val view = LocalView.current
     val quizState by quiz.quiz3State.collectAsState()
-    var quiz3List by remember{mutableStateOf(quizState.shuffledAnswers.subList(1, quizState.shuffledAnswers.size))}
+    val quiz3List = quizState.shuffledAnswers.subList(1, quizState.shuffledAnswers.size)
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         // Update the list
-//        quiz.switchShuffledAnswers(from.index-1, to.index-1)
-        quiz3List = quiz3List.toMutableList().apply {
-            add(to.index-3, removeAt(from.index-3))
+        Logger().debug("Reordering from ${from.index} to ${to.index}")
+        quiz.switchShuffledAnswers(from.index, to.index)
+        if(Build.VERSION_CODES.UPSIDE_DOWN_CAKE <= Build.VERSION.SDK_INT){
+            view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
         }
-        view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
     }
 
     DisposableEffect(Unit) {
         onDispose {
-            quiz.updateShuffledAnswers(quiz3List)
             onExit(quizState)
         }
     }
@@ -85,15 +86,11 @@ fun Quiz3Viewer(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-        }
-        item{
             BuildBody(
                 quizState = quizState,
                 quizTheme = quizTheme
             )
             Spacer(modifier = Modifier.height(8.dp))
-        }
-        item{
             GetTextStyle(
                 quizState.shuffledAnswers[0],
                 quizTheme.answerTextStyle,

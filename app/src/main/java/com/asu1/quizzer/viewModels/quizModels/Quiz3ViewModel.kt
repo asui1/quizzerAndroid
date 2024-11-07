@@ -21,7 +21,6 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun loadQuiz(quiz: Quiz3) {
-        quiz.initViewState()
         _quiz3State.value = quiz
     }
 

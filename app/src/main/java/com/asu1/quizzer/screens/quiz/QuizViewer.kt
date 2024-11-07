@@ -27,6 +27,7 @@ fun QuizViewer(
 ) {
     fun updateQuiz(quiz: Quiz){
         if(!isPreview){
+            Logger().debug("Updating Quiz For ${quiz.layoutType}")
             updateUserInput(quiz)
         }
     }

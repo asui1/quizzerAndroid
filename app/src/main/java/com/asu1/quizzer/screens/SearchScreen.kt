@@ -1,7 +1,7 @@
 package com.asu1.quizzer.screens
 
 import QuizCardHorizontalList
-import android.app.Activity
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +27,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -54,26 +57,31 @@ import loadImageAsByteArray
 
 @Composable
 fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
-                 onQuizClick: (quizId: String) -> Unit = {}) {
+                 onQuizClick: (quizId: String) -> Unit = {}, searchText: String = "") {
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
-    var searchText by remember {mutableStateOf(TextFieldValue(""))}
+    var searchTextField by remember {mutableStateOf(TextFieldValue(searchText))}
     val searchResult by searchViewModel.searchResult.observeAsState()
-
+    val focusRequester = remember{ FocusRequester() }
 //    LaunchedEffect(Unit){
 //        searchViewModel.reset()
 //    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold(
         topBar = {
             SearchTopBar(
                 navController = navController,
-                searchText = searchText,
-                onSearchTextChanged = { searchText = it },
+                searchText = searchTextField,
+                onSearchTextChanged = { searchTextField = it },
                 search = { searchViewModel.search(it) },
                 focusManager = focusManager,
                 onTextFieldFocused = { isFocused = true },
-                onTextFieldUnfocused = { isFocused = false }
+                onTextFieldUnfocused = { isFocused = false },
+                focusRequester = focusRequester
             )
         },
         content = { paddingValues ->
@@ -145,6 +153,7 @@ fun SearchTopBar(
     focusManager: FocusManager,
     onTextFieldFocused: () -> Unit,
     onTextFieldUnfocused: () -> Unit,
+    focusRequester: FocusRequester,
 ) {
     TopAppBar(
         modifier = Modifier.height(80.dp),
@@ -171,6 +180,8 @@ fun SearchTopBar(
                     shape = RoundedCornerShape(50.dp),
                     onValueChange = onSearchTextChanged,
                     modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(50.dp))
+                        .focusRequester(focusRequester)
                         .onFocusChanged { focusState ->
                             if (focusState.isFocused) {
                                 onTextFieldFocused()

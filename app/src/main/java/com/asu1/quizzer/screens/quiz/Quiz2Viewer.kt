@@ -60,7 +60,7 @@ fun Quiz2Viewer(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            GetTextStyle("Selected Answers", quizTheme.bodyTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            GetTextStyle("Selected Answers", listOf(quizTheme.answerTextStyle[0], quizTheme.answerTextStyle[1], quizTheme.answerTextStyle[2], quizTheme.bodyTextStyle[3]), quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(quiz2State.userAnswerDate.size){

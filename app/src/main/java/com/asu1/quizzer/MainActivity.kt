@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Observer
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -88,6 +89,10 @@ class MainActivity : ComponentActivity() {
                             userViewModel = userViewModel,
                         )
 
+                        fun hasVisitedRoute(navController: NavController, route: Route): Boolean {
+                            val previousEntry = navController.previousBackStackEntry
+                            return previousEntry?.destination?.route == route::class.qualifiedName
+                        }
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -232,6 +237,12 @@ class MainActivity : ComponentActivity() {
                                 val loadIndex = backStackEntry.toRoute<Route.QuizSolver>().initIndex
                                 QuizSolver(navController, quizLayoutViewModel, loadIndex,
                                     navigateToScoreCard = {
+
+                                        val creatingQuiz = hasVisitedRoute(navController, Route.QuizBuilder)
+                                        if(creatingQuiz){
+                                            quizLayoutViewModel.sendToast("Can not Proceed when Creating Quiz")
+                                            return@QuizSolver
+                                        }
                                         quizLayoutViewModel.gradeQuiz()
                                         NavMultiClickPreventer.navigate(navController, Route.ScoringScreen){
                                             popUpTo(Route.Home) { inclusive = true }

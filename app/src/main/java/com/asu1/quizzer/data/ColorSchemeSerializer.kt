@@ -87,12 +87,6 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         }else{
             LightColorScheme
         }
-        val hex = JsonPrimitive(baseColorScheme.primary.toArgb().toHexString())
-        Logger().debug("ColorSchemeSerializer ${hex}")
-        val colorHex = json["primary"]?.jsonPrimitive?.content
-        Logger().debug("ColorSchemeSerializer1 ${colorHex}")
-        val color = stringToColor(colorHex!!)
-        Logger().debug("ColorSchemeSerializer2 ${color}")
         return baseColorScheme.copy(
             primary = json["primary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.primary,
             onPrimary = json["onPrimary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.onPrimary,

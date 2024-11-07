@@ -36,7 +36,6 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     }
 
     override fun loadQuiz(quiz: Quiz4) {
-        quiz.initViewState()
         _quiz4State.value = quiz
     }
 
