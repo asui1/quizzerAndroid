@@ -39,6 +39,7 @@ fun QuizSolver(
 ) {
     val quizzes by quizLayoutViewModel.quizzes.observeAsState(emptyList())
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+    val quizData by quizLayoutViewModel.quizData.collectAsState()
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme
@@ -89,6 +90,7 @@ fun QuizSolver(
                 }
                 item {
                     QuizSubmit(
+                        title = quizData.title,
                         modifier = Modifier.fillParentMaxSize(),
                         onSubmit = {
                             navigateToScoreCard()
@@ -103,6 +105,7 @@ fun QuizSolver(
 //ANSWER SCREEN, Button to Move to Scoring Screen
 @Composable
 fun QuizSubmit(
+    title: String = "Title",
     modifier: Modifier = Modifier,
     onSubmit: () -> Unit = {}
 ){
@@ -114,7 +117,14 @@ fun QuizSubmit(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "End of Quiz.\nDo you want to submit your answers?")
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(text = "End of Quiz.\nDo you want to submit your answers?",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onSubmit) {
                 Text(text = "Submit")
@@ -133,4 +143,10 @@ fun QuizSolverPreview() {
         navController = rememberNavController(),
         quizLayoutViewModel = quizLayoutViewModel,
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizSubmitPreView(){
+    QuizSubmit()
 }

@@ -64,13 +64,17 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
         _quiz3State.value = _quiz3State.value.copy(question = question)
     }
 
+    fun updateShuffledAnswers(shuffledAnswers: List<String>){
+        val newShuffledAnswers = mutableListOf(_quiz3State.value.shuffledAnswers[0]) + shuffledAnswers
+        _quiz3State.value = _quiz3State.value.copy(shuffledAnswers = newShuffledAnswers.toMutableList())
+    }
+
     fun switchShuffledAnswers(from: Int, to: Int){
         _quiz3State.value = _quiz3State.value.copy(shuffledAnswers = _quiz3State.value.shuffledAnswers.toMutableList().apply {
-            val temp = get(from)
-            set(from, get(to))
-            set(to, temp)
+            add(to, removeAt(from))
         })
     }
+
     override fun updateBodyState(bodyType: BodyType){
         _quiz3State.value = _quiz3State.value.copy(bodyType = bodyType)
     }

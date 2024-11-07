@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -24,8 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.sampleQuiz3
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 import sh.calvin.reorderable.ReorderableItem
@@ -47,15 +53,20 @@ fun Quiz3Viewer(
 ) {
     val view = LocalView.current
     val quizState by quiz.quiz3State.collectAsState()
+    var quiz3List by remember{mutableStateOf(quizState.shuffledAnswers.subList(1, quizState.shuffledAnswers.size))}
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         // Update the list
-        quiz.switchShuffledAnswers(from.index-1, to.index-1)
+//        quiz.switchShuffledAnswers(from.index-1, to.index-1)
+        quiz3List = quiz3List.toMutableList().apply {
+            add(to.index-3, removeAt(from.index-3))
+        }
         view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
     }
 
     DisposableEffect(Unit) {
         onDispose {
+            quiz.updateShuffledAnswers(quiz3List)
             onExit(quizState)
         }
     }
@@ -85,17 +96,20 @@ fun Quiz3Viewer(
         item{
             GetTextStyle(
                 quizState.shuffledAnswers[0],
-                quizTheme.bodyTextStyle,
+                quizTheme.answerTextStyle,
                 quizTheme.colorScheme,
                 modifier = Modifier.fillMaxWidth().padding(8.dp)
             )
         }
-        items(quizState.shuffledAnswers.size -1, key = { quizState.shuffledAnswers[it + 1] }) {
-            ReorderableItem(reorderableLazyListState, key = quizState.shuffledAnswers[it + 1]) { isDragging ->
-                val item = quizState.shuffledAnswers[it + 1].replace(Regex("Q!Z2\\d+$"), "")
+        items(quiz3List, key = { it }) {
+            ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
+                val item = it.replace(Regex("Q!Z2\\d+$"), "")
                 val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "")
 
-                Surface(shadowElevation = elevation) {
+                Surface(
+                    color = Color.Transparent,
+                    shadowElevation = elevation
+                ) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
