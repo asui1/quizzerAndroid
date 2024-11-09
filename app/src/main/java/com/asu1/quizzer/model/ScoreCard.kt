@@ -45,9 +45,6 @@ data class ScoreCard (
     var solver: String = "Nickname",
     var score: Float = 100f,
     var background: ImageColor = ImageColor(LightColorScheme.primary, ByteArray(0), LightColorScheme.secondary, ImageColorState.COLOR2),
-    var size: Float = 0.3f,
-    var xRatio: Float = 0.5f,
-    var yRatio: Float = 0.5f,
     var imageStateval : Int = 0,
     @Contextual var textColor: Color = Color.Black,
     @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
@@ -61,9 +58,6 @@ data class ScoreCard (
         if (solver != other.solver) return false
         if (score != other.score) return false
         if (background != other.background) return false
-        if (size != other.size) return false
-        if (xRatio != other.xRatio) return false
-        if (yRatio != other.yRatio) return false
         if (imageStateval != other.imageStateval) return false
         if (colorScheme != other.colorScheme) return false
         if (shaderType != other.shaderType) return false

@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -74,6 +76,7 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ColorPicker
 import com.asu1.quizzer.composables.ScoreCardBackground
+import com.asu1.quizzer.composables.ScoreCardComposable
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
@@ -85,7 +88,6 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DesignScoreCardScreen(
     navController: NavController,
@@ -170,12 +172,6 @@ fun DesignScoreCardScreen(
                     width = screenWidth * 0.8f,
                     height = screenHeight * 0.8f,
                     scoreCard = scoreCard,
-                    onUpdateRatio = { x, y ->
-                        scoreCardViewModel.updateRatio(x, y)
-                    },
-                    onUpdateSize = { size ->
-                        scoreCardViewModel.updateSize(size)
-                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 RowWithShares()
@@ -329,119 +325,7 @@ fun RowWithShares(){
     }
 }
 
-@Composable
-fun ScoreCardComposable(
-    width: Dp,
-    height: Dp,
-    scoreCard: ScoreCard,
-    onUpdateRatio: (Float, Float) -> Unit,
-    onUpdateSize: (Float) -> Unit,
-    isDesignScoreCard: Boolean = true,
-){
-    var xSize by remember { mutableStateOf(0.dp) }
-    var ySize by remember { mutableStateOf(0.dp) }
-    var textSize by remember {mutableStateOf(scoreCard.size)}
-    var offsetX by remember { mutableStateOf(width * scoreCard.xRatio) }
-    var offsetY by remember { mutableStateOf(height * scoreCard.yRatio) }
-    var dotSize by remember { mutableStateOf(25.dp) }
-    val density = LocalDensity.current
 
-    val time by produceState(0f) {
-        while(true){
-            withInfiniteAnimationFrameMillis {
-                value = it/1000f
-            }
-        }
-    }
-    val formattedScore = if (scoreCard.score % 1 == 0f) {
-        scoreCard.score.toInt().toString()
-    } else {
-        scoreCard.score.toString()
-    }
-    Box(
-        modifier = Modifier
-            .size(width = width, height = height)
-            .border(
-                width = 3.dp,
-                color = scoreCard.colorScheme.outline,
-                shape = RoundedCornerShape(16.dp)
-            )
-    ) {
-        ScoreCardBackground(
-            scoreCard = scoreCard,
-            time = time
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Text(
-                text = scoreCard.title,
-                color = scoreCard.textColor,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Text(
-                text = scoreCard.solver,
-                color = scoreCard.textColor,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
-        Text(
-            text = formattedScore,
-            style = TextStyle(
-                fontFamily = ongle_yunue,
-                fontSize = (400 * textSize).sp,
-                color = scoreCard.textColor,
-            ),
-            modifier = Modifier
-                .zIndex(2f)
-                .offset(x = offsetX - xSize / 2, y = offsetY - ySize / 2)
-                .onGloballyPositioned { coordinates ->
-                    xSize = density.run { coordinates.size.width.toDp() }
-                    ySize = density.run { coordinates.size.height.toDp() }
-                }
-                .pointerInput(Unit) {
-                    if(!isDesignScoreCard) return@pointerInput
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        offsetX += dragAmount.x.toDp()
-                        offsetY += dragAmount.y.toDp()
-                        onUpdateRatio(
-                            offsetX.value / width.value,
-                            offsetY.value / height.value
-                        )
-                    }
-                }
-        )
-
-        // Dot for resizing text
-        if(isDesignScoreCard) {
-            Box(
-                modifier = Modifier
-                    .zIndex(1f)
-                    .offset(
-                        x = offsetX + xSize / 2 - dotSize / 2,
-                        y = offsetY + ySize / 2 - dotSize / 2
-                    )
-                    .size(dotSize)
-                    .background(scoreCard.textColor, CircleShape)
-                    .zIndex(1f)
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            val newSize = textSize + dragAmount.x / 1000 + dragAmount.y / 1000
-                            textSize = newSize
-                            onUpdateSize(textSize)
-                        }
-                    }
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

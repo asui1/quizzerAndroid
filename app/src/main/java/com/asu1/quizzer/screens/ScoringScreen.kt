@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.composables.ScoreCardComposable
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import kotlinx.coroutines.launch
@@ -57,11 +58,6 @@ fun ScoringScreen(
                 width = screenWidth * 0.8f,
                 height = screenHeight * 0.8f,
                 scoreCard = scoreCard,
-                onUpdateRatio = { x, y ->
-                },
-                onUpdateSize = { size ->
-                },
-                isDesignScoreCard = false,
             )
             Spacer(modifier = Modifier.height(8.dp))
             RowWithShares()

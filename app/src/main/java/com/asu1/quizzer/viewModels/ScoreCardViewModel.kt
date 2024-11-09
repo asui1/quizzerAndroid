@@ -110,14 +110,6 @@ class ScoreCardViewModel : ViewModel() {
     fun updateBackground(background: ImageColor){
         _scoreCard.value = _scoreCard.value.copy(background = background)
     }
-
-    fun updateRatio(x: Float, y: Float){
-        _scoreCard.value = _scoreCard.value.copy(xRatio = x, yRatio = y)
-    }
-
-    fun updateSize(size: Float){
-        _scoreCard.value = _scoreCard.value.copy(size = size)
-    }
 }
 
 fun createSampleScoreCardViewModel(): ScoreCardViewModel {
