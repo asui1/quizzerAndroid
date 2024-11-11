@@ -20,35 +20,33 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
+import java.time.LocalDate
 
 @Composable
 fun QuizViewer(
     quiz: Quiz,
     quizTheme: QuizTheme = QuizTheme(),
-    updateUserInput: (Quiz) -> Unit = {},
-    isPreview: Boolean = false,
+    updateQuiz1: (Int) -> Unit = {},
+    updateQuiz2: (LocalDate) -> Unit = {},
+    updateQuiz3: (Int, Int) -> Unit = {_, _ ->},
+    updateQuiz4: (Int, Int?) -> Unit = {_, _ ->},
 ) {
-    fun updateQuiz(quiz: Quiz){
-        if(!isPreview){
-            updateUserInput(quiz)
-        }
-    }
     when(quiz){
         is Quiz1 -> {
             Quiz1Viewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
-                onExit = {
-                    updateQuiz(it)
-                },
+                toggleUserAnswer = {
+                    updateQuiz1(it)
+                }
             )
         }
         is Quiz2 -> {
             Quiz2Viewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
-                onExit = {
-                    updateQuiz(it)
+                onUserInput = {
+                    updateQuiz2(it)
                 }
             )
         }
@@ -56,8 +54,8 @@ fun QuizViewer(
             Quiz3Viewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
-                onExit = {
-                    updateQuiz(it)
+                onUserInput = {first, second ->
+                    updateQuiz3(first, second)
                 }
             )
         }
@@ -69,8 +67,8 @@ fun QuizViewer(
             Quiz4Viewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
-                onExit = {
-                    updateQuiz(it)
+                onUserInput = {first, second ->
+                    updateQuiz4(first, second)
                 }
             )
         }

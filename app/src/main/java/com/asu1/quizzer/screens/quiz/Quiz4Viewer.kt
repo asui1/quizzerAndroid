@@ -36,7 +36,7 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 fun Quiz4Viewer(
     quiz: Quiz4ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
-    onExit: (Quiz4) -> Unit = {},
+    onUserInput: (Int, Int?) -> Unit = {_, _ -> },
 ) {
     val quizState by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
@@ -50,12 +50,6 @@ fun Quiz4Viewer(
     val boxPadding = 16.dp
     val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
     val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            onExit(quizState)
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -106,13 +100,13 @@ fun Quiz4Viewer(
                                 onDragStart = {
                                     startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
                                     endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
-                                    quiz.updateUserConnection(index, null)
+                                    quiz.updateUserConnection(index, null, onUserInput)
                                     initOffset = null
                                     isDragging = true
                                 },
                                 onDragEnd = {
                                     isDragging = false
-                                    quiz.updateUserConnection(index, endOffset)
+                                    quiz.updateUserConnection(index, endOffset, onUserInput)
                                     startOffset = Offset(0f, 0f)
                                     endOffset = Offset(0f, 0f)
                                 },

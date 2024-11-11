@@ -5,6 +5,7 @@ import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
@@ -19,7 +20,9 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.data.ColorSerializer
+import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -60,67 +63,73 @@ data class ImageColor(
             }
         }
     }
-    fun asBackgroundModifier(): Modifier {
-        return when(state) {
-            ImageColorState.COLOR -> Modifier.background(color)
-            ImageColorState.COLOR2 -> Modifier.background(color2)
-            ImageColorState.IMAGE -> if (imageData.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
-                Modifier.paint(BitmapPainter(bitmap.asImageBitmap()))
-            } else {
-                Modifier.background(color)
-            }
-        }
-    }
-
-    fun asBackgroundModifierForScoreCard(shaderOption: ShaderType, time: Float): Modifier {
-        return when(state) {
-            ImageColorState.COLOR -> Modifier.background(color)
-            ImageColorState.COLOR2 -> {
-                if (Build.VERSION_CODES.TIRAMISU > Build.VERSION.SDK_INT) {
-                    Modifier.background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(color, color2),
-                            start = Offset(0f, 0f),
-                            end = Offset(100f, 100f),
-                            tileMode = TileMode.Clamp
-                        )
-                    )
-                } else {
-                    val shader = RuntimeShader(
-                        shaderOption.getShader(),
-                    )
-                    Modifier.graphicsLayer {
-                        shader.setFloatUniform("resolution", size.width, size.height)
-                        if(shaderOption != ShaderType.Brush1) {
-                            shader.setFloatUniform("time", time)
-                        }
-                        shader.setColorUniform(
-                            "color",
-                            color.toArgb(),
-                        )
-                        shader.setColorUniform(
-                            "color2",
-                            color2.toArgb()
-                        )
-                        renderEffect = RenderEffect.createShaderEffect(shader).asComposeRenderEffect()
-                    }
-                }
-            }
-            ImageColorState.IMAGE -> if (imageData.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
-                Modifier.paint(BitmapPainter(bitmap.asImageBitmap()),
-                    contentScale = ContentScale.FillBounds
-                    )
-            } else {
-                Modifier.background(color)
-            }
-        }
-    }
     fun getAsJson(): Json {
         return Json {
             encodeDefaults = true
             ignoreUnknownKeys = true
+        }
+    }
+}
+
+fun Modifier.asBackgroundModifier(imageColor: ImageColor): Modifier {
+    return when(imageColor.state) {
+        ImageColorState.COLOR -> this.background(imageColor.color)
+        ImageColorState.COLOR2 -> this.background(imageColor.color2)
+        ImageColorState.IMAGE -> if (imageColor.imageData.isNotEmpty()) {
+            val bitmap = BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size)
+            this.paint(BitmapPainter(bitmap.asImageBitmap()))
+        } else {
+            this.background(imageColor.color)
+        }
+    }
+}
+
+fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float): Modifier {
+    return when(imageColor.state) {
+        ImageColorState.COLOR -> this.background(imageColor.color, shape = RoundedCornerShape(16.dp))
+        ImageColorState.COLOR2 -> {
+            if (Build.VERSION_CODES.TIRAMISU > Build.VERSION.SDK_INT) {
+                this.background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(imageColor.color, imageColor.color2),
+                        start = Offset(0f, 0f),
+                        end = Offset(100f, 100f),
+                        tileMode = TileMode.Clamp
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                )
+            } else {
+                val shader = RuntimeShader(
+                    shaderOption.getShader(),
+                )
+                this.graphicsLayer {
+                    shader.setFloatUniform("resolution", size.width, size.height)
+                    if(shaderOption != ShaderType.Brush1) {
+                        shader.setFloatUniform("time", time)
+                    }
+                    shader.setColorUniform(
+                        "color",
+                        imageColor.color.toArgb(),
+                    )
+                    shader.setColorUniform(
+                        "color2",
+                        imageColor.color2.toArgb()
+                    )
+                    renderEffect = RenderEffect.createShaderEffect(shader).asComposeRenderEffect()
+                    shape = RoundedCornerShape(16.dp)
+                    clip = true
+                }
+            }
+        }
+        ImageColorState.IMAGE -> if (imageColor.imageData.isNotEmpty()) {
+            val bitmap = BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size)
+            this.paint(BitmapPainter(bitmap.asImageBitmap()),
+                contentScale = ContentScale.FillBounds,
+            )
+        } else {
+            this.background(imageColor.color,
+                shape = RoundedCornerShape(16.dp)
+            )
         }
     }
 }

@@ -137,10 +137,6 @@ fun Quiz1Creator(
                 Quiz1AnswerSelection(
                     shuffleValue = quiz1State.shuffleAnswers,
                     onShuffleToggle = { quiz.toggleShuffleAnswers() },
-                    maxAnswerSelectionValue = if(quiz1State.maxAnswerSelection == -1) "" else quiz1State.maxAnswerSelection.toString(),
-                    maxAnswerSelectionValueChange = { it ->
-                        quiz.updateMaxAnswerSelection(it)
-                    },
                 )
             }
         }
@@ -284,48 +280,12 @@ fun AddAnswer(
 fun Quiz1AnswerSelection(
     shuffleValue: Boolean = false,
     onShuffleToggle: () -> Unit,
-    maxAnswerSelectionValue: String,
-    maxAnswerSelectionValueChange: (String) -> Unit
 ){
-    var textFieldValue by remember { mutableStateOf(maxAnswerSelectionValue) }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(maxAnswerSelectionValue) {
-        textFieldValue = maxAnswerSelectionValue
-    }
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
-        Text("Max. Answer\nSelectable")
-        TextField(
-            modifier = Modifier.width(60.dp)
-                .padding(start = 8.dp)
-                .testTag("QuizMaxAnswerSelectionTextField"),
-            value = textFieldValue,
-            onValueChange = {it ->
-                if(it.isEmpty()){
-                    textFieldValue = it
-                }
-                else if(it.isDigitsOnly()){
-                    textFieldValue = it
-                    maxAnswerSelectionValueChange(it)
-                }
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    maxAnswerSelectionValueChange(textFieldValue)
-                }
-            ),
-        )
-        Spacer(modifier = Modifier.width(8.dp))
         Text("Shuffle\nAnswers?")
         Checkbox(
             checked = shuffleValue,

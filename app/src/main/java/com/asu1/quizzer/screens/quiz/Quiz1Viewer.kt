@@ -42,28 +42,13 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 fun Quiz1Viewer(
     quiz: Quiz1,
     quizTheme: QuizTheme = QuizTheme(),
-    onExit: (Quiz1) -> Unit = {},
+    toggleUserAnswer: (Int) -> Unit = {},
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
-    val maxSelection = quiz.maxAnswerSelection
-    fun toggleUserAnswers(index: Int){
-        if(userAnswers[index]){
-            userAnswers[index] = false
-        }else{
-            if(userAnswers.count { it } < maxSelection){
-                userAnswers[index] = true
-            }
-        }
+    fun toggleLocalUserAnswers(index: Int){
+        userAnswers[index ] = !userAnswers[index]
     }
-
-    DisposableEffect(key1 = quiz){
-        quiz.userAns = userAnswers
-        onDispose {
-            onExit(quiz)
-        }
-    }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -84,13 +69,15 @@ fun Quiz1Viewer(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().clickable {
-                        toggleUserAnswers(index)
+                    toggleLocalUserAnswers(index)
+                    toggleUserAnswer(index)
                     }
             ){
                 Checkbox(
                     checked = userAnswers[index],
                     onCheckedChange = {
-                        toggleUserAnswers(index)
+                        toggleLocalUserAnswers(index)
+                        toggleUserAnswer(index)
                     }
                 )
                 GetTextStyle(quiz.shuffledAnswers[index], quizTheme.answerTextStyle, quizTheme.colorScheme)

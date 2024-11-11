@@ -52,7 +52,7 @@ import java.lang.Thread.sleep
 fun Quiz3Viewer(
     quiz: Quiz3,
     quizTheme: QuizTheme = QuizTheme(),
-    onExit: (Quiz3) -> Unit = {},
+    onUserInput: (Int, Int) -> Unit = {_, _ ->},
 ) {
     val view = LocalView.current
     val quiz3List = remember { mutableStateListOf(*quiz.shuffledAnswers.toTypedArray()) }
@@ -63,15 +63,9 @@ fun Quiz3Viewer(
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         // Update the list
         shuffleQuiz3List(from.index, to.index)
+        onUserInput(from.index, to.index)
         if(Build.VERSION_CODES.UPSIDE_DOWN_CAKE <= Build.VERSION.SDK_INT){
             view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
-        }
-    }
-
-    DisposableEffect(Unit) {
-        quiz.shuffledAnswers = quiz3List
-        onDispose {
-            onExit(quiz)
         }
     }
 

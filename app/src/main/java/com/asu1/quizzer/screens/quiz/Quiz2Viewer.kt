@@ -28,23 +28,15 @@ import java.time.LocalDate
 fun Quiz2Viewer(
     quiz: Quiz2,
     quizTheme: QuizTheme = QuizTheme(),
-    onExit: (Quiz2) -> Unit = {},
+    onUserInput: (LocalDate) -> Unit = {},
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAnswerDate.toTypedArray()) }
-
-    fun updateUserAnswer(localDate: LocalDate){
+    fun updateLocalUserAnswer(localDate: LocalDate){
         if(userAnswers.contains(localDate)) {
             userAnswers.remove(localDate)
         }else{
             userAnswers.add(localDate)
-        }
-    }
-
-    DisposableEffect(Unit) {
-        quiz.userAnswerDate = userAnswers.toMutableSet()
-        onDispose {
-            onExit(quiz)
         }
     }
 
@@ -62,7 +54,8 @@ fun Quiz2Viewer(
                 CalendarWithFocusDates(
                     focusDates = userAnswers.toSet(),
                     onDateClick = { date ->
-                        updateUserAnswer(date)
+                        onUserInput(date)
+                        updateLocalUserAnswer(date)
                     },
                     currentMonth = quiz.centerDate,
                     colorScheme = quizTheme.colorScheme,

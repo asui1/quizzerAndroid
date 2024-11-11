@@ -240,10 +240,11 @@ class MainActivity : ComponentActivity() {
                                             quizLayoutViewModel.sendToast("Can not Proceed when Creating Quiz")
                                             return@QuizSolver
                                         }
-                                        quizLayoutViewModel.gradeQuiz()
-                                        NavMultiClickPreventer.navigate(navController, Route.ScoringScreen){
-                                            popUpTo(Route.Home) { inclusive = true }
-                                            launchSingleTop = true
+                                        quizLayoutViewModel.gradeQuiz(userViewModel.userData.value?.email ?: "GUEST"){
+                                            NavMultiClickPreventer.navigate(navController, Route.ScoringScreen){
+                                                popUpTo(Route.Home) { inclusive = true }
+                                                launchSingleTop = true
+                                            }
                                         }
                                     }
                                 )

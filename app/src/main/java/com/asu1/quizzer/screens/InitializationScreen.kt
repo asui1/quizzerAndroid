@@ -44,7 +44,6 @@ fun InitializationScreen(navHostController: NavHostController, initViewModel: Ma
             }
         }
     }
-
 }
 
 private fun redirectToPlayStore(context: Context) {

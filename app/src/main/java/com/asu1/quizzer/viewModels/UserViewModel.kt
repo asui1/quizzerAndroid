@@ -43,21 +43,26 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun logIn(email: String, urlToImage: String?) {
+        try{
+
         viewModelScope.launch {
             val response = RetrofitInstance.api.login(email)
             val nickname = response.body()?.nickname ?: ""
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 val userTags = response.body()?.tags ?: emptySet()
                 _userData.value = UserDatas(email, nickname, urlToImage, userTags)
                 sharedPreferencesHelper.saveUserLoginInfo(email, nickname, urlToImage, userTags)
                 _showToast.postValue("Logged in")
                 _isUserLoggedIn.postValue(true)
-            }
-            else{
+            } else {
                 _showToast.postValue("Failed Login")
 
             }
+        }
 
+        } catch (e: Exception) {
+            Logger().debug("Failed to login $e")
+            _showToast.postValue("Failed Login")
         }
     }
 

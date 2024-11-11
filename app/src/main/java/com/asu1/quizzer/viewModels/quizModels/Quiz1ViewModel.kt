@@ -54,29 +54,8 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         }
         _quiz1State.update { state ->
             val ans = state.ans.toMutableList()
-            val trueCount = ans.count { it }
-            if (trueCount >= _quiz1State.value.maxAnswerSelection && !ans[index]) {
-                return
-            }
             ans[index] = !ans[index]
             state.copy(ans = ans)
-        }
-    }
-
-    fun toggleUserAnsAt(index: Int){
-
-        _quiz1State.update{ state ->
-            if(index >= state.userAns.size){
-                return@update state
-            }
-            val userAns = state.userAns.toMutableList()
-            val trueCount = userAns.count { it }
-            if (trueCount >= state.maxAnswerSelection && !userAns[index]) {
-                return@update state
-            }
-            userAns[index] = !userAns[index]
-            state.shuffledAnswers
-            state.copy(userAns = userAns)
         }
     }
 
@@ -107,17 +86,6 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
     fun toggleShuffleAnswers(){
         _quiz1State.update {
             it.copy(shuffleAnswers = !it.shuffleAnswers)
-        }
-    }
-
-    fun updateMaxAnswerSelection(maxAnswerSelection: String){
-        _quiz1State.update{
-            val maxAnswerSelectionValue = maxAnswerSelection.toIntOrNull()
-            if (maxAnswerSelection.isEmpty() || maxAnswerSelectionValue == null) {
-                it.copy(maxAnswerSelection = -1) // or any default value
-            } else {
-                it.copy(maxAnswerSelection = maxAnswerSelectionValue)
-            }
         }
     }
 

@@ -239,8 +239,6 @@ fun QuizBuilderScreen(navController: NavController,
                             QuizViewer(
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
-                                updateUserInput = { },
-                                isPreview = true,
                             )
                         }
                         Spacer(modifier = Modifier.width(4.dp))

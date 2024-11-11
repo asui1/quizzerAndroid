@@ -157,14 +157,16 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
         }
     }
 
-    fun updateUserConnection(curIndex: Int, offset: Offset?){
+    fun updateUserConnection(curIndex: Int, offset: Offset?, additionalUpdate: (Int, Int?) -> Unit = {_, _ ->}){
         if(offset == null){
             updateUserConnectionAnswerIndex(curIndex, null)
+            additionalUpdate(curIndex, null)
         }
         else {
             val connectionIndex = getClosestDotIndex(offset)
             if (connectionIndex != -1) {
                 updateUserConnectionAnswerIndex(curIndex, connectionIndex)
+                additionalUpdate(curIndex, connectionIndex)
             }
         }
     }

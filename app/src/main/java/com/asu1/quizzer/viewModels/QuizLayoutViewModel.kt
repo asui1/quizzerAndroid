@@ -12,7 +12,7 @@ import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.SendQuizResult
-import com.asu1.quizzer.data.loadQuizData
+import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
@@ -46,14 +46,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.time.LocalDate
 import java.util.Base64
-import java.util.Locale
 
 @Serializable
 data class QuizTheme(
@@ -133,7 +134,7 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizResult = MutableStateFlow<QuizResult?>(null)
     val quizResult: StateFlow<QuizResult?> = _quizResult.asStateFlow()
 
-    fun gradeQuiz(){
+    fun gradeQuiz(email: String, navigate: () -> Unit) {
         var totalScore = 0f
         var currentScore = 0f
         var corrections = quizzes.value!!.map { false }
@@ -152,6 +153,7 @@ class QuizLayoutViewModel : ViewModel() {
         }
         val percentageScore = (currentScore / totalScore) * 100
         val result = SendQuizResult(
+            email = email,
             quizUuid = quizData.value.uuid!!,
             score = percentageScore,
             correction = corrections,
@@ -160,12 +162,15 @@ class QuizLayoutViewModel : ViewModel() {
             try{
                 val response = RetrofitInstance.api.submitQuiz(result)
                 if(response.isSuccessful){
-                    _quizResult.value = response.body()
+                    updateQuizResult(response.body()!!)
+                    navigate()
                 } else {
+                    Logger().debug("Failed to grade quiz ${response.errorBody()?.string()}")
                     _showToast.postValue("Failed to grade quiz")
                 }
             }
             catch (e: Exception){
+                Logger().debug("Failed to grade quiz $e")
                 _showToast.postValue("Failed to grade quiz")
             }
         }
@@ -443,10 +448,6 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateQuizzes(quizzes: List<Quiz>) {
-        _quizzes.value = quizzes
-    }
-
     fun addQuiz(quiz: Quiz, index: Int? = null) {
         if(index == null || index >= quizzes.value!!.size || index == -1){
             val quizzes = quizzes.value!!.toMutableList()
@@ -461,16 +462,50 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
+    fun updateQuiz1(quizIndex: Int, answerIndex: Int){
+        val quiz = quizzes.value[quizIndex] as Quiz1
+        quiz.toggleUserAnswer(answerIndex)
+        _quizzes.update {
+            it.toMutableList().apply {
+                set(quizIndex, quiz)
+            }
+        }
+    }
+
+    fun updateQuiz2(quizIndex: Int, date: LocalDate){
+        val quiz = quizzes.value[quizIndex] as Quiz2
+        quiz.toggleUserAnswer(date)
+        _quizzes.update {
+            it.toMutableList().apply {
+                set(quizIndex, quiz)
+            }
+        }
+    }
+
+    fun updateQuiz3(quizIndex: Int, from: Int, to: Int){
+        val quiz = quizzes.value[quizIndex] as Quiz3
+        quiz.swap(from, to)
+        _quizzes.update {
+            it.toMutableList().apply {
+                set(quizIndex, quiz)
+            }
+        }
+    }
+
+    fun updateQuiz4(quizIndex: Int, from: Int, to: Int?){
+        val quiz = quizzes.value[quizIndex] as Quiz4
+        quiz.updateUserConnection(from, to)
+        _quizzes.update {
+            it.toMutableList().apply {
+                set(quizIndex, quiz)
+            }
+        }
+    }
+
     fun updateQuiz(quiz: Quiz, index: Int) {
         val quizzes = quizzes.value!!.toMutableList()
         quizzes[index] = quiz
         _quizzes.value = quizzes
-    }
-
-    fun removeQuiz(quiz: Quiz) {
-        _quizzes.value = quizzes.value!!.toMutableList().apply {
-            remove(quiz)
-        }
     }
 
     fun removeQuizAt(index: Int) {
@@ -482,51 +517,6 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateUserAnswer(quiz: Quiz, index: Int){
-        when(quiz){
-            is Quiz1 -> updateUserAnswer(quiz, index)
-            is Quiz2 -> updateUserAnswer(quiz, index)
-            is Quiz3 -> updateUserAnswer(quiz, index)
-            is Quiz4 -> updateUserAnswer(quiz, index)
-        }
-    }
-
-    fun updateUserAnswer(quiz: Quiz1, index: Int) {
-        if (index >= 0 && index < _quizzes.value!!.size) {
-            val quizzes = _quizzes.value!!.toMutableList()
-            quizzes[index] = quiz
-            _quizzes.value = quizzes
-        }
-    }
-
-    fun updateUserAnswer(quiz: Quiz2, index: Int) {
-        if (index >= 0 && index < _quizzes.value!!.size) {
-            val quizzes = _quizzes.value!!.toMutableList()
-            quizzes.removeAt(index)
-            quizzes.add(index, quiz)
-            _quizzes.value = quizzes
-        }
-    }
-
-    fun updateUserAnswer(quiz: Quiz3, index: Int) {
-        if (index >= 0 && index < _quizzes.value!!.size) {
-            val quizzes = _quizzes.value!!.toMutableList()
-            quizzes[index] = quiz
-            _quizzes.value = quizzes
-        }
-    }
-
-    fun updateUserAnswer(quiz: Quiz4, index: Int) {
-        if (index >= 0 && index < _quizzes.value!!.size) {
-            val quizzes = _quizzes.value!!.toMutableList()
-            quizzes[index] = quiz
-            _quizzes.value = quizzes
-        }
-    }
-
-    fun updateColorScheme(colorScheme: ColorScheme) {
-        _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -538,6 +528,9 @@ class QuizLayoutViewModel : ViewModel() {
 
         return true
     }
+    fun updateQuizResult(quizResult: QuizResult){
+        _quizResult.value = quizResult
+    }
 }
 
 fun createSampleQuizLayoutViewModel(): QuizLayoutViewModel {
@@ -547,5 +540,6 @@ fun createSampleQuizLayoutViewModel(): QuizLayoutViewModel {
     viewModel.setQuizTitle("Sample Quiz")
     viewModel.setQuizDescription("This is a sample quiz description.")
     viewModel.updateCreator("Sample Creator")
+    viewModel.updateQuizResult(sampleResult)
     return viewModel
 }

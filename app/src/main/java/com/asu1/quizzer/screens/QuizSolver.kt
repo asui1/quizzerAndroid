@@ -25,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.model.asBackgroundModifier
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.screens.quiz.QuizViewer
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
 @Composable
@@ -54,7 +56,9 @@ fun QuizSolver(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .then(quizTheme.backgroundImage.asBackgroundModifier())
+                .asBackgroundModifier(
+                    quizTheme.backgroundImage,
+                )
         ) {
             LazyRow(
                 horizontalArrangement = Arrangement.Center,
@@ -70,13 +74,22 @@ fun QuizSolver(
                         modifier = Modifier
                             .fillParentMaxSize()
                     ) {
+                        Logger().debug("Trigger RECOMPOSE")
                         QuizViewer(
                             quiz = quizzes[it],
                             quizTheme = quizTheme,
-                            updateUserInput = { newQuiz ->
-                                quizLayoutViewModel.updateUserAnswer(newQuiz, it)
+                            updateQuiz1 = { index ->
+                                quizLayoutViewModel.updateQuiz1(it, index)
                             },
-                            isPreview = false,
+                            updateQuiz2 = { date ->
+                                quizLayoutViewModel.updateQuiz2(it, date)
+                            },
+                            updateQuiz3 = { first, second ->
+                                quizLayoutViewModel.updateQuiz3(it, first, second)
+                            },
+                            updateQuiz4 = { first, second ->
+                                quizLayoutViewModel.updateQuiz4(it, first, second)
+                            }
                         )
                         Text(
                             text = "${quizzes[it].point} points",

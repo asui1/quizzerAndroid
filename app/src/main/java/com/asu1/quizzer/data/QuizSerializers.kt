@@ -78,7 +78,6 @@ sealed class QuizJson {
                 answers = body.answers.toMutableList(),
                 ans = body.ans.toMutableList(),
                 shuffleAnswers = body.shuffleAnswers,
-                maxAnswerSelection = body.maxAnswerSelection,
                 bodyImage = Base64.getDecoder().decode(body.bodyImage),
                 bodyText = body.bodyText,
                 bodyType = BodyType.entries[body.bodyType],
@@ -95,7 +94,6 @@ sealed class QuizJson {
     @Serializable
     data class Quiz1Body(
         val shuffleAnswers: Boolean,
-        val maxAnswerSelection: Int,
         val answers: List<String>,
         val ans: List<Boolean>,
         val question: String,

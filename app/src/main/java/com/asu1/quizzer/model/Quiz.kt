@@ -60,7 +60,6 @@ enum class BodyType(val value: Int) {
 data class Quiz1(
     var ans: MutableList<Boolean> = mutableListOf(false, false, false, false, false),
     var shuffleAnswers: Boolean = false,
-    var maxAnswerSelection: Int = 1,
     var userAns: MutableList<Boolean> = mutableListOf(false, false, false, false, false),
     var shuffledAnswers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
@@ -73,6 +72,13 @@ data class Quiz1(
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ) : Quiz(answers, question){
+
+    fun toggleUserAnswer(index: Int){
+        userAns = userAns.toMutableList().apply{
+            set(index, get(index).not())
+        }
+    }
+
     override fun initViewState() {
         shuffledAnswers = if(shuffleAnswers){
             answers.toMutableList().also {
@@ -95,9 +101,6 @@ data class Quiz1(
         if(ans.contains(true).not()){
             return Pair("Correct answer not selected", false)
         }
-        if(ans.count { it } > maxAnswerSelection){
-            return Pair("More than $maxAnswerSelection correct answers selected", false)
-        }
         return Pair("", true)
     }
 
@@ -108,13 +111,12 @@ data class Quiz1(
                 bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
                 bodyText = bodyText,
                 shuffleAnswers = shuffleAnswers,
-                maxAnswerSelection = maxAnswerSelection,
                 answers = answers,
                 ans = ans,
                 question = question,
                 points = point,
                 youtubeId = youtubeId,
-                youtubeStartTime = youtubeStartTime
+                youtubeStartTime = youtubeStartTime,
             )
         )
         return quiz1Json
@@ -128,7 +130,6 @@ data class Quiz1(
         bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
         shuffleAnswers = body.shuffleAnswers
-        maxAnswerSelection = body.maxAnswerSelection
         answers = body.answers.toMutableList()
         ans = body.ans.toMutableList()
         question = body.question
@@ -147,7 +148,6 @@ data class Quiz1(
         if (!bodyImage.contentEquals(other.bodyImage)) return false
         if (ans != other.ans) return false
         if (shuffleAnswers != other.shuffleAnswers) return false
-        if (maxAnswerSelection != other.maxAnswerSelection) return false
         if (bodyText != other.bodyText) return false
         if (youtubeId != other.youtubeId) return false
         if (youtubeStartTime != other.youtubeStartTime) return false
@@ -162,7 +162,6 @@ data class Quiz1(
     override fun hashCode(): Int {
         var result = ans.hashCode()
         result = 31 * result + shuffleAnswers.hashCode()
-        result = 31 * result + maxAnswerSelection
         result = 31 * result + userAns.hashCode()
         result = 31 * result + shuffledAnswers.hashCode()
         result = 31 * result + answers.hashCode()
@@ -211,6 +210,16 @@ data class Quiz2(
     override var layoutType: QuizType = QuizType.QUIZ2,
     override var point: Int = 5,
 ): Quiz(answers, question){
+    fun toggleUserAnswer(date: LocalDate){
+        userAnswerDate = userAnswerDate.toMutableSet().apply{
+            if(contains(date)){
+                remove(date)
+            }else{
+                add(date)
+            }
+        }
+    }
+
     override fun initViewState() {
         userAnswerDate = mutableSetOf()
         validateBody()
@@ -312,6 +321,13 @@ data class Quiz3(
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ): Quiz(answers, question){
+    fun swap(index1: Int, index2: Int){
+        shuffledAnswers = shuffledAnswers.toMutableList().apply {
+            val temp = get(index1)
+            set(index1, get(index2))
+            set(index2, temp)
+        }
+    }
     override fun initViewState() {
         if (answers.isNotEmpty()) {
             shuffledAnswers = (mutableListOf(answers.first()) + answers.drop(1).mapIndexed { index, answer ->
@@ -426,9 +442,12 @@ data class Quiz4(
     override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ): Quiz(answers, question){
-    init {
-        // Additional initialization logic if needed
+    fun updateUserConnection(from: Int, to: Int?){
+        userConnectionIndex = userConnectionIndex.toMutableList().apply {
+            set(from, to)
+        }
     }
+
     override fun initViewState() {
         userConnectionIndex = MutableList(answers.size) { null }
         validateBody()

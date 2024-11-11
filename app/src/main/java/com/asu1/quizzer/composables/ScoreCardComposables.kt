@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import androidx.compose.ui.zIndex
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 
@@ -56,15 +58,14 @@ fun ScoreCardBackground(
         contentDescription = "Background",
         contentScale = ContentScale.FillBounds,
         modifier = Modifier
+            .asBackgroundModifierForScoreCard(
+                imageColor = scoreCard.background,
+                shaderOption = scoreCard.shaderType,
+                time = time,
+
+            )
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
-            .shadow(16.dp, shape = RoundedCornerShape(16.dp))
-            .then(
-                scoreCard.background.asBackgroundModifierForScoreCard(
-                    shaderOption = scoreCard.shaderType,
-                    time = time
-                )
-            )
     )
 }
 
@@ -104,20 +105,16 @@ fun ScoreCardComposable(
     Box(
         modifier = Modifier
             .size(width = width, height = height)
-            .border(
-                width = 3.dp,
-                color = scoreCard.colorScheme.outline,
-                shape = RoundedCornerShape(16.dp)
-            )
     ) {
+        TODO("BACKGROUND IS NOT SHOWN IN SCORING SCREEN GIVEN BY SERVER")
         ScoreCardBackground(
             scoreCard = scoreCard,
             time = time
         )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = Color.Transparent)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
@@ -136,6 +133,7 @@ fun ScoreCardComposable(
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
+                    .background(color = Color.Transparent)
             ){ page ->
                 Box(
                     modifier = Modifier
@@ -262,12 +260,14 @@ fun PointDistribution(
     height: Dp = 200.dp
 ){
     val maxItem = distribution.maxOrNull() ?: 1
+    val formattedPercent = String.format("%.1f", percent)
+
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.wrapContentSize()
     ){
-        Text("You are top ${percent}%!", color = textColor, style = MaterialTheme.typography.headlineSmall)
+        Text("You are top ${formattedPercent}%!", color = textColor, style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -281,6 +281,23 @@ fun PointDistribution(
                         .height(height * value / maxItem + 5.dp)
                         .background(color)
                 )
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)
+        ){
+            for(i in listOf("0", "50", "100")){
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .width(30.dp)
+                ) {
+                    Text(
+                        text = i,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }

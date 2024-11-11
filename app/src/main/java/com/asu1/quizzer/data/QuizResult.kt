@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SendQuizResult(
+    val email: String,
     val quizUuid: String,
     val score: Float,
     val correction: List<Boolean>,
