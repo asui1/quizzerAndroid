@@ -21,40 +21,28 @@ import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
 fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel()) {
-    val isInternetAvailable by initViewModel.isInternetAvailable.observeAsState()
     val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState()
     val hasCheckedUpdate = remember { mutableStateOf(false) }
 
-    if (isInternetAvailable == true){
-        when (isUpdateAvailable) {
-            null -> {
-                if (!hasCheckedUpdate.value) {
-                    initViewModel.updateIsUpdateAvailable()
-                    hasCheckedUpdate.value = true
-                }
-                LoadComposable()
+    when (isUpdateAvailable) {
+        null -> {
+            if (!hasCheckedUpdate.value) {
+                initViewModel.updateIsUpdateAvailable()
+                hasCheckedUpdate.value = true
             }
-            true -> UpdateDialog(
-                onUpdate = { redirectToPlayStore(it) },
-                onCancel = { initViewModel.finishApp() },
-            )
-            else -> {
-                NavMultiClickPreventer.navigate(navHostController,Route.Home) {
-                    popUpTo(navHostController.graph.startDestinationId) {
-                        inclusive = true
-                    }
+            LoadComposable()
+        }
+        true -> UpdateDialog(
+            onUpdate = { redirectToPlayStore(it) },
+            onCancel = { initViewModel.finishApp() },
+        )
+        else -> {
+            NavMultiClickPreventer.navigate(navHostController,Route.Home) {
+                popUpTo(navHostController.graph.startDestinationId) {
+                    inclusive = true
                 }
             }
         }
-
-    } else if(isInternetAvailable == false){
-        NoInternetDialog(
-            onRetry = { initViewModel.updateInternetConnection() },
-            onExit = { initViewModel.finishApp() },
-        )
-    }
-    else{
-        LoadComposable()
     }
 
 }

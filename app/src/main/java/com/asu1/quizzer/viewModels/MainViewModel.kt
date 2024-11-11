@@ -15,18 +15,11 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _isInternetAvailable = MutableLiveData<Boolean>()
-    val isInternetAvailable: LiveData<Boolean> get() = _isInternetAvailable
-
     private val _isUpdateAvailable = MutableLiveData<Boolean>()
     val isUpdateAvailable: LiveData<Boolean> get() = _isUpdateAvailable
 
     init {
-        checkInternetConnection()
-    }
-
-    fun updateInternetConnection() {
-        checkInternetConnection()
+        checkForUpdates()
     }
 
     fun updateIsUpdateAvailable() {
@@ -36,19 +29,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun finishApp() {
         val activity = getApplication<Application>().applicationContext as? Activity
         activity?.finish()
-    }
-
-    private fun checkInternetConnection() {
-        val connectivityManager = getApplication<Application>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork
-        val activeNetwork = connectivityManager.getNetworkCapabilities(network)
-        _isInternetAvailable.postValue(
-            activeNetwork != null && (
-                    activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                    )
-        )
     }
 
     private fun checkForUpdates() {

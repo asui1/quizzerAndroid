@@ -37,8 +37,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val userInfo = sharedPreferencesHelper.getUserLoginInfo()
         if (userInfo.email != null) {
-            _userData.value = UserDatas(userInfo.email, userInfo.nickname, userInfo.urlToImage, userInfo.tags ?: emptySet())
-            _isUserLoggedIn.value = true
+            logIn(userInfo.email, userInfo.urlToImage)
         }
     }
 

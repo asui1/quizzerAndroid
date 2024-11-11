@@ -2,6 +2,12 @@ package com.asu1.quizzer.data
 
 import kotlinx.serialization.Serializable
 
+@Serializable
+data class SendQuizResult(
+    val quizUuid: String,
+    val score: Float,
+    val correction: List<Boolean>,
+)
 
 @Serializable
 data class QuizResult(

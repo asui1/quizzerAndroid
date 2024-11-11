@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
+import com.asu1.quizzer.data.QuizResult
+import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.data.loadQuizData
 import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
@@ -128,11 +130,8 @@ class QuizLayoutViewModel : ViewModel() {
     private val _initIndex = MutableLiveData(0)
     val initIndex: LiveData<Int> get() = _initIndex
 
-    private val _score = MutableLiveData<Float?>(null)
-    val score: LiveData<Float?> get() = _score
-
-    private val _correction = MutableLiveData<List<Boolean>>(emptyList())
-    val correction: LiveData<List<Boolean>> get() = _correction
+    private val _quizResult = MutableStateFlow<QuizResult?>(null)
+    val quizResult: StateFlow<QuizResult?> = _quizResult.asStateFlow()
 
     fun gradeQuiz(){
         var totalScore = 0f
@@ -152,9 +151,24 @@ class QuizLayoutViewModel : ViewModel() {
             totalScore += quiz.point
         }
         val percentageScore = (currentScore / totalScore) * 100
-        _correction.value = corrections
-        _score.value = String.format(Locale.getDefault(), "%.2f", percentageScore).toFloat()
-        //TODO: SEND SCORE TO SERVER AND GET PERCENTAGE OF RESULT.
+        val result = SendQuizResult(
+            quizUuid = quizData.value.uuid!!,
+            score = percentageScore,
+            correction = corrections,
+        )
+        viewModelScope.launch {
+            try{
+                val response = RetrofitInstance.api.submitQuiz(result)
+                if(response.isSuccessful){
+                    _quizResult.value = response.body()
+                } else {
+                    _showToast.postValue("Failed to grade quiz")
+                }
+            }
+            catch (e: Exception){
+                _showToast.postValue("Failed to grade quiz")
+            }
+        }
     }
 
     fun loadQuiz(quizId: String, scoreCardViewModel: ScoreCardViewModel, onDone: () -> Unit) {

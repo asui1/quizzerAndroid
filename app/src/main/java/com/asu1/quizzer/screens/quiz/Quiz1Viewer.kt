@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -38,17 +40,27 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 
 @Composable
 fun Quiz1Viewer(
-    quiz: Quiz1ViewModel = viewModel(),
+    quiz: Quiz1,
     quizTheme: QuizTheme = QuizTheme(),
-    toggleUserAns: (Int) -> Unit = {},
     onExit: (Quiz1) -> Unit = {},
 )
 {
-    val quizState by quiz.quiz1State.collectAsState()
+    val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
+    val maxSelection = quiz.maxAnswerSelection
+    fun toggleUserAnswers(index: Int){
+        if(userAnswers[index]){
+            userAnswers[index] = false
+        }else{
+            if(userAnswers.count { it } < maxSelection){
+                userAnswers[index] = true
+            }
+        }
+    }
 
-    DisposableEffect(key1 = quizState){
+    DisposableEffect(key1 = quiz){
+        quiz.userAns = userAnswers
         onDispose {
-            onExit(quizState)
+            onExit(quiz)
         }
     }
 
@@ -58,30 +70,30 @@ fun Quiz1Viewer(
             .padding(16.dp)
     ){
         item{
-            GetTextStyle(quizState.question, quizTheme.questionTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            GetTextStyle(quiz.question, quizTheme.questionTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         item{
             BuildBody(
-                quizState = quizState,
+                quizState = quiz,
                 quizTheme = quizTheme
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        items(quizState.userAns.size){ index ->
+        items(userAnswers.size){ index ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().clickable {
-                        quiz.toggleUserAnsAt(index)
+                        toggleUserAnswers(index)
                     }
             ){
                 Checkbox(
-                    checked = quizState.userAns[index],
+                    checked = userAnswers[index],
                     onCheckedChange = {
-                        toggleUserAns(index)
+                        toggleUserAnswers(index)
                     }
                 )
-                GetTextStyle(quizState.shuffledAnswers[index], quizTheme.answerTextStyle, quizTheme.colorScheme)
+                GetTextStyle(quiz.shuffledAnswers[index], quizTheme.answerTextStyle, quizTheme.colorScheme)
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -128,7 +140,7 @@ fun Quiz1ViewerPreview()
     quiz1ViewModel.loadQuiz(sampleQuiz1)
 
     Quiz1Viewer(
-        quiz = quiz1ViewModel,
+        quiz = sampleQuiz1,
         quizTheme = QuizTheme(),
     )
 }

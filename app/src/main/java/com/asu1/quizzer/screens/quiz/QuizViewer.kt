@@ -1,6 +1,8 @@
 package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.model.Quiz
@@ -12,6 +14,7 @@ import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.model.sampleQuiz3
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
@@ -20,29 +23,20 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
 fun QuizViewer(
-    quizTheme: QuizTheme = QuizTheme(),
     quiz: Quiz,
+    quizTheme: QuizTheme = QuizTheme(),
     updateUserInput: (Quiz) -> Unit = {},
     isPreview: Boolean = false,
 ) {
     fun updateQuiz(quiz: Quiz){
         if(!isPreview){
-            Logger().debug("Updating Quiz For ${quiz.layoutType}")
             updateUserInput(quiz)
         }
     }
     when(quiz){
         is Quiz1 -> {
-            val quiz1ViewModel: Quiz1ViewModel = viewModel(
-                key = quiz.uuid
-            )
-            quiz1ViewModel.loadQuiz(quiz)
-            //여기서는 UserAns를 수정할 수 있음.
             Quiz1Viewer(
-                quiz = quiz1ViewModel,
-                toggleUserAns = {
-                    quiz1ViewModel.toggleUserAnsAt(it)
-                },
+                quiz = quiz,
                 quizTheme = quizTheme,
                 onExit = {
                     updateQuiz(it)
@@ -50,12 +44,8 @@ fun QuizViewer(
             )
         }
         is Quiz2 -> {
-            val quiz2ViewModel: Quiz2ViewModel = viewModel(
-                key = quiz.uuid
-            )
-            quiz2ViewModel.loadQuiz(quiz)
             Quiz2Viewer(
-                quiz = quiz2ViewModel,
+                quiz = quiz,
                 quizTheme = quizTheme,
                 onExit = {
                     updateQuiz(it)
@@ -63,12 +53,8 @@ fun QuizViewer(
             )
         }
         is Quiz3 -> {
-            val quiz3ViewModel: Quiz3ViewModel = viewModel(
-                key = quiz.uuid
-            )
-            quiz3ViewModel.loadQuiz(quiz)
             Quiz3Viewer(
-                quiz = quiz3ViewModel,
+                quiz = quiz,
                 quizTheme = quizTheme,
                 onExit = {
                     updateQuiz(it)

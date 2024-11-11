@@ -74,10 +74,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-
-
             Box(Modifier.safeDrawingPadding()) {
-
                 QuizzerAndroidTheme {
                     Surface(
                         color = MaterialTheme.colorScheme.background

@@ -34,18 +34,13 @@ fun ScoringScreen(
     quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
     scoreCardViewModel: ScoreCardViewModel = viewModel(),
 ) {
-    val score by quizLayoutViewModel.score.observeAsState()
-    LaunchedEffect(score) {
-        if(score != null) {
-            scoreCardViewModel.updateScore(score!!)
-        }
-    }
+    val quizResult by quizLayoutViewModel.quizResult.collectAsState()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
 
-    if(score != null) {
+    if(quizResult != null) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -58,6 +53,7 @@ fun ScoringScreen(
                 width = screenWidth * 0.8f,
                 height = screenHeight * 0.8f,
                 scoreCard = scoreCard,
+                quizResult = quizResult!!
             )
             Spacer(modifier = Modifier.height(8.dp))
             RowWithShares()
@@ -78,12 +74,6 @@ fun ScoringScreen(
         }
     }
 }
-
-@Composable
-fun ScoreCardWithFullResults(){
-
-}
-
 
 @Preview(showBackground = true)
 @Composable

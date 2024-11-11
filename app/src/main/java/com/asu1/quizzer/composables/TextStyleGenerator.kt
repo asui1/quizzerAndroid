@@ -45,7 +45,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
             fontSize = fontSize
         ),
         modifier = modifier
-            .background(color = backgroundColor)
+            .background(color = backgroundColor, shape = RoundedCornerShape(4.dp))
             .then(borderModifier)
             .padding(8.dp)
     )

@@ -1,6 +1,8 @@
 package com.asu1.quizzer.network
 
 import com.asu1.quizzer.data.QuizLayoutSerializer
+import com.asu1.quizzer.data.QuizResult
+import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.Recommendations
 import com.asu1.quizzer.model.UserInfo
@@ -52,4 +54,8 @@ interface ApiService {
     @UseKotlinxSerialization
     @GET("quizData")
     suspend fun getQuizData(@Query("uuid") uuid: String): Response<QuizLayoutSerializer>
+
+    @UseKotlinxSerialization
+    @POST("submitQuiz")
+    suspend fun submitQuiz(@Body sendQuizResult: SendQuizResult): Response<QuizResult>
 }

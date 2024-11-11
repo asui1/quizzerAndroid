@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -43,16 +41,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -74,30 +69,6 @@ import com.materialkolor.dynamicColorScheme
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-data class ColorSchemeState(
-    val primary: Color,
-    val secondary: Color,
-    val tertiary: Color,
-    val onPrimary: Color,
-    val onSecondary: Color,
-    val onTertiary: Color,
-    val error: Color,
-    val onError: Color,
-)
-
-fun updateColorSchemeState(colorScheme: ColorScheme): List<Color> {
-    return listOf(
-        colorScheme.primary,
-        colorScheme.secondary,
-        colorScheme.tertiary,
-        colorScheme.onPrimary,
-        colorScheme.onSecondary,
-        colorScheme.onTertiary,
-        colorScheme.error,
-        colorScheme.onError,
-    )
-}
-
 @Composable
 fun QuizLayoutSetColorScheme(
     colorScheme: ColorScheme = lightColorScheme(),
@@ -110,7 +81,8 @@ fun QuizLayoutSetColorScheme(
     val colorSchemeState = colorScheme.primary
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    var selectedLevel by remember { mutableIntStateOf(2) }
+    var paletteLevel by remember { mutableIntStateOf(7) }
+    var contrastLevel by remember { mutableIntStateOf(0) }
 
     MaterialTheme(
         colorScheme = colorScheme
@@ -128,9 +100,13 @@ fun QuizLayoutSetColorScheme(
                     quizImage = quizImage,
                     setColorScheme = onColorSchemeUpdate,
                     primaryColor = colorScheme.primary,
-                    selectedLevel = selectedLevel,
-                    onUpdateLevel = { level ->
-                        selectedLevel = level
+                    contrastLevel = contrastLevel,
+                    onContrastLevelUpdate = { level ->
+                        contrastLevel = level
+                    },
+                    paletteLevel = paletteLevel,
+                    onPaletteLevelUpdate = { level ->
+                        paletteLevel = level
                     }
                 )
             }
@@ -357,31 +333,20 @@ fun BackgroundRow(
         }
     }
 }
-fun getColorbyName(colorScheme: ColorScheme, name: String): Color {
-    return when(name){
-        "Primary Color" -> colorScheme.primary
-        "Secondary Color" -> colorScheme.secondary
-        "Territory Color" -> colorScheme.tertiary
-        "onPrimary Color" -> colorScheme.onPrimary
-        "onSecondary Color" -> colorScheme.onSecondary
-        "onTerritory Color" -> colorScheme.onTertiary
-        "Error Color" -> colorScheme.error
-        "onError Color" -> colorScheme.onError
-        else -> Color.Red
-    }
-}
 
 @Composable
 fun GenerateColorScheme(
     quizImage: ByteArray? = byteArrayOf(),
     setColorScheme: (ColorScheme) -> Unit = {},
     primaryColor: Color = MaterialTheme.colorScheme.primary,
-    selectedLevel: Int = 2,
-    onUpdateLevel: (Int) -> Unit = {},
+    contrastLevel: Int = 2,
+    onContrastLevelUpdate: (Int) -> Unit = {},
+    paletteLevel: Int = 2,
+    onPaletteLevelUpdate: (Int) -> Unit = {},
 ){
     val isTitleImageSet = quizImage != null
-    val levels = 5
     val isDark = isSystemInDarkTheme()
+
 
     Column(
 
@@ -398,9 +363,8 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = "Gen with\nTitle Image",
                 onClick = {
-
                     val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
-                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, selectedLevel, isDark)
+                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
                     setColorScheme(titleImageColorScheme)
                 },
                 enabled = isTitleImageSet,
@@ -410,7 +374,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = "Gen with\nPrimary Color",
                 onClick = {
-                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, selectedLevel, isDark)
+                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, paletteLevel, contrastLevel, isDark)
                     setColorScheme(primaryColorScheme)
                 },
                 enabled = true,
@@ -418,90 +382,88 @@ fun GenerateColorScheme(
             )
         }
         LevelSelector(
+            prefix = "Palette : ",
+            items = PaletteStyle.entries.map { it.toString() },
             onUpdateLevel = { level ->
-                onUpdateLevel(level)
+                onPaletteLevelUpdate(level)
             },
-            selectedLevel = selectedLevel,
-            levels = levels
+            selectedLevel = paletteLevel,
+        )
+        LevelSelector(
+            prefix = "Contrast : ",
+            items = Contrast.entries.map { it.toString() },
+            onUpdateLevel = { level ->
+                onContrastLevelUpdate(level)
+            },
+            selectedLevel = contrastLevel,
         )
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LevelSelector(
-    start: String = "Weak\nRandom",
-    end: String = "Strong\nRandom",
+    prefix: String = "Level : ",
+    items: List<String> = listOf("1", "2", "3", "4"),
     onUpdateLevel: (Int) -> Unit = {},
     selectedLevel: Int = 1,
-    levels: Int = 4,
 ){
     val barLevel = selectedLevel * 2 + 1
     val interactionSource = remember { MutableInteractionSource() }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .pointerInput(Unit) {
-                detectDragGestures { change, _ ->
-                    val newLevel = (change.position.x / (size.width / levels)).toInt()
-                    if (newLevel in 0..levels) {
-                        onUpdateLevel(newLevel)
+            .padding(8.dp)
+    ){
+        Text(
+            text = prefix + items[selectedLevel],
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .pointerInput(Unit) {
+                    detectDragGestures { change, _ ->
+                        val newLevel = (change.position.x / (size.width / items.size)).toInt()
+                        if (newLevel in 0..items.size) {
+                            onUpdateLevel(newLevel)
+                        }
                     }
                 }
+        ) {
+            for(i in 0 until items.size * 2){
+                Box(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .weight(1f)
+                        .background(
+                            if(i < barLevel) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface.copy(
+                                alpha = 0.4f
+                            ),
+                        )
+                        .clickable(
+                            indication = null,
+                            interactionSource = interactionSource
+                        ) {
+                            onUpdateLevel(i / 2)
+                        }
+                )
             }
-    ) {
-        Text(text = start,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        for(i in 0 until levels * 2){
-            Box(
-                modifier = Modifier
-                    .height(24.dp)
-                    .weight(1f)
-                    .background(
-                        if(i < barLevel) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurface.copy(
-                            alpha = 0.4f
-                        ),
-                    )
-                    .clickable(
-                        indication = null,
-                        interactionSource = interactionSource
-                    ) {
-                        onUpdateLevel(i / 2)
-                    }
-            )
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = end,
-            textAlign = TextAlign.Center
-        )
     }
+
 }
 
-fun randomDynamicColorScheme(seedColor: Color, randomStrength: Int = 2, isDark: Boolean): ColorScheme {
-    val style = when (randomStrength) {
-        0 -> PaletteStyle.TonalSpot
-        1 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral).random()
-        2 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral, PaletteStyle.Vibrant).random()
-        3 -> listOf(PaletteStyle.TonalSpot, PaletteStyle.Neutral, PaletteStyle.Vibrant, PaletteStyle.Expressive).random()
-        4 -> PaletteStyle.entries.toTypedArray().random()
-        else -> PaletteStyle.entries.toTypedArray().random()
-    }
+fun randomDynamicColorScheme(seedColor: Color, paletteLevel: Int = 2, contrastLevel: Int = 2, isDark: Boolean): ColorScheme {
+    val style = PaletteStyle.entries[paletteLevel]
 
-    val contrast = when (randomStrength) {
-        0 -> Contrast.Default.value
-        1 -> listOf(Contrast.Default.value, Contrast.Medium.value).random()
-        2 -> listOf(Contrast.Default.value, Contrast.Medium.value, Contrast.High.value).random()
-        3 -> listOf(Contrast.Default.value, Contrast.Medium.value, Contrast.High.value, Contrast.Reduced.value).random()
-        4 -> Contrast.entries.toTypedArray().random().value
-        else -> Contrast.entries.toTypedArray().random().value
-    }
+    val contrast = Contrast.entries[contrastLevel].value
+
     return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
         style = style,
         contrastLevel = contrast,

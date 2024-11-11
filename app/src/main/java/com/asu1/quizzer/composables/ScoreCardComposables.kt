@@ -115,28 +115,28 @@ fun ScoreCardComposable(
             time = time
         )
 
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ){ page ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ){
-                Text(
-                    text = scoreCard.title,
-                    color = scoreCard.textColor,
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Text(
-                    text = scoreCard.solver,
-                    color = scoreCard.textColor,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.align(Alignment.End)
-                )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            Text(
+                text = scoreCard.title,
+                color = scoreCard.textColor,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = scoreCard.solver,
+                color = scoreCard.textColor,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.align(Alignment.End)
+            )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ){ page ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -155,7 +155,7 @@ fun ScoreCardComposable(
                             PointDistribution(
                                 distribution = quizResult.distribution,
                                 percent = quizResult.percent,
-                                score = formattedScore.toInt(),
+                                score = quizResult.score,
                                 textColor = scoreCard.textColor,
                                 errorColor = redded,
                             )
@@ -184,11 +184,11 @@ fun ScoreCardComposable(
 fun ScoreCardComposablePreview() {
     val scoreCardViewModel = createSampleScoreCardViewModel()
     val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
-        ScoreCardComposable(
-            width = 300.dp,
-            height = 600.dp,
-            scoreCard = scoreCard,
-        )
+    ScoreCardComposable(
+        width = 300.dp,
+        height = 600.dp,
+        scoreCard = scoreCard,
+    )
 }
 
 @Preview(showBackground = true)
@@ -223,7 +223,7 @@ fun AnswerCorrection(
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
-    ){
+){
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -256,7 +256,7 @@ fun AnswerCorrection(
 fun PointDistribution(
     distribution: List<Int>,
     percent: Float,
-    score: Int,
+    score: Float,
     textColor: Color,
     errorColor: Color,
     height: Dp = 200.dp
@@ -265,7 +265,7 @@ fun PointDistribution(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.height(height+ 50.dp)
+        modifier = Modifier.wrapContentSize()
     ){
         Text("You are top ${percent}%!", color = textColor, style = MaterialTheme.typography.headlineSmall)
         Row(
@@ -274,7 +274,7 @@ fun PointDistribution(
             modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
             distribution.forEachIndexed { index, value ->
-                val color = if (score in (index * 5)until((index + 1) * 5)) errorColor else textColor
+                val color = if ((index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()) errorColor else textColor
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -284,16 +284,4 @@ fun PointDistribution(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PointDistributionPreview(){
-    PointDistribution(
-        distribution = listOf(1, 3, 5, 7, 10, 13, 17, 21, 26, 31, 38, 31, 26, 21, 17, 13, 10, 7, 5, 3, 1),
-        percent = 10.5f,
-        score = 87,
-        textColor = Color.Black,
-        errorColor = Color.Red,
-    )
 }
