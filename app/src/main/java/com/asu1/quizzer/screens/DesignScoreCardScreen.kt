@@ -288,13 +288,17 @@ fun DesignScoreCardScreen(
 }
 
 @Composable
-fun RowWithShares(){
+fun RowWithShares(
+    onClickButton1: () -> Unit = { },
+    onClickButton2: () -> Unit = { },
+    onClickButton3: () -> Unit = { },
+){
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
-            onClick = { /*TODO*/ }
+            onClick = onClickButton1
         ) {
             Icon(
                 imageVector = Icons.Default.Facebook,
@@ -304,17 +308,17 @@ fun RowWithShares(){
         }
         Spacer(modifier = Modifier.width(8.dp))
         IconButton(
-            onClick = { /*TODO*/ }
+            onClick = onClickButton2
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.twitter),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Share",
                 modifier = Modifier.size(24.dp)
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
         IconButton(
-            onClick = { /*TODO*/ }
+            onClick = onClickButton3
         ) {
             Icon(
                 imageVector = Icons.Default.Share,

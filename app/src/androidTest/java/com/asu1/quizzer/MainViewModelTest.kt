@@ -79,18 +79,12 @@ class MainViewModelTest {
         whenever(connectivityManager.getNetworkCapabilities(any())).thenReturn(networkCapabilities)
         whenever(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)).thenReturn(true)
 
-        mainViewModel.isInternetAvailable.observeForever(observer)
-        mainViewModel.updateInternetConnection()
-
         verify(observer).onChanged(true)
     }
 
     @Test
     fun checkInternetConnection_whenNotConnected_shouldPostFalse() {
         whenever(connectivityManager.activeNetwork).thenReturn(null)
-
-        mainViewModel.isInternetAvailable.observeForever(observer)
-        mainViewModel.updateInternetConnection()
 
         verify(observer).onChanged(false)
     }

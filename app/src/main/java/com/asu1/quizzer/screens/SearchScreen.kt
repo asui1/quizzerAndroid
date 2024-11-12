@@ -63,12 +63,14 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
     var searchTextField by remember {mutableStateOf(TextFieldValue(searchText))}
     val searchResult by searchViewModel.searchResult.observeAsState()
     val focusRequester = remember{ FocusRequester() }
-//    LaunchedEffect(Unit){
-//        searchViewModel.reset()
-//    }
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        if(searchText.isNotEmpty()){
+            searchViewModel.search(searchText)
+        }
+        else{
+            focusRequester.requestFocus()
+        }
     }
 
     Scaffold(

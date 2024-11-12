@@ -53,8 +53,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             inputTextOnTag("QuizAnswerTextField${i}TextField", quiz.answers[i], checkFocus = true, withIme = true)
         }
         waitFor(500)
-        replaceTextOnTag("QuizMaxAnswerSelectionTextField", quiz.maxAnswerSelection.toString(), checkFocus = true, withIme = true)
-        waitFor(500)
         clickOnTag("QuizCreatorSaveButton")
         waitFor(1000)
     }

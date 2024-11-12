@@ -119,6 +119,17 @@ class RegisterViewModel : ViewModel() {
         _tags.postValue(tags!!.toSet())
     }
 
+    fun toggleTag(tag: String){
+        val tags = _tags.value?.toMutableList()
+        if(tags!!.contains(tag)){
+            tags.remove(tag)
+        }
+        else{
+            tags.add(tag)
+        }
+        _tags.postValue(tags!!.toSet())
+    }
+
     fun removeTag(tag: String){
         val tags = _tags.value?.toMutableList()
         if(tags?.remove(tag) == true){

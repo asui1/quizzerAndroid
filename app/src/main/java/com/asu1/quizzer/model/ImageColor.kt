@@ -63,11 +63,13 @@ data class ImageColor(
             }
         }
     }
-    fun getAsJson(): Json {
-        return Json {
-            encodeDefaults = true
-            ignoreUnknownKeys = true
-        }
+
+    override fun hashCode(): Int {
+        var result = color.hashCode()
+        result = 31 * result + imageData.contentHashCode()
+        result = 31 * result + color2.hashCode()
+        result = 31 * result + state.hashCode()
+        return result
     }
 }
 

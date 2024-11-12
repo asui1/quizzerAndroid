@@ -3,7 +3,6 @@ package com.asu1.quizzer.data
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
 import com.asu1.quizzer.ui.theme.DarkColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger
@@ -71,13 +70,14 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         )
         encoder.encodeSerializableValue(JsonObject.serializer(), json)
     }
-    private fun String.toColor(): Color{
+    fun String.toColor(): Color {
         val value = this.substring(1, 9).toLong(16)
         return Color(value.toInt())
     }
     fun stringToColor(colorString: String): Color {
         val value = colorString.substring(1, 9).toLong(16)
-        return Color(value.toInt())
+        val color = Color(value.toInt())
+        return Color(color.red, color.green, color.blue, color.alpha)
     }
     override fun deserialize(decoder: Decoder): ColorScheme {
         val json = decoder.decodeSerializableValue(JsonObject.serializer())
@@ -180,6 +180,6 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         return darkness < 0.5
     }
 
-    private fun Int.toHexString() = "#${Integer.toHexString(this)}"
+    fun Int.toHexString() = "#${Integer.toHexString(this)}"
     private fun String.toColorInt() = Color(android.graphics.Color.parseColor(this)).toArgb()
 }

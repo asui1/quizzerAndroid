@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import java.util.logging.Logger
 
 class Logger {
     private val tag = "quizzer"
@@ -11,7 +12,7 @@ class Logger {
 
     fun debug(input: String) {
         if (isDebug) {
-            Log.d(tag, input)
+            Logger.getLogger(tag).info(input)
         }
     }
     fun printBackStack(navController: NavController) {

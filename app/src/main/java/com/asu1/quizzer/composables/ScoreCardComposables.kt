@@ -46,6 +46,7 @@ import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 
 @Composable
@@ -62,8 +63,7 @@ fun ScoreCardBackground(
                 imageColor = scoreCard.background,
                 shaderOption = scoreCard.shaderType,
                 time = time,
-
-            )
+                )
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
     )
@@ -106,7 +106,6 @@ fun ScoreCardComposable(
         modifier = Modifier
             .size(width = width, height = height)
     ) {
-        TODO("BACKGROUND IS NOT SHOWN IN SCORING SCREEN GIVEN BY SERVER")
         ScoreCardBackground(
             scoreCard = scoreCard,
             time = time
@@ -125,7 +124,7 @@ fun ScoreCardComposable(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
-                text = scoreCard.solver,
+                text = quizResult.nickname,
                 color = scoreCard.textColor,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.End)
@@ -226,7 +225,9 @@ fun AnswerCorrection(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(16.dp).wrapContentSize()
+        modifier = Modifier
+            .padding(16.dp)
+            .wrapContentSize()
     ) {
         items(correction.size) { index ->
             Row(
@@ -271,21 +272,25 @@ fun PointDistribution(
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             distribution.forEachIndexed { index, value ->
                 val color = if ((index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()) errorColor else textColor
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(height * value / maxItem + 5.dp)
+                        .height(height * value / maxItem + 20.dp)
                         .background(color)
                 )
             }
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp)
         ){
             for(i in listOf("0", "50", "100")){
                 Box(

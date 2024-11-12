@@ -30,7 +30,6 @@ val quiz1 = Quiz1(
     bodyImage = byteArrayOf(),
     bodyText = "",
     shuffleAnswers = false,
-    maxAnswerSelection = 1,
     answers = mutableListOf(
         "오리아나",
         "니달리",

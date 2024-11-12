@@ -19,8 +19,7 @@ object ShaderTypeSerializer : KSerializer<ShaderType> {
         return text.removePrefix("Brush").toInt()
     }
     override fun deserialize(decoder: Decoder): ShaderType {
-        val text = decoder.decodeString()
-        val index = removePrefixAndConvertToInt(text) -1
-        return ShaderType.entries.first { it.index == index }
+        val text = decoder.decodeInt()
+        return ShaderType.entries.first { it.index == text }
     }
 }

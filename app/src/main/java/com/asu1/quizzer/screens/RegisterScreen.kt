@@ -119,7 +119,7 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
     // Nickname Input UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    var nickname by remember { mutableStateOf(TextFieldValue(text = "")) }
+    var nickname by remember { mutableStateOf(TextFieldValue(text = registerViewModel.nickname.value ?: "")) }
     val registerStep by registerViewModel.registerStep.observeAsState()
     val isError by registerViewModel.isError.observeAsState(false)
 
@@ -247,15 +247,13 @@ fun TagSetting(navController: NavHostController, registerViewModel: RegisterView
                 TagSetter(
                     tags = tags,
                     onClick = {
-                        registerViewModel.removeTag(it)
+                        registerViewModel.toggleTag(it)
                     },
                     focusRequester = focusRequester,
                 )
                 Button(
                     onClick = {
-                        if (registerViewModel.email != null && registerViewModel.photoUri != null) {
-                            registerViewModel.register()
-                        }
+                        registerViewModel.register()
                     },
                     modifier = Modifier
                         .fillMaxWidth()

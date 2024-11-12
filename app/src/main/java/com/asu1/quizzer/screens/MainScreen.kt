@@ -107,6 +107,7 @@ fun MainScreen(
     loginActivityState: LoginActivityState,
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
+    testPress: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -166,7 +167,8 @@ fun MainScreen(
                         },
                         bottomBar = {
                             MainActivityBottomBar({openDrawer()}, bottomBarSelection = bottomBarSelection,
-                                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder)
+                                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
+                                testPress = testPress)
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
@@ -254,7 +256,8 @@ fun MainActivityTopbarPreview(){
 
 @Composable
 fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,
-                          navigateToQuizLayoutBuilder: () -> Unit = {}) {
+                          navigateToQuizLayoutBuilder: () -> Unit = {},
+                          testPress: () -> Unit = {}) {
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -273,7 +276,9 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                     Icon(Icons.Default.Home, contentDescription = "Home", modifier = Modifier.size(defaultIconSize))
                 }
                 IconButton(
-                    onClick = { /* Handle Trends click */ },
+                    onClick = {
+                        testPress()
+                    },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
@@ -324,8 +329,8 @@ fun MainActivityBottomBarPreview(){
     }
 }
 
-fun moveToSearchActivity(navController: NavController) {
-    NavMultiClickPreventer.navigate(navController, Route.Search)
+fun moveToSearchActivity(navController: NavController, searchText: String = "") {
+    NavMultiClickPreventer.navigate(navController, Route.Search(searchText))
 }
 
 @Composable

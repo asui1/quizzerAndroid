@@ -7,11 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.SendQuizResult
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.data.toJson
 import com.asu1.quizzer.model.ImageColor
@@ -110,6 +112,9 @@ enum class LayoutSteps(value: Int) {
 }
 
 class QuizLayoutViewModel : ViewModel() {
+    private val _viewModelState = MutableLiveData(ViewModelState.IDLE)
+    val viewModelState: LiveData<ViewModelState> get() = _viewModelState
+
     private val _quizTheme = MutableStateFlow(QuizTheme())
     val quizTheme: StateFlow<QuizTheme> = _quizTheme.asStateFlow()
 
@@ -134,7 +139,35 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizResult = MutableStateFlow<QuizResult?>(null)
     val quizResult: StateFlow<QuizResult?> = _quizResult.asStateFlow()
 
-    fun gradeQuiz(email: String, navigate: () -> Unit) {
+    fun loadQuizResult(resultId: String, scoreCardViewModel: ScoreCardViewModel){
+        _viewModelState.value = ViewModelState.LOADING
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getResult(resultId)
+                if(response.isSuccessful){
+                    val quizResult = response.body()!!
+                    scoreCardViewModel.loadScoreCard(quizResult.scoreCard)
+                    updateQuizResult(quizResult.quizResult)
+                } else {
+                    Logger().debug("Failed to load quiz result ${response.errorBody()?.string()}")
+                    _viewModelState.value = ViewModelState.ERROR
+                    _showToast.postValue("Failed to load quiz result")
+                }
+
+            } catch (e: Exception) {
+                Logger().debug("Failed to load quiz result $e")
+                _viewModelState.value = ViewModelState.ERROR
+                _showToast.postValue("Failed to load quiz result")
+            }
+
+        }
+    }
+
+    fun resetViewModelState(){
+        _viewModelState.value = ViewModelState.IDLE
+    }
+
+    fun gradeQuiz(email: String, onDone: () -> Unit) {
         var totalScore = 0f
         var currentScore = 0f
         var corrections = quizzes.value!!.map { false }
@@ -162,8 +195,9 @@ class QuizLayoutViewModel : ViewModel() {
             try{
                 val response = RetrofitInstance.api.submitQuiz(result)
                 if(response.isSuccessful){
+                    _viewModelState.value = ViewModelState.LOADING
+                    onDone()
                     updateQuizResult(response.body()!!)
-                    navigate()
                 } else {
                     Logger().debug("Failed to grade quiz ${response.errorBody()?.string()}")
                     _showToast.postValue("Failed to grade quiz")
@@ -200,6 +234,7 @@ class QuizLayoutViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    Logger().debug("Failed to load quiz: $e")
                     _showToast.postValue("Failed to load quiz")
                 }
             }
@@ -294,10 +329,6 @@ class QuizLayoutViewModel : ViewModel() {
         return true
     }
 
-    fun saveQuizLayout() {
-        TODO ("Save Quiz Layout as JSON")
-    }
-
     fun updateInitIndex(index: Int) {
         if(index > quizzes.value!!.size){
             _initIndex.value = quizzes.value!!.size
@@ -327,6 +358,7 @@ class QuizLayoutViewModel : ViewModel() {
         _quizTheme.value = QuizTheme()
         _quizData.value = QuizData()
         _quizzes.value = emptyList()
+        _viewModelState.value = ViewModelState.IDLE
         _policyAgreement.value = false
         _step.value = LayoutSteps.POLICY
     }
@@ -530,6 +562,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
     fun updateQuizResult(quizResult: QuizResult){
         _quizResult.value = quizResult
+        _viewModelState.value = ViewModelState.IDLE
     }
 }
 
