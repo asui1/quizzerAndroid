@@ -24,10 +24,12 @@ class SearchViewModel : ViewModel() {
     fun search(searchText: String){
         Logger().debug("Searching for: $searchText")
         viewModelScope.launch {
+            setSearchResult(emptyList())
             try {
                 val response = RetrofitInstance.api.searchQuiz(searchText)
                 Logger().debug("Search Response: $response")
                 if(response.isSuccessful){
+                    Logger().debug("Search Response: ${response.body()}")
                     val quizCards = response.body()?.quizCards
                     setSearchResult(quizCards!!)
                 }

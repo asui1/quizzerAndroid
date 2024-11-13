@@ -1,6 +1,7 @@
 package com.asu1.quizzer.data
 
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
 import kotlinx.coroutines.Dispatchers
@@ -51,10 +52,13 @@ suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
 }
 
 suspend fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializer {
+    val localQuizData = quizDataToJson()
+    val scoreCardCopy = scoreCard.copy(quizUuid = localQuizData.uuid)
+    Logger().debug("ScoreCard: $scoreCardCopy")
     val quizLayoutSerializer = QuizLayoutSerializer(
-        quizData = quizDataToJson(),
+        quizData = localQuizData,
         quizTheme = quizTheme.value,
-        scoreCard = scoreCard
+        scoreCard = scoreCardCopy
     )
     return quizLayoutSerializer
 }

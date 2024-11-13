@@ -97,18 +97,27 @@ class MainActivity : ComponentActivity() {
                             return previousEntry?.destination?.route == route::class.qualifiedName
                         }
 
-                        fun getQuizResult(resultId: String = "72e270f91cb915b87d7114a958a7e7e151992f094caf5799db8e1c7c1245470a") {
+                        fun getQuizResult(resultId: String = "0c6d3a6f5f13602f46a2b37c11a33618b09bf1f11af2dc1a221e2aa191d9b773") {
                             quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,
                                 Route.ScoringScreen
                             ) {
-                                popUpTo(Route.Home) { inclusive = true }
+                                popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
                             }
-
-                            //  72e270f91cb915b87d7114a958a7e7e151992f094caf5799db8e1c7c1245470a  -> Unique id for quizresult
-
+                        }
+                        fun loadQuiz(quizId: String){
+                            quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel,
+                                onDone = {
+                                    NavMultiClickPreventer.navigate(
+                                        navController,
+                                        Route.QuizSolver(0)
+                                    ){
+                                        popUpTo(Route.Home) { inclusive = false }
+                                        launchSingleTop = true
+                                    }
+                                })
                         }
                         NavHost(
                             navController = navController,
@@ -156,7 +165,9 @@ class MainActivity : ComponentActivity() {
                                             Route.LoadUserQuiz
                                         )
                                     },
-                                    testPress = {getQuizResult()},
+                                    testPress = {
+                                        getQuizResult()
+                                    },
                                 )
                             }
                             composable<Route.Search>(
@@ -166,14 +177,8 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitToRightTransition(),
                             ) {
                                 SearchScreen(navController, searchViewModel,
-                                    onQuizClick = { quizId ->
-                                        quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel,
-                                            onDone = {
-                                                NavMultiClickPreventer.navigate(
-                                                    navController,
-                                                    Route.QuizSolver(0)
-                                                )
-                                            })
+                                    onQuizClick = {quizId ->
+                                        loadQuiz(quizId)
                                     },
                                     searchText = it.toRoute<Route.Search>().searchText
                                 )
@@ -304,7 +309,7 @@ class MainActivity : ComponentActivity() {
                                                 navController,
                                                 Route.ScoringScreen
                                             ) {
-                                                popUpTo(Route.Home) { inclusive = true }
+                                                popUpTo(Route.Home) { inclusive = false }
                                                 launchSingleTop = true
                                             }
                                         }
@@ -367,6 +372,10 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     quizLayoutViewModel = quizLayoutViewModel,
                                     scoreCardViewModel = scoreCardViewModel,
+                                    email = userViewModel.userData.value?.email ?: "GUEST",
+                                    loadQuiz = {quizId ->
+                                        loadQuiz(quizId)
+                                    }
                                 )
                             }
                         }

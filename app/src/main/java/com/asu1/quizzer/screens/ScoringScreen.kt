@@ -15,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,6 +53,7 @@ fun ScoringScreen(
     quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
     scoreCardViewModel: ScoreCardViewModel = viewModel(),
     email: String = "GUEST",
+    loadQuiz: (String) -> Unit = {},
 ) {
     val quizResult by quizLayoutViewModel.quizResult.collectAsState()
     val configuration = LocalConfiguration.current
@@ -65,6 +67,21 @@ fun ScoringScreen(
     LaunchedEffect(scoreCard.quizUuid){
         if(scoreCard.quizUuid != null){
             uniqueId = generateUniqueId(email = email, uuid = scoreCard.quizUuid!!)
+        }
+    }
+
+    LaunchedEffect(quizLayoutViewModelState){
+        if(quizLayoutViewModelState == ViewModelState.ERROR){
+            Logger().debug("Error in quizLayoutViewModel")
+            quizLayoutViewModel.resetViewModelState()
+            navController.popBackStack(Route.Home, inclusive = false)
+        }
+    }
+
+    DisposableEffect(key1 = uniqueId){
+        onDispose {
+            scoreCardViewModel.resetScoreCard()
+            quizLayoutViewModel.resetQuizResult()
         }
     }
 
@@ -135,7 +152,8 @@ fun ScoringScreen(
             ) {
                 Button(
                     onClick = {
-                        // TODO: RESOLVE QUIZ (Navigate to QuizResultScreen)
+//                        Logger().debug(scoreCard.toString())
+                        loadQuiz(scoreCard.quizUuid!!)
                     },
                     modifier = Modifier
                         .height(height = 36.dp)

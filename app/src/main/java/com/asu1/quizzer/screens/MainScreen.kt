@@ -172,7 +172,6 @@ fun MainScreen(
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                                //TODO : Add Search Bar
                                 item {
                                     Text(
                                         text = quizCards.quizCards1.tag,
@@ -288,7 +287,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 }
                 IconButton(
                     onClick = { navigateToQuizLayoutBuilder() },
-                modifier = Modifier.weight(1.5f).testTag("MainScreenCreateQuiz"),
+                    modifier = Modifier.weight(1.5f).testTag("MainScreenCreateQuiz"),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -538,6 +537,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         TextButton(
                             onClick = {
                                 navigateToMyQuizzes()
+                                closeDrawer()
                             },
                         ) {
                             Text(

@@ -163,6 +163,10 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
+    fun resetQuizResult(){
+        _quizResult.value = null
+    }
+
     fun resetViewModelState(){
         _viewModelState.value = ViewModelState.IDLE
     }

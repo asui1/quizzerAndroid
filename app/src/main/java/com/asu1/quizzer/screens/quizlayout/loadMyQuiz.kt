@@ -99,7 +99,7 @@ fun LoadMyQuiz(
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    if (quizList!!.isEmpty()) {
+                    if ((quizList?:mutableListOf()).isEmpty()) {
                         item {
                             Text(
                                 "No quizzes found",
@@ -107,7 +107,7 @@ fun LoadMyQuiz(
                             )
                         }
                     } else {
-                        items(quizList!!.size) { index ->
+                        items((quizList?:mutableListOf()).size) { index ->
                             val quizCard = quizList!![index]
                             val currentDismissState = dismissStates.getOrPut(quizCard.id) {
                                 rememberDismissState(
@@ -146,7 +146,6 @@ fun LoadMyQuiz(
                                     QuizCardHorizontal(
                                         quizCard = quizCard,
                                         onClick = {
-                                            TODO("IMPLEMENT LOAD WITH UUID")
                                             onLoadQuiz()
                                         }
                                     )

@@ -286,7 +286,7 @@ fun Quiz1AnswerSelection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
-        Text("Shuffle\nAnswers?")
+        Text("Shuffle Answers?")
         Checkbox(
             checked = shuffleValue,
             onCheckedChange = {
