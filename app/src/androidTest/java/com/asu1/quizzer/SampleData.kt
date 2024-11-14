@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
+import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
@@ -13,21 +14,26 @@ import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlin.random.Random
 
-val scoreCard = ScoreCard(
-    title = "페이커 퀴즈",
-    solver = "Guest",
-    score = 100f,
-    background = ImageColor(Color.Red, byteArrayOf(), Color.Blue, ImageColorState.COLOR),
-    imageStateval = 0,
-    colorScheme = LightColorScheme,
-    shaderType = ShaderType.Brush1,
+data class allInOneForTest(
+    val title: String,
+    val description: String,
+    val tags: Set<String>,
+    val titleImage: Int,
+    val colorInt : Int,
+    val quizzes: List<Quiz>,
+    val bodyImages: List<Int>,
+    val bodyYoutubeLinks: List<String> = listOf(),
+    val questionTextStyle : List<Int> = listOf(0, 0, 0),
+    val bodyTextStyle : List<Int> = listOf(0, 0, 0),
+    val answerTextStyle : List<Int> = listOf(0, 0, 0),
 )
 val quiz1 = Quiz1(
     point = 10,
-    bodyType = BodyType.NONE,
+    bodyType = BodyType.TEXT,
     bodyImage = byteArrayOf(),
-    bodyText = "",
+    bodyText = "FAKER IS GOD.",
     shuffleAnswers = false,
     answers = mutableListOf(
         "오리아나",
@@ -68,7 +74,8 @@ val quiz3 = Quiz3(
         "JDG",
         "Weibo"
     ),
-    question = "2023년 월즈에서 T1이 상대한 팀 순서는?"
+    question = "2023년 월즈에서 T1이 상대한 팀 순서는?",
+    bodyType = BodyType.IMAGE,
 )
 val quiz4 = Quiz4(
     connectionAnswers = mutableListOf(
@@ -92,5 +99,33 @@ val quiz4 = Quiz4(
         "아지르",
         "갈리오"
     ),
-    question =  "페이커가 플레이한 챔피언과 연관이 있는 선수를 연결하세요."
+    question =  "페이커가 플레이한 챔피언과 연관이 있는 선수를 연결하세요.",
+    bodyType = BodyType.YOUTUBE,
+
+)
+
+val testQuizData = allInOneForTest(
+    title = "페이커 퀴즈",
+    description = "페이커에 대한 퀴즈입니다.",
+    tags = setOf("페이커", "퀴즈", "아슈"),
+    titleImage = R.drawable.question1,
+    colorInt = Random.nextInt(primaryColors.size),
+    quizzes = listOf(
+        quiz1,
+        quiz2,
+        quiz3,
+        quiz4
+    ),
+    bodyImages = listOf(
+        R.drawable.question1,
+        R.drawable.question1,
+        R.drawable.question1,
+        R.drawable.question1,
+    ),
+    bodyYoutubeLinks = listOf(
+        "https://youtu.be/eyY_NWThxnY?si=rqj0tVixOzgROpsc",
+        "https://youtu.be/eyY_NWThxnY?si=rqj0tVixOzgROpsc",
+        "https://youtu.be/eyY_NWThxnY?si=rqj0tVixOzgROpsc",
+        "https://youtu.be/eyY_NWThxnY?si=rqj0tVixOzgROpsc",
+    ),
 )

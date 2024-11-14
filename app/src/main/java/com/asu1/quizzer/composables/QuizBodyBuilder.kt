@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.model.BodyType
@@ -84,6 +85,7 @@ fun QuizBodyBuilder(
         when(bodyState){
             BodyType.NONE -> {
                 TextButton(
+                    modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
                     onClick = {showBodyDialog = true},
                 ) {
                     Text("Add Body")
@@ -91,7 +93,7 @@ fun QuizBodyBuilder(
             }
             BodyType.TEXT -> {
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("QuizCreatorBodyTextField"),
                     value = bodyText,
                     onValueChange = {it ->
                         onBodyTextChange(it)
@@ -179,13 +181,19 @@ fun BodyTypeDialog(
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                TextButton(onClick = onTextSelected) {
+                TextButton(
+                    modifier = Modifier.testTag("BodyTypeDialogTextButton"),
+                    onClick = onTextSelected) {
                     Text("Text")
                 }
-                TextButton(onClick = onImageSelected) {
+                TextButton(
+                    modifier = Modifier.testTag("BodyTypeDialogImageButton"),
+                    onClick = onImageSelected) {
                     Text("Image")
                 }
-                TextButton(onClick = onYoutubeSelected) {
+                TextButton(
+                    modifier = Modifier.testTag("BodyTypeDialogYoutubeButton"),
+                    onClick = onYoutubeSelected) {
                     Text("Youtube")
                 }
             }

@@ -15,6 +15,7 @@ import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.data.toJson
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz
@@ -375,6 +376,20 @@ class QuizLayoutViewModel : ViewModel() {
             return
         }
         _quizData.value = _quizData.value.copy(image = image)
+    }
+
+    fun setQuizBodyImage(image: ByteArray){
+        if(_quizzes.value.isEmpty()){
+            return
+        }
+        _quizzes.update {
+            it.toMutableList().apply {
+                val firstQuiz = this[0]
+                firstQuiz.bodyType = BodyType.IMAGE
+                firstQuiz.bodyImage = image
+                this[0] = firstQuiz
+            }
+        }
     }
 
     fun setQuizDescription(description: String) {

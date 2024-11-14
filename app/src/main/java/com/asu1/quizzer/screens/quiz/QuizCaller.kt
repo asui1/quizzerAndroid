@@ -49,7 +49,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
     ) {
         when(quizType){
             QuizType.QUIZ1 -> {
-                val quiz1ViewModel: Quiz1ViewModel = viewModel()
+                val quiz1ViewModel: Quiz1ViewModel = viewModel(key="Quiz1ViewModel")
                 if(quiz != null){
                     quiz1ViewModel.loadQuiz(quiz as Quiz1)
                 }
@@ -61,7 +61,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 )
             }
             QuizType.QUIZ2 -> {
-                val quiz2ViewModel: Quiz2ViewModel = viewModel()
+                val quiz2ViewModel: Quiz2ViewModel = viewModel(key="Quiz2ViewModel")
                 if(quiz != null){
                     quiz2ViewModel.loadQuiz(quiz as Quiz2)
                 }
@@ -73,7 +73,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 )
             }
             QuizType.QUIZ3 -> {
-                val quiz3ViewModel: Quiz3ViewModel = viewModel()
+                val quiz3ViewModel: Quiz3ViewModel = viewModel(key="Quiz3ViewModel")
                 if(quiz != null){
                     quiz3ViewModel.loadQuiz(quiz as Quiz3)
                 }
@@ -85,7 +85,7 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
                 )
             }
             QuizType.QUIZ4 -> {
-                val quiz4ViewModel: Quiz4ViewModel = viewModel()
+                val quiz4ViewModel: Quiz4ViewModel = viewModel(key="Quiz4ViewModel")
                 if(quiz != null){
                     quiz4ViewModel.loadQuiz(quiz as Quiz4)
                 }

@@ -2,6 +2,7 @@ package com.asu1.quizzer
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
@@ -16,15 +17,26 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.Espresso.onIdle
+import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
+import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
@@ -40,9 +52,27 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         replaceTextOnTag("QuizPointTextField", quiz.point.toString(), checkFocus = true)
     }
 
+    fun addQuizBody(quiz: Quiz, youtubeLink: String = ""){
+        if(quiz.bodyType == BodyType.NONE || quiz.bodyType == BodyType.IMAGE) return
+        clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
+        when(quiz.bodyType.value){
+            1 -> {
+                clickOnTag("BodyTypeDialogTextButton")
+                inputTextOnTag("QuizCreatorBodyTextField", quiz.bodyText)
+            }
+            3 -> {
+                clickOnTag("BodyTypeDialogYoutubeButton")
+                inputTextOnTag("QuizCreatorBodyYoutubeLinkTextField", youtubeLink, withIme = true)
+                onIdle()
+            }
+        }
+    }
+
     // NEED CODE TO ADD BODY, ADD OR REMOVE ANSWERS
-    fun addQuiz1(quiz: Quiz1){
-        addQuizInit(quiz, 0)
+    fun addQuiz1(quiz: Quiz1, youtubeLink: String = ""){
+        val counts = quiz.answers.size - 5
+        addQuizInit(quiz, 0, counts)
+        addQuizBody(quiz, youtubeLink)
         for(i in 0 until quiz.answers.size){
             if(quiz.ans[i]){
                 clickOnTag("QuizAnswerTextField${i}Checkbox", checkFocus = true)
@@ -55,7 +85,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     // CURRENT CODE NEEDS answerDate to be on screen. No swiping around.
-    fun addQuiz2(quiz: Quiz2){
+    fun addQuiz2(quiz: Quiz2, activity: MainActivity){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
         clickOnTag("YearMonthDropDownMonthText")
@@ -69,9 +99,10 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun addQuiz3(quiz: Quiz3){
+    fun addQuiz3(quiz: Quiz3, youtubeLink: String = ""){
         val counts = quiz.answers.size - 5
         addQuizInit(quiz, 2, counts)
+        addQuizBody(quiz, youtubeLink)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizAnswerTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
         }
@@ -79,9 +110,10 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun addQuiz4(quiz: Quiz4){
+    fun addQuiz4(quiz: Quiz4, youtubeLink: String = ""){
         val counts = quiz.answers.size - 4
         addQuizInit(quiz, 3, counts)
+        addQuizBody(quiz, youtubeLink)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true)
             if(i == quiz.answers.size - 1){
@@ -110,7 +142,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun setImage(context: Context, image: Int, onImagePicked: (ByteArray) -> Unit = {}) {
+    fun setImage(context: Context, image: Int, onImagePicked: (ByteArray) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
         val mockRegistry = object : ActivityResultRegistry() {
             override fun <I : Any?, O : Any?> onLaunch(
                 requestCode: Int,
@@ -128,16 +160,18 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                 val byteArray = uriToByteArray(
                     context = context,
                     uri = result,
-                    maxWidth = 200.dp,
-                    maxHeight = 200.dp,
+                    maxWidth = width,
+                    maxHeight = height,
                 )
                 if(byteArray != null){
+                    Logger().debug("Image Picked ${byteArray.size}")
                     onImagePicked(byteArray)
                 }
             }
         }
         launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         onIdle()
+        waitFor(300)
     }
 
     fun setTextStyle(textStyle: List<Int>, targetTag: String){
@@ -168,11 +202,12 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         onIdle()
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performScrollTo()
-            waitFor(200)
             onIdle()
+            waitFor(100)
         }
         composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performClick()
         onIdle()
+        waitFor(100)
     }
 
     fun inputTextOnTag(tag: String, text: String, withIme: Boolean = false, checkFocus: Boolean = false) {
@@ -180,14 +215,16 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
+            waitFor(100)
         }
         composeTestRule.onNodeWithTag(tag).performTextInput(text)
         onIdle()
+        waitFor(100)
         if(withIme) {
             onIdle()
-            waitFor(200)
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
+            waitFor(100)
         }
     }
 
@@ -196,16 +233,20 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
+            waitFor(100)
         }
         onIdle()
         composeTestRule.onNodeWithTag(tag).performTextClearance()
         onIdle()
+        waitFor(100)
         composeTestRule.onNodeWithTag(tag).performTextInput(newText)
         onIdle()
+        waitFor(100)
         if(withIme) {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
+            waitFor(100)
         }
     }
 
@@ -214,15 +255,18 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
+            waitFor(100)
         }
         texts.forEach {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performTextInput(it)
             onIdle()
+            waitFor(100)
             if(withIme) {
                 onIdle()
                 composeTestRule.onNodeWithTag(tag).performImeAction()
                 onIdle()
+                waitFor(100)
             }
             onIdle()
         }

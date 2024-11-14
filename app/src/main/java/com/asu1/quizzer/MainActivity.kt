@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                             return previousEntry?.destination?.route == route::class.qualifiedName
                         }
 
-                        fun getQuizResult(resultId: String = "0c6d3a6f5f13602f46a2b37c11a33618b09bf1f11af2dc1a221e2aa191d9b773") {
+                        fun getQuizResult(resultId: String = "7cc99ddc2099ba966ff91e7cb39d6c6d86cf42e9519f854630975e3a71c94160") {
                             quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,

@@ -45,6 +45,8 @@ import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import kotlin.math.ceil
+import kotlin.math.round
 
 @Composable
 fun ScoreCardBackground(
@@ -90,7 +92,7 @@ fun ScoreCardComposable(
     val formattedScore = if (quizResult.score % 1 == 0f) {
         quizResult.score.toInt().toString()
     } else {
-        quizResult.score.toString()
+        String.format("%.1f", round(quizResult.score * 10) / 10)
     }
     val redded = scoreCard.textColor.copy(
         red = (scoreCard.textColor.red + 0.5f).coerceAtMost(1f),

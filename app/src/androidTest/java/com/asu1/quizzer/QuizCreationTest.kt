@@ -1,25 +1,23 @@
 package com.asu1.quizzer
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onIdle
+import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.model.Quiz1
+import com.asu1.quizzer.model.Quiz2
+import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.viewModels.QuizData
+import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
 import kotlin.random.Random
 
-val quizData = QuizData(
-    title = "Quiz Test Title",
-    image = byteArrayOf(),
-    description = "This is description for Testing Quiz",
-    tags= setOf("Test", "Quiz", "아슈"),
-    shuffleQuestions = false,
-    creator = "GUEST",
-    uuid = null
-)
-val titleImage: Int = R.drawable.question1
 val primaryColors: List<String> = listOf(
     "FFBBDEFB", // Light Blue
     "FFFFCDD2", // Light Red
@@ -71,9 +69,6 @@ val textColors: List<String> = listOf(
     "ff251a00",
 )
 
-val questionTextStyle : List<Int> = listOf(0, 0, 0)
-val bodyTextStyle : List<Int> = listOf(0, 0, 0)
-val answerTextStyle : List<Int> = listOf(0, 0, 0)
 val shaders: List<String> = listOf(
     "Left Bottom",
     "Bottom",
@@ -102,7 +97,7 @@ class MyComposeTest {
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
         userViewModel.logIn("whwkd122@gmail.com", "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c")
         onIdle()
-        testUtils.waitFor(2000)
+        testUtils.waitFor(1500)
         testUtils.clickOnTag("MainScreenCreateQuiz")
 
         //AGREE POLICY
@@ -111,113 +106,116 @@ class MyComposeTest {
 
         //SET TITLE
         testUtils.waitUntilTag("QuizLayoutTitleTextField")
-        testUtils.inputTextOnTag("QuizLayoutTitleTextField", quizData.title)
-        testUtils.waitFor(300)
+        testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizData.title)
 
         //Set Quiz Description
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", quizData.description)
-        testUtils.waitFor(300)
+        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizData.description)
 
         //SET TAGS
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.enterTextsOnTag("TagSetterTextField", quizData.tags.toList(), true)
-        testUtils.waitFor(300)
+        testUtils.enterTextsOnTag("TagSetterTextField", testQuizData.tags.toList(), true)
 
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-//        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
-//        testUtils.setImage(context, titleImage, onImagePicked = { image ->
-//            quizLayoutViewModel.setQuizImage(image)
-//        })
+        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
+        testUtils.setImage(context, testQuizData.titleImage, onImagePicked = { image ->
+            quizLayoutViewModel.setQuizImage(image)
+        }, width = 200.dp, height = 200.dp)
         onIdle()
-        testUtils.waitFor(300)
-
-        // composeRule.onNode(hasContentDescription("Description of the image")).assertExists()
-        // replace tags test to contentDescription
+        testUtils.waitFor(100)
 
         //Set ColorScheme
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color")
-        val colorInt = Random.nextInt(primaryColors.size)
+        val colorInt = testQuizData.colorInt
         val primaryColor = primaryColors[colorInt]
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimary Color", primaryColor, true)
-        testUtils.waitFor(300)
+        testUtils.waitFor(100)
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color", true)
-        testUtils.waitFor(300)
+        testUtils.waitFor(100)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
-        testUtils.waitFor(300)
+        testUtils.waitFor(100)
 
         // NEED TESTING FROM HERE
         //Set TextStyles
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.setTextStyle(questionTextStyle, "setTextStyleQuestion")
-        testUtils.setTextStyle(bodyTextStyle, "setTextStyleBody")
-        testUtils.setTextStyle(answerTextStyle, "setTextStyleAnswer")
-        testUtils.waitFor(300)
+        testUtils.setTextStyle(testQuizData.questionTextStyle, "setTextStyleQuestion")
+        testUtils.setTextStyle(testQuizData.bodyTextStyle, "setTextStyleBody")
+        testUtils.setTextStyle(testQuizData.answerTextStyle, "setTextStyleAnswer")
+        testUtils.waitFor(100)
 
         //QUIZ BUILDER
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
 
-        //ADD QUIZ1
-        testUtils.addQuiz1(quiz1)
-
-        //ADD QUIZ2
-        testUtils.addQuiz2(quiz2)
-
-        //ADD QUIZ3
-        testUtils.addQuiz3(quiz3)
-
-        //ADD QUIZ4
-        testUtils.addQuiz4(quiz4)
+        for(i in 0 until testQuizData.quizzes.size){
+            val quiz = testQuizData.quizzes[i]
+            when(quiz){
+                is Quiz1 -> {
+                    testUtils.addQuiz1(quiz, testQuizData.bodyYoutubeLinks[i])
+                }
+                is Quiz2 -> {
+                    testUtils.addQuiz2(quiz, activity)
+                }
+                is Quiz3 -> {
+                    testUtils.addQuiz3(quiz, testQuizData.bodyYoutubeLinks[i])
+                }
+                is Quiz4 -> {
+                    testUtils.addQuiz4(quiz, testQuizData.bodyYoutubeLinks[i])
+                }
+            }
+            if(quiz.bodyType == BodyType.IMAGE){
+                testUtils.setImage(context, testQuizData.bodyImages[i], onImagePicked = { image ->
+                    quizLayoutViewModel.setQuizBodyImage(image)
+                })
+            }
+        }
 
         //DESIGN SCORECARD
         testUtils.clickOnTag("QuizBuilderScreenProceedButton")
-        testUtils.waitFor(500)
+        testUtils.waitFor(300)
 
         testUtils.clickOnTag("DesignScoreCardSetTextColorButton")
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", textColors[colorInt], true)
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()
 
         testUtils.waitUntilTag("DesignScoreCardSetColor1Button")
         onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor1Button")
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors1[colorInt], true)
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()
 
         testUtils.waitUntilTag("DesignScoreCardSetColor2Button")
         onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor2Button")
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors2[colorInt], true)
-        testUtils.waitFor(200)
+        testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()
 
         testUtils.waitUntilTag("DesignScoreCardShaderButton")
         onIdle()
         testUtils.clickOnTag("DesignScoreCardShaderButton")
-        testUtils.waitFor(500)
+        testUtils.waitFor(300)
         val shader = shaders.random()
         testUtils.clickOnTag("DesignScoreCardShaderButton$shader", useUnmergedTree = true)
         onIdle()
-        testUtils.waitFor(300)
+        testUtils.waitFor(200)
 
         //UPLOAD
         testUtils.clickOnTag("DesignScoreCardUploadButton")
         onIdle()
-        testUtils.waitFor(5000)
-        onIdle()
 
         onIdle()
-        testUtils.waitFor(5000)
+        testUtils.waitFor(1000)
         onIdle()
 
     }

@@ -169,7 +169,7 @@ data class Quiz1(
         result = 31 * result + layoutType.hashCode()
         result = 31 * result + bodyType.hashCode()
         result = 31 * result + bodyText.hashCode()
-        result = 31 * result + (bodyImage?.contentHashCode() ?: 0)
+        result = 31 * result + (bodyImage.contentHashCode() ?: 0)
         result = 31 * result + youtubeId.hashCode()
         result = 31 * result + youtubeStartTime
         result = 31 * result + point
@@ -418,6 +418,20 @@ data class Quiz3(
         }
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = shuffledAnswers.hashCode()
+        result = 31 * result + answers.hashCode()
+        result = 31 * result + question.hashCode()
+        result = 31 * result + layoutType.hashCode()
+        result = 31 * result + bodyType.hashCode()
+        result = 31 * result + bodyText.hashCode()
+        result = 31 * result + bodyImage.contentHashCode()
+        result = 31 * result + youtubeId.hashCode()
+        result = 31 * result + youtubeStartTime
+        result = 31 * result + point
+        return result
+    }
 }
 
 val sampleQuiz3 = Quiz3(
@@ -545,6 +559,23 @@ data class Quiz4(
             }
         }
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = connectionAnswers.hashCode()
+        result = 31 * result + connectionAnswerIndex.hashCode()
+        result = 31 * result + dotPairOffsets.hashCode()
+        result = 31 * result + userConnectionIndex.hashCode()
+        result = 31 * result + answers.hashCode()
+        result = 31 * result + question.hashCode()
+        result = 31 * result + layoutType.hashCode()
+        result = 31 * result + bodyType.hashCode()
+        result = 31 * result + bodyText.hashCode()
+        result = 31 * result + bodyImage.contentHashCode()
+        result = 31 * result + youtubeId.hashCode()
+        result = 31 * result + youtubeStartTime
+        result = 31 * result + point
+        return result
     }
 }
 

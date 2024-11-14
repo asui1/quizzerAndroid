@@ -2,9 +2,15 @@ TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
 - Test Code to Generate Quizzes with AI gen datas.
+NEED FULL TEST WITH TITLE IMAGE, BODY FOR ALL QUIZZES
 This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
 
+- Implement Quiz Trends. Recommend top 30 quizzes with most recent solves.
+- Implement stats to check how many quizzes are solved by user.
+
 - Need Custom Toast message to beautify current default toast messages.
+
+---------------MINIMUM FOR APP RELEASE----------------
 
 - maybe put some gradients to color backgrounds at mainScreen to make it more beautiful.
 

@@ -61,6 +61,7 @@ fun ScoringScreen(
     LaunchedEffect(scoreCard.quizUuid){
         if(scoreCard.quizUuid != null){
             uniqueId = generateUniqueId(email = email, uuid = scoreCard.quizUuid!!)
+            Logger().debug("Generated uniqueId: $uniqueId")
         }
     }
 

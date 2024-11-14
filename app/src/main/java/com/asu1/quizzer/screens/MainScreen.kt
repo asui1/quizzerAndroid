@@ -339,7 +339,8 @@ fun PrivacyPolicyRow(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = {
             NavMultiClickPreventer.navigate(navController, Route.PrivacyPolicy)
@@ -348,6 +349,8 @@ fun PrivacyPolicyRow(navController: NavController) {
         }
         Text(
             text = stringResource(R.string.contact) + ": whwkd122@gmail.com",
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(start = 16.dp),
         )
     }

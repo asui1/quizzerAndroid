@@ -2,6 +2,7 @@ package com.asu1.quizzer.viewModels.quizModels
 
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -82,6 +83,7 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun updateBodyImage(image: ByteArray){
+        Logger().debug("Quiz3ViewModel")
         _quiz3State.value = _quiz3State.value.copy(bodyImage = image)
     }
 
