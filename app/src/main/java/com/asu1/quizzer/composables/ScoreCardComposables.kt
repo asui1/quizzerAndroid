@@ -3,7 +3,6 @@ package com.asu1.quizzer.composables
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -46,7 +44,6 @@ import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 
 @Composable

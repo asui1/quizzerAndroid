@@ -1,13 +1,13 @@
 package com.asu1.quizzer.screens.quizlayout
 
-import QuizCardHorizontal
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -16,7 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,20 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.DialogComposable
+import com.asu1.quizzer.composables.LazyColumnSwipeToDismissDialog
+import com.asu1.quizzer.composables.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
-
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
-import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.DialogComposable
 import kotlinx.coroutines.launch
 import java.util.Base64
 
@@ -48,7 +48,17 @@ fun LoadItems(
     quizLoadViewModel: QuizLoadViewModel = viewModel(),
     onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { quizData, quizTheme, scoreCard -> },
 ) {
-    val quizList by quizLoadViewModel.quizList.collectAsState()
+    val quizSerializerList by quizLoadViewModel.quizList.collectAsState()
+    val quizList = quizSerializerList?.map{
+        QuizCard(
+            id = it.quizData.uuid,
+            title = it.quizData.title,
+            creator = it.quizData.creator,
+            tags = it.quizData.tags.toList(),
+            image = Base64.getDecoder().decode(it.quizData.titleImage),
+            count = 0,
+        )
+    } ?: emptyList()
     val loadComplete by quizLoadViewModel.loadComplete.collectAsState()
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
@@ -78,7 +88,7 @@ fun LoadItems(
                 .padding(paddingValue)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            if (quizList == null) {
+            if (quizSerializerList == null) {
                 Text(
                     "Searching for quizzes...",
                     style = MaterialTheme.typography.bodyMedium,
@@ -89,109 +99,47 @@ fun LoadItems(
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                LazyColumn(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    item {
-                        Text(
-                            text = "Load Quiz",
-                            style = MaterialTheme.typography.headlineMedium,
+                LazyColumnWithSwipeToDismiss(
+                    quizList = quizList,
+                    onLoadQuiz = { index ->
+                        val quizLayout = quizSerializerList!![index]
+                        onClickLoad(
+                            quizLayout.quizData,
+                            quizLayout.quizTheme,
+                            quizLayout.scoreCard
                         )
-                        Spacer(modifier = Modifier.padding(8.dp))
-                    }
-                    if (quizList!!.isEmpty()) {
-                        item {
-                            Text(
-                                "No quizzes found",
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                    } else {
-                        items(quizList!!.size) { index ->
-                            val quizData = quizList!![index].quizData
-                            val quizCard = QuizCard(
-                                id = quizData.uuid,
-                                title = quizData.title,
-                                creator = quizData.creator,
-                                tags = quizData.tags.toList(),
-                                image = Base64.getDecoder().decode(quizData.titleImage),
-                                count = 0,
-                            )
-                            val currentDismissState = dismissStates.getOrPut(quizCard.id) {
-                                rememberDismissState(
-                                    confirmStateChange = {
-                                        if (it == DismissValue.DismissedToStart) {
-                                            deleteIndex = index
-                                            showDialog = true
-                                        }
-                                        true
+                    },
+                    getOrPutDismiss = { id, index->
+                        dismissStates.getOrPut(id) {
+                            rememberDismissState(
+                                confirmStateChange = {
+                                    if (it == DismissValue.DismissedToStart) {
+                                        deleteIndex = index
+                                        showDialog = true
                                     }
-                                )
-                            }
-                            SwipeToDismiss(
-                                state = currentDismissState,
-                                directions = setOf(DismissDirection.EndToStart),
-                                background = {
-                                    val color = when (currentDismissState.dismissDirection) {
-                                        DismissDirection.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
-                                        else -> Color.Transparent
-                                    }
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(16.dp),
-                                        contentAlignment = Alignment.CenterEnd
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete",
-                                            tint = Color.White
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    QuizCardHorizontal(
-                                        quizCard = quizCard,
-                                        onClick = {
-                                            val quizLayout = quizList!![index]
-                                            onClickLoad(
-                                                quizLayout.quizData,
-                                                quizLayout.quizTheme,
-                                                quizLayout.scoreCard
-                                            )
-                                        }
-                                    )
+                                    true
                                 }
                             )
                         }
                     }
-                }
+                )
             }
         }
     }
 
     if (showDialog) {
-        DialogComposable(
-            titleResource = R.string.delete_save,
-            messageResource = R.string.delete_save_body,
-            onContinue = {
-                scope.launch {
-                    quizLoadViewModel.deleteLocalQuiz(deleteIndex)
-                }
-                showDialog = false
+        LazyColumnSwipeToDismissDialog(
+            quizList = quizList,
+            deleteIndex = deleteIndex,
+            onDelete = {index ->
+                quizLoadViewModel.deleteLocalQuiz(deleteIndex)
             },
-            onContinueResource = R.string.delete,
-            onCancel = { showDialog = false
+            updateDialog = { showDialog = it },
+            resetDismiss = { uuid ->
                 scope.launch {
-                    dismissStates[quizList!![deleteIndex].quizData.uuid]?.reset()
+                    dismissStates[uuid]?.reset()
                 }
-            },
-            onCancelResource = R.string.cancel
+            }
         )
     }
 }

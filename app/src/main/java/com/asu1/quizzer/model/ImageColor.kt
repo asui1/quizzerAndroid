@@ -22,9 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.data.ColorSerializer
-import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 //State 0 -> Color, State 1 -> Color1 + Color2, State 2 -> Image
 @Serializable

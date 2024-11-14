@@ -14,7 +14,6 @@ import com.asu1.quizzer.util.repeatShader
 import com.asu1.quizzer.util.verticalWaveShader
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlin.uuid.Uuid
 
 enum class ShaderType(val shaderName: String, val index: Int) {
     Brush1("No Shader", 0),

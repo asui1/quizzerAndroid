@@ -11,7 +11,6 @@ import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.LightColorScheme
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import java.time.LocalDate
 import java.time.YearMonth
 

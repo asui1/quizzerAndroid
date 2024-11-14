@@ -1,7 +1,6 @@
 package com.asu1.quizzer.data
 
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

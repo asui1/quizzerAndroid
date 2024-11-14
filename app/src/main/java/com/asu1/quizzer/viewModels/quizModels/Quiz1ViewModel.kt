@@ -1,15 +1,11 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 
 class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){

@@ -1,32 +1,8 @@
 TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
-- Implement Save and Upload QuizLayout.
-1. Validate Check for empty fields.
--> For each quiz class, they need fun validationCheck() to check if they are valid. Also, implement fun check() to get whether they are right or wrong.
-2. Change Item format to json format. -> Need to match format with flutter. Make dummy data for some items.
--> Flutter version is stupid... So I'll reset db and fit it with android version.
--> remove access to static web files in nginx and deactivate it.
-Currently local save and loads is implemented so it'll be fine to upload this and download it.
-Also, need check box to ask whether user wants to share quiTheme or not.
-
-3. Upload to server.
-4. Get response from server.
-5. If success, show success message, reset viewmodels and move back to home.
-6. If failed, show error message.
-
-1. Make load function with quiz uuids.
-2. Get response from server.
-3. If success, get data and open quizSolver with it.
-
 - Test Code to Generate Quizzes with AI gen datas.
 This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
-
-- ColorScheme generation with Random Strength.
-Generate Random ColorScheme should have a value from 0 to 5 to show how strong random color should be.
-
-- ScoreCard should Fill most of page(Quiz title, and solver nickname should go inside it). Also, User should be able to set text's color.
-Apply graphics layer also to image.
 
 - Need Custom Toast message to beautify current default toast messages.
 

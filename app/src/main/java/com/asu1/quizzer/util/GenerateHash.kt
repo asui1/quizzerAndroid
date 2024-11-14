@@ -1,9 +1,6 @@
 package com.asu1.quizzer.util
 
-import com.google.android.gms.common.util.Base64Utils
 import java.security.MessageDigest
-import java.util.Base64
-import java.util.logging.Logger
 
 fun generateUniqueId(uuid: String, email: String): String {
     val concatenated = "$uuid-$email"

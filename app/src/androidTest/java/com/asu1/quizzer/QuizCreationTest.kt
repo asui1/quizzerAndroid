@@ -1,47 +1,14 @@
 package com.asu1.quizzer
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import androidx.activity.result.ActivityResultRegistry
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performImeAction
-import androidx.compose.ui.test.performTextInput
-import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.Lifecycle
-import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.onIdle
-import com.asu1.quizzer.viewModels.QuizData
-import org.junit.Rule
-import org.junit.Test
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.GestureScope
-import androidx.compose.ui.test.TouchInjectionScope
-import androidx.compose.ui.test.performGesture
-import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextClearance
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions.click
-import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.uriToByteArray
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import androidx.test.espresso.Espresso.onIdle
+import com.asu1.quizzer.viewModels.QuizData
 import com.asu1.quizzer.viewModels.UserViewModel
+import org.junit.Rule
+import org.junit.Test
 import kotlin.random.Random
-import kotlin.reflect.KClass
 
 val quizData = QuizData(
     title = "Quiz Test Title",

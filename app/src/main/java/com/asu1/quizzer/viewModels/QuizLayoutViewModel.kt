@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
@@ -23,7 +22,6 @@ import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
-import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
@@ -34,7 +32,6 @@ import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.withSurfaceColor
 import com.asu1.quizzer.util.withErrorColor
 import com.asu1.quizzer.util.withOnErrorColor
 import com.asu1.quizzer.util.withOnPrimaryColor
@@ -42,6 +39,7 @@ import com.asu1.quizzer.util.withOnSecondaryColor
 import com.asu1.quizzer.util.withOnTertiaryColor
 import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
+import com.asu1.quizzer.util.withSurfaceColor
 import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.Dispatchers
@@ -307,7 +305,7 @@ class QuizLayoutViewModel : ViewModel() {
 
     suspend fun saveLocal(context: Context, scoreCard: ScoreCard) {
         val jsoned = Json.encodeToString(toJson(scoreCard))
-        val fileName = "${quizData.value.uuid}_quizSave.json"
+        val fileName = "${quizData.value.uuid}_${quizData.value.creator}_quizSave.json"
         val file = File(context.filesDir, fileName)
         file.writeText(jsoned)
         _showToast.value = "${quizData.value.title} saved"

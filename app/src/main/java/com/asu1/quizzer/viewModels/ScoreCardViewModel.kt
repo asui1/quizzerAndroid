@@ -3,19 +3,15 @@ package com.asu1.quizzer.viewModels
 import androidx.compose.material3.ColorScheme
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class ScoreCardViewModel : ViewModel() {
     private val _scoreCard = MutableStateFlow(ScoreCard())

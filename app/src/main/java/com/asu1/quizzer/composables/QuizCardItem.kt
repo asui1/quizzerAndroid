@@ -47,7 +47,6 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import kotlin.math.max
 
 @Composable
 fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {

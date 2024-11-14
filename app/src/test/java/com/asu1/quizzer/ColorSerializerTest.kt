@@ -5,8 +5,6 @@ import androidx.compose.ui.graphics.toArgb
 import com.asu1.quizzer.data.ColorSchemeSerializer.toColor
 import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
 import com.asu1.quizzer.data.ColorSerializer
-import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.generateUniqueId
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test

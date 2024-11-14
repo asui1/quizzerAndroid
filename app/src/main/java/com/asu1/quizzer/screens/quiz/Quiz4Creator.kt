@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -50,10 +48,7 @@ import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 
 @Composable
 fun Quiz4Creator(

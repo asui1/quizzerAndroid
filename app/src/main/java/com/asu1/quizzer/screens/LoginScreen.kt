@@ -40,7 +40,6 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption

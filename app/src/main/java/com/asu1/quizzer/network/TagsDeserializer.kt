@@ -1,7 +1,6 @@
 package com.asu1.quizzer.model
 
 import android.util.Base64
-import com.asu1.quizzer.util.Logger
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

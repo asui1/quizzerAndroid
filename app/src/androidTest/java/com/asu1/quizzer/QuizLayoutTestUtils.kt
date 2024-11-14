@@ -10,7 +10,6 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performGesture
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
@@ -25,9 +24,7 @@ import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
-import okhttp3.internal.wait
 import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {

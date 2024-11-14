@@ -531,41 +531,45 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
             ) {
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp).fillMaxWidth()
                 ) {
                     if(isUserLoggedIn) {
                         TextButton(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 navigateToMyQuizzes()
                                 closeDrawer()
                             },
-                        ) {
+                        )
+                        {
                             Text(
                                 "My Quizzes",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
                         TextButton(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {},
                         ) {
                             Text(
                                 "Profile",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 style = TextStyle(
                                     textDecoration = TextDecoration.LineThrough,
                                 )
                             )
                         }
                         TextButton(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {},
                         ) {
                             Text(
                                 "Settings",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 style = TextStyle(
                                     textDecoration = TextDecoration.LineThrough,
                                 )
@@ -573,26 +577,30 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         }
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    TextButton(onClick = {
-                        showInquiry = true
-                    },
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            showInquiry = true
+                        },
                     ) {
                         Text(
                             stringResource(R.string.inquiry),
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
                     if (isUserLoggedIn) {
-                        TextButton(onClick = {
-                            showSignOut = true
-                        },
+                        TextButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                showSignOut = true
+                            },
                         ) {
                             Text(
                                 stringResource(R.string.sign_out),
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }

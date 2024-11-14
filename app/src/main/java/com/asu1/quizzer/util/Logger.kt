@@ -12,7 +12,7 @@ class Logger {
 
     fun debug(input: String) {
         if (isDebug) {
-            Logger.getLogger(tag).info(input)
+            Logger.getLogger(tag).warning(input)
         }
     }
     fun printBackStack(navController: NavController) {

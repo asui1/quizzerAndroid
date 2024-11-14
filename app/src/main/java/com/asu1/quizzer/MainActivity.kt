@@ -7,19 +7,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Observer
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,10 +29,13 @@ import com.asu1.quizzer.screens.PrivacyPolicy
 import com.asu1.quizzer.screens.QuizBuilderScreen
 import com.asu1.quizzer.screens.QuizLayoutBuilderScreen
 import com.asu1.quizzer.screens.QuizSolver
+import com.asu1.quizzer.screens.ScoringScreen
 import com.asu1.quizzer.screens.SearchScreen
 import com.asu1.quizzer.screens.TagSetting
 import com.asu1.quizzer.screens.UsageAgreement
 import com.asu1.quizzer.screens.quiz.QuizCaller
+import com.asu1.quizzer.screens.quizlayout.LoadItems
+import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
@@ -46,21 +44,16 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
+import com.asu1.quizzer.util.fromRouteName
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.MainViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.RegisterViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import androidx.navigation.compose.composable
-import com.asu1.quizzer.data.loadQuizData
-import com.asu1.quizzer.screens.ScoringScreen
-import com.asu1.quizzer.screens.quizlayout.LoadItems
-import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
-import com.asu1.quizzer.util.fromRouteName
-import com.asu1.quizzer.viewModels.QuizLoadViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -231,7 +224,7 @@ class MainActivity : ComponentActivity() {
                                 QuizLayoutBuilderScreen(
                                     navController, quizLayoutViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(context = context)
+                                        quizLoadViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.LoadLocalQuiz
@@ -259,7 +252,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     scoreCardViewModel = scoreCardViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(context = context)
+                                        quizLoadViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.LoadLocalQuiz

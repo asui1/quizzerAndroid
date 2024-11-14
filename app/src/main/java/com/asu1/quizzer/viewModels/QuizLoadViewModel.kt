@@ -12,8 +12,6 @@ import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCards
-import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -113,14 +111,14 @@ class QuizLoadViewModel: ViewModel() {
         }
     }
 
-    fun loadLocalQuiz(context: Context) {
+    fun loadLocalQuiz(context: Context, email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val directory = context.filesDir
             Logger().debug(directory.toString())
             if (directory.exists() && directory.isDirectory) {
                 val files = directory.listFiles { _, name ->
                     Logger().debug(name)
-                    name.endsWith("_quizSave.json") }
+                    name.endsWith("${email}_quizSave.json") }
                 val loadedQuizzes = mutableListOf<QuizLayoutSerializer>()
                 files?.forEach { file ->
                     if (file.isFile) {

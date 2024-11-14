@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.asu1.quizzer.ui.theme.DarkColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
-import com.asu1.quizzer.util.Logger
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
