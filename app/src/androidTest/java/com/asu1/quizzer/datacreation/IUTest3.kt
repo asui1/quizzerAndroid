@@ -1,6 +1,5 @@
 package com.asu1.quizzer.datacreation
 
-import com.asu1.quizzer.R
 import com.asu1.quizzer.TestQuiz1
 import com.asu1.quizzer.TestQuiz2
 import com.asu1.quizzer.TestQuiz3
@@ -112,7 +111,7 @@ val iutestdata3 = allInOneForTest(
     title = "아이유에 퀴즈 심화편",
     description = "아이유의 팬 그리고 음악 활동에 대한 문제들입니다. 정말 어디까지 알고 있나요?",
     tags = setOf("아이유", "유애나", "가수", "앨범", "팬"),
-    titleImage = R.drawable.ai_iu3,
+    titleImage = com.asu1.quizzer.test.R.drawable.ai_iu3,
     colorInt = 3,
     quizzes = iuquizzes3,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
