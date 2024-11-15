@@ -8,6 +8,7 @@ import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
+import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.model.sampleQuiz3
@@ -23,15 +24,16 @@ fun QuizViewer(
     updateQuiz2: (LocalDate) -> Unit = {},
     updateQuiz3: (Int, Int) -> Unit = {_, _ ->},
     updateQuiz4: (Int, Int?) -> Unit = {_, _ ->},
+    quizStyleManager: TextStyleManager,
 ) {
     when(quiz){
         is Quiz1 -> {
             Quiz1Viewer(
                 quiz = quiz,
-                quizTheme = quizTheme,
                 toggleUserAnswer = {
                     updateQuiz1(it)
-                }
+                },
+                quizStyleManager = quizStyleManager
             )
         }
         is Quiz2 -> {
@@ -40,16 +42,17 @@ fun QuizViewer(
                 quizTheme = quizTheme,
                 onUserInput = {
                     updateQuiz2(it)
-                }
+                },
+                quizStyleManager = quizStyleManager
             )
         }
         is Quiz3 -> {
             Quiz3Viewer(
                 quiz = quiz,
-                quizTheme = quizTheme,
                 onUserInput = {first, second ->
                     updateQuiz3(first, second)
-                }
+                },
+                quizStyleManager = quizStyleManager
             )
         }
         is Quiz4 -> {
@@ -62,7 +65,8 @@ fun QuizViewer(
                 quizTheme = quizTheme,
                 onUserInput = {first, second ->
                     updateQuiz4(first, second)
-                }
+                },
+                quizStyleManager = quizStyleManager
             )
         }
     }
@@ -74,7 +78,8 @@ fun QuizViewer(
 @Composable
 fun ViewerPreviewQuiz1() {
     QuizViewer(
-        quiz = sampleQuiz1
+        quiz = sampleQuiz1,
+        quizStyleManager = TextStyleManager()
     )
 }
 
@@ -82,7 +87,8 @@ fun ViewerPreviewQuiz1() {
 @Composable
 fun ViewerPreviewQuiz2() {
     QuizViewer(
-        quiz = sampleQuiz2
+        quiz = sampleQuiz2,
+        quizStyleManager = TextStyleManager()
     )
 }
 
@@ -90,6 +96,7 @@ fun ViewerPreviewQuiz2() {
 @Composable
 fun ViewerPreviewQuiz3(){
     QuizViewer(
-        quiz = sampleQuiz3
+        quiz = sampleQuiz3,
+        quizStyleManager = TextStyleManager()
     )
 }

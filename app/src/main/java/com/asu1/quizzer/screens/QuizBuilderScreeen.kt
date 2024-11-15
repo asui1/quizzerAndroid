@@ -236,6 +236,7 @@ fun QuizBuilderScreen(navController: NavController,
                             QuizViewer(
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
+                                quizStyleManager = quizLayoutViewModel.getTextStyleManager(),
                             )
                         }
                         Spacer(modifier = Modifier.width(4.dp))

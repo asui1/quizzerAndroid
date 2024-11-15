@@ -88,7 +88,8 @@ fun QuizSolver(
                             },
                             updateQuiz4 = { first, second ->
                                 quizLayoutViewModel.updateQuiz4(it, first, second)
-                            }
+                            },
+                            quizStyleManager = quizLayoutViewModel.getTextStyleManager()
                         )
                         Text(
                             text = "${quizzes[it].point} points",

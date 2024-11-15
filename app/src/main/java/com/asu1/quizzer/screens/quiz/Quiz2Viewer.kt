@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.Quiz2
+import com.asu1.quizzer.model.TextStyleManager
+import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
@@ -26,6 +28,7 @@ fun Quiz2Viewer(
     quiz: Quiz2,
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (LocalDate) -> Unit = {},
+    quizStyleManager: TextStyleManager,
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAnswerDate.toTypedArray()) }
@@ -43,7 +46,7 @@ fun Quiz2Viewer(
             .padding(16.dp)
     ){
         item{
-            GetTextStyle(quiz.question, quizTheme.questionTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
@@ -62,11 +65,11 @@ fun Quiz2Viewer(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            GetTextStyle("Selected Answers", listOf(quizTheme.answerTextStyle[0], quizTheme.answerTextStyle[1], quizTheme.answerTextStyle[2], quizTheme.bodyTextStyle[3]), quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.ANSWER, "Selected Answers", modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(userAnswers.size){
-            GetTextStyle("${it+1}. " + userAnswers[it], quizTheme.answerTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.ANSWER, "${it+1}. " + userAnswers[it], modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -85,6 +88,8 @@ fun Quiz2ViewerPreview(){
 
     Quiz2Viewer(
         quiz = sampleQuiz2,
-        quizTheme = QuizTheme()
+        quizTheme = QuizTheme(),
+        onUserInput = { },
+        quizStyleManager = TextStyleManager()
     )
 }

@@ -2,6 +2,7 @@ package com.asu1.quizzer.viewModels
 
 import android.content.Context
 import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,6 +25,7 @@ import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
@@ -31,6 +33,7 @@ import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
+import com.asu1.quizzer.screens.quizlayout.outlines
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.withErrorColor
@@ -60,9 +63,9 @@ import java.util.Base64
 @Serializable
 data class QuizTheme(
     var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
-    var questionTextStyle: List<Int> = listOf(0, 0, 1, 0),
-    var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
-    var answerTextStyle: List<Int> = listOf(0, 0, 0, 2),
+    var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 2),
+    var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1, 0),
+    var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
     @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
 )
 
@@ -137,6 +140,25 @@ class QuizLayoutViewModel : ViewModel() {
 
     private val _quizResult = MutableStateFlow<QuizResult?>(null)
     val quizResult: StateFlow<QuizResult?> = _quizResult.asStateFlow()
+
+    private val textStyleManager = TextStyleManager()
+
+    init {
+        initTextStyleManager()
+    }
+
+    fun initTextStyleManager(){
+        textStyleManager.initTextStyleManager(
+            colorScheme = quizTheme.value.colorScheme,
+            questionStyle = quizTheme.value.questionTextStyle,
+            answerStyle = quizTheme.value.answerTextStyle,
+            bodyStyle = quizTheme.value.bodyTextStyle
+        )
+    }
+
+    fun getTextStyleManager(): TextStyleManager {
+        return textStyleManager
+    }
 
     fun loadQuizResult(resultId: String, scoreCardViewModel: ScoreCardViewModel){
         _viewModelState.value = ViewModelState.LOADING
@@ -262,6 +284,7 @@ class QuizLayoutViewModel : ViewModel() {
         _quizzes.value = quiz
         _quizTheme.value = quizTheme
         _step.postValue(LayoutSteps.THEME)
+        initTextStyleManager()
         loadDone()
     }
 
@@ -459,6 +482,7 @@ class QuizLayoutViewModel : ViewModel() {
             0 -> fonts.size
             1 -> colors.size
             2 -> borders.size
+            4 -> outlines.size
             else -> borders.size
         }
         return textStyle.toMutableList().apply {
@@ -484,6 +508,8 @@ class QuizLayoutViewModel : ViewModel() {
     fun updateAnswerTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.value = _quizTheme.value.copy(answerTextStyle = textStyleUpdater(_quizTheme.value.answerTextStyle, indexSelector, isIncrease))
     }
+
+
 
     fun updateCreator(creator: String) {
         _quizData.value = _quizData.value.copy(creator = creator)

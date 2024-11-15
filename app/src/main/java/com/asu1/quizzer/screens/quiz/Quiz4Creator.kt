@@ -168,7 +168,7 @@ fun Quiz4Creator(
                         moveOffset = moveOffset,
                         key = "QuizCreatorLeftDot$index"
                     )
-                    Spacer(modifier = Modifier.width(60.dp))
+                    Spacer(modifier = Modifier.width(30.dp))
                     DraggableDot(
                         setOffset = {offset ->
                             quiz.updateDotOffset(index, offset, false)
@@ -191,8 +191,8 @@ fun Quiz4Creator(
                             if(index == quizState.answers.size - 1) {
                                 focusManager.clearFocus()
                             } else {
-                                focusManager.moveFocus(FocusDirection.Down)
                                 focusManager.moveFocus(FocusDirection.Left)
+                                focusManager.moveFocus(FocusDirection.Down)
                             }
                         },
                         modifier = Modifier.weight(1f),

@@ -1,17 +1,6 @@
 package com.asu1.quizzer
 
-import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.model.BodyType
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.ui.theme.LightColorScheme
 import java.time.LocalDate
 import java.time.YearMonth
 import kotlin.random.Random
@@ -22,19 +11,64 @@ data class allInOneForTest(
     val tags: Set<String>,
     val titleImage: Int,
     val colorInt : Int,
-    val quizzes: List<Quiz>,
+    val quizzes: List<TestQuiz>,
     val bodyImages: List<Int>,
     val bodyYoutubeLinks: List<String> = listOf(),
     val questionTextStyle : List<Int> = listOf(0, 0, 0),
     val bodyTextStyle : List<Int> = listOf(0, 0, 0),
     val answerTextStyle : List<Int> = listOf(0, 0, 0),
+    val primaryColor: String = "",
+    val gradientColor1: String = "",
+    val gradientColor2: String = "",
+    val textColor: String = "",
 )
-val quiz1 = Quiz1(
-    point = 10,
-    bodyType = BodyType.TEXT,
-    bodyImage = byteArrayOf(),
-    bodyText = "FAKER IS GOD.",
-    shuffleAnswers = false,
+
+abstract class TestQuiz(
+    open val point: Int = 5,
+    open val bodyType: BodyType = BodyType.NONE,
+    open val bodyText: String = "",
+    open val question: String,
+)
+
+data class TestQuiz1(
+    val answers: MutableList<String>,
+    val ans: MutableList<Boolean>,
+    override val point: Int = 5,
+    override val bodyType: BodyType = BodyType.NONE,
+    override val bodyText: String = "",
+    override val question: String,
+) : TestQuiz(point, bodyType, bodyText, question)
+
+data class TestQuiz2(
+    val centerDate: YearMonth,
+    val answerDate: MutableSet<LocalDate>,
+    val answers: MutableList<LocalDate>,
+    override val point: Int = 5,
+    override val bodyType: BodyType = BodyType.NONE,
+    override val bodyText: String = "",
+    override val question: String,
+) : TestQuiz(point, bodyType, bodyText, question)
+
+data class TestQuiz3(
+    val answers: MutableList<String>,
+    override val point: Int = 5,
+    override val bodyType: BodyType = BodyType.NONE,
+    override val bodyText: String = "",
+    override val question: String,
+) : TestQuiz(point, bodyType, bodyText, question)
+
+data class TestQuiz4(
+    val connectionAnswers: MutableList<String>,
+    val connectionAnswerIndex: MutableList<Int>,
+    val answers: MutableList<String>,
+    override val point: Int = 5,
+    override val bodyType: BodyType = BodyType.NONE,
+    override val bodyText: String = "",
+    override val question: String,
+) : TestQuiz(point, bodyType, bodyText, question)
+
+val quiz1 = TestQuiz1(
+    point = 5,
     answers = mutableListOf(
         "오리아나",
         "니달리",
@@ -49,22 +83,21 @@ val quiz1 = Quiz1(
         false,
         false
     ),
+    bodyType = BodyType.TEXT,
+    bodyText = "FAKER IS GOD.",
     question = "페이커가 데뷔전 첫 킬을 딴 챔피언은?",
-    youtubeId = null.toString(),
-    youtubeStartTime = 0,
 )
-val quiz2 = Quiz2(
+
+
+val quiz2 = TestQuiz2(
     centerDate = YearMonth.of(1996, 5),
-    yearRange= 20,
     answerDate = mutableSetOf(
         LocalDate.of(1996, 5, 7),
     ),
-    maxAnswerSelection = 1,
     answers = mutableListOf(),
     question = "페이커의 생일은?"
-
 )
-val quiz3 = Quiz3(
+val quiz3 = TestQuiz3(
     answers= mutableListOf(
         "Team Liquid",
         "Gen. G",
@@ -76,8 +109,9 @@ val quiz3 = Quiz3(
     ),
     question = "2023년 월즈에서 T1이 상대한 팀 순서는?",
     bodyType = BodyType.IMAGE,
+    bodyText = "",
 )
-val quiz4 = Quiz4(
+val quiz4 = TestQuiz4(
     connectionAnswers = mutableListOf(
         "캡틴잭",
         "우지",

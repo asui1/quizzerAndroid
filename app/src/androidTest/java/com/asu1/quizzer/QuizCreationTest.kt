@@ -1,22 +1,20 @@
 package com.asu1.quizzer
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onIdle
+import com.asu1.quizzer.datacreation.fakertestData
+import com.asu1.quizzer.datacreation.iutestdata1
+import com.asu1.quizzer.datacreation.iutestdata2
+import com.asu1.quizzer.datacreation.iutestdata3
+import com.asu1.quizzer.datacreation.springTest
 import com.asu1.quizzer.model.BodyType
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
-import com.asu1.quizzer.viewModels.QuizData
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
-import kotlin.random.Random
 
 val primaryColors: List<String> = listOf(
     "FFBBDEFB", // Light Blue
@@ -88,6 +86,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
+        val testQuizData = springTest
 
         //Move to Create Quiz Layout
         testUtils.waitUntilTag("MainScreenCreateQuiz")
@@ -129,7 +128,7 @@ class MyComposeTest {
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color")
         val colorInt = testQuizData.colorInt
-        val primaryColor = primaryColors[colorInt]
+        val primaryColor = if(testQuizData.primaryColor == "") primaryColors[colorInt] else testQuizData.primaryColor
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimary Color", primaryColor, true)
         testUtils.waitFor(100)
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary Color", true)
@@ -152,16 +151,16 @@ class MyComposeTest {
         for(i in 0 until testQuizData.quizzes.size){
             val quiz = testQuizData.quizzes[i]
             when(quiz){
-                is Quiz1 -> {
+                is TestQuiz1 -> {
                     testUtils.addQuiz1(quiz, testQuizData.bodyYoutubeLinks[i])
                 }
-                is Quiz2 -> {
+                is TestQuiz2 -> {
                     testUtils.addQuiz2(quiz, activity)
                 }
-                is Quiz3 -> {
+                is TestQuiz3 -> {
                     testUtils.addQuiz3(quiz, testQuizData.bodyYoutubeLinks[i])
                 }
-                is Quiz4 -> {
+                is TestQuiz4 -> {
                     testUtils.addQuiz4(quiz, testQuizData.bodyYoutubeLinks[i])
                 }
             }
@@ -178,7 +177,8 @@ class MyComposeTest {
 
         testUtils.clickOnTag("DesignScoreCardSetTextColorButton")
         testUtils.waitFor(100)
-        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", textColors[colorInt], true)
+        val textColor = if(testQuizData.textColor == "") textColors[colorInt] else testQuizData.textColor
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", textColor, true)
         testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()
@@ -187,7 +187,8 @@ class MyComposeTest {
         onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor1Button")
         testUtils.waitFor(100)
-        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors1[colorInt], true)
+        val color1 = if(testQuizData.gradientColor1 == "") gradientColors1[colorInt] else testQuizData.gradientColor1
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", color1, true)
         testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()
@@ -196,7 +197,8 @@ class MyComposeTest {
         onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColor2Button")
         testUtils.waitFor(100)
-        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", gradientColors2[colorInt], true)
+        val color2 = if(testQuizData.gradientColor2 == "") gradientColors2[colorInt] else testQuizData.gradientColor2
+        testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", color2, true)
         testUtils.waitFor(100)
         Espresso.pressBack()
         onIdle()

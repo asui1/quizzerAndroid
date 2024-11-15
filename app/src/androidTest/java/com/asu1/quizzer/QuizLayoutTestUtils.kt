@@ -41,7 +41,7 @@ import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
-    fun addQuizInit(quiz: Quiz, quizType: Int, clickAddAnswerNTimes: Int = 0){
+    fun addQuizInit(quiz: TestQuiz, quizType: Int, clickAddAnswerNTimes: Int = 0){
         clickOnTag("QuizBuilderScreenAddQuizIconButton")
         clickOnTag("QuizBuilderScreenNewQuizDialogImage${quizType}", true)
         waitFor(200)
@@ -52,7 +52,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         replaceTextOnTag("QuizPointTextField", quiz.point.toString(), checkFocus = true)
     }
 
-    fun addQuizBody(quiz: Quiz, youtubeLink: String = ""){
+    fun addQuizBody(quiz: TestQuiz, youtubeLink: String = ""){
         if(quiz.bodyType == BodyType.NONE || quiz.bodyType == BodyType.IMAGE) return
         clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
         when(quiz.bodyType.value){
@@ -69,7 +69,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     // NEED CODE TO ADD BODY, ADD OR REMOVE ANSWERS
-    fun addQuiz1(quiz: Quiz1, youtubeLink: String = ""){
+    fun addQuiz1(quiz: TestQuiz1, youtubeLink: String = ""){
         val counts = quiz.answers.size - 5
         addQuizInit(quiz, 0, counts)
         addQuizBody(quiz, youtubeLink)
@@ -85,7 +85,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     // CURRENT CODE NEEDS answerDate to be on screen. No swiping around.
-    fun addQuiz2(quiz: Quiz2, activity: MainActivity){
+    fun addQuiz2(quiz: TestQuiz2, activity: MainActivity){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
         clickOnTag("YearMonthDropDownMonthText")
@@ -93,13 +93,14 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 //        YearMonthDropDownMonth1
         clickOnTag("YearMonthDropDownMonth${quiz.centerDate.monthValue}", useUnmergedTree = true)
         for(i in quiz.answerDate){
+            waitFor(100)
             clickOnTag(i.toString())
         }
         clickOnTag("QuizCreatorSaveButton")
         waitFor(1000)
     }
 
-    fun addQuiz3(quiz: Quiz3, youtubeLink: String = ""){
+    fun addQuiz3(quiz: TestQuiz3, youtubeLink: String = ""){
         val counts = quiz.answers.size - 5
         addQuizInit(quiz, 2, counts)
         addQuizBody(quiz, youtubeLink)
@@ -110,12 +111,12 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun addQuiz4(quiz: Quiz4, youtubeLink: String = ""){
+    fun addQuiz4(quiz: TestQuiz4, youtubeLink: String = ""){
         val counts = quiz.answers.size - 4
         addQuizInit(quiz, 3, counts)
         addQuizBody(quiz, youtubeLink)
         for(i in 0 until quiz.answers.size){
-            inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true)
+            inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
             if(i == quiz.answers.size - 1){
                 inputTextOnTag("QuizCreatorAnswerRightTextField${i}", quiz.connectionAnswers[i], checkFocus = true, withIme = true)
             }

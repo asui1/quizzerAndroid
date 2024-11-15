@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
+import com.asu1.quizzer.model.TextStyleManager
+import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.model.sampleQuiz4
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
@@ -35,6 +37,7 @@ fun Quiz4Viewer(
     quiz: Quiz4ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (Int, Int?) -> Unit = {_, _ -> },
+    quizStyleManager: TextStyleManager,
 ) {
     val quizState by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
@@ -63,18 +66,13 @@ fun Quiz4Viewer(
                 .padding(16.dp)
         ) {
             item {
-                GetTextStyle(
-                    quizState.question,
-                    quizTheme.questionTextStyle,
-                    quizTheme.colorScheme,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
                 BuildBody(
                     quizState = quizState,
-                    quizTheme = quizTheme
+                    quizStyleManager = quizStyleManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -83,12 +81,7 @@ fun Quiz4Viewer(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    GetTextStyle(
-                        quizState.answers[index],
-                        quizTheme.bodyTextStyle,
-                        quizTheme.colorScheme,
-                        modifier = Modifier.weight(1f)
-                    )
+                    quizStyleManager.GetTextComposable(TextStyles.ANSWER, quizState.answers[index], modifier = Modifier.weight(2f))
                     DraggableDot(
                         setOffset = {offset ->
                             quiz.updateDotOffset(index, offset, true)
@@ -134,12 +127,7 @@ fun Quiz4Viewer(
                         padding = paddingDp,
                         moveOffset = moveOffset,
                         )
-                    GetTextStyle(
-                        quizState.connectionAnswers[index],
-                        quizTheme.bodyTextStyle,
-                        quizTheme.colorScheme,
-                        modifier = Modifier.weight(1f)
-                    )
+                    quizStyleManager.GetTextComposable(TextStyles.ANSWER, quizState.connectionAnswers[index], modifier = Modifier.weight(2f))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -169,6 +157,9 @@ fun Quiz4ViewerPreview() {
     quiz4ViewModel.loadQuiz(sampleQuiz4)
 
     Quiz4Viewer(
-        quiz = quiz4ViewModel
+        quiz = quiz4ViewModel,
+        quizTheme = QuizTheme(),
+        onUserInput = {_, _ -> },
+        quizStyleManager = TextStyleManager()
     )
 }

@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.Quiz3
+import com.asu1.quizzer.model.TextStyleManager
+import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.model.sampleQuiz3
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
@@ -44,8 +46,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun Quiz3Viewer(
     quiz: Quiz3,
-    quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (Int, Int) -> Unit = {_, _ ->},
+    quizStyleManager: TextStyleManager,
 ) {
     val view = LocalView.current
     val quiz3List = remember { mutableStateListOf(*quiz.shuffledAnswers.toTypedArray()) }
@@ -69,24 +71,14 @@ fun Quiz3Viewer(
             .padding(16.dp)
     ) {
         item {
-            GetTextStyle(
-                quiz.question,
-                quizTheme.questionTextStyle,
-                quizTheme.colorScheme,
-                modifier = Modifier.fillMaxWidth()
-            )
+            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
                 quizState = quiz,
-                quizTheme = quizTheme
+                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            GetTextStyle(
-                quiz.shuffledAnswers[0],
-                quizTheme.answerTextStyle,
-                quizTheme.colorScheme,
-                modifier = Modifier.fillMaxWidth().padding(8.dp)
-            )
+            quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
         items(quiz3List.subList(1, quiz3List.size), key = { it }) {
             ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
@@ -117,7 +109,7 @@ fun Quiz3Viewer(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            GetTextStyle(item, quizTheme.answerTextStyle, quizTheme.colorScheme, modifier = Modifier.weight(1f).padding(8.dp))
+                            quizStyleManager.GetTextComposable(TextStyles.ANSWER, item, modifier = Modifier.weight(1f).padding(8.dp))
                             IconButton(
                                 modifier = Modifier.draggableHandle(
                                     onDragStarted = {
@@ -145,5 +137,8 @@ fun Quiz3ViewPreview() {
     val quiz3ViewModel: Quiz3ViewModel = viewModel()
     quiz3ViewModel.loadQuiz(sampleQuiz3)
 
-    Quiz3Viewer(quiz = sampleQuiz3)
+    Quiz3Viewer(quiz = sampleQuiz3,
+        onUserInput = { _, _ -> },
+        quizStyleManager = TextStyleManager()
+    )
 }

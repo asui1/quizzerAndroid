@@ -27,6 +27,8 @@ import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
+import com.asu1.quizzer.model.TextStyleManager
+import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
@@ -37,8 +39,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 @Composable
 fun Quiz1Viewer(
     quiz: Quiz1,
-    quizTheme: QuizTheme = QuizTheme(),
     toggleUserAnswer: (Int) -> Unit = {},
+    quizStyleManager: TextStyleManager,
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
@@ -51,13 +53,13 @@ fun Quiz1Viewer(
             .padding(16.dp)
     ){
         item{
-            GetTextStyle(quiz.question, quizTheme.questionTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         item{
             BuildBody(
                 quizState = quiz,
-                quizTheme = quizTheme
+                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -76,7 +78,7 @@ fun Quiz1Viewer(
                         toggleUserAnswer(index)
                     }
                 )
-                GetTextStyle(quiz.shuffledAnswers[index], quizTheme.answerTextStyle, quizTheme.colorScheme)
+                quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -86,13 +88,13 @@ fun Quiz1Viewer(
 @Composable
 fun BuildBody(
     quizState: Quiz,
-    quizTheme: QuizTheme = QuizTheme(),
+    quizStyleManager: TextStyleManager,
 ){
     val context = LocalContext.current
 
     when(quizState.bodyType){
         BodyType.NONE -> {}
-        BodyType.TEXT -> GetTextStyle(quizState.bodyText, quizTheme.bodyTextStyle, quizTheme.colorScheme, modifier = Modifier.fillMaxWidth())
+        BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizState.bodyText, modifier = Modifier.fillMaxWidth())
         BodyType.IMAGE -> {
             Image(
                 bitmap = BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap(),
@@ -124,6 +126,6 @@ fun Quiz1ViewerPreview()
 
     Quiz1Viewer(
         quiz = sampleQuiz1,
-        quizTheme = QuizTheme(),
+        quizStyleManager = TextStyleManager()
     )
 }

@@ -130,6 +130,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         if(step.ordinal < 6) {
             quizLayoutViewModel.updateStep(step + 1)
         } else {
+            quizLayoutViewModel.initTextStyleManager()
             NavMultiClickPreventer.navigate(navController, Route.QuizBuilder)
         }
     }
@@ -246,7 +247,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
                         },
                         colorScheme = quizTheme.colorScheme,
-                        proceed = {proceed()})
+                        proceed = {proceed()},
+                        )
                     // Set Text Setting
                 }
             }
