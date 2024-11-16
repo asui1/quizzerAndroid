@@ -118,9 +118,9 @@ fun MainScreen(
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
     val bottomBarSelection by quizCardMainViewModel.bottomBarSelection.observeAsState(0)
 
-    LaunchedEffect(Unit){
+//    LaunchedEffect(Unit){
 //        quizCardMainViewModel.fetchQuizCards("ko")
-    }
+//    }
 
     BackHandler {
         val currentTime = System.currentTimeMillis()
