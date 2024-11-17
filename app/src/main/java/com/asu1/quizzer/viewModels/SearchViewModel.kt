@@ -30,14 +30,16 @@ class SearchViewModel : ViewModel() {
                 Logger().debug("Search Response: $response")
                 if(response.isSuccessful){
                     Logger().debug("Search Response: ${response.body()}")
-                    val quizCards = response.body()?.quizCards
+                    val quizCards = response.body()?.searchResult
                     setSearchResult(quizCards!!)
                 }
                 else{
+                    Logger().debug("Search Response: ${response.errorBody()}")
                     _showToast.postValue("Search No Response")
                 }
             }
             catch (e: Exception){
+                Logger().debug("Search Response: $e")
                 _showToast.postValue("Search Failed")
             }
         }

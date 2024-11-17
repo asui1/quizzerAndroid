@@ -44,7 +44,7 @@ class QuizLoadViewModel: ViewModel() {
             try {
                 val response = RetrofitInstance.api.getMyQuiz(email)
                 if(response.isSuccessful){
-                    val quizCards = response.body()?.quizCards
+                    val quizCards = response.body()?.searchResult
                     if(quizCards != null){
                         _myQuizList.value = quizCards as MutableList<QuizCard>?
                     }

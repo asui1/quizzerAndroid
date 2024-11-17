@@ -108,7 +108,7 @@ val iuquizzes3 = listOf(
 )
 
 val iutestdata3 = allInOneForTest(
-    title = "아이유에 퀴즈 심화편",
+    title = "아이유 퀴즈 심화편",
     description = "아이유의 팬 그리고 음악 활동에 대한 문제들입니다. 정말 어디까지 알고 있나요?",
     tags = setOf("아이유", "유애나", "가수", "앨범", "팬"),
     titleImage = com.asu1.quizzer.test.R.drawable.ai_iu3,

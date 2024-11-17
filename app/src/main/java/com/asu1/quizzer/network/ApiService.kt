@@ -5,6 +5,7 @@ import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.model.QuizCardList
+import com.asu1.quizzer.model.RecommendationList
 import com.asu1.quizzer.model.Recommendations
 import com.asu1.quizzer.model.UserInfo
 import com.asu1.quizzer.model.UserRegister
@@ -21,8 +22,9 @@ interface ApiService {
     @GET("version")
     suspend fun getVersion(): Response<VersionResponse>
 
+    @UseKotlinxSerialization
     @GET("recommendations")
-    suspend fun getRecommendations(@Query("language") language: String): Response<Recommendations>
+    suspend fun getRecommendations(@Query("language") language: String, @Query("email") email: String): Response<RecommendationList>
 
     @GET("login")
     suspend fun login(@Query("email") email: String): Response<UserInfo>
@@ -39,9 +41,11 @@ interface ApiService {
     @POST("register")
     suspend fun register(@Body userInfo: UserRegister): Response<Void>
 
+    @UseKotlinxSerialization
     @GET("searchQuiz")
     suspend fun searchQuiz(@Query("search") search: String): Response<QuizCardList>
 
+    @UseKotlinxSerialization
     @GET("myQuiz")
     suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
 

@@ -2,13 +2,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ContextualFlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,10 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,8 +40,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -41,10 +53,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizzer.composables.HorizontalPagerIndicator
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
@@ -75,7 +89,7 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
         modifier = Modifier
             .width(166.dp)
             .wrapContentHeight()
-            .padding(8.dp)
+            .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
@@ -95,10 +109,10 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
             }
             Text(
                 text = quizCard.title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
+                minLines = 2,
+                maxLines = 2,
             )
             Text(
                 text = quizCard.creator,
@@ -113,34 +127,40 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
 
 @Composable
 fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
-    val listState = rememberLazyListState()
-    val currentIndex = remember { mutableStateOf(0) }
-    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
-            .collect { visibleItems ->
-                if (visibleItems.isNotEmpty()) {
-                    val middleIndex = visibleItems.size / 2
-                    currentIndex.value = visibleItems[middleIndex].index
+    val listState = rememberPagerState(
+        initialPage = 0,
+    ){
+        quizCards.size
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+            .wrapContentHeight()
+    ){
+        HorizontalPager(
+            pageSize = object : PageSize {
+                override fun Density.calculateMainAxisPageSize(
+                    availableSpace: Int,
+                    pageSpacing: Int
+                ): Int {
+                    return ((availableSpace - 2 * pageSpacing) * 0.95f).toInt()
                 }
-            }
-    }
-
-    LaunchedEffect(currentIndex.value) {
-        coroutineScope.launch {
-            listState.animateScrollToItem(currentIndex.value)
+            },
+            pageSpacing = 4.dp,
+            state = listState,
+            modifier = Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+        ) { page ->
+            QuizCardLarge(quizCards[page], onClick)
         }
-    }
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
-        state = listState
-    ) {
-        items(quizCards) { quizCard ->
-            QuizCardLarge(quizCard, onClick)
-        }
+        HorizontalPagerIndicator(
+            pageCount = quizCards.size,
+            currentPage = listState.currentPage,
+            targetPage = listState.targetPage,
+            currentPageOffsetFraction = listState.currentPageOffsetFraction
+        )
     }
 }
 
@@ -156,20 +176,21 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
     } ?: loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
     }
+    val minSize = minOf(screenWidth, screenHeight).times(0.5f)
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
             .wrapContentHeight()
-            .width(screenWidth)
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             imageBitmap.let {
                 Box(
                     modifier = Modifier
-                        .size(minOf(screenWidth, screenHeight).times(0.6f)) // Square shape
+                        .size(minSize) // Square shape
                         .clip(RoundedCornerShape(8.dp))
                 ) {
                     Image(
@@ -180,8 +201,9 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(8.dp))
             Column(modifier = Modifier
-                .padding(8.dp),
+                .height(minSize),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -201,8 +223,9 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                 ContextualFlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                    maxLines = 3,
+                        .height(32.dp)
+                        .padding(horizontal = 4.dp),
+                    maxLines = 2,
                     itemCount = 1,
                 ) {
                     quizCard.tags.forEach { tag ->
@@ -217,9 +240,11 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                 Text(
                     text = quizCard.description,
                     style = MaterialTheme.typography.bodySmall,
-                    minLines = 7,
-                    maxLines = 7,
+                    minLines = 6,
+                    maxLines = 6,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "Solved: ${quizCard.count}",
                     style = MaterialTheme.typography.bodySmall
@@ -256,7 +281,8 @@ fun QuizCardLargePreview() {
         tags = listOf("tag1", "tag1", "tag2", "tag2"),
         creator = "Creator",
         image = imageByte,
-        count = 0
+        count = 0,
+        description = "This is Example of a long description for the quiz card. This is Example of a long description for the quiz card. This is Example of a long description for the quiz card. This is Example of a long description for the quiz card."
     )
     HorizontalQuizCardItemLarge(quizCards = listOf(quizCard, quizCard, quizCard))
 }
@@ -276,6 +302,7 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
         }else{
             BitmapFactory.decodeByteArray(quizCard.image, 0, quizCard.image.size).asImageBitmap()
         }
+    val minSize = minOf(screenWidth, screenHeight).times(0.35f)
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -289,7 +316,7 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
             imageBitmap.let {
                 Box(
                     modifier = Modifier
-                        .size(minOf(screenWidth, screenHeight).times(0.35f)) // Square shape
+                        .size(minSize) // Square shape
                         .clip(RoundedCornerShape(8.dp))
                 ) {
                     Image(
@@ -301,25 +328,28 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                 }
             }
             Column(modifier = Modifier
-                .padding(8.dp),
-                verticalArrangement = Arrangement.Center
+                .height(minSize)
+                .padding(horizontal = 8.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = quizCard.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    maxLines = 1,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = quizCard.creator,
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 ContextualFlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(horizontal = 4.dp)
                         .height(32.dp),
                     maxLines = 2,
                     itemCount = 1,
@@ -333,6 +363,8 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "Solved: ${quizCard.count}",
                     style = MaterialTheme.typography.bodySmall
@@ -363,7 +395,7 @@ fun QuizCardHorizontalPreview() {
     val imageByte = loadImageAsByteArray(context, R.drawable.question2)
     val quizCard = QuizCard(
         id = "1",
-        title = "Quiz 1",
+        title = "Quiz 11111111111111111111111111111111111111111111111 Long Quiz",
         tags = listOf("tag1", "tag2", "tag2"),
         creator = "Creator",
         image = imageByte,

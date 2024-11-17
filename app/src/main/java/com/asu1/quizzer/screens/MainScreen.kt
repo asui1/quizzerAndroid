@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -55,6 +57,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -108,6 +111,7 @@ fun MainScreen(
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
     testPress: () -> Unit = {},
+    loadQuiz: (String) -> Unit = { },
 ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -117,22 +121,17 @@ fun MainScreen(
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
     val bottomBarSelection by quizCardMainViewModel.bottomBarSelection.observeAsState(0)
-
-//    LaunchedEffect(Unit){
-//        quizCardMainViewModel.fetchQuizCards("ko")
-//    }
+    val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
 
     BackHandler {
         val currentTime = System.currentTimeMillis()
         val toast = Toast.makeText(context, "Press back again to exit", Toast.LENGTH_LONG)
         if (currentTime - backPressedTime < 3000) {
-            // Terminate the app
             toast.cancel()
             (context as? Activity)?.finish()
         } else {
             backPressedTime = currentTime
             toast.show()
-
             scope.launch {
                 delay(3000)
                 toast.cancel()
@@ -171,34 +170,20 @@ fun MainScreen(
                                 testPress = testPress)
                         },
                         content = { paddingValues ->
-                            LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                                item {
-                                    Text(
-                                        text = quizCards.quizCards1.tag,
-                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                        style = MaterialTheme.typography.headlineMedium
-                                    )
-                                    HorizontalQuizCardItemLarge(quizCards = quizCards.quizCards1.quizCards)
-                                }
-                                item {
-                                    Text(
-                                        text = quizCards.quizCards2.tag,
-                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                        style = MaterialTheme.typography.headlineMedium
-                                    )
-                                    HorizontalQuizCardItemVertical(quizCards = quizCards.quizCards2.quizCards)
-                                }
-                                item {
-                                    Text(
-                                        text = quizCards.quizCards3.tag,
-                                        modifier = Modifier.padding(start = 16.dp, top= 8.dp),
-                                        style = MaterialTheme.typography.headlineMedium
-                                    )
-                                    HorizontalQuizCardItemVertical(quizCards = quizCards.quizCards3.quizCards)
-                                }
-                                item{
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    PrivacyPolicyRow(navController)
+                            Box(modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)) {
+                                when (selectedTab) {
+                                    0 -> {
+                                        HomeScreen(
+                                            modifier = Modifier.padding(paddingValues),
+                                            quizCards = quizCards,
+                                            loadQuiz = loadQuiz,
+                                            navController = navController,
+                                        )
+                                    }
+                                    1 -> {}
+                                    2 -> {}
                                 }
                             }
                         }
@@ -214,6 +199,12 @@ fun MainScreen(
 fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?) {
     val scope = rememberCoroutineScope()
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
         title = { Text("Quizzer") },
         navigationIcon = {
             IconButton(onClick = {  }) {
@@ -287,7 +278,9 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 }
                 IconButton(
                     onClick = { navigateToQuizLayoutBuilder() },
-                    modifier = Modifier.weight(1.5f).testTag("MainScreenCreateQuiz"),
+                    modifier = Modifier
+                        .weight(1.5f)
+                        .testTag("MainScreenCreateQuiz"),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -332,29 +325,6 @@ fun moveToSearchActivity(navController: NavController, searchText: String = "") 
     NavMultiClickPreventer.navigate(navController, Route.Search(searchText))
 }
 
-@Composable
-fun PrivacyPolicyRow(navController: NavController) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextButton(onClick = {
-            NavMultiClickPreventer.navigate(navController, Route.PrivacyPolicy)
-        }) {
-            Text(stringResource(R.string.privacy_policy))
-        }
-        Text(
-            text = stringResource(R.string.contact) + ": whwkd122@gmail.com",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 16.dp),
-        )
-    }
-}
 
 @Composable
 fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
@@ -534,7 +504,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
             ) {
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.padding(16.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
                 ) {
                     if(isUserLoggedIn) {
                         TextButton(
@@ -548,7 +520,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             Text(
                                 "My Quizzes",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
@@ -559,7 +533,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             Text(
                                 "Profile",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
                                 style = TextStyle(
                                     textDecoration = TextDecoration.LineThrough,
                                 )
@@ -572,7 +548,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             Text(
                                 "Settings",
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
                                 style = TextStyle(
                                     textDecoration = TextDecoration.LineThrough,
                                 )
@@ -589,7 +567,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         Text(
                             stringResource(R.string.inquiry),
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
@@ -603,7 +583,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             Text(
                                 stringResource(R.string.sign_out),
                                 textAlign = TextAlign.Start,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }

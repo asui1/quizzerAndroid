@@ -180,7 +180,7 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
         Column(
             modifier = Modifier.weight(1f),
         ){
-            Text(text = "Month: ${yearMonth.month}",
+            Text(text = "Month: ${yearMonth.monthValue}",
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
@@ -265,7 +265,7 @@ fun CalendarWithFocusDates(
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Text(text = month.yearMonth.year.toString() + ",  " + month.yearMonth.month.name)
+                    Text(text = month.yearMonth.year.toString() + "  /  " + month.yearMonth.monthValue)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(){

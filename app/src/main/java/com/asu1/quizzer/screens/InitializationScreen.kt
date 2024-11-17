@@ -18,7 +18,9 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
-fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel()) {
+fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel(),
+                         navigateToHome: () -> Unit = {},
+                         ) {
     val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState()
     val hasCheckedUpdate = remember { mutableStateOf(false) }
 
@@ -35,11 +37,7 @@ fun InitializationScreen(navHostController: NavHostController, initViewModel: Ma
             onCancel = { initViewModel.finishApp() },
         )
         else -> {
-            NavMultiClickPreventer.navigate(navHostController,Route.Home) {
-                popUpTo(navHostController.graph.startDestinationId) {
-                    inclusive = true
-                }
-            }
+            navigateToHome()
         }
     }
 }

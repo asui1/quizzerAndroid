@@ -54,6 +54,7 @@ import com.asu1.quizzer.viewModels.RegisterViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
@@ -112,6 +113,17 @@ class MainActivity : ComponentActivity() {
                                     }
                                 })
                         }
+                        fun getHome(){
+                            NavMultiClickPreventer.navigate(
+                                navController,
+                                Route.Home
+                            ){
+                                val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
+                                quizCardMainViewModel.fetchQuizCards(lang, userViewModel.userData.value?.email ?: "GUEST")
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -119,7 +131,10 @@ class MainActivity : ComponentActivity() {
                             composable<Route.Init> {
                                 InitializationScreen(
                                     navController,
-                                    initViewModel = mainViewModel
+                                    initViewModel = mainViewModel,
+                                    navigateToHome = {
+                                        getHome()
+                                    }
                                 )
                             }
                             composable<Route.Home> {
@@ -161,6 +176,7 @@ class MainActivity : ComponentActivity() {
                                     testPress = {
                                         getQuizResult()
                                     },
+                                    loadQuiz ={loadQuiz(it)},
                                 )
                             }
                             composable<Route.Search>(

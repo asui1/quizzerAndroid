@@ -1,9 +1,12 @@
 package com.asu1.quizzer.model
 
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 
+@Serializable(with = KQuizCardDeserializer::class)
 data class QuizCard(
     @SerializedName("id")
     val id: String,

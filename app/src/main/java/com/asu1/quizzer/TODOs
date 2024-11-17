@@ -5,8 +5,12 @@ First aim to make app launchable without some features that are not essential.
 NEED FULL TEST WITH TITLE IMAGE, BODY FOR ALL QUIZZES
 This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
 
-- Implement Quiz Trends. Recommend top 30 quizzes with most recent solves.
-- Implement stats to check how many quizzes are solved by user.
+Home: Name, QuizCardList를 받는 형식으로 변경.
+
+Trends: from 6am ~ next day 6am, get top 20 QuizCardList with most solves.
+
+Stats: For this week, get to 20 users with most solves. If solve is same, then order by average score.
+To do this, need data of: User nickname, User profile image, User total solves, User average score.
 
 - Need Custom Toast message to beautify current default toast messages.
 

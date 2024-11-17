@@ -1,22 +1,19 @@
 package com.asu1.quizzer.model
 
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
-data class Recommendations(
-    @JsonAdapter(QuizCardListDeserializer::class)
-    @SerializedName("most_viewed")
-    val mostViewed: List<QuizCard>,
-    @JsonAdapter(QuizCardListDeserializer::class)
-    @SerializedName("similar_items")
-    val similarItems: List<QuizCard>,
-    @JsonAdapter(QuizCardListDeserializer::class)
-    @SerializedName("most_recent_items")
-    val recentItems: List<QuizCard>
+@Serializable
+data class RecommendationList(
+    val searchResult: List<Recommendations>
 )
 
+@Serializable
+data class Recommendations(
+    val key: String,
+    val items: List<QuizCard>
+)
+
+@Serializable
 data class QuizCardList(
-    @JsonAdapter(QuizCardListDeserializer::class)
-    @SerializedName("searchResult")
-    val quizCards: List<QuizCard>
+    val searchResult: List<QuizCard>
 )
