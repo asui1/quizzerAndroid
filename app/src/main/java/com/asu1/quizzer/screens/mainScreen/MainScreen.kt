@@ -1,7 +1,5 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
-import HorizontalQuizCardItemLarge
-import HorizontalQuizCardItemVertical
 import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -10,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,9 +19,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -64,14 +60,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -83,6 +80,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -117,11 +115,17 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val quizCards by quizCardMainViewModel.quizCards.collectAsState()
+    val quizTrends by quizCardMainViewModel.quizTrends.collectAsState()
+    val userRanks by quizCardMainViewModel.userRanks.collectAsState()
     var backPressedTime by remember { mutableStateOf(0L) }
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
-    val bottomBarSelection by quizCardMainViewModel.bottomBarSelection.observeAsState(0)
     val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
+
+    fun updateSelectedTab(index: Int) {
+        setSelectedTab(index)
+        quizCardMainViewModel.tryUpdate(index)
+    }
 
     BackHandler {
         val currentTime = System.currentTimeMillis()
@@ -165,9 +169,9 @@ fun MainScreen(
                                 { openDrawer() }, isUserLoggedIn, userData)
                         },
                         bottomBar = {
-                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = bottomBarSelection,
+                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = selectedTab,
                                 navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
-                                testPress = testPress)
+                                setSelectedTab = setSelectedTab)
                         },
                         content = { paddingValues ->
                             Box(modifier = Modifier
@@ -176,14 +180,22 @@ fun MainScreen(
                                 when (selectedTab) {
                                     0 -> {
                                         HomeScreen(
-                                            modifier = Modifier.padding(paddingValues),
                                             quizCards = quizCards,
                                             loadQuiz = loadQuiz,
                                             navController = navController,
                                         )
                                     }
-                                    1 -> {}
-                                    2 -> {}
+                                    1 -> {
+                                        QuizTrendScreen(
+                                            quizTrends = quizTrends,
+                                            loadQuiz = loadQuiz,
+                                        )
+                                    }
+                                    2 -> {
+                                        UserRankScreen(
+                                            userRanks = userRanks,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -247,7 +259,7 @@ fun MainActivityTopbarPreview(){
 @Composable
 fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,
                           navigateToQuizLayoutBuilder: () -> Unit = {},
-                          testPress: () -> Unit = {}) {
+                          setSelectedTab: (Int) -> Unit = {}) {
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -257,7 +269,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(
-                    onClick = { /* Handle Home click */ },
+                    onClick = { setSelectedTab(0) },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
@@ -267,7 +279,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 }
                 IconButton(
                     onClick = {
-                        testPress()
+                        setSelectedTab(1)
                     },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
@@ -288,7 +300,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                     Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Quiz", modifier = Modifier.size(1.5f * defaultIconSize))
                 }
                 IconButton(
-                    onClick = { /* Handle Stats click */ },
+                    onClick = { setSelectedTab(2) },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
@@ -335,14 +347,7 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
     if (isUserLoggedIn) {
         if(urlToImage != null) {
             IconButton(onClick = onClick) {
-                Box(modifier = Modifier.size(iconSize)) {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = urlToImage),
-                        contentDescription = "User Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                UriImageButton(modifier = Modifier.size(iconSize).clip(shape = RoundedCornerShape(8.dp)), urlToImage)
             }
         } else {
             IconButton(onClick = onClick) {
@@ -362,6 +367,21 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
             )
         }
 
+    }
+}
+
+@Composable
+fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String) {
+    Box(modifier = modifier) {
+        Image(
+            painter = rememberAsyncImagePainter(
+                model = urlToImage,
+                error = rememberVectorPainter(image = Icons.Default.Person)
+            ),
+            contentDescription = "User Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
@@ -766,19 +786,6 @@ fun InquiryBottomSheetContent(
 }
 
 val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
-
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    val navController = rememberNavController()
-    QuizzerAndroidTheme {
-        MainScreen(
-            navController,
-            loginActivityState = getLoginActivityState(),
-        )
-    }
-}
 
 @Preview
 @Composable

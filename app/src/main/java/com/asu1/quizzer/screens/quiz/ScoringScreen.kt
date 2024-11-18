@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +32,7 @@ import com.asu1.quizzer.composables.ScoreCardComposable
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
+import com.asu1.quizzer.screens.quizlayout.RowWithShares
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route

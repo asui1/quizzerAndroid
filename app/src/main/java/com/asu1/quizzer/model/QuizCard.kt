@@ -1,8 +1,12 @@
 package com.asu1.quizzer.model
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import com.asu1.quizzer.R
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
+import loadImageAsByteArray
 import java.util.UUID
 
 
@@ -54,4 +58,19 @@ data class QuizCard(
         result = 31 * result + count
         return result
     }
+}
+
+@Composable
+fun getSampleQuizCard(): QuizCard {
+    val context = LocalContext.current
+    val imageByte = loadImageAsByteArray(context, R.drawable.question2)
+    return QuizCard(
+        id = "1",
+        title = "11Quiz 1. Sample of Quiz Cards. Can you solve this? This will go over 2 lines.",
+        tags = listOf("tag1", "tag2"),
+        creator = "Creator",
+        image = imageByte,
+        count = 3,
+        description = "This is a sample quiz card. Please check how this is shown on screen."
+    )
 }

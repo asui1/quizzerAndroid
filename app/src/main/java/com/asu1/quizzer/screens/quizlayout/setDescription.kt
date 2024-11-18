@@ -33,6 +33,7 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = quizDescription)) }
+    val sizeLimit = 200
 
     Column(
         modifier = Modifier
@@ -47,8 +48,10 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
         TextField(
             value = textFieldValue,
             onValueChange = {
-                textFieldValue = it
-                onDescriptionChange(it.text)
+                if (it.text.length <= sizeLimit) {
+                    textFieldValue = it
+                    onDescriptionChange(it.text)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,6 +67,7 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
             ),
             minLines = 3,
             maxLines = 7,
+            supportingText = { Text(text = "Length: ${textFieldValue.text.length}/$sizeLimit") }
         )
     }
 

@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.quizlayout
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -48,12 +48,6 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.RowWithAppIconAndName
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetColorScheme
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetDescription
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTags
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTextStyle
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutSetTitleImage
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutTitle
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route

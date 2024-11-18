@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

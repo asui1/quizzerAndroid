@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
 import android.content.Context
 import android.content.Intent
@@ -13,8 +13,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.composables.LoadComposable
 import com.asu1.quizzer.composables.UpdateDialog
-import com.asu1.quizzer.util.NavMultiClickPreventer
-import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable

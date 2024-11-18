@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.quizlayout
 
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts

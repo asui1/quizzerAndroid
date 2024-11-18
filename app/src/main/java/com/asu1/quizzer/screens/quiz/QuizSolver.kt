@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.model.asBackgroundModifier
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
-import com.asu1.quizzer.screens.quiz.QuizViewer
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 

@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,7 +59,6 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
-import com.asu1.quizzer.screens.quiz.QuizViewer
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route

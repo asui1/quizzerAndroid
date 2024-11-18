@@ -17,3 +17,8 @@ data class Recommendations(
 data class QuizCardList(
     val searchResult: List<QuizCard>
 )
+
+@Serializable
+data class UserRankList(
+    val searchResult: List<UserRank>
+)

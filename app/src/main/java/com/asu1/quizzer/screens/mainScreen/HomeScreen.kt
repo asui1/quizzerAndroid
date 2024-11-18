@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
 import HorizontalQuizCardItemLarge
 import HorizontalQuizCardItemVertical
@@ -17,15 +17,20 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
+import loadImageAsByteArray
 
 @Composable
 fun HomeScreen(
@@ -65,6 +70,22 @@ fun HomeScreen(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview(){
+    val quizCard = getSampleQuizCard()
+
+    val quizCardsWithTag = QuizCardsWithTag(
+        tag = "tag1",
+        quizCards = listOf(quizCard, quizCard, quizCard, quizCard, quizCard)
+    )
+    HomeScreen(
+        quizCards = listOf(quizCardsWithTag, quizCardsWithTag, quizCardsWithTag),
+        loadQuiz = {},
+        navController = rememberNavController()
+    )
+}
+
 @Composable
 fun PrivacyPolicyRow(navController: NavController) {
 
@@ -87,4 +108,11 @@ fun PrivacyPolicyRow(navController: NavController) {
             modifier = Modifier.padding(start = 16.dp),
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PrivacyPolicyRowPreview() {
+    val navController = rememberNavController()
+    PrivacyPolicyRow(navController)
 }

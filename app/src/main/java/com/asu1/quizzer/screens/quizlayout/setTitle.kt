@@ -32,6 +32,7 @@ fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, pr
 ) {
     val focusRequester = remember{ FocusRequester() }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = title)) }
+    val sizeLimit = 50
 
     Column(
         modifier = Modifier
@@ -46,8 +47,10 @@ fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, pr
         TextField(
             value = textFieldValue,
             onValueChange = {
-                textFieldValue = it
-                onTitleChange(it.text)
+                if (it.text.length <= sizeLimit) {
+                    textFieldValue = it
+                    onTitleChange(it.text)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -58,9 +61,12 @@ fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, pr
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
-                    proceed()
+                    if(textFieldValue.text.isNotBlank()) {
+                        proceed()
+                    }
                 }
-            )
+            ),
+            supportingText = { Text(text = "Length: ${textFieldValue.text.length}/$sizeLimit") }
         )
     }
 

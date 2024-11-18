@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
 import QuizCardHorizontalList
 import androidx.compose.foundation.border
@@ -51,6 +51,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.SearchViewModel
 import loadImageAsByteArray
@@ -122,17 +123,8 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
 @Preview
 @Composable
 fun PreviewSearchScreen(){
-    val context = LocalContext.current
-    val imageByte = loadImageAsByteArray(context, R.drawable.question2)
     val searchViewModel: SearchViewModel = viewModel()
-    val quizCard = QuizCard(
-        id = "1",
-        title = "Quiz 1",
-        tags = listOf("tag1", "tag2"),
-        creator = "Creator",
-        image = imageByte,
-        count = 0
-    )
+    val quizCard = getSampleQuizCard()
     searchViewModel.setSearchResult(
         listOf(quizCard, quizCard, quizCard, quizCard, quizCard)
     )

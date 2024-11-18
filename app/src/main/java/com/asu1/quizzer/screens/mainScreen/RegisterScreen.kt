@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens
+package com.asu1.quizzer.screens.mainScreen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box

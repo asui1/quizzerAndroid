@@ -8,6 +8,7 @@ import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.RecommendationList
 import com.asu1.quizzer.model.Recommendations
 import com.asu1.quizzer.model.UserInfo
+import com.asu1.quizzer.model.UserRankList
 import com.asu1.quizzer.model.UserRegister
 import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.model.VersionResponse
@@ -67,4 +68,13 @@ interface ApiService {
     @UseKotlinxSerialization
     @GET("result")
     suspend fun getResult(@Query("resultId") resultId: String): Response<GetQuizResult>
+
+    @UseKotlinxSerialization
+    @GET("trends")
+    suspend fun getTrends(@Query("language") language: String): Response<QuizCardList>
+
+    @UseKotlinxSerialization
+    @GET("ranks")
+    suspend fun getUserRanks(): Response<UserRankList>
+
 }
