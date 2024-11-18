@@ -173,9 +173,6 @@ class MainActivity : ComponentActivity() {
                                             Route.LoadUserQuiz
                                         )
                                     },
-                                    testPress = {
-                                        getQuizResult()
-                                    },
                                     loadQuiz ={loadQuiz(it)},
                                 )
                             }

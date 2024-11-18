@@ -99,6 +99,7 @@ import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun MainScreen(
@@ -108,7 +109,6 @@ fun MainScreen(
     loginActivityState: LoginActivityState,
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
-    testPress: () -> Unit = {},
     loadQuiz: (String) -> Unit = { },
 ) {
     val context = LocalContext.current
@@ -121,10 +121,11 @@ fun MainScreen(
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
     val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
+    val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
 
     fun updateSelectedTab(index: Int) {
         setSelectedTab(index)
-        quizCardMainViewModel.tryUpdate(index)
+        quizCardMainViewModel.tryUpdate(index, language = lang)
     }
 
     BackHandler {
@@ -171,7 +172,7 @@ fun MainScreen(
                         bottomBar = {
                             MainActivityBottomBar({openDrawer()}, bottomBarSelection = selectedTab,
                                 navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
-                                setSelectedTab = setSelectedTab)
+                                setSelectedTab ={updateSelectedTab(it)})
                         },
                         content = { paddingValues ->
                             Box(modifier = Modifier

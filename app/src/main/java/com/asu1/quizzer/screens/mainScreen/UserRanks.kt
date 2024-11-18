@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.composables.UserRankComposableList
 import com.asu1.quizzer.model.UserRank
+import com.asu1.quizzer.model.userRankSample
 
 @Composable
 fun UserRankScreen(
@@ -22,12 +23,7 @@ fun UserRankScreen(
 @Preview(showBackground = true)
 @Composable
 fun UserRankScreenPreview() {
-    val userRank = UserRank(
-        "Nickname",
-        "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c",
-        342.3f,
-        5,
-    )
+    val userRank = userRankSample
     val userRanks = mutableListOf<UserRank>()
     for (i in 1..20) {
         userRanks.add(

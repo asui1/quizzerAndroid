@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +45,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.UserRank
+import com.asu1.quizzer.model.userRankSample
 import com.asu1.quizzer.screens.mainScreen.UriImageButton
+import com.asu1.quizzer.util.Logger
 import java.util.Locale
 import kotlin.math.round
 
@@ -64,6 +67,7 @@ fun UserRankComposable(
         3 -> Color(0xFFCE8946)
         else -> Color.Transparent
     }
+    Logger().debug(userRank.profileImageUri)
     val score = String.format(Locale.US, "%.1f", round(userRank.totalScore * 10) / 10)
     val average = String.format(Locale.US, "%.1f", round(userRank.totalScore / userRank.quizzesSolved * 10) / 10)
     Card(
@@ -102,6 +106,20 @@ fun UserRankComposable(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
+                    text = "Points: ${userRank.orderScore}",
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Average: $average",
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
                     text = "Total Score: $score",
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
@@ -110,13 +128,6 @@ fun UserRankComposable(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Solved Quizzes: ${userRank.quizzesSolved}",
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Average: $average",
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -133,6 +144,7 @@ fun UserRankComposableList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
+        contentPadding = PaddingValues(4.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         items(userRanks.size){index ->
@@ -148,12 +160,7 @@ fun UserRankComposableList(
 @Preview(showBackground = true)
 @Composable
 fun UserRankComposablePreview() {
-    val userRank = UserRank(
-        "John Doe",
-        "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c",
-        342.3f,
-        5,
-    )
+    val userRank = userRankSample
     UserRankComposableList(
         listOf(userRank, userRank, userRank, userRank, userRank)
     )
