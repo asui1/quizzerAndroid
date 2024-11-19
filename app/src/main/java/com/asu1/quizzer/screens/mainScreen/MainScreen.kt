@@ -31,6 +31,12 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Face2
+import androidx.compose.material.icons.filled.Face3
+import androidx.compose.material.icons.filled.Face4
+import androidx.compose.material.icons.filled.Face5
+import androidx.compose.material.icons.filled.Face6
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -100,6 +106,7 @@ import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
+import kotlin.random.Random
 
 @Composable
 fun MainScreen(
@@ -110,6 +117,7 @@ fun MainScreen(
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
     loadQuiz: (String) -> Unit = { },
+    moveHome: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -167,7 +175,8 @@ fun MainScreen(
                     Scaffold(
                         topBar = {
                             MainActivityTopbar(navController,
-                                { openDrawer() }, isUserLoggedIn, userData)
+                                { openDrawer() }, isUserLoggedIn, userData,
+                                resetHome = moveHome)
                         },
                         bottomBar = {
                             MainActivityBottomBar({openDrawer()}, bottomBarSelection = selectedTab,
@@ -209,7 +218,8 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?) {
+fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?,
+                       resetHome: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -220,7 +230,7 @@ fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}
         ),
         title = { Text("Quizzer") },
         navigationIcon = {
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {  resetHome()}) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = "App Icon"
@@ -373,11 +383,21 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
 
 @Composable
 fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String) {
+    val randomFaceIndex = remember { Random.nextInt(1, 7) }
+    val faceIcon = remember{when (randomFaceIndex) {
+        1 -> Icons.Default.Face
+        2 -> Icons.Default.Face2
+        3 -> Icons.Default.Face3
+        4 -> Icons.Default.Face4
+        5 -> Icons.Default.Face5
+        6 -> Icons.Default.Face6
+        else -> Icons.Default.Face
+    }}
     Box(modifier = modifier) {
         Image(
             painter = rememberAsyncImagePainter(
                 model = urlToImage,
-                error = rememberVectorPainter(image = Icons.Default.Person)
+                error = rememberVectorPainter(image = faceIcon)
             ),
             contentDescription = "User Image",
             modifier = Modifier.fillMaxSize(),

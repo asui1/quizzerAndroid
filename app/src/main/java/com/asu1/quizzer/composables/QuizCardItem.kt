@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -66,41 +67,72 @@ import com.asu1.quizzer.model.getSampleQuizCard
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+
 @Composable
 fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(quizCards) { quizCard ->
-            QuizCardItemVertical(quizCard, onClick)
+        quizCards.chunked(3).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                rowItems.forEach { quizCard ->
+                    QuizCardItemVertical(
+                        quizCard = quizCard,
+                        onClick = onClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                if (rowItems.size < 3) {
+                    repeat(3 - rowItems.size) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
+fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier:Modifier = Modifier) {
     val context = LocalContext.current
-    val imageBitmap: ImageBitmap = quizCard.image?.let { byteArray ->
+    val configuration = LocalConfiguration.current
+    val imageBitmap: ImageBitmap = remember{quizCard.image?.let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
     } ?: loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
-    }
+    }}
+    val screenWidth = remember{configuration.screenWidthDp.dp / 3}
+
     Card(
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
-            .width(166.dp)
+        modifier = modifier
             .wrapContentHeight()
             .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(8.dp)
+            )
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.wrapContentHeight().fillMaxWidth())
+        {
             imageBitmap.let {
                 Box(
                     modifier = Modifier
-                        .size(150.dp) // Square shape
+                        .fillMaxWidth()
+                        .height(screenWidth)
                         .clip(RoundedCornerShape(8.dp))
                 ) {
                     Image(
@@ -112,13 +144,17 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                 }
             }
             Text(
+                modifier = Modifier.padding(horizontal = 4.dp).fillMaxWidth(),
                 text = quizCard.title,
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
                 minLines = 2,
                 maxLines = 2,
             )
             Text(
+                modifier = Modifier.padding(horizontal = 4.dp).fillMaxWidth(),
+                textAlign = TextAlign.Center,
                 text = quizCard.creator,
                 style = MaterialTheme.typography.labelSmall,
                 overflow = TextOverflow.Ellipsis,
@@ -168,27 +204,26 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
 }
 
 @Composable
-fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
+fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
-    val imageBitmap: ImageBitmap = quizCard.image?.let { byteArray ->
+    val screenWidth = remember{configuration.screenWidthDp.dp}
+    val screenHeight = remember{configuration.screenHeightDp.dp}
+    val imageBitmap: ImageBitmap = remember{quizCard.image?.let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
     } ?: loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
-    }
-    val minSize = minOf(screenWidth, screenHeight).times(0.5f)
+    }}
+    val minSize = minOf(screenWidth, screenHeight).times(0.55f)
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
+        modifier = modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+        Row(modifier = Modifier) {
             imageBitmap.let {
                 Box(
                     modifier = Modifier
@@ -205,7 +240,8 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column(modifier = Modifier
-                .height(minSize),
+                .padding(top = 4.dp)
+                .height(minSize - 4.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -220,6 +256,7 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 TagsView(
                     tags = quizCard.tags,
                     modifier = Modifier
@@ -228,24 +265,24 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
                         .padding(horizontal = 4.dp),
                     maxLines = 2
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.description,
                     style = MaterialTheme.typography.bodySmall,
                     minLines = 6,
                     maxLines = 6,
                 )
-                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
-@Preview(name = "QuizCardItemVertical Preview")
+@Preview(name = "QuizCardItemVertical Preview", showBackground = true)
 @Composable
 fun QuizCardItemPreview() {
     val quizCard = getSampleQuizCard()
 
-    HorizontalQuizCardItemVertical(quizCards = listOf(quizCard, quizCard, quizCard))
+    HorizontalQuizCardItemVertical(quizCards = listOf(quizCard, quizCard, quizCard, quizCard, quizCard))
 }
 
 @Preview(name = "QuizCardLarge Preview")
@@ -256,32 +293,30 @@ fun QuizCardLargePreview() {
     HorizontalQuizCardItemLarge(quizCards = listOf(quizCard, quizCard, quizCard))
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
+fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
+    val screenWidth = remember{configuration.screenWidthDp.dp}
+    val screenHeight = remember{configuration.screenHeightDp.dp}
     val imageBitmap: ImageBitmap =
-        if(quizCard.image == null || quizCard.image.size < 100){
+        remember{ if(quizCard.image == null || quizCard.image.size < 100){
             loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
                 BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
             }
         }else{
             BitmapFactory.decodeByteArray(quizCard.image, 0, quizCard.image.size).asImageBitmap()
-        }
-    val minSize = minOf(screenWidth, screenHeight).times(0.35f)
+        }}
+    val minSize = remember{minOf(screenWidth, screenHeight).times(0.35f)}
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
+        modifier = modifier
             .wrapContentHeight()
             .width(screenWidth)
-            .padding(8.dp)
             .clickable { onClick(quizCard.id) }
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+        Row(modifier = Modifier) {
             imageBitmap.let {
                 Box(
                     modifier = Modifier
@@ -298,7 +333,7 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}) {
             }
             Column(modifier = Modifier
                 .height(minSize)
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 4.dp),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
@@ -340,9 +375,11 @@ fun QuizCardHorizontalList(quizCards: List<QuizCard>, onClick: (String) -> Unit 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(4.dp)
     ) {
         items(quizCards) { quizCard ->
             QuizCardHorizontal(quizCard, onClick)
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 
@@ -358,15 +395,15 @@ fun QuizCardHorizontalPreview() {
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
-    val imageBitmap: ImageBitmap = quizCard.image?.let { byteArray ->
+    val screenWidth = remember{configuration.screenWidthDp.dp}
+    val screenHeight = remember{configuration.screenHeightDp.dp}
+    val imageBitmap: ImageBitmap = remember{quizCard.image?.let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
     } ?: loadImageAsByteArray(context, R.drawable.question2).let { byteArray ->
         BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size).asImageBitmap()
-    }
-    val minSize = minOf(screenWidth, screenHeight).times(0.4f)
+    }}
+    val minSize = remember{minOf(screenWidth, screenHeight).times(0.4f)}
     val borderColor = MaterialTheme.colorScheme.onSurface
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),

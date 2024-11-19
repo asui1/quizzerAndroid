@@ -80,6 +80,18 @@ class QuizCardMainViewModel : ViewModel() {
         }
     }
 
+    fun resetQuizCards(){
+        _quizCards.value = emptyList()
+    }
+
+    fun resetQuizTrends(){
+        _quizTrends.value = emptyList()
+    }
+
+    fun resetUserRanks(){
+        _userRanks.value = emptyList()
+    }
+
     fun fetchQuizCards(language: String, email: String = "GUEST") {
         _quizCards.value = emptyList()
         viewModelScope.launch {

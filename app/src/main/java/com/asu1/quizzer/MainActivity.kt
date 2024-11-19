@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
     private val scoreCardViewModel: ScoreCardViewModel by viewModels()
     private val quizLoadViewModel: QuizLoadViewModel by viewModels()
     private lateinit var navController: NavHostController
+    private var loadResultId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +92,7 @@ class MainActivity : ComponentActivity() {
                             return previousEntry?.destination?.route == route::class.qualifiedName
                         }
 
-                        fun getQuizResult(resultId: String = "7cc99ddc2099ba966ff91e7cb39d6c6d86cf42e9519f854630975e3a71c94160") {
+                        fun getQuizResult(resultId: String = "b407d82491b7b51756996155706df72258445f7e7d1998c9934d6a6fababd676") {
                             quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,
@@ -99,6 +100,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
+                                loadResultId = null
                             }
                         }
                         fun loadQuiz(quizId: String){
@@ -119,7 +121,9 @@ class MainActivity : ComponentActivity() {
                                 Route.Home
                             ){
                                 val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
-                                quizCardMainViewModel.fetchQuizCards(lang, userViewModel.userData.value?.email ?: "GUEST")
+                                quizCardMainViewModel.resetQuizTrends()
+                                quizCardMainViewModel.resetUserRanks()
+//                                quizCardMainViewModel.fetchQuizCards(lang, userViewModel.userData.value?.email ?: "GUEST")
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -133,7 +137,11 @@ class MainActivity : ComponentActivity() {
                                     navController,
                                     initViewModel = mainViewModel,
                                     navigateToHome = {
-                                        getHome()
+                                        if(loadResultId != null) {
+                                            getQuizResult(loadResultId!!)
+                                        }else{
+                                            getHome()
+                                        }
                                     }
                                 )
                             }
@@ -174,6 +182,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     },
                                     loadQuiz ={loadQuiz(it)},
+                                    moveHome = {getHome()}
                                 )
                             }
                             composable<Route.Search>(
@@ -438,29 +447,11 @@ class MainActivity : ComponentActivity() {
         if (intent.action == Intent.ACTION_VIEW) {
             val data: Uri? = intent.data
             data?.let {
-                val query = it.getQueryParameter("query") ?: ""
-                val route = it.getQueryParameter("route")
-                // Use the query parameter as needed
-                val targetRoute = fromRouteName(route, query)
-                Logger().debug("Query: $query, Route: $route")
-                if(targetRoute != null){
-//                    navigateToRoute(targetRoute)
+                val query = it.getQueryParameter("resultId") ?: ""
+                if(query.isNotEmpty()){
+                    loadResultId = query
                 }
             }
         }
     }
-//    private fun navigateToRoute(route: Route) {
-//        navController.navigate(Route.Init) {
-//            popUpTo(Route.Init) { inclusive = true }
-//        }
-//        route.let {
-//            quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel,
-//                onDone = {
-//                    NavMultiClickPreventer.navigate(
-//                        navController,
-//                        Route.QuizSolver(0)
-//                    )
-//                })
-//        }
-//    }
 }

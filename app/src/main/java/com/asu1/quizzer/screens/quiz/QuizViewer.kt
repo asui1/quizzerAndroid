@@ -25,6 +25,7 @@ fun QuizViewer(
     updateQuiz3: (Int, Int) -> Unit = {_, _ ->},
     updateQuiz4: (Int, Int?) -> Unit = {_, _ ->},
     quizStyleManager: TextStyleManager,
+    isPreview: Boolean = false,
 ) {
     when(quiz){
         is Quiz1 -> {
@@ -33,7 +34,8 @@ fun QuizViewer(
                 toggleUserAnswer = {
                     updateQuiz1(it)
                 },
-                quizStyleManager = quizStyleManager
+                quizStyleManager = quizStyleManager,
+                isPreview = isPreview,
             )
         }
         is Quiz2 -> {
@@ -43,7 +45,8 @@ fun QuizViewer(
                 onUserInput = {
                     updateQuiz2(it)
                 },
-                quizStyleManager = quizStyleManager
+                quizStyleManager = quizStyleManager,
+                isPreview = isPreview,
             )
         }
         is Quiz3 -> {
@@ -52,7 +55,8 @@ fun QuizViewer(
                 onUserInput = {first, second ->
                     updateQuiz3(first, second)
                 },
-                quizStyleManager = quizStyleManager
+                quizStyleManager = quizStyleManager,
+                isPreview = isPreview,
             )
         }
         is Quiz4 -> {
@@ -66,8 +70,9 @@ fun QuizViewer(
                 onUserInput = {first, second ->
                     updateQuiz4(first, second)
                 },
-                quizStyleManager = quizStyleManager
-            )
+                quizStyleManager = quizStyleManager,
+                isPreview = isPreview,
+                )
         }
     }
 

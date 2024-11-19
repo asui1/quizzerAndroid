@@ -109,17 +109,15 @@ fun Quiz2Creator(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                key(quiz2State.centerDate, quiz2State.uuid, "creator"){
-                    CalendarWithFocusDates(
-                        focusDates = quiz2State.answerDate,
-                        onDateClick = { date ->
-                            quiz.updateDate(date)
-                            currentMonth = YearMonth.of(date.year, date.month)
-                        },
-                        currentMonth = currentMonth,
-                        colorScheme = MaterialTheme.colorScheme
-                    )
-                }
+                CalendarWithFocusDates(
+                    focusDates = quiz2State.answerDate,
+                    onDateClick = { date ->
+                        quiz.updateDate(date)
+                        currentMonth = YearMonth.of(date.year, date.month)
+                    },
+                    currentMonth = currentMonth,
+                    colorScheme = MaterialTheme.colorScheme
+                )
             }
             item{
                 Text(
@@ -145,7 +143,7 @@ fun Quiz2Creator(
 fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {},
                       modifier: Modifier = Modifier,
                       key: String = "YearMonthDropDown"
-                      ){
+){
     val months = 1..12
     var expanded by remember { mutableStateOf(false) }
     var year by remember { mutableStateOf(yearMonth.year.toString()) }
@@ -226,37 +224,41 @@ fun CalendarWithFocusDates(
     yearRange: Int = 10,
     colorScheme: ColorScheme,
     bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
+    isPreview: Boolean = false
 ) {
     val startMonth = currentMonth.minusYears(yearRange.toLong()) // Adjust as needed
     val endMonth = currentMonth.plusYears(yearRange.toLong()) // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
-    val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+    val daysOfWeek = remember{listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")}
     val state = rememberCalendarState(
         startMonth = startMonth,
         endMonth = endMonth,
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = firstDayOfWeek
     )
-    val (backgroundColor, contentColor) = getColor(colorScheme, bodyTextStyle[1])
-    val redded = contentColor.copy(
+    val (backgroundColor, contentColor) = remember{getColor(colorScheme, bodyTextStyle[1])}
+    val redded = remember{contentColor.copy(
         red = (contentColor.red + 0.5f).coerceAtMost(1f),
-    )
-    val blueed = contentColor.copy(
+    )}
+    val blueed = remember{contentColor.copy(
         blue = (contentColor.blue + 0.5f).coerceAtMost(1f),
-    )
-    val focusColor = colorScheme.surfaceDim
+    )}
+    val focusColor = remember{colorScheme.surfaceDim}
 
     HorizontalCalendar(
+        userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxWidth()
             .getBorder(bodyTextStyle[2])
             .background(color = backgroundColor)
             .height(380.dp),
         state = state,
-        dayContent = {it ->
+        dayContent = {
             val isSelected = focusDates.contains(it.date)
-            Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick,
-                focusColor, contentColor, redded, blueed)
+            key(isSelected) {
+                Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick,
+                    focusColor, contentColor, redded, blueed)
+            }
         },
         monthHeader = { month ->
             Column() {

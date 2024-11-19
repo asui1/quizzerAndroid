@@ -38,14 +38,15 @@ fun Quiz4Viewer(
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (Int, Int?) -> Unit = {_, _ -> },
     quizStyleManager: TextStyleManager,
+    isPreview: Boolean = false,
 ) {
     val quizState by quiz.quiz4State.collectAsState()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }
     var isDragging by remember { mutableStateOf(false) }
-    val color = quizTheme.colorScheme.primary
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
+    val color = remember{quizTheme.colorScheme.primary}
     val dotSizeDp = 20.dp
     val paddingDp = 4.dp
     val boxPadding = 16.dp
@@ -61,6 +62,7 @@ fun Quiz4Viewer(
             }
     ) {
         LazyColumn(
+            userScrollEnabled = !isPreview,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -84,66 +86,72 @@ fun Quiz4Viewer(
                     quizStyleManager.GetTextComposable(TextStyles.ANSWER, quizState.answers[index], modifier = Modifier.weight(2f))
                     DraggableDot(
                         setOffset = {offset ->
-                            quiz.updateDotOffset(index, offset, true)
+                            if(!isPreview) quiz.updateDotOffset(index, offset, true)
                         },
                         pointerEvent = { it ->
-                            detectDragGestures(
-                                onDragStart = {
-                                    startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
-                                    endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
-                                    quiz.updateUserConnection(index, null, onUserInput)
-                                    initOffset = null
-                                    isDragging = true
-                                },
-                                onDragEnd = {
-                                    isDragging = false
-                                    quiz.updateUserConnection(index, endOffset, onUserInput)
-                                    startOffset = Offset(0f, 0f)
-                                    endOffset = Offset(0f, 0f)
-                                },
-                            ) { change, dragAmount ->
-                                change.consume()
-                                if(initOffset == null){
-                                    initOffset = change.position
+                            if(!isPreview) {
+                                detectDragGestures(
+                                    onDragStart = {
+                                        startOffset =
+                                            quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
+                                        endOffset =
+                                            quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
+                                        quiz.updateUserConnection(index, null, onUserInput)
+                                        initOffset = null
+                                        isDragging = true
+                                    },
+                                    onDragEnd = {
+                                        isDragging = false
+                                        quiz.updateUserConnection(index, endOffset, onUserInput)
+                                        startOffset = Offset(0f, 0f)
+                                        endOffset = Offset(0f, 0f)
+                                    },
+                                ) { change, dragAmount ->
+                                    change.consume()
+                                    if (initOffset == null) {
+                                        initOffset = change.position
+                                    }
+                                    endOffset = Offset(
+                                        x = startOffset.x + change.position.x - initOffset!!.x,
+                                        y = startOffset.y + change.position.y - initOffset!!.y
+                                    )
                                 }
-                                endOffset = Offset(
-                                    x = startOffset.x + change.position.x - initOffset!!.x,
-                                    y = startOffset.y + change.position.y - initOffset!!.y
-                                )
                             }
                         },
                         boxPosition = boxPosition,
                         dotSize = dotSizeDp,
                         padding = paddingDp,
                         moveOffset = moveOffset,
-                        )
+                    )
                     Spacer(modifier = Modifier.weight(1.0f))
                     DraggableDot(
                         setOffset = {offset ->
-                            quiz.updateDotOffset(index, offset, false)
+                            if(!isPreview) quiz.updateDotOffset(index, offset, false)
                         },
                         boxPosition = boxPosition,
                         dotSize = dotSizeDp,
                         padding = paddingDp,
                         moveOffset = moveOffset,
-                        )
+                    )
                     quizStyleManager.GetTextComposable(TextStyles.ANSWER, quizState.connectionAnswers[index], modifier = Modifier.weight(2f))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-        DrawLines(
-            dotOffsets = quizState.dotPairOffsets,
-            connections = quizState.userConnectionIndex
-        )
-        if(isDragging) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawLine(
-                    color = color,
-                    start = startOffset,
-                    end = endOffset,
-                    strokeWidth = 4f
-                )
+        if(!isPreview) {
+            DrawLines(
+                dotOffsets = quizState.dotPairOffsets,
+                connections = quizState.userConnectionIndex
+            )
+            if(isDragging) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawLine(
+                        color = color,
+                        start = startOffset,
+                        end = endOffset,
+                        strokeWidth = 4f
+                    )
+                }
             }
         }
     }

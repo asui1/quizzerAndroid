@@ -52,7 +52,7 @@ fun HomeScreen(
         ) { index ->
             Text(
                 text = quizCards[index].tag,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
             if (index == 0) {

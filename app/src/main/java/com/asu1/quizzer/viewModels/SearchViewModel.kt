@@ -7,17 +7,21 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
     private val _showToast = MutableLiveData<String?>()
     val showToast: LiveData<String?> get() = _showToast
 
-    private val _searchResult = MutableLiveData<List<QuizCard>?>()
-    val searchResult: LiveData<List<QuizCard>?> get() = _searchResult
+    private val _searchResult = MutableStateFlow<List<QuizCard>?>(null)
+    val searchResult: StateFlow<List<QuizCard>?> get() = _searchResult.asStateFlow()
 
     fun reset(){
-        _searchResult.postValue(null)
+        _searchResult.value = null
     }
 
 
@@ -46,7 +50,7 @@ class SearchViewModel : ViewModel() {
     }
 
     fun setSearchResult(quizCards: List<QuizCard>){
-        _searchResult.postValue(quizCards)
+        _searchResult.value = quizCards
     }
 
     fun toastShown() {

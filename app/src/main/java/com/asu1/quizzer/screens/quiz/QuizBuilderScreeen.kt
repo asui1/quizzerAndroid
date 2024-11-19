@@ -60,6 +60,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -89,10 +90,21 @@ fun QuizBuilderScreen(navController: NavController,
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(snapLayoutInfoProvider) {
-        snapshotFlow { snapLayoutInfoProvider.firstVisibleItemIndex }
-            .collect { index ->
-                curIndex = index
-                quizLayoutViewModel.updateInitIndex(curIndex)
+        snapshotFlow { snapLayoutInfoProvider.layoutInfo }
+            .collect { layoutInfo ->
+                val visibleItems = layoutInfo.visibleItemsInfo
+                if (visibleItems.isNotEmpty()) {
+                    val center = layoutInfo.viewportEndOffset / 2
+                    val centerItem = visibleItems.minByOrNull {
+                        kotlin.math.abs(it.offset + it.size / 2 - center)
+                    }
+                    centerItem?.let {
+                        val centerIndex = it.index
+                        Logger().debug("Center Item Index: $centerIndex")
+                        curIndex = centerIndex
+                        quizLayoutViewModel.updateInitIndex(curIndex)
+                    }
+                }
             }
     }
 
@@ -212,6 +224,7 @@ fun QuizBuilderScreen(navController: NavController,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+
                 LazyRow(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -236,6 +249,7 @@ fun QuizBuilderScreen(navController: NavController,
                                 quiz = quizzes[it],
                                 quizTheme = quizTheme,
                                 quizStyleManager = quizLayoutViewModel.getTextStyleManager(),
+                                isPreview = true,
                             )
                         }
                         Spacer(modifier = Modifier.width(4.dp))

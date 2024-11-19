@@ -48,6 +48,7 @@ fun Quiz3Viewer(
     quiz: Quiz3,
     onUserInput: (Int, Int) -> Unit = {_, _ ->},
     quizStyleManager: TextStyleManager,
+    isPreview: Boolean = false,
 ) {
     val view = LocalView.current
     val quiz3List = remember { mutableStateListOf(*quiz.shuffledAnswers.toTypedArray()) }
@@ -65,6 +66,7 @@ fun Quiz3Viewer(
     }
 
     LazyColumn(
+        userScrollEnabled = !isPreview,
         state = lazyListState,
         modifier = Modifier
             .fillMaxSize()
@@ -112,6 +114,7 @@ fun Quiz3Viewer(
                             quizStyleManager.GetTextComposable(TextStyles.ANSWER, item, modifier = Modifier.weight(1f).padding(8.dp))
                             IconButton(
                                 modifier = Modifier.draggableHandle(
+                                    enabled = !isPreview,
                                     onDragStarted = {
                                         view.performHapticFeedback(HapticFeedbackConstants.DRAG_START)
                                     },

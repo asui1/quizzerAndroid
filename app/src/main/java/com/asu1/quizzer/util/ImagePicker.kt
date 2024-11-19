@@ -43,11 +43,6 @@ fun launchPhotoPicker(
     )
 }
 
-fun loadImageFromDrawable(context: Context, drawableId: Int): ImageBitmap {
-    val bitmap = BitmapFactory.decodeResource(context.resources, drawableId)
-    return bitmap.asImageBitmap()
-}
-
 fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): ByteArray? {
     return context.contentResolver.openInputStream(uri)?.use { inputStream ->
         val originalBitmap = BitmapFactory.decodeStream(inputStream)

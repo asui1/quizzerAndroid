@@ -41,6 +41,7 @@ fun Quiz1Viewer(
     quiz: Quiz1,
     toggleUserAnswer: (Int) -> Unit = {},
     quizStyleManager: TextStyleManager,
+    isPreview: Boolean = false,
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
@@ -48,6 +49,7 @@ fun Quiz1Viewer(
         userAnswers[index ] = !userAnswers[index]
     }
     LazyColumn(
+        userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -67,13 +69,15 @@ fun Quiz1Viewer(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().clickable {
+                    if(isPreview) return@clickable
                     toggleLocalUserAnswers(index)
                     toggleUserAnswer(index)
-                    }
+                }
             ){
                 Checkbox(
                     checked = userAnswers[index],
                     onCheckedChange = {
+                        if(isPreview) return@Checkbox
                         toggleLocalUserAnswers(index)
                         toggleUserAnswer(index)
                     }
@@ -96,8 +100,11 @@ fun BuildBody(
         BodyType.NONE -> {}
         BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizState.bodyText, modifier = Modifier.fillMaxWidth())
         BodyType.IMAGE -> {
+            val image = remember{
+                BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap()
+            }
             Image(
-                bitmap = BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap(),
+                bitmap = image,
                 contentDescription = "Selected Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

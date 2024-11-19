@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +63,7 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
     var searchTextField by remember {mutableStateOf(TextFieldValue(searchText))}
-    val searchResult by searchViewModel.searchResult.observeAsState()
+    val searchResult by searchViewModel.searchResult.collectAsState()
     val focusRequester = remember{ FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -103,15 +104,18 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 } else {
-                    if (searchResult!!.isEmpty()) {
+                    if (searchResult?.isEmpty() != false) {
                         Text(
                             text = "No search result",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {
                         QuizCardHorizontalList(
-                            quizCards = searchResult!!,
-                            onClick = { onQuizClick(it) }
+                            quizCards = searchResult ?: emptyList(),
+                            onClick = {
+                                searchViewModel.reset()
+                                onQuizClick(it)
+                            }
                         )
                     }
                 }

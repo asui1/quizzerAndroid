@@ -10,11 +10,18 @@ class Logger {
     private val tag = "quizzer"
     private val isDebug = true
 
-    fun debug(input: String) {
+    fun debug(input: Any) {
         if (isDebug) {
-            Logger.getLogger(tag).warning(input)
+            Logger.getLogger(tag).warning(input.toString())
         }
     }
+
+    fun debug(tag1: String, input: Any){
+        if (isDebug) {
+            Logger.getLogger(tag + tag1).warning(input.toString())
+        }
+    }
+
     fun printBackStack(navController: NavController) {
         try {
             val backQueueField = NavController::class.java.getDeclaredField("backQueue")
