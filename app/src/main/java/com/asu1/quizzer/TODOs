@@ -5,6 +5,8 @@ First aim to make app launchable without some features that are not essential.
 NEED FULL TEST WITH TITLE IMAGE, BODY FOR ALL QUIZZES
 This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
 
+// APP TEST LINK : https://quizzer.co.kr/?resultId=b407d82491b7b51756996155706df72258445f7e7d1998c9934d6a6fababd676
+
 Home: Name, QuizCardList를 받는 형식으로 변경.
 
 Trends: from 6am ~ next day 6am, get top 20 QuizCardList with most solves.

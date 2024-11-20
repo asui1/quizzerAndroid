@@ -19,15 +19,10 @@ import com.asu1.quizzer.viewModels.MainViewModel
 fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel(),
                          navigateToHome: () -> Unit = {},
                          ) {
-    val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState()
-    val hasCheckedUpdate = remember { mutableStateOf(false) }
+    val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState(null)
 
     when (isUpdateAvailable) {
         null -> {
-            if (!hasCheckedUpdate.value) {
-                initViewModel.updateIsUpdateAvailable()
-                hasCheckedUpdate.value = true
-            }
             LoadComposable()
         }
         true -> UpdateDialog(

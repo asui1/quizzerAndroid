@@ -1,6 +1,8 @@
 package com.asu1.quizzer.screens.mainScreen
 
 import android.app.Activity
+import android.content.pm.verify.domain.DomainVerificationManager
+import android.content.pm.verify.domain.DomainVerificationUserState
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -98,6 +100,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.InquiryViewModel
@@ -132,13 +135,16 @@ fun MainScreen(
     val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
 
     fun updateSelectedTab(index: Int) {
+        Logger().debug("Selected Tab: $index")
         setSelectedTab(index)
         quizCardMainViewModel.tryUpdate(index, language = lang)
     }
+    BackHandler(
 
-    BackHandler {
+    ) {
         val currentTime = System.currentTimeMillis()
         val toast = Toast.makeText(context, "Press back again to exit", Toast.LENGTH_LONG)
+        Logger().debug("Back Pressed")
         if (currentTime - backPressedTime < 3000) {
             toast.cancel()
             (context as? Activity)?.finish()
@@ -152,6 +158,7 @@ fun MainScreen(
             }
         }
     }
+
     fun openDrawer() {
         scope.launch {
             drawerState.open()
@@ -280,7 +287,9 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(
-                    onClick = { setSelectedTab(0) },
+                    onClick = {
+                        setSelectedTab(0)
+                    },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface

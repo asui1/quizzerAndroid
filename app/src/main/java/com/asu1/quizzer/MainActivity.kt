@@ -44,7 +44,6 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
-import com.asu1.quizzer.util.fromRouteName
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.MainViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
@@ -55,7 +54,6 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import java.util.Locale
-
 
 class MainActivity : ComponentActivity() {
     private val inquiryViewModel: InquiryViewModel by viewModels()
@@ -69,6 +67,7 @@ class MainActivity : ComponentActivity() {
     private val quizLoadViewModel: QuizLoadViewModel by viewModels()
     private lateinit var navController: NavHostController
     private var loadResultId: String? = null
+    private var loadQuizId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,9 +112,10 @@ class MainActivity : ComponentActivity() {
                                         popUpTo(Route.Home) { inclusive = false }
                                         launchSingleTop = true
                                     }
+                                    loadQuizId = null
                                 })
                         }
-                        fun getHome(){
+                        fun getHome(fetchData: Boolean = true){
                             NavMultiClickPreventer.navigate(
                                 navController,
                                 Route.Home
@@ -123,11 +123,12 @@ class MainActivity : ComponentActivity() {
                                 val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
                                 quizCardMainViewModel.resetQuizTrends()
                                 quizCardMainViewModel.resetUserRanks()
-//                                quizCardMainViewModel.fetchQuizCards(lang, userViewModel.userData.value?.email ?: "GUEST")
+                                if(fetchData) quizCardMainViewModel.fetchQuizCards(lang)
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
+                        Logger().debug("RUNNING MAIN APP")
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -137,15 +138,20 @@ class MainActivity : ComponentActivity() {
                                     navController,
                                     initViewModel = mainViewModel,
                                     navigateToHome = {
-                                        if(loadResultId != null) {
-                                            getQuizResult(loadResultId!!)
-                                        }else{
-                                            getHome()
-                                        }
+                                        getHome(
+                                            fetchData = false  // FOR DEBUG MODES
+//                                            fetchData = loadResultId == null // ONLY IN DEBUG MODES
+                                        )
                                     }
                                 )
                             }
                             composable<Route.Home> {
+                                if(loadResultId != null){
+                                    getQuizResult(loadResultId!!)
+                                }
+                                if(loadQuizId != null){
+                                    loadQuiz(loadQuizId!!)
+                                }
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
@@ -447,9 +453,13 @@ class MainActivity : ComponentActivity() {
         if (intent.action == Intent.ACTION_VIEW) {
             val data: Uri? = intent.data
             data?.let {
-                val query = it.getQueryParameter("resultId") ?: ""
-                if(query.isNotEmpty()){
-                    loadResultId = query
+                val resultId = it.getQueryParameter("resultId") ?: ""
+                val quizId = it.getQueryParameter("quizId") ?: ""
+                if(resultId.isNotEmpty()){
+                    loadResultId = resultId
+                }
+                if(quizId.isNotEmpty()){
+                    loadQuizId = quizId
                 }
             }
         }
