@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -122,63 +124,43 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                     .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
-                Row(modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    UserProfilePic(userData, onClick = {
-                        scope.launch {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(24.dp)
+                ){
+                    Row(modifier = Modifier
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        UserProfilePic(userData, onClick = {
+                            scope.launch {
+                                if (isUserLoggedIn) {
+                                } else {
+                                    NavMultiClickPreventer.navigate(navController, Route.Login)
+                                }
+                            }
+                        })
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(onClick = {
                             if (isUserLoggedIn) {
-                                //TODO LATER for profile pic fix and user tags setting
+                                showLogoutDialog = true
                             } else {
                                 NavMultiClickPreventer.navigate(navController, Route.Login)
                             }
+                        }) {
+                            Icon(
+                                imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
+                                contentDescription = if (isUserLoggedIn) "Logout" else "Login"
+                            )
                         }
-                    })
-                    Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
-                    IconButton(onClick = {
-                        if (isUserLoggedIn) {
-                            showLogoutDialog = true
-                        } else {
-                            NavMultiClickPreventer.navigate(navController, Route.Login)
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
-                            contentDescription = if (isUserLoggedIn) "Logout" else "Login"
-                        )
-                    }
 
-                }
-                Row(modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    UserProfilePic(userData, onClick = {
-                        scope.launch {
-                            if (isUserLoggedIn) {
-                                //TODO LATER for profile pic fix and user tags setting
-                            } else {
-                                NavMultiClickPreventer.navigate(navController, Route.Login)
-                            }
-                        }
-                    })
-                    Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
-                    IconButton(onClick = {
-                        if (isUserLoggedIn) {
-                            showLogoutDialog = true
-                        } else {
-                            NavMultiClickPreventer.navigate(navController, Route.Login)
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
-                            contentDescription = if (isUserLoggedIn) "Logout" else "Login"
-                        )
                     }
-
                 }
             }
             Box(

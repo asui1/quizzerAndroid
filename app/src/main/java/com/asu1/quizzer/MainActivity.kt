@@ -9,10 +9,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +28,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.asu1.quizzer.composables.CustomSnackbar
 import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
@@ -93,25 +95,58 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val context = LocalContext.current
             val snackbarHostState = remember { SnackbarHostState() }
+
+            // Observe ToastManager for Toast messages
+            LaunchedEffect(Unit) {
+                ToastManager.toastMessage.observe(this@MainActivity) { message ->
+                    message?.let {
+                        val prefix = when (it.second) {
+                            ToastType.SUCCESS -> "S"
+                            ToastType.ERROR -> "E"
+                            ToastType.INFO -> "I"
+                        }
+                        lifecycleScope.launch {
+                            snackbarHostState.showSnackbar(buildString {
+                                append(prefix)
+                                append(context.getString(it.first))
+                            },)
+                            ToastManager.toastShown()
+                        }
+                    }
+                }
+            }
+
             navController = rememberNavController()
-            Box(Modifier.safeDrawingPadding()) {
-                QuizzerAndroidTheme {
+            QuizzerAndroidTheme {
+                Scaffold(
+                    snackbarHost = {
+                        CustomSnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier
+                        )
+                    }
+                ) {it ->
                     Surface(
-                        color = MaterialTheme.colorScheme.background
+                        color = MaterialTheme.colorScheme.background,
+                        modifier = Modifier.safeDrawingPadding().padding(it)
                     ) {
-                        val context = LocalContext.current
                         val colorScheme = MaterialTheme.colorScheme
                         val loginActivityState = rememberLoginActivityState(
                             userViewModel = userViewModel,
                         )
-                        fun hasVisitedRoute(navController: NavController, route: Route): Boolean {
+
+                        fun hasVisitedRoute(
+                            navController: NavController,
+                            route: Route
+                        ): Boolean {
                             val previousEntry = navController.previousBackStackEntry
                             return previousEntry?.destination?.route == route::class.qualifiedName
                         }
 
                         fun getQuizResult(resultId: String = "") {
-                            if(resultId.isEmpty()) return
+                            if (resultId.isEmpty()) return
                             quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,
@@ -122,33 +157,33 @@ class MainActivity : ComponentActivity() {
                                 loadResultId = null
                             }
                         }
-                        fun loadQuiz(quizId: String, popUpToHome: Boolean = false){
+
+                        fun loadQuiz(quizId: String, popUpToHome: Boolean = false) {
                             quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,
                                 Route.QuizSolver(0)
-                            ){
-                                if(popUpToHome) popUpTo(Route.Home) { inclusive = false }
+                            ) {
+                                if (popUpToHome) popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
                             }
                             loadQuizId = null
                         }
-                        fun getHome(fetchData: Boolean = true){
+
+                        fun getHome(fetchData: Boolean = true) {
                             NavMultiClickPreventer.navigate(
                                 navController,
                                 Route.Home
-                            ){
-                                val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
+                            ) {
+                                val lang =
+                                    if (Locale.getDefault().language == "ko") "ko" else "en"
                                 quizCardMainViewModel.resetQuizTrends()
                                 quizCardMainViewModel.resetUserRanks()
-                                if(fetchData) quizCardMainViewModel.fetchQuizCards(lang)
+                                if (fetchData) quizCardMainViewModel.fetchQuizCards(lang)
                                 popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
-                        CustomSnackbarHost(
-                            hostState = snackbarHostState
-                        )
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init
@@ -166,10 +201,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
-                                if(loadResultId != null){
+                                if (loadResultId != null) {
                                     getQuizResult(loadResultId!!)
                                 }
-                                if(loadQuizId != null){
+                                if (loadQuizId != null) {
                                     loadQuiz(loadQuizId!!)
                                 }
                                 MainScreen(
@@ -179,7 +214,10 @@ class MainActivity : ComponentActivity() {
                                     loginActivityState = loginActivityState,
                                     navigateToQuizLayoutBuilder = {
                                         if (userViewModel.userData.value?.email == null) {
-                                            ToastManager.showToast(R.string.please_login_first, ToastType.INFO)
+                                            ToastManager.showToast(
+                                                R.string.please_login_first,
+                                                ToastType.INFO
+                                            )
                                             NavMultiClickPreventer.navigate(
                                                 navController,
                                                 Route.Login
@@ -207,8 +245,8 @@ class MainActivity : ComponentActivity() {
                                             Route.LoadUserQuiz
                                         )
                                     },
-                                    loadQuiz ={loadQuiz(it)},
-                                    moveHome = {getHome()}
+                                    loadQuiz = { loadQuiz(it) },
+                                    moveHome = { getHome() }
                                 )
                             }
                             composable<Route.Search>(
@@ -217,8 +255,9 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) {
-                                SearchScreen(navController, searchViewModel,
-                                    onQuizClick = {quizId ->
+                                SearchScreen(
+                                    navController, searchViewModel,
+                                    onQuizClick = { quizId ->
                                         loadQuiz(quizId)
                                     },
                                     searchText = it.toRoute<Route.Search>().searchText
@@ -272,7 +311,11 @@ class MainActivity : ComponentActivity() {
                                 QuizLayoutBuilderScreen(
                                     navController, quizLayoutViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
+                                        quizLoadViewModel.loadLocalQuiz(
+                                            context = context,
+                                            email = userViewModel.userData.value?.email
+                                                ?: "GUEST"
+                                        )
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.LoadLocalQuiz
@@ -300,7 +343,11 @@ class MainActivity : ComponentActivity() {
                                     },
                                     scoreCardViewModel = scoreCardViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
+                                        quizLoadViewModel.loadLocalQuiz(
+                                            context = context,
+                                            email = userViewModel.userData.value?.email
+                                                ?: "GUEST"
+                                        )
                                         NavMultiClickPreventer.navigate(
                                             navController,
                                             Route.LoadLocalQuiz
@@ -314,8 +361,10 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
-                                val loadIndex = backStackEntry.toRoute<Route.QuizCaller>().loadIndex
-                                val quizType = backStackEntry.toRoute<Route.QuizCaller>().quizType
+                                val loadIndex =
+                                    backStackEntry.toRoute<Route.QuizCaller>().loadIndex
+                                val quizType =
+                                    backStackEntry.toRoute<Route.QuizCaller>().quizType
                                 val insertIndex =
                                     backStackEntry.toRoute<Route.QuizCaller>().insertIndex
                                 QuizCaller(
@@ -332,18 +381,22 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
-                                val loadIndex = backStackEntry.toRoute<Route.QuizSolver>().initIndex
+                                val loadIndex =
+                                    backStackEntry.toRoute<Route.QuizSolver>().initIndex
                                 QuizSolver(navController, quizLayoutViewModel, loadIndex,
                                     navigateToScoreCard = {
                                         val creatingQuiz =
                                             hasVisitedRoute(navController, Route.QuizBuilder)
                                         if (creatingQuiz) {
-                                            ToastManager.showToast(R.string.can_not_proceed_when_creating_quiz, ToastType.INFO)
+                                            ToastManager.showToast(
+                                                R.string.can_not_proceed_when_creating_quiz,
+                                                ToastType.INFO
+                                            )
                                             return@QuizSolver
                                         }
                                         quizLayoutViewModel.gradeQuiz(
                                             userViewModel.userData.value?.email ?: "GUEST"
-                                        ){
+                                        ) {
                                             NavMultiClickPreventer.navigate(
                                                 navController,
                                                 Route.ScoringScreen
@@ -366,7 +419,10 @@ class MainActivity : ComponentActivity() {
                                     quizLayoutViewModel,
                                     scoreCardViewModel,
                                     onUpload = {
-                                        navController.popBackStack(Route.Home, inclusive = false)
+                                        navController.popBackStack(
+                                            Route.Home,
+                                            inclusive = false
+                                        )
                                         quizLoadViewModel.reset()
                                         scoreCardViewModel.resetScoreCard()
                                     })
@@ -411,22 +467,10 @@ class MainActivity : ComponentActivity() {
                                     quizLayoutViewModel = quizLayoutViewModel,
                                     scoreCardViewModel = scoreCardViewModel,
                                     email = userViewModel.userData.value?.email ?: "GUEST",
-                                    loadQuiz = {quizId ->
+                                    loadQuiz = { quizId ->
                                         loadQuiz(quizId, popUpToHome = true)
                                     }
                                 )
-                            }
-                        }
-                        // Observe ToastManager for Toast messages
-                        ToastManager.toastMessage.observe(this@MainActivity) { message ->
-                            message?.let {
-                                lifecycleScope.launch {
-                                    try{
-                                        snackbarHostState.showSnackbar(context.getString(message.first))
-                                    }catch(_: Exception){
-                                    }
-                                }
-                                ToastManager.toastShown()
                             }
                         }
                     }
@@ -456,3 +500,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
