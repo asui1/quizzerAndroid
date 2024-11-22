@@ -341,7 +341,11 @@ fun StepProgressBar(
             }
         }
         Text(
-            text = currentStep.toString()+ ". " + layoutSteps[currentStep - 1],
+            text = buildString {
+                append(currentStep.toString())
+                append(". ")
+                append(layoutSteps[currentStep - 1])
+            },
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp),

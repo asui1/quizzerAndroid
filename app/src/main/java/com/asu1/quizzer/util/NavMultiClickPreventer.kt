@@ -10,21 +10,22 @@ import kotlinx.coroutines.launch
 
 object NavMultiClickPreventer {
     private val isNavigated = mutableStateOf(false)
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val scope = CoroutineScope(Dispatchers.Unconfined)
 
     fun navigate(navController: NavController, targetRoute: Route, builder: NavOptionsBuilder.() -> Unit = {}) {
         if (!isNavigated.value) {
-            isNavigated.value = true
+//            isNavigated.value = true
             navController.navigate(targetRoute){
+                launchSingleTop = true
                 builder()
             }
-            resetAfterDelay()
+//            resetAfterDelay()
         }
     }
 
     private fun resetAfterDelay() {
         scope.launch {
-            delay(500)
+            delay(100)
             isNavigated.value = false
         }
     }

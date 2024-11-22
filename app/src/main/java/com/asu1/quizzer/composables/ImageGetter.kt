@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,13 +62,13 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
         if (image.isEmpty()) {
             Icon(
                 imageVector = Icons.Default.Photo,
-                contentDescription = "Add Image",
+                contentDescription = stringResource(R.string.add_image),
                 modifier = Modifier.size(size/2)
             )
         } else {
             Image(
                 bitmap = BitmapFactory.decodeByteArray(image, 0, image.size).asImageBitmap(),
-                contentDescription = "Selected Image",
+                contentDescription = stringResource(R.string.selected_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -75,13 +76,13 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
                 onClick = onImageDelete,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = size/10, y = -size/10) // Adjust the offset values as needed
+                    .offset(x = size / 10, y = -size / 10) // Adjust the offset values as needed
                     .size(size / 5)
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Default.RemoveCircle,
-                    contentDescription = "Delete Image"
+                    contentDescription = stringResource(R.string.delete_image)
                 )
             }
         }

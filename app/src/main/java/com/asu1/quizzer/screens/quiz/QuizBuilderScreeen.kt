@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -100,7 +101,6 @@ fun QuizBuilderScreen(navController: NavController,
                     }
                     centerItem?.let {
                         val centerIndex = it.index
-                        Logger().debug("Center Item Index: $centerIndex")
                         curIndex = centerIndex
                         quizLayoutViewModel.updateInitIndex(curIndex)
                     }
@@ -130,7 +130,7 @@ fun QuizBuilderScreen(navController: NavController,
         if (showNewQuizDialog) {
             AlertDialog(
                 onDismissRequest = { showNewQuizDialog = false },
-                title = { Text("Select Question Type") },
+                title = { Text(stringResource(R.string.select_question_type)) },
                 text = {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
@@ -152,7 +152,7 @@ fun QuizBuilderScreen(navController: NavController,
                                 modifier = Modifier
                                     .size(width = 100.dp, height = 300.dp)
                                     .testTag("QuizBuilderScreenNewQuizDialogImage$index")
-                                    .clickable{
+                                    .clickable {
                                         showNewQuizDialog = false
                                         moveToQuizCaller(
                                             loadIndex = -1,
@@ -172,7 +172,8 @@ fun QuizBuilderScreen(navController: NavController,
         Scaffold(
             topBar = {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .background(color = colorScheme.primaryContainer),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -284,7 +285,7 @@ fun QuizBuilderScreen(navController: NavController,
                     }
                 )
                 Text(
-                    "Too many/big images might not be uploaded.",
+                    stringResource(R.string.too_many_big_images_might_not_be_uploaded),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -340,7 +341,10 @@ fun QuizEditIconsRow(
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "Quiz : $curIndexText / $totalQuizzes",
+            text = buildString {
+                append(stringResource(R.string.quiz))
+                append("$curIndexText / $totalQuizzes")
+            },
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -399,7 +403,7 @@ fun QuizBuilderBottomBar(
                 onPreview()
             }
         ) {
-            Text("Preview")
+            Text(stringResource(R.string.preview))
         }
         IconButton(
             modifier = Modifier.testTag("QuizBuilderScreenProceedButton"),

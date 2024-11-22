@@ -2,6 +2,8 @@ package com.asu1.quizzer.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class UserDataSharedPreferences(context: Context) {
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -17,13 +19,20 @@ class UserDataSharedPreferences(context: Context) {
         }
     }
 
-    fun getUserLoginInfo(): UserLoginInfo {
-        val email = sharedPreferences.getString("email", null)
-        val nickname = sharedPreferences.getString("nickname", null)
-        val urlToImage = sharedPreferences.getString("urlToImage", null)
-        val tags = sharedPreferences.getStringSet("tags", emptySet())
-        val agreement = sharedPreferences.getBoolean("agreement", false)
-        return UserLoginInfo(email, nickname, urlToImage, tags, agreement)
+    suspend fun getUserLoginInfo(): UserLoginInfo = coroutineScope {
+        val emailDeferred = async { sharedPreferences.getString("email", null) }
+        val nicknameDeferred = async { sharedPreferences.getString("nickname", null) }
+        val urlToImageDeferred = async { sharedPreferences.getString("urlToImage", null) }
+        val tagsDeferred = async { sharedPreferences.getStringSet("tags", emptySet()) }
+        val agreementDeferred = async { sharedPreferences.getBoolean("agreement", false) }
+
+        UserLoginInfo(
+            emailDeferred.await(),
+            nicknameDeferred.await(),
+            urlToImageDeferred.await(),
+            tagsDeferred.await(),
+            agreementDeferred.await()
+        )
     }
 
     fun clearUserLoginInfo() {

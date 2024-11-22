@@ -102,7 +102,10 @@ fun PrivacyPolicyRow(navController: NavController) {
             Text(stringResource(R.string.privacy_policy))
         }
         Text(
-            text = stringResource(R.string.contact) + ": whwkd122@gmail.com",
+            text = buildString {
+                append(stringResource(R.string.contact))
+                append(": whwkd122@gmail.com")
+            },
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(start = 16.dp),

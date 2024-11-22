@@ -1,26 +1,15 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.R
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.UserDataSharedPreferences
 import kotlinx.coroutines.launch
-
-class UserViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return UserViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferencesHelper = UserDataSharedPreferences(application)
@@ -31,13 +20,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _userData = MutableLiveData<UserDatas?>()
     val userData: MutableLiveData<UserDatas?> get() = _userData
 
-    private val _showToast = MutableLiveData<String?>()
-    val showToast: LiveData<String?> get() = _showToast
-
     init {
-        val userInfo = sharedPreferencesHelper.getUserLoginInfo()
-        if (userInfo.email != null) {
-            logIn(userInfo.email, userInfo.urlToImage)
+        viewModelScope.launch {
+            val userInfo = sharedPreferencesHelper.getUserLoginInfo()
+            if (userInfo.email != null) {
+                logIn(userInfo.email, userInfo.urlToImage)
+            }
         }
     }
 
@@ -52,17 +40,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 val userTags = response.body()?.tags ?: emptySet()
                 _userData.value = UserDatas(email, nickname, urlToImage, userTags)
                 sharedPreferencesHelper.saveUserLoginInfo(email, nickname, urlToImage, userTags)
-                _showToast.postValue("Logged in")
+                ToastManager.showToast(R.string.logged_in, ToastType.SUCCESS)
                 _isUserLoggedIn.postValue(true)
             } else {
-                _showToast.postValue("Failed Login")
-
+                ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
             }
         }
 
         } catch (e: Exception) {
-            Logger().debug("Failed to login $e")
-            _showToast.postValue("Failed Login")
+            ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
         }
     }
 
@@ -71,15 +57,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = RetrofitInstance.api.deleteUser(email)
                 if(response.isSuccessful){
-                    _showToast.postValue("User Deleted")
+                    ToastManager.showToast(R.string.user_delete_successed, ToastType.SUCCESS)
                     logOut()
                 }
                 else{
-                    _showToast.postValue("Failed to Delete User")
+                    ToastManager.showToast(R.string.failed_to_delete_user, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
-                _showToast.postValue("Failed to Delete User")
+                ToastManager.showToast(R.string.failed_to_delete_user, ToastType.ERROR)
             }
         }
     }
@@ -87,16 +73,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     fun logOut() {
         _userData.value = null
         sharedPreferencesHelper.clearUserLoginInfo()
-        _showToast.postValue("Logged out")
+        ToastManager.showToast(R.string.logged_out, ToastType.SUCCESS)
         _isUserLoggedIn.postValue(false)
-    }
-
-    fun toastShown() {
-        _showToast.value = null
-    }
-
-    fun setToast(message: String) {
-        _showToast.value = message
     }
 
     data class UserDatas(

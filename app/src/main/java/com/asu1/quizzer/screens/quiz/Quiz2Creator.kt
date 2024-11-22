@@ -39,12 +39,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.getBorder
@@ -98,7 +100,10 @@ fun Quiz2Creator(
             item{
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Current Start: ${quiz2State.centerDate}, ±20Y",
+                    buildString {
+                        append(stringResource(R.string.current_start))
+                        append("${quiz2State.centerDate}, ±20Y")
+                    },
                 )
                 YearMonthDropDown(
                     yearMonth = quiz2State.centerDate,
@@ -160,10 +165,11 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                 year = it
             },
             label = { Text("Year : ") },
-            modifier = modifier.weight(1f)
-                .testTag(key+"YearTextField")
+            modifier = modifier
+                .weight(1f)
+                .testTag(key + "YearTextField")
                 .onFocusChanged { focusState ->
-                    if(!focusState.isFocused){
+                    if (!focusState.isFocused) {
                         onYearMonthChange(YearMonth.of(year.toInt(), yearMonth.month))
                     }
                 },
@@ -181,10 +187,14 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
             Text(text = "Month: ${yearMonth.monthValue}",
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                    .border(
+                        1.dp,
+                        androidx.compose.ui.graphics.Color.Black,
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                    )
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .testTag(key+"MonthText")
+                    .testTag(key + "MonthText")
                     .clickable { expanded = true }
             )
             DropdownMenu(
@@ -204,10 +214,16 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                                 text = month.toString(),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .border(1.dp, androidx.compose.ui.graphics.Color.Black, shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                                    .border(
+                                        1.dp,
+                                        androidx.compose.ui.graphics.Color.Black,
+                                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                                            8.dp
+                                        )
+                                    )
                                     .padding(8.dp)
                                     .fillMaxWidth()
-                                    .testTag(key+"Month${month}")
+                                    .testTag(key + "Month${month}")
                             ) },
                     )
                 }
@@ -263,11 +279,17 @@ fun CalendarWithFocusDates(
         monthHeader = { month ->
             Column() {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Text(text = month.yearMonth.year.toString() + "  /  " + month.yearMonth.monthValue)
+                    Text(text = buildString {
+                        append(month.yearMonth.year.toString())
+                        append("  /  ")
+                        append(month.yearMonth.monthValue)
+                    })
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(){
@@ -309,7 +331,10 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
         modifier = Modifier
             .aspectRatio(1f) // This is important for square sizing!
             .alpha(alpha)
-            .background(color = backgroundColor, shape = androidx.compose.foundation.shape.CircleShape)
+            .background(
+                color = backgroundColor,
+                shape = androidx.compose.foundation.shape.CircleShape
+            )
             .clickable {
                 onDateClick(day.date)
             }

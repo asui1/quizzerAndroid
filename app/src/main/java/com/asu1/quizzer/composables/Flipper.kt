@@ -20,7 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
@@ -57,16 +59,23 @@ fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevio
             modifier = Modifier.testTag("${key}FlipperPrevious"),
             onClick = { onPrevious(currentIndex) }
         ) {
-            Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "Previous")
+            Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = stringResource(R.string.previous))
         }
         Text(
-            text = items[currentIndex].toString(),
+            text = if (items[currentIndex] is Int) {
+                    stringResource(id = items[currentIndex] as Int)
+            } else {
+                items[currentIndex].toString()
+            },
             style = MaterialTheme.typography.bodyLarge
         )
         IconButton(
             modifier = Modifier.testTag("${key}FlipperNext"),
             onClick = { onNext(currentIndex) }) {
-            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Next")
+            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = stringResource(
+                R.string.next
+            )
+            )
         }
     }
 

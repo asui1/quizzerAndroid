@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.R
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
@@ -77,7 +82,7 @@ fun QuizBodyBuilder(
                 ) {
                     Icon(
                         imageVector = Icons.Default.RemoveCircleOutline,
-                        contentDescription = "Delete Body"
+                        contentDescription = stringResource(R.string.delete_body)
                     )
                 }
             }
@@ -88,17 +93,19 @@ fun QuizBodyBuilder(
                     modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
                     onClick = {showBodyDialog = true},
                 ) {
-                    Text("Add Body")
+                    Text(stringResource(R.string.add_body))
                 }
             }
             BodyType.TEXT -> {
                 TextField(
-                    modifier = Modifier.fillMaxWidth().testTag("QuizCreatorBodyTextField"),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("QuizCreatorBodyTextField"),
                     value = bodyText,
                     onValueChange = {it ->
                         onBodyTextChange(it)
                     },
-                    label = { Text("Body Text") }
+                    label = { Text(stringResource(R.string.body_text)) }
                 )
             }
             BodyType.IMAGE -> {
@@ -136,7 +143,9 @@ fun BodyPreviews() {
                 youtubeStartTime = 0,
                 onYoutubeUpdate = { _, _ -> }
             )
-            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
+            Spacer(modifier = Modifier
+                .height(8.dp)
+                .background(color = Color.Black))
             QuizBodyBuilder(
                 bodyState = BodyType.IMAGE,
                 updateBody = {},
@@ -148,7 +157,9 @@ fun BodyPreviews() {
                 youtubeStartTime = 0,
                 onYoutubeUpdate = { _, _ -> }
             )
-            Spacer(modifier = Modifier.height(8.dp).background(color = Color.Black))
+            Spacer(modifier = Modifier
+                .height(8.dp)
+                .background(color = Color.Black))
             QuizBodyBuilder(
                 bodyState = BodyType.YOUTUBE,
                 updateBody = {},
@@ -174,27 +185,40 @@ fun BodyTypeDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text("Select Body Type") },
+        title = { Text(stringResource(R.string.select_body_type)) },
         text = {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                TextButton(
+                IconButton(
                     modifier = Modifier.testTag("BodyTypeDialogTextButton"),
-                    onClick = onTextSelected) {
-                    Text("Text")
+                    onClick = onTextSelected
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.TextFields, // Replace with appropriate icon
+                        contentDescription = stringResource(R.string.body_text)
+                    )
                 }
-                TextButton(
+                IconButton(
                     modifier = Modifier.testTag("BodyTypeDialogImageButton"),
-                    onClick = onImageSelected) {
-                    Text("Image")
+                    onClick = onImageSelected
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Image, // Replace with appropriate icon
+                        contentDescription = stringResource(R.string.add_image)
+                    )
                 }
-                TextButton(
+                IconButton(
                     modifier = Modifier.testTag("BodyTypeDialogYoutubeButton"),
-                    onClick = onYoutubeSelected) {
-                    Text("Youtube")
+                    onClick = onYoutubeSelected
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.VideoLibrary,
+                        contentDescription = "Youtube"
+                    )
                 }
             }
         },

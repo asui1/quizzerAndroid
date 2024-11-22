@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -102,7 +103,7 @@ fun DesignScoreCardScreen(
                         onColorSelected = { color ->
                             scoreCardViewModel.updateColor1(color)
                         },
-                        text = "Select Color1"
+                        text = stringResource(R.string.select_color1)
                     )
                 }
             }
@@ -117,7 +118,7 @@ fun DesignScoreCardScreen(
                         onColorSelected = { color ->
                             scoreCardViewModel.updateColor2(color)
                         },
-                        text = "Select Color2"
+                        text = stringResource(R.string.select_color2)
                     )
                 }
             }
@@ -132,7 +133,7 @@ fun DesignScoreCardScreen(
                         onColorSelected = { color ->
                             scoreCardViewModel.updateTextColor(color)
                         },
-                        text = "Select Text Color"
+                        text = stringResource(R.string.select_text_color)
                     )
                 }
             }
@@ -163,7 +164,7 @@ fun DesignScoreCardScreen(
                         .testTag("DesignScoreCardUploadButton")
                 ) {
                     Text(
-                        text = "Upload",
+                        text = stringResource(R.string.upload),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -246,8 +247,8 @@ fun DesignScoreCardScreen(
                 ) {
                     ShaderType.entries.forEach { shader ->
                         DropdownMenuItem(
-                            modifier = Modifier.testTag("DesignScoreCardShaderButton${shader.shaderName}"),
-                            text = { Text(text = shader.shaderName,
+                            modifier = Modifier.testTag("DesignScoreCardShaderButton${shader.index}"),
+                            text = { Text(text = stringResource(shader.shaderName),
                                 color = if (shader == scoreCard.shaderType) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                             ) },
                             onClick = {
@@ -277,7 +278,7 @@ fun RowWithShares(
         ) {
             Icon(
                 imageVector = Icons.Default.Facebook,
-                contentDescription = "Share",
+                contentDescription = "Share Facebook",
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -286,8 +287,8 @@ fun RowWithShares(
             onClick = onClickButton2
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Share",
+                painter = painterResource(id = R.drawable.x_logo),
+                contentDescription = "Share X",
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -297,7 +298,7 @@ fun RowWithShares(
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
-                contentDescription = "Share",
+                contentDescription = "Share Link",
                 modifier = Modifier.size(24.dp),
             )
         }

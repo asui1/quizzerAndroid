@@ -7,19 +7,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavBackStackEntry
-
+val durations = 500
 fun enterFadeInTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> androidx.compose.animation.EnterTransition?) {
-    return { fadeIn(tween(1000)) }
+    return { fadeIn(tween(durations)) }
 }
 
 fun exitFadeOutTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> androidx.compose.animation.ExitTransition?) {
-    return { fadeOut(tween(1000)) }
+    return { fadeOut(tween(durations)) }
 }
 
 fun enterFromRightTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> androidx.compose.animation.EnterTransition?) {
-    return { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(1000)) }
+    return { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(durations)) }
 }
 
 fun exitToRightTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> androidx.compose.animation.ExitTransition?) {
-    return { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(1000)) }
+    return { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durations)) }
 }

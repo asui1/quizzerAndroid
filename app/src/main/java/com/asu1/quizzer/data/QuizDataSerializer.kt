@@ -28,7 +28,6 @@ data class QuizLayoutSerializer(
     val quizTheme: QuizTheme,
     val scoreCard: ScoreCard
 )
-// TODO: SERVER CAN NOT USE LIST as input. SO WHEN UPLOADING, things need to get in shape of json or string.
 
 suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
     if (quizData.value.uuid == null) {
@@ -42,9 +41,9 @@ suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
         titleImage = Base64.getEncoder().encodeToString(quizData.value.image),
         uuid = quizData.value.uuid!!,
         tags = quizData.value.tags,
-        quizzes = quizzes.value?.map {
+        quizzes = quizzes.value.map {
             it.changeToJson()
-        } ?: emptyList(),
+        },
         description = quizData.value.description
     )
     return quizDataSerializer

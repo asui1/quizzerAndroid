@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.R
 
 @Composable
 fun SaveButton(onSave: () -> Unit) {
@@ -26,7 +28,7 @@ fun SaveButton(onSave: () -> Unit) {
                 .align(Alignment.BottomEnd)
                 .testTag("QuizCreatorSaveButton")
         ) {
-            Text("Save")
+            Text(stringResource(R.string.save))
         }
     }
 }

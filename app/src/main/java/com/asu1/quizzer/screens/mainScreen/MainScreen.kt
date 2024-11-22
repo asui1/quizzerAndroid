@@ -1,8 +1,10 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import ToastManager
 import android.app.Activity
 import android.content.pm.verify.domain.DomainVerificationManager
 import android.content.pm.verify.domain.DomainVerificationUserState
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -95,11 +97,23 @@ import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
+import com.asu1.quizzer.composables.mainscreen.DrawerContent
+import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
+import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
 import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.ui.theme.UserBackground1
+import com.asu1.quizzer.ui.theme.UserBackground2
+import com.asu1.quizzer.ui.theme.UserBackground3
+import com.asu1.quizzer.ui.theme.UserBackground4
+import com.asu1.quizzer.ui.theme.UserBackground5
+import com.asu1.quizzer.ui.theme.UserBackground6
+import com.asu1.quizzer.ui.theme.UserBackground7
+import com.asu1.quizzer.ui.theme.UserBackground8
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
@@ -110,6 +124,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.random.Random
+
+val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
 
 @Composable
 fun MainScreen(
@@ -132,19 +148,18 @@ fun MainScreen(
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
     val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
-    val lang = if(Locale.getDefault().language == "ko") "ko" else "en"
+    val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
 
     fun updateSelectedTab(index: Int) {
-        Logger().debug("Selected Tab: $index")
         setSelectedTab(index)
         quizCardMainViewModel.tryUpdate(index, language = lang)
     }
     BackHandler(
-
     ) {
         val currentTime = System.currentTimeMillis()
-        val toast = Toast.makeText(context, "Press back again to exit", Toast.LENGTH_LONG)
-        Logger().debug("Back Pressed")
+        
+        val toast = Toast.makeText(context,
+            context.getString(R.string.press_back_again_to_exit), Toast.LENGTH_LONG)
         if (currentTime - backPressedTime < 3000) {
             toast.cancel()
             (context as? Activity)?.finish()
@@ -223,140 +238,9 @@ fun MainScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}, isLoggedIn: Boolean, userData: UserViewModel.UserDatas?,
-                       resetHome: () -> Unit = {}) {
-    val scope = rememberCoroutineScope()
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        title = { Text("Quizzer") },
-        navigationIcon = {
-            IconButton(onClick = {  resetHome()}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "App Icon"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { moveToSearchActivity(navController) }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            }
-            UserProfilePic(userData, onClick = {
-                scope.launch {
-                    if(isLoggedIn){
-                        openDrawer()
-                    }
-                    else{
-                        NavMultiClickPreventer.navigate(navController, Route.Login)
-                    }
-                }
-            })
-        },
-    )
-}
-
-@Preview
-@Composable
-fun MainActivityTopbarPreview(){
-    QuizzerAndroidTheme {
-        MainActivityTopbar(
-            navController = rememberNavController(),
-            isLoggedIn = true,
-            userData = userDataTest,
-        )
-    }
-}
-
-@Composable
-fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,
-                          navigateToQuizLayoutBuilder: () -> Unit = {},
-                          setSelectedTab: (Int) -> Unit = {}) {
-    val defaultIconSize = 24.dp
-
-    BottomAppBar(
-        content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                IconButton(
-                    onClick = {
-                        setSelectedTab(0)
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.Default.Home, contentDescription = "Home", modifier = Modifier.size(defaultIconSize))
-                }
-                IconButton(
-                    onClick = {
-                        setSelectedTab(1)
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = "Trends", modifier = Modifier.size(defaultIconSize))
-                }
-                IconButton(
-                    onClick = { navigateToQuizLayoutBuilder() },
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .testTag("MainScreenCreateQuiz"),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Quiz", modifier = Modifier.size(1.5f * defaultIconSize))
-                }
-                IconButton(
-                    onClick = { setSelectedTab(2) },
-                    modifier = Modifier.weight(1f),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.Default.BarChart, contentDescription = "Stats", modifier = Modifier.size(defaultIconSize))
-                }
-                IconButton(
-                    onClick = {
-                        onDrawerOpen()
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 4) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(defaultIconSize))
-                }
-            }
-        }
-    )
-}
-
-@Preview
-@Composable
-fun MainActivityBottomBarPreview(){
-    QuizzerAndroidTheme {
-        MainActivityBottomBar(
-        )
-    }
-}
-
 fun moveToSearchActivity(navController: NavController, searchText: String = "") {
     NavMultiClickPreventer.navigate(navController, Route.Search(searchText))
 }
-
 
 @Composable
 fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
@@ -367,7 +251,11 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
     if (isUserLoggedIn) {
         if(urlToImage != null) {
             IconButton(onClick = onClick) {
-                UriImageButton(modifier = Modifier.size(iconSize).clip(shape = RoundedCornerShape(8.dp)), urlToImage)
+                UriImageButton(modifier = Modifier
+                    .size(iconSize)
+                    .clip(shape = RoundedCornerShape(8.dp)), urlToImage,
+                    nickname = userData.nickname?.get(0) ?: 'Q'
+                )
             }
         } else {
             IconButton(onClick = onClick) {
@@ -391,257 +279,69 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
 }
 
 @Composable
-fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String) {
-    val randomFaceIndex = remember { Random.nextInt(1, 7) }
-    val faceIcon = remember{when (randomFaceIndex) {
-        1 -> Icons.Default.Face
-        2 -> Icons.Default.Face2
-        3 -> Icons.Default.Face3
-        4 -> Icons.Default.Face4
-        5 -> Icons.Default.Face5
-        6 -> Icons.Default.Face6
-        else -> Icons.Default.Face
-    }}
+fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String, nickname: Char = 'Q') {
+    val painter = rememberAsyncImagePainter(
+        model = urlToImage,
+    )
+    val isError = painter.state is AsyncImagePainter.State.Error
+    val randomInt = Random.nextInt(0, 8)
+    val backgroundColor = remember{
+        when(randomInt){
+            0 -> UserBackground1
+            1 -> UserBackground2
+            2 -> UserBackground3
+            3 -> UserBackground4
+            4 -> UserBackground5
+            5 -> UserBackground6
+            6 -> UserBackground7
+            7 -> UserBackground8
+            else -> UserBackground1
+        }
+    }
+
     Box(modifier = modifier) {
-        Image(
-            painter = rememberAsyncImagePainter(
-                model = urlToImage,
-                error = rememberVectorPainter(image = faceIcon)
-            ),
-            contentDescription = "User Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+        if (isError) {
+            BoxWithTextAndColorBackground(backgroundColor, nickname)
+        } else {
+            Image(
+                painter = painter,
+                contentDescription = "User Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+@Composable
+private fun BoxWithTextAndColorBackground(backgroundColor: Color, nickname: Char, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+            .clip(RoundedCornerShape(8.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            textAlign = TextAlign.Center,
+            text = nickname.toString(),
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.White
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
-                  userData: UserViewModel.UserDatas?,
-                  onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
-                  logOut: () -> Unit = { },
-                  signOut: (String) -> Unit = { },
-                  navigateToMyQuizzes: () -> Unit = {},
-) {
-    val scope = rememberCoroutineScope()
-    val nickname = userData?.nickname
-    var showInquiry by remember { mutableStateOf(false) }
-    var showSignOut by remember { mutableStateOf(false) }
-    var showLogoutDialog by remember { mutableStateOf(false) }
-    val isUserLoggedIn = userData != null
+fun UserProfilePicPreview(){
+    QuizzerAndroidTheme {
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        if(showInquiry) {
-            ModalBottomSheet(onDismissRequest = {showInquiry = false },
-                modifier = Modifier.imePadding()
-            ) {
-                InquiryBottomSheetContent(
-                    onDismissRequest = { showInquiry = false
-                        closeDrawer() },
-                    userData = userData,
-                    isDone = false,
-                    onSendInquiry = { email, type, text ->
-                        onSendInquiry(email, type, text)
-                        showInquiry = false
-                    }
-                )
-            }
-        }
-        else if(showSignOut && isUserLoggedIn) {
-            ModalBottomSheet(onDismissRequest = {showSignOut = false },
-                modifier = Modifier.imePadding()) {
-                SignoutBottomSheetContent(
-                    onDismissRequest = { showSignOut = false
-                        logOut()
-                        closeDrawer() },
-                    userData = userData,
-                    isDone = false,
-                    onSendSignOut = { email ->
-                        signOut(email)
-                        showSignOut = false
-                    }
-                )
-            }
-        }
-        else if(showLogoutDialog){
-            LogoutConfirmationDialog(
-                onConfirm = {
-                    logOut()
-                    showLogoutDialog = false
-                    closeDrawer()
-                },
-                onDismiss = { showLogoutDialog = false }
+        Box(modifier = Modifier
+            .size(30.dp)
+            .clip(shape = RoundedCornerShape(8.dp))) {
+            BoxWithTextAndColorBackground(
+                UserBackground1, 'A',
             )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(250.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    UserProfilePic(userData, onClick = {
-                        scope.launch {
-                            if (isUserLoggedIn) {
-                                //TODO LATER for profile pic fix and user tags setting
-                            } else {
-                                NavMultiClickPreventer.navigate(navController, Route.Login)
-                            }
-                        }
-                    })
-                    Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
-                    IconButton(onClick = {
-                        if (isUserLoggedIn) {
-                            showLogoutDialog = true
-                        } else {
-                            NavMultiClickPreventer.navigate(navController, Route.Login)
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
-                            contentDescription = if (isUserLoggedIn) "Logout" else "Login"
-                        )
-                    }
-
-                }
-                Row(modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    UserProfilePic(userData, onClick = {
-                        scope.launch {
-                            if (isUserLoggedIn) {
-                                //TODO LATER for profile pic fix and user tags setting
-                            } else {
-                                NavMultiClickPreventer.navigate(navController, Route.Login)
-                            }
-                        }
-                    })
-                    Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
-                    IconButton(onClick = {
-                        if (isUserLoggedIn) {
-                            showLogoutDialog = true
-                        } else {
-                            NavMultiClickPreventer.navigate(navController, Route.Login)
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
-                            contentDescription = if (isUserLoggedIn) "Logout" else "Login"
-                        )
-                    }
-
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .weight(5f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    if(isUserLoggedIn) {
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                navigateToMyQuizzes()
-                                closeDrawer()
-                            },
-                        )
-                        {
-                            Text(
-                                "My Quizzes",
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                        ) {
-                            Text(
-                                "Profile",
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = TextStyle(
-                                    textDecoration = TextDecoration.LineThrough,
-                                )
-                            )
-                        }
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                        ) {
-                            Text(
-                                "Settings",
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = TextStyle(
-                                    textDecoration = TextDecoration.LineThrough,
-                                )
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    TextButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            showInquiry = true
-                        },
-                    ) {
-                        Text(
-                            stringResource(R.string.inquiry),
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                    if (isUserLoggedIn) {
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                showSignOut = true
-                            },
-                        ) {
-                            Text(
-                                stringResource(R.string.sign_out),
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -669,189 +369,6 @@ fun LogoutConfirmationDialogPreview(
         LogoutConfirmationDialog(
             onConfirm = { },
             onDismiss = { }
-        )
-    }
-}
-
-@Composable
-fun SignoutBottomSheetContent(
-    onDismissRequest: () -> Unit,
-    userData: UserViewModel.UserDatas?,
-    isDone: Boolean = false,
-    onSendSignOut: (String) -> Unit = { },
-){
-    var textFieldValue by remember { mutableStateOf("") }
-    val email = userData?.email ?: "GUEST"
-
-    LaunchedEffect(isDone) {
-        if (isDone) {
-            onDismissRequest()
-        }
-    }
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-    ) {
-        Text(stringResource(id = R.string.sign_out), style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("If you sign out, all your activities and records will be deleted. Even if you re-register, data won't be restored", style = MaterialTheme.typography.bodySmall)
-        Spacer(modifier = Modifier.height(4.dp))
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = textFieldValue,
-            onValueChange = { textFieldValue = it },
-            label = { Text("Enter \"Sign Out\"") },
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        TextButton(onClick = {
-            if(textFieldValue == "Sign Out" || textFieldValue == "회원 탈퇴") {
-                onSendSignOut(email)
-            }
-        },
-            modifier = Modifier
-                .fillMaxWidth()
-                .imePadding(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer
-            )
-        ) {
-            Text("Submit")
-        }
-    }
-}
-
-@Composable
-fun InquiryBottomSheetContent(
-    onDismissRequest: () -> Unit,
-    userData: UserViewModel.UserDatas?,
-    isDone: Boolean,
-    onSendInquiry: (String, String, String) -> Unit
-) {
-    val email = userData?.email ?: "GUEST"
-    val options = listOf("Bug Report", "Quiz Report", "Develop Plan Request", "Others")
-    var selectedOption by remember { mutableStateOf(options[0]) }
-    var textFieldValue by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isDone) {
-        if (isDone) {
-            onDismissRequest()
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(vertical = 4.dp, horizontal = 16.dp)
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-    ) {
-        Text(stringResource(id = R.string.inquiry), style = MaterialTheme.typography.headlineSmall)
-        Text(stringResource(R.string.inquiry_body), style = MaterialTheme.typography.bodySmall)
-        Button(
-            onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(selectedOption)
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown Icon"
-                )
-            }
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = { Text(text = option) },
-                    onClick = {
-                        selectedOption = option
-                        expanded = false
-                    }
-                )
-            }
-        }
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = textFieldValue,
-            onValueChange = { textFieldValue = it },
-            label = { Text("Enter text") },
-            minLines = 1,
-            maxLines = 5,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = {
-                onSendInquiry(email, selectedOption, textFieldValue)
-            })
-        )
-        TextButton(onClick = {
-            onSendInquiry(email, selectedOption, textFieldValue) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .imePadding()
-                .navigationBarsPadding(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        ) {
-            Text("Submit")
-        }
-    }
-
-}
-
-val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
-
-@Preview
-@Composable
-fun DrawerPreview(){
-    val navController = rememberNavController()
-    QuizzerAndroidTheme {
-        DrawerContent(
-            navController = navController,
-            closeDrawer = {},
-            userData = userDataTest,
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignoutBottomSheetContentPreview() {
-    QuizzerAndroidTheme {
-        SignoutBottomSheetContent(
-            onDismissRequest = { },
-            userData = userDataTest,
-            isDone = false,
-            onSendSignOut = { },
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun InquiryBottomSheetContentPreview() {
-    QuizzerAndroidTheme {
-        InquiryBottomSheetContent(
-            onDismissRequest = { },
-            userData = userDataTest,
-            isDone = false,
-            onSendInquiry = { _, _, _ -> }
         )
     }
 }

@@ -28,10 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
@@ -141,11 +143,11 @@ fun PointSetter(){
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text("Points")
+        Text(stringResource(R.string.points))
         TextField(
             value = "",
             onValueChange = {},
-            label = { Text("Points") }
+            label = { Text(stringResource(R.string.points)) }
         )
     }
 }
@@ -231,7 +233,8 @@ fun AnswerTextField(
         )
         IconButton(
             onClick = deleteAnswer,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
                 .padding(start = 8.dp),
         ) {
             Icon(
@@ -252,10 +255,11 @@ fun AddAnswer(
     ){
         TextButton(
             onClick = onClick,
-            modifier = Modifier.width(200.dp)
+            modifier = Modifier
+                .width(200.dp)
                 .testTag("QuizCreatorAddAnswerButton")
         ) {
-            Text("Add Answer")
+            Text(stringResource(R.string.add_answer))
         }
     }
 }
@@ -270,7 +274,7 @@ fun Quiz1AnswerSelection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
-        Text("Shuffle Answers?")
+        Text(stringResource(R.string.shuffle_answers))
         Checkbox(
             checked = shuffleValue,
             onCheckedChange = {

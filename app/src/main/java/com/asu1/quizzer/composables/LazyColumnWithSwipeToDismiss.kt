@@ -26,6 +26,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
@@ -50,7 +51,7 @@ fun LazyColumnWithSwipeToDismiss(
         if (quizList.isEmpty()) {
             item {
                 Text(
-                    "No quizzes found",
+                    stringResource(R.string.no_quizzes_found),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -75,7 +76,7 @@ fun LazyColumnWithSwipeToDismiss(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete",
+                                contentDescription = stringResource(R.string.delete),
                                 tint = Color.White
                             )
                         }

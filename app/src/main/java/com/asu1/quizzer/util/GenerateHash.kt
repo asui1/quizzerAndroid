@@ -9,7 +9,6 @@ fun generateUniqueId(uuid: String, email: String): String {
     digest.update(concatenated.toByteArray(Charsets.UTF_8))
     val hash = digest.digest()
     val hashed = hash.joinToString("") { "%02x".format(it) }
-    Logger().debug("Generated uniqueId: $hashed")
 
     return hashed // Or return concatenated if you skip hashing
 }

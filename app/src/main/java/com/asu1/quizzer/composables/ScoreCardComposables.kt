@@ -30,21 +30,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.round
 
@@ -55,14 +61,14 @@ fun ScoreCardBackground(
 ) {
     Image(
         painter = ColorPainter(Color.Transparent),
-        contentDescription = "Background",
+        contentDescription = stringResource(R.string.background),
         contentScale = ContentScale.FillBounds,
         modifier = Modifier
             .asBackgroundModifierForScoreCard(
                 imageColor = scoreCard.background,
                 shaderOption = scoreCard.shaderType,
                 time = time,
-                )
+            )
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
     )
@@ -92,7 +98,7 @@ fun ScoreCardComposable(
     val formattedScore = if (quizResult.score % 1 == 0f) {
         quizResult.score.toInt().toString()
     } else {
-        String.format("%.1f", round(quizResult.score * 10) / 10)
+        String.format(Locale.US, "%.1f", round(quizResult.score * 10) / 10)
     }
     val redded = scoreCard.textColor.copy(
         red = (scoreCard.textColor.red + 0.5f).coerceAtMost(1f),
@@ -120,6 +126,7 @@ fun ScoreCardComposable(
                 text = scoreCard.title,
                 color = scoreCard.textColor,
                 style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
@@ -130,7 +137,8 @@ fun ScoreCardComposable(
             )
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(color = Color.Transparent)
             ){ page ->
                 Box(
@@ -260,13 +268,16 @@ fun PointDistribution(
     height: Dp = 200.dp
 ){
     val maxItem = distribution.maxOrNull() ?: 1
-    val formattedPercent = String.format("%.1f", percent)
+    val formattedPercent = String.format(Locale.US, "%.1f", percent)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.wrapContentSize()
     ){
-        Text("You are top ${formattedPercent}%!", color = textColor, style = MaterialTheme.typography.headlineSmall)
+        Text(buildString {
+            append(stringResource(R.string.you_are_top))
+            append("${formattedPercent}%!")
+        }, color = textColor, style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             verticalAlignment = Alignment.Bottom,

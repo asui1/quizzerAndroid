@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -48,13 +49,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ColorPicker
 import com.asu1.quizzer.composables.ColorSchemeSheet
 import com.asu1.quizzer.composables.ImageGetter
@@ -112,7 +116,7 @@ fun QuizLayoutSetColorScheme(
             }
             item{
                 BackgroundRow(
-                    text = "Background",
+                    text = stringResource(R.string.background),
                     background = backgroundImage,
                     onImageSelected = { imageColor ->
                         onBackgroundImageUpdate(imageColor)
@@ -125,7 +129,7 @@ fun QuizLayoutSetColorScheme(
                 )
             }
             item{
-                val colorName = "Primary Color"
+                val colorName = stringResource(R.string.primary_color)
                 ColorPickerRowOpener(
                     text = colorName,
                     imageColor = colorSchemeState,
@@ -143,7 +147,7 @@ fun QuizLayoutSetColorScheme(
             }
             item{
                 Text(
-                    text = "Colors : ",
+                    text = stringResource(R.string.will_be_using_colors),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -243,7 +247,7 @@ fun BackgroundRow(
                                 )
                             )
                         }) {
-                            Text("Single Color")
+                            Text(stringResource(R.string.single_color))
                         }
                         Tab(selected = selectedTabIndex == 1, onClick = {
                             onImageSelected(
@@ -255,7 +259,8 @@ fun BackgroundRow(
                                 )
                             )
                         }) {
-                            Text("Gradient",
+                            Text(
+                                stringResource(R.string.gradient),
                                 style = TextStyle(
                                     brush = gradient,
                                     textDecoration = TextDecoration.LineThrough
@@ -272,7 +277,7 @@ fun BackgroundRow(
                                 )
                             )
                         }) {
-                            Text("Image")
+                            Text(stringResource(R.string.image))
                         }
                     }
                     when (selectedTabIndex) {
@@ -294,9 +299,7 @@ fun BackgroundRow(
                         }
 
                         1 -> {
-                            // Gradient Picker (Placeholder)
-                            // TODO Make opengl functions using two colors and draw gradient with two selected colors and selected method
-                            Text("Gradient Picker Placeholder\n To be implemented")
+                            Text(stringResource(R.string.gradient_picker_placeholder_to_be_implemented))
                         }
 
                         2 -> {
@@ -334,6 +337,16 @@ fun BackgroundRow(
     }
 }
 
+fun getPaletteStyleStringMap(context: Context): Map<PaletteStyle, String> {
+    val paletteStyleNames = context.resources.getStringArray(R.array.palette_style_names)
+    return PaletteStyle.entries.associateWith { paletteStyleNames[it.ordinal] }
+}
+
+fun getContrastStringMap(context: Context): Map<Contrast, String>{
+    val contrastNames = context.resources.getStringArray(R.array.contrast_names)
+    return Contrast.entries.associateWith { contrastNames[it.ordinal] }
+}
+
 @Composable
 fun GenerateColorScheme(
     quizImage: ByteArray? = byteArrayOf(),
@@ -346,7 +359,9 @@ fun GenerateColorScheme(
 ){
     val isTitleImageSet = quizImage != null
     val isDark = isSystemInDarkTheme()
-
+    val context = LocalContext.current
+    val paletteStyleStringMap = remember{getPaletteStyleStringMap(context)}
+    val contrastStringMap = remember{getContrastStringMap(context)}
 
     Column(
 
@@ -361,7 +376,7 @@ fun GenerateColorScheme(
         ) {
             IconButtonWithDisable(
                 imageVector = Icons.Default.Autorenew,
-                text = "Gen with\nTitle Image",
+                text = stringResource(R.string.gen_with_title_image),
                 onClick = {
                     val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
                     val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
@@ -372,7 +387,7 @@ fun GenerateColorScheme(
             )
             IconButtonWithDisable(
                 imageVector = Icons.Default.Autorenew,
-                text = "Gen with\nPrimary Color",
+                text = stringResource(R.string.gen_with_primary_color),
                 onClick = {
                     val primaryColorScheme = randomDynamicColorScheme(primaryColor, paletteLevel, contrastLevel, isDark)
                     setColorScheme(primaryColorScheme)
@@ -382,16 +397,16 @@ fun GenerateColorScheme(
             )
         }
         LevelSelector(
-            prefix = "Palette : ",
-            items = PaletteStyle.entries.map { it.toString() },
+            prefix = stringResource(R.string.palette),
+            items = PaletteStyle.entries.map { paletteStyleStringMap[it] ?: "" },
             onUpdateLevel = { level ->
                 onPaletteLevelUpdate(level)
             },
             selectedLevel = paletteLevel,
         )
         LevelSelector(
-            prefix = "Contrast : ",
-            items = Contrast.entries.map { it.toString() },
+            prefix = stringResource(R.string.contrast),
+            items = Contrast.entries.map { contrastStringMap[it] ?: "" },
             onUpdateLevel = { level ->
                 onContrastLevelUpdate(level)
             },
@@ -441,7 +456,7 @@ fun LevelSelector(
                         .height(24.dp)
                         .weight(1f)
                         .background(
-                            if(i < barLevel) MaterialTheme.colorScheme.primary
+                            if (i < barLevel) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurface.copy(
                                 alpha = 0.4f
                             ),

@@ -102,7 +102,6 @@ class MainViewModelTest {
         whenever(application.packageManager.getPackageInfo(anyString(), anyInt())).thenReturn(packageInfo)
 
         mainViewModel.isUpdateAvailable.observeForever(observer)
-        mainViewModel.updateIsUpdateAvailable()
 
         advanceUntilIdle()
         verify(observer).onChanged(true)
@@ -121,7 +120,6 @@ class MainViewModelTest {
         whenever(application.packageManager.getPackageInfo(anyString(), anyInt())).thenReturn(packageInfo)
 
         mainViewModel.isUpdateAvailable.observeForever(observer)
-        mainViewModel.updateIsUpdateAvailable()
 
         advanceUntilIdle()
         verify(observer).onChanged(false)

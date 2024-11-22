@@ -43,6 +43,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -100,13 +101,13 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
 
                 if (isFocused || searchResult == null) {
                     Text(
-                        text = "Searching...",
+                        text = stringResource(R.string.searching),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 } else {
                     if (searchResult?.isEmpty() != false) {
                         Text(
-                            text = "No search result",
+                            text = stringResource(R.string.no_search_result),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {

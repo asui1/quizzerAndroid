@@ -72,6 +72,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -126,7 +127,9 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, mod
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
-        Column(modifier = Modifier.wrapContentHeight().fillMaxWidth())
+        Column(modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth())
         {
             imageBitmap.let {
                 Box(
@@ -137,14 +140,19 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, mod
                 ) {
                     Image(
                         bitmap = it,
-                        contentDescription = "Quiz Image for " + quizCard.title,
+                        contentDescription = buildString {
+                            append(stringResource(R.string.quiz_image_for))
+                            append(quizCard.title)
+                        },
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize() // Expand to fill the square shape
                     )
                 }
             }
             Text(
-                modifier = Modifier.padding(horizontal = 4.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .fillMaxWidth(),
                 text = quizCard.title,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
@@ -153,7 +161,9 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, mod
                 maxLines = 2,
             )
             Text(
-                modifier = Modifier.padding(horizontal = 4.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = quizCard.creator,
                 style = MaterialTheme.typography.labelSmall,
@@ -174,7 +184,8 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .wrapContentHeight()
     ){
         HorizontalPager(
@@ -188,7 +199,8 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
             },
             pageSpacing = 4.dp,
             state = listState,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
         ) { page ->
@@ -232,7 +244,10 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
                 ) {
                     Image(
                         bitmap = it,
-                        contentDescription = "Quiz Image for " + quizCard.title,
+                        contentDescription = buildString {
+                            append(stringResource(R.string.quiz_image_for))
+                            append(quizCard.title)
+                        },
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize() // Expand to fill the square shape
                     )
@@ -325,7 +340,10 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}, modif
                 ) {
                     Image(
                         bitmap = it,
-                        contentDescription = "Quiz Image for " + quizCard.title,
+                        contentDescription = buildString {
+                            append(stringResource(R.string.quiz_image_for))
+                            append(quizCard.title)
+                        },
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize() // Expand to fill the square shape
                     )
@@ -361,10 +379,12 @@ fun QuizCardHorizontal(quizCard: QuizCard, onClick: (String) -> Unit = {}, modif
                 Spacer(modifier = Modifier.height(4.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Solved: ${quizCard.count}",
+                    text = buildString {
+                        append(stringResource(R.string.solved))
+                        append(quizCard.count)
+                    },
                     style = MaterialTheme.typography.bodySmall
                 )
-
             }
         }
     }
@@ -434,7 +454,8 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
             )
             Column(
                 horizontalAlignment = Alignment.Start,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
             ){
                 Row(){
@@ -446,7 +467,10 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
                         ) {
                             Image(
                                 bitmap = it,
-                                contentDescription = "Quiz Image for " + quizCard.title,
+                                contentDescription = buildString {
+                                    append(stringResource(R.string.quiz_image_for))
+                                    append(quizCard.title)
+                                },
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize() // Expand to fill the square shape
                             )
@@ -482,14 +506,18 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
                         Spacer(modifier = Modifier.height(8.dp))
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = "Solved: ${quizCard.count}",
+                            text = buildString {
+                                append(stringResource(R.string.solved))
+                                append(quizCard.count)
+                            },
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 4.dp),
                     text = quizCard.description,
                     style = MaterialTheme.typography.bodySmall,

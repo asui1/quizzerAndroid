@@ -11,9 +11,11 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.TextStyleManager
@@ -67,11 +69,15 @@ fun Quiz2Viewer(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER, "Selected Answers", modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.ANSWER,
+                stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(userAnswers.size){
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER, "${it+1}. " + userAnswers[it], modifier = Modifier.fillMaxWidth())
+            quizStyleManager.GetTextComposable(TextStyles.ANSWER, buildString {
+                append("${it + 1}. ")
+                append(userAnswers[it])
+            }, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(4.dp))
         }
     }

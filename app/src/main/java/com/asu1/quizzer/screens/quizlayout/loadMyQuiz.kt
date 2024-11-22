@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,7 +74,7 @@ fun LoadMyQuiz(
                     }
                 )
                 Text(
-                    text = "My Quizzes",
+                    text = stringResource(R.string.my_quizzes),
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -88,7 +89,7 @@ fun LoadMyQuiz(
         ) {
             if (quizList == null) {
                 Text(
-                    "Searching for quizzes...",
+                    stringResource(R.string.searching_for_quizzes),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 CircularProgressIndicator(

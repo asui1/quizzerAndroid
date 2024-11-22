@@ -1,10 +1,12 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.json
@@ -29,9 +31,6 @@ class QuizLoadViewModel: ViewModel() {
     private val _myQuizList = MutableLiveData<MutableList<QuizCard>?>(null)
     val myQuizList: LiveData<MutableList<QuizCard>?> = _myQuizList
 
-    private val _showToast = MutableLiveData<String?>()
-    val showToast: LiveData<String?> get() = _showToast
-
     fun reset(){
         _quizList.value = null
         _loadComplete.value = false
@@ -53,12 +52,12 @@ class QuizLoadViewModel: ViewModel() {
                     }
                 }
                 else{
-                    _showToast.value = "Search No Response"
+                    ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
                 Logger().debug("Search Failed: $e")
-                _showToast.value = "Search Failed"
+                ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
             }
         }
     }
@@ -91,22 +90,19 @@ class QuizLoadViewModel: ViewModel() {
             val quiz = _myQuizList.value?.get(index)
 
             if (quiz != null) {
-                Logger().debug("SENDING DELETE REQUEST")
-//                val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
                 val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
                 if(response.isSuccessful){
                     val updatedList = _myQuizList.value?.toMutableList()
                     updatedList?.removeAt(index)
                     _myQuizList.value = updatedList
-                    Logger().debug("Delete At Index: $index")
-                    _showToast.value = "Delete Successful"
+                    ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
                 }
                 else{
-                    _showToast.value = "Delete Failed"
+                    ToastManager.showToast(R.string.delete_failed, ToastType.ERROR)
                 }
             }
             else{
-                _showToast.value = "Delete Failed"
+                ToastManager.showToast(R.string.delete_failed, ToastType.ERROR)
             }
         }
     }
@@ -130,9 +126,6 @@ class QuizLoadViewModel: ViewModel() {
                 _quizList.value = loadedQuizzes
             }
         }
-    }
-    fun toastShown() {
-        _showToast.value = null
     }
 
     fun setTest(){

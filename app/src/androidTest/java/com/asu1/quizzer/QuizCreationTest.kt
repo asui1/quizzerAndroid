@@ -15,6 +15,7 @@ import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
+import kotlin.random.Random
 
 val primaryColors: List<String> = listOf(
     "FFBBDEFB", // Light Blue
@@ -207,7 +208,7 @@ class MyComposeTest {
         onIdle()
         testUtils.clickOnTag("DesignScoreCardShaderButton")
         testUtils.waitFor(300)
-        val shader = shaders.random()
+        val shader = Random.nextInt(shaders.size)
         testUtils.clickOnTag("DesignScoreCardShaderButton$shader", useUnmergedTree = true)
         onIdle()
         testUtils.waitFor(200)

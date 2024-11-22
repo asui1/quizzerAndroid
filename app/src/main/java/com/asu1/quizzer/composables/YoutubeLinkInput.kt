@@ -26,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -57,8 +59,10 @@ fun YoutubeLinkInput(
             TextField(
                 value = link,
                 onValueChange = { link = it },
-                label = { Text("Enter YouTube Link") },
-                modifier = Modifier.fillMaxWidth().testTag("QuizCreatorBodyYoutubeLinkTextField"),
+                label = { Text(stringResource(R.string.enter_youtube_link)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("QuizCreatorBodyYoutubeLinkTextField"),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = {
@@ -68,7 +72,7 @@ fun YoutubeLinkInput(
                 ),
                 placeholder = {
                     if (clipboardText.isNotEmpty()) {
-                        Text("Suggested: $clipboardText")
+                        Text(clipboardText)
                     }
                 }
             )
@@ -76,14 +80,15 @@ fun YoutubeLinkInput(
                 onClick = {
                     val (id, time) = parseYoutubeLink(link)
                     if(id == "") {
-                        Toast.makeText(context, "Invalid YouTube link", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            context.getString(R.string.invalid_youtube_link), Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     onYoutubeUpdate(id, time)
                 },
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                Text("Load Video")
+                Text(stringResource(R.string.load_video))
             }
         }
     } else {
@@ -97,7 +102,7 @@ fun YoutubeLinkInput(
             ) {
                 Icon(
                     imageVector = Icons.Default.RemoveCircleOutline,
-                    contentDescription = "Delete Current Quiz"
+                    contentDescription = stringResource(R.string.delete_current_quiz_s_youtube)
                 )
             }
         }

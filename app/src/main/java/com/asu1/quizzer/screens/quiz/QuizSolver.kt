@@ -19,11 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.R
 import com.asu1.quizzer.model.asBackgroundModifier
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
@@ -72,7 +74,6 @@ fun QuizSolver(
                         modifier = Modifier
                             .fillParentMaxSize()
                     ) {
-                        Logger().debug("Trigger RECOMPOSE")
                         QuizViewer(
                             quiz = quizzes[it],
                             quizTheme = quizTheme,
@@ -91,7 +92,10 @@ fun QuizSolver(
                             quizStyleManager = quizLayoutViewModel.getTextStyleManager()
                         )
                         Text(
-                            text = "${quizzes[it].point} points",
+                            text = buildString {
+                                append(quizzes[it].point)
+                                append(stringResource(R.string.pt))
+                            },
                             modifier = Modifier.align(Alignment.TopEnd)
                         )
                         Text(
@@ -134,12 +138,12 @@ fun QuizSubmit(
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(modifier = Modifier.height(32.dp))
-            Text(text = "End of Quiz.\nDo you want to submit your answers?",
+            Text(text = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onSubmit) {
-                Text(text = "Submit")
+                Text(text = stringResource(R.string.submit))
             }
         }
     }

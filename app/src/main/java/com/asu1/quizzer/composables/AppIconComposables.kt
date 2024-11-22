@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
@@ -33,7 +34,7 @@ fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> 
             IconButton(onClick = onBackPressed) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Move Back Home"
+                    contentDescription = stringResource(R.string.move_back_home)
                 )
             }
         }
@@ -44,7 +45,7 @@ fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> 
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "quizzer",
+            text = "Quizzer",
             style = MaterialTheme.typography.headlineMedium
         )
     }

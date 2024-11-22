@@ -83,7 +83,6 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun updateBodyImage(image: ByteArray){
-        Logger().debug("Quiz3ViewModel")
         _quiz3State.value = _quiz3State.value.copy(bodyImage = image)
     }
 

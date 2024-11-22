@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
@@ -119,7 +120,7 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
             contentScale = ContentScale.Crop,
         )
         Text(
-            text = "Sign in",
+            text = stringResource(R.string.sign_in),
             style = MaterialTheme.typography.headlineMedium,
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +143,8 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_rd_si), // Replace with your drawable resource
                 contentDescription = "Sign in with Google",
-                modifier = Modifier.width(250.dp)
+                modifier = Modifier
+                    .width(250.dp)
                     .fillMaxWidth()
             )
         }

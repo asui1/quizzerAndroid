@@ -1,5 +1,6 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
 import android.content.Context
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizResult
@@ -47,6 +49,8 @@ import com.asu1.quizzer.util.withSurfaceColor
 import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -123,9 +127,6 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizData = MutableStateFlow(QuizData())
     val quizData: StateFlow<QuizData> = _quizData.asStateFlow()
 
-    private val _showToast = MutableLiveData<String?>()
-    val showToast: LiveData<String?> get() = _showToast
-
     private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
     val quizzes: StateFlow<List<Quiz>> get() = _quizzes.asStateFlow()
 
@@ -143,7 +144,7 @@ class QuizLayoutViewModel : ViewModel() {
 
     private val textStyleManager = TextStyleManager()
 
-    init {
+    fun initialize(){
         initTextStyleManager()
     }
 
@@ -162,25 +163,27 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun loadQuizResult(resultId: String, scoreCardViewModel: ScoreCardViewModel){
         _viewModelState.value = ViewModelState.LOADING
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.api.getResult(resultId)
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     val quizResult = response.body()!!
-                    scoreCardViewModel.loadScoreCard(quizResult.scoreCard)
-                    updateQuizResult(quizResult.quizResult)
+                    coroutineScope {
+                        val loadScoreCardDeferred = async { scoreCardViewModel.loadScoreCard(quizResult.scoreCard) }
+                        val updateQuizResultDeferred = async { updateQuizResult(quizResult.quizResult) }
+                        loadScoreCardDeferred.await()
+                        updateQuizResultDeferred.await()
+                    }
                 } else {
                     Logger().debug("Failed to load quiz result ${response.errorBody()?.string()}")
                     _viewModelState.value = ViewModelState.ERROR
-                    _showToast.postValue("Failed to load quiz result")
+                    ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
                 }
-
             } catch (e: Exception) {
                 Logger().debug("Failed to load quiz result $e")
                 _viewModelState.value = ViewModelState.ERROR
-                _showToast.postValue("Failed to load quiz result")
+                ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
             }
-
         }
     }
 
@@ -225,48 +228,46 @@ class QuizLayoutViewModel : ViewModel() {
                     updateQuizResult(response.body()!!)
                 } else {
                     Logger().debug("Failed to grade quiz ${response.errorBody()?.string()}")
-                    _showToast.postValue("Failed to grade quiz")
+                    ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
                 Logger().debug("Failed to grade quiz $e")
-                _showToast.postValue("Failed to grade quiz")
+                ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
             }
         }
     }
 
-    fun loadQuiz(quizId: String, scoreCardViewModel: ScoreCardViewModel, onDone: () -> Unit) {
-        val thisViewModel = this
+    fun loadQuiz(quizId: String, scoreCardViewModel: ScoreCardViewModel) {
+        _viewModelState.value = ViewModelState.LOADING
         viewModelScope.launch(Dispatchers.IO){
             try {
-                Logger().debugFull("Get Quiz : $quizId")
                 val response = RetrofitInstance.api.getQuizData(quizId)
-                withContext(Dispatchers.IO) {
-                    if (response.isSuccessful) {
-                        scoreCardViewModel.loadScoreCard(response.body()!!.scoreCard)
-                        withContext(Dispatchers.Main) {
-                            thisViewModel.loadQuizData(
-                                response.body()!!.quizData,
-                                response.body()!!.quizTheme,
-                                onDone
-                            )
-                        }
-                    } else {
-                        val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
-                        Logger().debug("Failed to load quiz: $errorMessage")
-                        _showToast.postValue("Failed to load quiz")
+                if (response.isSuccessful) {
+                    coroutineScope{
+                        val loadScoreCardDeferred = async { scoreCardViewModel.loadScoreCard(response.body()!!.scoreCard) }
+                        val loadQuizDataDeferred = async { loadQuizData(response.body()!!.quizData, response.body()!!.quizTheme) }
+                        loadScoreCardDeferred.await()
+                        loadQuizDataDeferred.await()
+                        _viewModelState.value = ViewModelState.IDLE
                     }
+                } else {
+                    val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
+                    Logger().debug("Failed to load quiz: $errorMessage")
+                    ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
+                    _viewModelState.value = ViewModelState.ERROR
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Logger().debug("Failed to load quiz: $e")
-                    _showToast.postValue("Failed to load quiz")
+                    ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
+                    _viewModelState.value = ViewModelState.ERROR
                 }
             }
         }
     }
 
-    fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme, loadDone: () -> Unit) {
+    fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme) {
         _quizData.value = QuizData(
             title = quizData.title,
             image = Base64.getDecoder().decode(quizData.titleImage),
@@ -285,7 +286,6 @@ class QuizLayoutViewModel : ViewModel() {
         _quizTheme.value = quizTheme
         _step.postValue(LayoutSteps.THEME)
         initTextStyleManager()
-        loadDone()
     }
 
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
@@ -296,7 +296,7 @@ class QuizLayoutViewModel : ViewModel() {
         _step.value = LayoutSteps.POLICY
     }
 
-    suspend fun tryUpload(navController: NavController, scoreCard: ScoreCard, onUpload: () -> Unit) {
+    fun tryUpload(navController: NavController, scoreCard: ScoreCard, onUpload: () -> Unit) {
         if(!validateQuizLayout()){
             navController.popBackStack()
             return
@@ -304,25 +304,23 @@ class QuizLayoutViewModel : ViewModel() {
         uploadQuizLayout(scoreCard, onUpload)
     }
 
-    private suspend fun uploadQuizLayout(scoreCard: ScoreCard, onUpload: () -> Unit) {
+    private fun uploadQuizLayout(scoreCard: ScoreCard, onUpload: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val jsoned = toJson(scoreCard)
                 val response = RetrofitInstance.api.addQuiz(jsoned)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        _showToast.postValue("Quiz uploaded successfully")
+                        ToastManager.showToast(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
                         onUpload()
                     } else {
                         val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
                         Logger().debug("Failed to upload quiz: $errorMessage")
-                        _showToast.postValue("Failed to upload quiz")
+                        ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    _showToast.postValue("Failed to upload quiz")
-                }
+                ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
             }
         }
     }
@@ -332,23 +330,23 @@ class QuizLayoutViewModel : ViewModel() {
         val fileName = "${quizData.value.uuid}_${quizData.value.creator}_quizSave.json"
         val file = File(context.filesDir, fileName)
         file.writeText(jsoned)
-        _showToast.value = "${quizData.value.title} saved"
+        ToastManager.showToast(R.string.save_success, ToastType.SUCCESS)
     }
 
     fun validateQuizLayout(): Boolean {
         if(_quizData.value.title.isEmpty()) {
-            _showToast.value = "Title cannot be empty"
+            ToastManager.showToast(R.string.title_cannot_be_empty, ToastType.ERROR)
             return false
         }
         if(_quizzes.value!!.isEmpty()) {
-            _showToast.value = "Quiz cannot be empty"
+            ToastManager.showToast(R.string.quiz_cannot_be_empty, ToastType.ERROR)
             return false
         }
         for(quiz in _quizzes.value!!){
             val check = quiz.validateQuiz()
             if(!check.second){
-                _showToast.value = check.first
-                updateInitIndex(_quizzes.value!!.indexOf(quiz))
+                ToastManager.showToast(check.first, ToastType.ERROR)
+                updateInitIndex(_quizzes.value.indexOf(quiz))
                 return false
             }
         }
@@ -361,14 +359,6 @@ class QuizLayoutViewModel : ViewModel() {
             return
         }
         _initIndex.value = index
-    }
-
-    fun toastShown() {
-        _showToast.value = null
-    }
-
-    fun sendToast(message: String){
-        _showToast.value = message
     }
 
     fun updatePolicyAgreement(agreement: Boolean) {
@@ -395,7 +385,7 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun setQuizImage(image: ByteArray) {
         if(image.size > 80000){
-            _showToast.value = "Image size too large"
+            ToastManager.showToast(R.string.image_size_too_large, ToastType.ERROR)
             return
         }
         _quizData.value = _quizData.value.copy(image = image)

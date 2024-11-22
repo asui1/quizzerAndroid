@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,12 +91,16 @@ fun UserRankComposable(
             Spacer(modifier = Modifier.width(8.dp))
             UriImageButton(
                 urlToImage = userRank.profileImageUri,
-                modifier = Modifier.size(minSize).clip(shape = RoundedCornerShape(8.dp)),
+                modifier = Modifier
+                    .size(minSize)
+                    .clip(shape = RoundedCornerShape(8.dp)),
+                nickname = userRank.nickname[0]
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(
                 horizontalAlignment = Alignment.Start,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
             ){
                 Text(
@@ -106,28 +111,40 @@ fun UserRankComposable(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Points: ${userRank.orderScore}",
+                    text = buildString{
+                        append(stringResource(R.string.points))
+                        append(userRank.orderScore)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Average: $average",
+                    text = buildString {
+                        append(stringResource(R.string.average))
+                        append(average)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Total Score: $score",
+                    text = buildString {
+                        append(stringResource(R.string.total_score))
+                        append(score)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Solved Quizzes: ${userRank.quizzesSolved}",
+                    text = buildString {
+                        append(stringResource(R.string.solved_quizzes))
+                        append(userRank.quizzesSolved)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -170,7 +187,8 @@ fun Modifier.GlitteringBackground(
     baseColor: Color,
 ): Modifier {
     if(baseColor == Color.Transparent) return this
-    return this.graphicsLayer { alpha = 0.99f } // Enable hardware acceleration
+    return this
+        .graphicsLayer { alpha = 0.99f } // Enable hardware acceleration
         .background(
             shape = RoundedCornerShape(8.dp),
             brush = Brush.verticalGradient(
@@ -194,7 +212,9 @@ fun Modifier.GlitteringBackground(
                         size.width,
                         size.height,
                         glitterColor.toArgb(),
-                        Color.White.copy(alpha = 0.1f).toArgb(),
+                        Color.White
+                            .copy(alpha = 0.1f)
+                            .toArgb(),
                         android.graphics.Shader.TileMode.MIRROR
                     )
                 }

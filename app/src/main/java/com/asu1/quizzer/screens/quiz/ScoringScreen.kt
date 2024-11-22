@@ -23,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ScoreCardComposable
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColor
@@ -62,13 +64,11 @@ fun ScoringScreen(
     LaunchedEffect(scoreCard.quizUuid){
         if(scoreCard.quizUuid != null){
             uniqueId = generateUniqueId(email = email, uuid = scoreCard.quizUuid!!)
-            Logger().debug("Generated uniqueId: $uniqueId")
         }
     }
 
     LaunchedEffect(quizLayoutViewModelState){
         if(quizLayoutViewModelState == ViewModelState.ERROR){
-            Logger().debug("Error in quizLayoutViewModel")
             quizLayoutViewModel.resetViewModelState()
             navController.popBackStack(Route.Home, inclusive = false)
         }
@@ -156,7 +156,7 @@ fun ScoringScreen(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Solve Again",
+                        text = stringResource(R.string.solve_again),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -178,7 +178,7 @@ fun ScoringScreen(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Move Home",
+                        text = stringResource(R.string.move_home),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

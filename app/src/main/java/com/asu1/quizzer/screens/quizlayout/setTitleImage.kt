@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
@@ -28,7 +30,7 @@ fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageC
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Set Quiz Image (80 kb)",
+            text = stringResource(R.string.set_quiz_image_80_kb),
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.size(16.dp))

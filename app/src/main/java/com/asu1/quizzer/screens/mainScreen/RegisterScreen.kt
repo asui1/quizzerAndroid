@@ -95,7 +95,7 @@ fun UsageAgreement(navController: NavHostController, registerViewModel: Register
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
             ) {
-                Text(text = "Agree")
+                Text(text = stringResource(R.string.agree))
             }
         }
     }
@@ -150,7 +150,7 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                         .verticalScroll(rememberScrollState())
                 ) {
                     Text(
-                        text = "Enter your nickname",
+                        text = stringResource(R.string.enter_your_nickname),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     TextField(
@@ -163,9 +163,9 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                         },
                         isError = isError,
                         label = {
-                            if(isError) Text(text = "Duplicate Nickname", color = MaterialTheme.colorScheme.error)
+                            if(isError) Text(text = stringResource(R.string.duplicate_nickname), color = MaterialTheme.colorScheme.error)
                             else
-                            Text(text = "Nickname")
+                            Text(text = stringResource(R.string.nickname))
                                 },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -178,7 +178,10 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                                 if(nickname.text.length <= 12) registerViewModel.setNickName(nickname.text)
                             }
                         ),
-                        supportingText = { Text(text = "Length: ${nickname.text.length}/12") }
+                        supportingText = { Text(text = buildString {
+                            append(stringResource(R.string.length))
+                            append("${nickname.text.length}/12")
+                        }) }
                     )
                 }
                 Button(
@@ -189,7 +192,7 @@ fun NicknameInput(navController: NavHostController, registerViewModel: RegisterV
                         .padding(16.dp)
                         .imePadding()
                 ) {
-                    Text(text = "Proceed")
+                    Text(text = stringResource(R.string.proceed))
                 }
             }
         }
@@ -261,7 +264,7 @@ fun TagSetting(navController: NavHostController, registerViewModel: RegisterView
                         .padding(16.dp)
                         .imePadding()
                 ) {
-                    Text(text = "Register")
+                    Text(text = stringResource(R.string.register))
                 }
             }
         }

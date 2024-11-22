@@ -2,6 +2,7 @@ package com.asu1.quizzer.model
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.ShaderTypeSerializer
 import com.asu1.quizzer.ui.theme.LightColorScheme
@@ -15,14 +16,14 @@ import com.asu1.quizzer.util.verticalWaveShader
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
-enum class ShaderType(val shaderName: String, val index: Int) {
-    Brush1("No Shader", 0),
-    Brush2("Left Bottom", 1),
-    Brush3("Bottom", 2),
-    Brush4("Center", 3),
-    Brush5("Repeat", 4),
-    Brush6("Vertical Wave", 5),
-    Brush7("Horizontal Wave", 6);
+enum class ShaderType(val shaderName: Int, val index: Int) {
+    Brush1(R.string.no_shader, 0),
+    Brush2(R.string.left_bottom, 1),
+    Brush3(R.string.bottom, 2),
+    Brush4(R.string.center, 3),
+    Brush5(R.string.repeat, 4),
+    Brush6(R.string.vertical_wave, 5),
+    Brush7(R.string.horizontal_wave, 6);
 
     fun getShader(): String {
         return when(this){

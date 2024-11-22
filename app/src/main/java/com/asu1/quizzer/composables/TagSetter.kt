@@ -26,8 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -44,7 +46,7 @@ fun TagSetter(
             .imePadding()
     ) {
         Text(
-            text = "Select tags that interest you",
+            text = stringResource(R.string.select_tags_that_interest_you),
             style = MaterialTheme.typography.titleMedium,
         )
         FlowRow(
@@ -70,7 +72,7 @@ fun TagSetter(
         TextField(
             value = tag,
             onValueChange = { tag = it },
-            label = { Text("Enter Tag") },
+            label = { Text(stringResource(R.string.enter_tag)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)

@@ -1,39 +1,34 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.R
 import com.asu1.quizzer.model.UserRegister
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    private val _registerStep = MutableLiveData<Int>()
+    private val _registerStep = MutableLiveData<Int>(0)
     val registerStep: LiveData<Int> get() = _registerStep
 
-    private val _showToast = MutableLiveData<String?>()
-    val showToast: LiveData<String?> get() = _showToast
-
-    private val _nickname = MutableLiveData<String?>()
+    private val _nickname = MutableLiveData<String?>(null)
     val nickname: MutableLiveData<String?> get() = _nickname
 
     private val _tags = MutableLiveData<Set<String>>(emptySet())
     val tags: LiveData<Set<String>> get() = _tags
 
-    private val _email = MutableLiveData<String?>()
+    private val _email = MutableLiveData<String?>(null)
     val email: LiveData<String?> get() = _email
 
-    private val _photoUri = MutableLiveData<String?>()
+    private val _photoUri = MutableLiveData<String?>(null)
     val photoUri: LiveData<String?> get() = _photoUri
 
     private val _isError = MutableLiveData<Boolean>(false)
     val isError: LiveData<Boolean> get() = _isError
-
-    init{
-        reset()
-    }
 
     fun undoError(){
         _isError.postValue(false)
@@ -64,13 +59,12 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun agreeTerms(){
-        Logger().debug("Agree terms")
         _registerStep.postValue(1)
     }
 
     fun setNickName(nickName: String){
         if(nickName.isEmpty()){
-            _showToast.postValue("Please enter a nickname")
+            ToastManager.showToast(R.string.please_enter_a_nickname, ToastType.ERROR)
         }
         else{
             viewModelScope.launch {
@@ -82,7 +76,7 @@ class RegisterViewModel : ViewModel() {
                     }
                 }
                 else {
-                    _showToast.postValue("Failed to check nickname")
+                    ToastManager.showToast(R.string.can_not_use_this_nickname, ToastType.ERROR)
                 }
             }
         }
@@ -96,48 +90,26 @@ class RegisterViewModel : ViewModel() {
             val response = RetrofitInstance.api.register(UserRegister(_email.value!!, _nickname.value!!, _tags.value!!.toList(), photoUri.value ?: ""))
             if(response.isSuccessful){
                 if(response.code() == 201){
-                    _showToast.postValue("Registered successfully")
+                    ToastManager.showToast(R.string.registered_successfully, ToastType.SUCCESS)
                     _registerStep.postValue(3)
                 }
                 else{
-                    _showToast.postValue("Failed to register")
+                    ToastManager.showToast(R.string.failed_to_register, ToastType.ERROR)
                 }
             }
             else{
-                _showToast.postValue("Failed to register")
+                ToastManager.showToast(R.string.failed_to_register, ToastType.ERROR)
             }
         }
     }
-
-    fun addTag(tag: String){
-        val tags = _tags.value?.toMutableList()
-        if(tags!!.contains(tag)){
-            _showToast.postValue("Tag already exists")
-            return
-        }
-        tags.add(tag)
-        _tags.postValue(tags!!.toSet())
-    }
-
     fun toggleTag(tag: String){
-        val tags = _tags.value?.toMutableList()
-        if(tags!!.contains(tag)){
+        val tags = _tags.value?.toMutableList() ?: mutableListOf()
+        if(tags.contains(tag)){
             tags.remove(tag)
         }
         else{
             tags.add(tag)
         }
-        _tags.postValue(tags!!.toSet())
-    }
-
-    fun removeTag(tag: String){
-        val tags = _tags.value?.toMutableList()
-        if(tags?.remove(tag) == true){
-            _tags.postValue(tags!!.toSet())
-        }
-    }
-
-    fun toastShown() {
-        _showToast.value = null
+        _tags.postValue(tags.toSet())
     }
 }

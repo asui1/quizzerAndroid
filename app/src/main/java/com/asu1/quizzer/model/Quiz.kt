@@ -1,6 +1,7 @@
 package com.asu1.quizzer.model
 
 import androidx.compose.ui.geometry.Offset
+import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizJson
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.util.Logger
@@ -43,7 +44,7 @@ abstract class Quiz(
         }
     }
     abstract fun initViewState()
-    abstract fun validateQuiz() : Pair<String, Boolean>
+    abstract fun validateQuiz() : Pair<Int, Boolean>
     abstract fun changeToJson() : QuizJson
     abstract fun load(data: String)
     abstract fun gradeQuiz(): Boolean
@@ -91,17 +92,17 @@ data class Quiz1(
         validateBody()
     }
 
-    override fun validateQuiz(): Pair<String, Boolean> {
+    override fun validateQuiz(): Pair<Int, Boolean> {
         if(question == ""){
-            return Pair("Question cannot be empty", false)
+            return Pair(R.string.question_cannot_be_empty, false)
         }
         if(answers.contains("")){
-            return Pair("Answers cannot be empty", false)
+            return Pair(R.string.answers_cannot_be_empty, false)
         }
         if(ans.contains(true).not()){
-            return Pair("Correct answer not selected", false)
+            return Pair(R.string.correct_answer_not_selected, false)
         }
-        return Pair("", true)
+        return Pair(0, true)
     }
 
     override fun changeToJson(): QuizJson {
@@ -133,8 +134,8 @@ data class Quiz1(
         answers = body.answers.toMutableList()
         ans = body.ans.toMutableList()
         question = body.question
-        youtubeId = body.youtubeId ?: ""
-        youtubeStartTime = body.youtubeStartTime ?: 0
+        youtubeId = body.youtubeId
+        youtubeStartTime = body.youtubeStartTime
         initViewState()
     }
 
@@ -177,8 +178,6 @@ data class Quiz1(
     }
 
     override fun gradeQuiz(): Boolean {
-        Logger().debug("Answer: $ans")
-        Logger().debug("UserAnswer: $userAns")
         for(i in ans.indices){
             if(ans[i] != userAns[i]){
                 return false
@@ -225,14 +224,14 @@ data class Quiz2(
         validateBody()
     }
 
-    override fun validateQuiz(): Pair<String, Boolean> {
+    override fun validateQuiz(): Pair<Int, Boolean> {
         if(question == ""){
-            return Pair("Question cannot be empty", false)
+            return Pair(R.string.question_cannot_be_empty, false)
         }
         if(answerDate.isEmpty()){
-            return Pair("Answer date cannot be empty", false)
+            return Pair(R.string.answer_date_cannot_be_empty, false)
         }
-        return Pair("", true)
+        return Pair(0, true)
     }
 
     override fun changeToJson(): QuizJson {
@@ -284,8 +283,6 @@ data class Quiz2(
     }
 
     override fun gradeQuiz(): Boolean {
-        Logger().debug("AnswerDate: $answerDate")
-        Logger().debug("UserAnswerDate: $userAnswerDate")
         for( i in answerDate){
             if(userAnswerDate.contains(i).not()){
                 return false
@@ -331,20 +328,23 @@ data class Quiz3(
     override fun initViewState() {
         if (answers.isNotEmpty()) {
             shuffledAnswers = (mutableListOf(answers.first()) + answers.drop(1).mapIndexed { index, answer ->
-                answer + "Q!Z2${index + 1}"
+                buildString {
+                    append(answer)
+                    append("Q!Z2${index + 1}")
+                }
             }.shuffled()).toMutableList()
         }
         validateBody()
     }
 
-    override fun validateQuiz(): Pair<String, Boolean> {
+    override fun validateQuiz(): Pair<Int, Boolean> {
         if(question == ""){
-            return Pair("Question cannot be empty", false)
+            return Pair(R.string.question_cannot_be_empty, false)
         }
         if(answers.contains("")){
-            return Pair("Answer cannot be empty", false)
+            return Pair(R.string.answers_cannot_be_empty, false)
         }
-        return Pair("", true)
+        return Pair(0, true)
     }
 
     override fun changeToJson(): QuizJson {
@@ -376,7 +376,7 @@ data class Quiz3(
         bodyType = BodyType.entries.first { it.value == body.bodyType }
         bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
-        youtubeId = body.youtubeId ?: ""
+        youtubeId = body.youtubeId
         youtubeStartTime = body.youtubeStartTime
         point = body.points
 
@@ -403,8 +403,6 @@ data class Quiz3(
     }
 
     override fun gradeQuiz(): Boolean {
-        Logger().debug("Answer: $answers")
-        Logger().debug("ShuffledAnswer: $shuffledAnswers")
         for(i in answers.indices){
             val curAnswer = if(i != 0){
                 shuffledAnswers[i].replace(Regex("Q!Z2\\d+$"), "")
@@ -467,17 +465,17 @@ data class Quiz4(
         validateBody()
     }
 
-    override fun validateQuiz(): Pair<String, Boolean> {
+    override fun validateQuiz(): Pair<Int, Boolean> {
         if(question == ""){
-            return Pair("Question cannot be empty", false)
+            return Pair(R.string.question_cannot_be_empty, false)
         }
         if(answers.contains("") || connectionAnswers.contains("")){
-            return Pair("Answer cannot be empty", false)
+            return Pair(R.string.answers_cannot_be_empty, false)
         }
         if(connectionAnswerIndex.none { it != null }){
-            return Pair("At least one connection must be made", false)
+            return Pair(R.string.at_least_one_connection_must_be_made, false)
         }
-        return Pair("", true)
+        return Pair(0, true)
     }
 
     override fun changeToJson(): QuizJson {
@@ -512,8 +510,8 @@ data class Quiz4(
         bodyType = BodyType.entries.first { it.value == body.bodyType }
         bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
         bodyText = body.bodyText
-        youtubeId = body.youtubeId ?: ""
-        youtubeStartTime = body.youtubeStartTime ?: 0
+        youtubeId = body.youtubeId
+        youtubeStartTime = body.youtubeStartTime
         point = body.points
 
         initViewState()
@@ -551,8 +549,6 @@ data class Quiz4(
     }
 
     override fun gradeQuiz(): Boolean {
-        Logger().debug("ConnectionAnswer: $connectionAnswerIndex")
-        Logger().debug("UserConnectionAnswer: $userConnectionIndex")
         for(i in connectionAnswerIndex.indices){
             if(connectionAnswerIndex[i] != userConnectionIndex[i]){
                 return false

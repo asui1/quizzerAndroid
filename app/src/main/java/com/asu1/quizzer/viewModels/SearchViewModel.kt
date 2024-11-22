@@ -1,9 +1,12 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
@@ -14,9 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    private val _showToast = MutableLiveData<String?>()
-    val showToast: LiveData<String?> get() = _showToast
-
     private val _searchResult = MutableStateFlow<List<QuizCard>?>(null)
     val searchResult: StateFlow<List<QuizCard>?> get() = _searchResult.asStateFlow()
 
@@ -26,34 +26,30 @@ class SearchViewModel : ViewModel() {
 
 
     fun search(searchText: String){
-        Logger().debug("Searching for: $searchText")
         viewModelScope.launch {
-            setSearchResult(emptyList())
+            _searchResult.value = emptyList()
             try {
                 val response = RetrofitInstance.api.searchQuiz(searchText)
-                Logger().debug("Search Response: $response")
                 if(response.isSuccessful){
-                    Logger().debug("Search Response: ${response.body()}")
                     val quizCards = response.body()?.searchResult
-                    setSearchResult(quizCards!!)
+                    if(quizCards == null){
+                        return@launch
+                    }else{
+                        _searchResult.value = quizCards
+                    }
                 }
                 else{
-                    Logger().debug("Search Response: ${response.errorBody()}")
-                    _showToast.postValue("Search No Response")
+                    ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
                 Logger().debug("Search Response: $e")
-                _showToast.postValue("Search Failed")
+                ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
             }
         }
     }
 
     fun setSearchResult(quizCards: List<QuizCard>){
         _searchResult.value = quizCards
-    }
-
-    fun toastShown() {
-        _showToast.value = null
     }
 }

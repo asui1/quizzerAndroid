@@ -79,3 +79,13 @@ val DarkOnInverseSurface = Color(0xFF2D3135)
 val DarkInversePrimary = Color(0xFF2D628B)
 val DarkScrim = Color(0xFF000000)
 val DarkShadow = Color(0xFF000000)
+
+
+val UserBackground1 = Color(0xFF8f4c38)
+val UserBackground2 = Color(0xFF77574e)
+val UserBackground3 = Color(0xFF4c662b)
+val UserBackground4 = Color(0xFF386663)
+val UserBackground5 = Color(0xFF415f91)
+val UserBackground6 = Color(0xFF705575)
+val UserBackground7 = Color(0xFF6d5e0f)
+val UserBackground8 = Color(0xFF43664e)

@@ -8,6 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -19,34 +22,36 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         checkForUpdates()
     }
 
-    fun updateIsUpdateAvailable() {
-        checkForUpdates()
-    }
-
     fun finishApp() {
         val activity = getApplication<Application>().applicationContext as? Activity
         activity?.finish()
     }
 
     private fun checkForUpdates() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.api.getVersion()
-                val packageManager = getApplication<Application>().packageManager
-                val packageName = getApplication<Application>().packageName
-                val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                val currentVersion = packageInfo.versionName
-                Logger().debug("Current version: $currentVersion")
-                Logger().debug("Latest version: ${response.body()?.latestVersion}")
-                if(response.isSuccessful && response.body() != null && response.body()?.latestVersion != null){
-                    if(isUpdateNeeded(response.body()!!.latestVersion, currentVersion)){
-                        _isUpdateAvailable.postValue(true)
+                coroutineScope {
+                    val responseDeferred = async { RetrofitInstance.api.getVersion() }
+                    val currentVersionDeferred = async {
+                        val packageManager = getApplication<Application>().packageManager
+                        val packageName = getApplication<Application>().packageName
+                        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                        packageInfo.versionName
                     }
-                    else
+
+                    val response = responseDeferred.await()
+                    val currentVersion = currentVersionDeferred.await()
+
+                    if (response.isSuccessful && response.body() != null && response.body()?.latestVersion != null) {
+                        if (isUpdateNeeded(response.body()!!.latestVersion, currentVersion)) {
+                            _isUpdateAvailable.postValue(true)
+                        } else {
+                            _isUpdateAvailable.postValue(false)
+                        }
+                    } else {
                         _isUpdateAvailable.postValue(false)
+                    }
                 }
-                else
-                    _isUpdateAvailable.postValue(false)
             } catch (e: Exception) {
                 _isUpdateAvailable.postValue(false)
             }
