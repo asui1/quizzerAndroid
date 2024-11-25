@@ -140,8 +140,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                                 }
                             }
                         })
-                        Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth(),

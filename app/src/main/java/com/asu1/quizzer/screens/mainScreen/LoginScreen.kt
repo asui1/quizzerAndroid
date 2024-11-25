@@ -167,7 +167,7 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
                     }
                     val profileUri = googleIdTokenCredential.profilePictureUri
 
-                    NavMultiClickPreventer.navigate(navController, Route.RegisterPolicyAgreement(email,
+                    NavMultiClickPreventer.navigate(navController, Route.Register(email,
                         profileUri.toString()
                     ))
                 } catch (e: GetCredentialException) {

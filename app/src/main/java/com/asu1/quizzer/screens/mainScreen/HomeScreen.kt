@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +38,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     quizCards: List<QuizCardsWithTag>,
     loadQuiz: (String) -> Unit,
+    isKo: Boolean = false,
     navController: NavController,
 ) {
 
@@ -51,7 +53,7 @@ fun HomeScreen(
             }
         ) { index ->
             Text(
-                text = quizCards[index].tag,
+                text = remember{if(isKo) changeTagToText(quizCards[index].tag) else quizCards[index].tag},
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -68,6 +70,20 @@ fun HomeScreen(
             PrivacyPolicyRow(navController)
         }
     }
+}
+
+fun changeTagToText(tag: String): String{
+    val newTag = when {
+        tag.startsWith("Most Viewed") -> "인기순"
+        tag.startsWith("Most Recent") -> "업데이트 순"
+        tag.startsWith("With Tag : ") -> buildString {
+            append("이런 주제는 어떠세요? \"")
+            append(tag.removePrefix("With Tag : "))
+            append("\"")
+        }
+        else -> tag
+    }
+    return newTag
 }
 
 @Preview(showBackground = true)

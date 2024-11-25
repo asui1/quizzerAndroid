@@ -1,16 +1,22 @@
 TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
-- Test Code to Generate Quizzes with AI gen datas.
-NEED FULL TEST WITH TITLE IMAGE, BODY FOR ALL QUIZZES
-This should be able to generate quizzes with AI generated data with provided json format of quiz contents.
-
 // APP TEST LINK : https://quizzer.co.kr/?resultId=b407d82491b7b51756996155706df72258445f7e7d1998c9934d6a6fababd676
 
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:
 
-- Need Custom Toast message to beautify current default toast messages.
+홈화면 태그 받아오는거  다듬기. Most Viewed -> ??, With Tag : -> ?? Most Recent -> ??
+
+배경 그라데이션 설정? 아니면 SVG 파일 몇개 해서 데코 느낌으로 추가할 수 있게.
+
+텍스트 스타일에서 그림자 개선 필요. 너무 못생김.
+
+질문타입4도 최적화 더 할수 있을지도?
+
+스코어 스크린도 수정해볼수도. 배경 없는 사진 받아서 배경 커스텀 가능한지 체크.
+그라데이션을 배경에서 쓰는 SVG 기반 데코 + 그레이스케일 이미지 기반 그래픽레이어 하는걸 확인하기.
+스코어 스크린은 타임 기반으로 돌아가게 하고 싶음.
 
 ---------------MINIMUM FOR APP RELEASE----------------
 

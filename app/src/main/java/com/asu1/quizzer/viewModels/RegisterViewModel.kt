@@ -12,7 +12,7 @@ import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    private val _registerStep = MutableLiveData<Int>(0)
+    private val _registerStep = MutableLiveData(0)
     val registerStep: LiveData<Int> get() = _registerStep
 
     private val _nickname = MutableLiveData<String?>(null)
@@ -31,7 +31,7 @@ class RegisterViewModel : ViewModel() {
     val isError: LiveData<Boolean> get() = _isError
 
     fun undoError(){
-        _isError.postValue(false)
+        if(_isError.value == true) _isError.postValue(false)
     }
 
     fun reset(){

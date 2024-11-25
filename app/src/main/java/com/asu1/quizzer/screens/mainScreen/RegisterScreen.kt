@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,11 +21,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,241 +52,281 @@ import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.RegisterViewModel
+import kotlinx.coroutines.launch
+
 
 @Composable
-fun UsageAgreement(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
-    // Usage Agreement UI
-    val context = LocalContext.current
+fun RegisterScreen(
+    navController: NavHostController,
+    registerViewModel: RegisterViewModel = viewModel(),
+    email: String = "",
+    profileUri: String = "",
+    login: () -> Unit = {},
+){
     val registerStep by registerViewModel.registerStep.observeAsState()
+    val nickname by registerViewModel.nickname.observeAsState()
+    val isError by registerViewModel.isError.observeAsState()
+    val tags by registerViewModel.tags.observeAsState(emptySet())
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 3 },
+    )
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit){
+        registerViewModel.setEmail(email)
+        registerViewModel.setPhotoUri(profileUri)
+    }
 
     LaunchedEffect(registerStep) {
-        if (registerStep == 1) {
-            NavMultiClickPreventer.navigate(navController, Route.RegisterNickname)
+        when(registerStep){
+            0 -> pagerState.animateScrollToPage(0)
+            1 -> pagerState.animateScrollToPage(1)
+            2 -> pagerState.animateScrollToPage(2)
+            3 -> {
+                coroutineScope.launch {
+                    launch { login() }
+                    launch {
+                        navController.navigate(Route.Home) {
+                            popUpTo(Route.Home) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            }
         }
     }
     BackHandler {
-        registerViewModel.reset()
-        navController.popBackStack()
+        Logger().debug(
+            "Register ${registerStep}"
+        )
+        if(registerStep == 0){
+            navController.popBackStack()
+        }else{
+            registerViewModel.moveBack()
+        }
     }
-
-    Scaffold { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                RowWithAppIconAndName()
-                Text(
-                    text = stringResource(R.string.privacy_policy),
-                    style = MaterialTheme.typography.headlineMedium
+    Scaffold(
+        topBar = {RowWithAppIconAndName()},
+    )
+    { paddingValues ->
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+        ){page ->
+            when(page){
+                0 -> UsageAgreement(
+                    onProceed = {
+                        registerViewModel.agreeTerms()
+                    }
                 )
-                Spacer(modifier = Modifier.padding(8.dp))
-                Text(
-                    text = stringResource(R.string.privacy_policy_body)
+                1 -> NicknameInput(
+                    nickname = nickname ?: "",
+                    onProceed = {
+                        registerViewModel.setNickName(it)
+                    },
+                    isError = isError ?: false,
+                    undoError = {
+                        registerViewModel.undoError()
+                    }
                 )
-                Spacer(modifier = Modifier.padding(32.dp))
-            }
-            Button(
-                onClick = {
-                    registerViewModel.agreeTerms()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) {
-                Text(text = stringResource(R.string.agree))
+                2 -> TagSetting(
+                    tags = tags,
+                    toggleTag = {
+                        registerViewModel.toggleTag(it)
+                    },
+                    register = {
+                        registerViewModel.register()
+                    }
+                )
             }
         }
     }
 }
 
-@Preview
+@Composable
+fun UsageAgreement(
+    onProceed: () -> Unit = {},
+) {
+    // Usage Agreement UI
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.privacy_policy),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.padding(8.dp))
+            Text(
+                text = stringResource(R.string.privacy_policy_body)
+            )
+            Spacer(modifier = Modifier.padding(32.dp))
+        }
+        Button(
+            onClick = {
+                onProceed()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text(text = stringResource(R.string.agree))
+        }
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 fun UsageAgreementPreview() {
-    val navController = rememberNavController()
-
-
     QuizzerAndroidTheme {
         UsageAgreement(
-            navController = navController,
         )
     }
 }
 
 @Composable
-fun NicknameInput(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
+fun NicknameInput(
+    nickname : String = "",
+    onProceed: (String) -> Unit = {_ -> },
+    isError : Boolean = false,
+    undoError: () -> Unit = {},
+) {
     // Nickname Input UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    var nickname by remember { mutableStateOf(TextFieldValue(text = registerViewModel.nickname.value ?: "")) }
-    val registerStep by registerViewModel.registerStep.observeAsState()
-    val isError by registerViewModel.isError.observeAsState(false)
+    var localNickname by remember { mutableStateOf(TextFieldValue(text = nickname)) }
 
-    LaunchedEffect(registerStep) {
-        Logger().printBackStack(navController)
-        if (registerStep == 2) {
-            NavMultiClickPreventer.navigate(navController,Route.RegisterTags)
-        }
-    }
-    BackHandler {
-        registerViewModel.moveBack()
-        navController.popBackStack()
-    }
-
-    Scaffold(
-        topBar = {
-            RowWithAppIconAndName()
-        },
-        content = { paddingValues ->
-            Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.enter_your_nickname),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            TextField(
+                value = localNickname,
+                onValueChange = {textfieldvalue ->
+                    if(textfieldvalue.text.length <= 12) {
+                        localNickname = textfieldvalue
+                        undoError()
+                    }
+                },
+                isError = isError,
+                label = {
+                    if(isError) Text(text = stringResource(R.string.duplicate_nickname), color = MaterialTheme.colorScheme.error)
+                    else
+                        Text(text = stringResource(R.string.nickname))
+                },
                 modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(
-                        text = stringResource(R.string.enter_your_nickname),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    TextField(
-                        value = nickname,
-                        onValueChange = {textfieldvalue ->
-                            if(textfieldvalue.text.length <= 12) {
-                                nickname = textfieldvalue
-                                registerViewModel.undoError()
-                            }
-                        },
-                        isError = isError,
-                        label = {
-                            if(isError) Text(text = stringResource(R.string.duplicate_nickname), color = MaterialTheme.colorScheme.error)
-                            else
-                            Text(text = stringResource(R.string.nickname))
-                                },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                if(nickname.text.length <= 12) registerViewModel.setNickName(nickname.text)
-                            }
-                        ),
-                        supportingText = { Text(text = buildString {
-                            append(stringResource(R.string.length))
-                            append("${nickname.text.length}/12")
-                        }) }
-                    )
-                }
-                Button(
-                    onClick = { registerViewModel.setNickName(nickname.text) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                        .imePadding()
-                ) {
-                    Text(text = stringResource(R.string.proceed))
-                }
-            }
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        if(localNickname.text.length <= 12) onProceed(localNickname.text)
+                    }
+                ),
+                supportingText = { Text(text = buildString {
+                    append(stringResource(R.string.length))
+                    append("${localNickname.text.length}/12")
+                }) }
+            )
         }
-    )
-
-    LaunchedEffect(Unit) {
+        Button(
+            onClick = {
+                if(localNickname.text.length <= 12) onProceed(localNickname.text)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .imePadding()
+        ) {
+            Text(text = stringResource(R.string.proceed))
+        }
+    }
+    DisposableEffect(Unit) {
+        Logger().debug("NicknameInput")
         focusRequester.requestFocus()
+        localNickname = localNickname.copy(selection = TextRange(localNickname.text.length))
         keyboardController?.show()
+        onDispose { }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun NicknameInputPreview() {
-    val navController = rememberNavController()
     QuizzerAndroidTheme {
         NicknameInput(
-            navController = navController,
+            nickname = "nickname"
         )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TagSetting(navController: NavHostController, registerViewModel: RegisterViewModel = viewModel()) {
+fun TagSetting(
+    tags: Set<String> = emptySet(),
+    toggleTag: (String) -> Unit = {},
+    register: () -> Unit = {},
+) {
     // Tag Setting UI
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val tags by registerViewModel.tags.observeAsState()
-    val registerStep by registerViewModel.registerStep.observeAsState()
 
 
-    LaunchedEffect(registerStep) {
-        if (registerStep == 3) {
-            registerViewModel.reset()
-            navController.popBackStack(Route.Login, inclusive = false)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        TagSetter(
+            tags = tags,
+            onClick = {
+                toggleTag(it)
+            },
+            focusRequester = focusRequester,
+        )
+        Button(
+            onClick = {
+                register()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .imePadding()
+        ) {
+            Text(text = stringResource(R.string.register))
         }
     }
-
-    BackHandler {
-        registerViewModel.moveBack()
-        navController.popBackStack()
-    }
-
-    Scaffold(
-        topBar = {
-            RowWithAppIconAndName()
-        },
-        content = { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                TagSetter(
-                    tags = tags,
-                    onClick = {
-                        registerViewModel.toggleTag(it)
-                    },
-                    focusRequester = focusRequester,
-                )
-                Button(
-                    onClick = {
-                        registerViewModel.register()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                        .imePadding()
-                ) {
-                    Text(text = stringResource(R.string.register))
-                }
-            }
-        }
-    )
-
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
         keyboardController?.show()
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TagSettingPreview() {
     QuizzerAndroidTheme {
         TagSetting(
-            navController = rememberNavController(),
+            tags = setOf("tag1", "tag2", "tag3")
         )
     }
 }

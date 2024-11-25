@@ -63,7 +63,7 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                         .weight(1.5f)
                         .testTag("MainScreenCreateQuiz"),
                     colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     )
                 ) {
                     Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Quiz", modifier = Modifier.size(1.5f * defaultIconSize))

@@ -4,11 +4,9 @@ import ToastManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
@@ -19,8 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -33,28 +29,23 @@ import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
-import com.asu1.quizzer.screens.mainScreen.NicknameInput
 import com.asu1.quizzer.screens.mainScreen.PrivacyPolicy
+import com.asu1.quizzer.screens.mainScreen.RegisterScreen
 import com.asu1.quizzer.screens.quiz.QuizBuilderScreen
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
 import com.asu1.quizzer.screens.quiz.QuizSolver
 import com.asu1.quizzer.screens.quiz.ScoringScreen
 import com.asu1.quizzer.screens.mainScreen.SearchScreen
-import com.asu1.quizzer.screens.mainScreen.TagSetting
-import com.asu1.quizzer.screens.mainScreen.UsageAgreement
 import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
-import com.asu1.quizzer.viewModels.InquiryViewModel
-import com.asu1.quizzer.viewModels.MainViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -62,26 +53,20 @@ import com.asu1.quizzer.viewModels.RegisterViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
     // NEED INITIALIZATION WITH HIGH PRIORITY
-    private val mainViewModel: MainViewModel by viewModels()
     private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
     // CAN BE INITIALIZED LATER
-    private val registerViewModel: RegisterViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
     private val quizLayoutViewModel: QuizLayoutViewModel by viewModels()
     private val scoreCardViewModel: ScoreCardViewModel by viewModels()
     private val quizLoadViewModel: QuizLoadViewModel by viewModels()
-    private val inquiryViewModel: InquiryViewModel by viewModels()
     private lateinit var navController: NavHostController
     private var loadResultId: String? = null
     private var loadQuizId: String? = null
@@ -191,7 +176,6 @@ class MainActivity : ComponentActivity() {
                             composable<Route.Init> {
                                 InitializationScreen(
                                     navController,
-                                    initViewModel = mainViewModel,
                                     navigateToHome = {
                                         getHome(
                                             fetchData = false  // FOR DEBUG MODES
@@ -210,7 +194,6 @@ class MainActivity : ComponentActivity() {
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
-                                    inquiryViewModel = inquiryViewModel,
                                     loginActivityState = loginActivityState,
                                     navigateToQuizLayoutBuilder = {
                                         if (userViewModel.userData.value?.email == null) {
@@ -279,28 +262,27 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 PrivacyPolicy(navController)
                             }
-                            composable<Route.RegisterPolicyAgreement>(
+                            composable<Route.Register>(
                                 enterTransition = enterFromRightTransition(),
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
                                 val email =
-                                    backStackEntry.toRoute<Route.RegisterPolicyAgreement>().email
+                                    backStackEntry.toRoute<Route.Register>().email
                                 val profileUri =
-                                    backStackEntry.toRoute<Route.RegisterPolicyAgreement>().profileUri
+                                    backStackEntry.toRoute<Route.Register>().profileUri
                                 if (email == "" || profileUri == null) {
                                     return@composable
                                 }
-                                registerViewModel.setEmail(email)
-                                registerViewModel.setPhotoUri(profileUri)
-                                UsageAgreement(navController, registerViewModel)
-                            }
-                            composable<Route.RegisterNickname> {
-                                NicknameInput(navController, registerViewModel)
-                            }
-                            composable<Route.RegisterTags> {
-                                TagSetting(navController, registerViewModel)
+                                RegisterScreen(
+                                    navController = navController,
+                                    email = email,
+                                    profileUri = profileUri,
+                                    login = {
+                                        loginActivityState.login(email, profileUri)
+                                    }
+                                )
                             }
                             composable<Route.CreateQuizLayout>(
                                 enterTransition = enterFromRightTransition(),

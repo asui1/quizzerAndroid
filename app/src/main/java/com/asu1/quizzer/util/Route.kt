@@ -21,19 +21,13 @@ sealed interface Route {
     @Serializable
     data object Home : Route
     @Serializable
-    data object Setting : Route
-    @Serializable
     data class Search(val searchText: String = "") : Route
     @Serializable
     data object Login : Route
     @Serializable
     data object PrivacyPolicy : Route
     @Serializable
-    data class RegisterPolicyAgreement(val email: String, val profileUri:String?) : Route
-    @Serializable
-    data object RegisterNickname : Route
-    @Serializable
-    data object RegisterTags : Route
+    data class Register(val email: String, val profileUri:String?) : Route
     @Serializable
     data object CreateQuizLayout: Route
     @Serializable

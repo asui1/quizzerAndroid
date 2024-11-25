@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables
 
+import android.nfc.Tag
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -16,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 
@@ -39,6 +42,14 @@ fun TagSetter(
     focusRequester: androidx.compose.ui.focus.FocusRequester
 ) {
     var tag by remember { mutableStateOf("") }
+
+    fun onAddTag() {
+        if (tag.isNotEmpty()) {
+            onClick(tag)
+            tag = ""
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -58,7 +69,7 @@ fun TagSetter(
                 Button(
                     onClick = {
                         onClick(tag)
-                              },
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
                         contentColor = MaterialTheme.colorScheme.primary
@@ -71,7 +82,9 @@ fun TagSetter(
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = tag,
-            onValueChange = { tag = it },
+            onValueChange = {
+                if(it.length <= 20)  tag = it
+            },
             label = { Text(stringResource(R.string.enter_tag)) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -82,12 +95,29 @@ fun TagSetter(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
+                    onAddTag()
+                }
+            ),
+            trailingIcon = {
+                TextButton(onClick = {
                     if (tag.isNotEmpty()) {
                         onClick(tag)
                         tag = ""
                     }
+                }) {
+                    Text("+")
                 }
-            )
+            }
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TagSetterPreview(){
+    TagSetter(
+        tags = setOf("tag1", "tag2", "tag3"),
+        onClick = {},
+        focusRequester = androidx.compose.ui.focus.FocusRequester()
+    )
 }

@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -147,11 +149,17 @@ fun MainScreen(
     var backPressedTime by remember { mutableStateOf(0L) }
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
-    val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 3 },
+    )
+    val coroutineScope = rememberCoroutineScope()
 
     fun updateSelectedTab(index: Int) {
-        setSelectedTab(index)
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(index)
+        }
         quizCardMainViewModel.tryUpdate(index, language = lang)
     }
     BackHandler(
@@ -201,19 +209,22 @@ fun MainScreen(
                                 resetHome = moveHome)
                         },
                         bottomBar = {
-                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = selectedTab,
+                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = pagerState.currentPage,
                                 navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
                                 setSelectedTab ={updateSelectedTab(it)})
                         },
                         content = { paddingValues ->
-                            Box(modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues)) {
-                                when (selectedTab) {
+                            HorizontalPager(
+                                state = pagerState,
+                                userScrollEnabled = false,
+                                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                            ){page ->
+                                when(page){
                                     0 -> {
                                         HomeScreen(
                                             quizCards = quizCards,
                                             loadQuiz = loadQuiz,
+                                            isKo = lang == "ko",
                                             navController = navController,
                                         )
                                     }
