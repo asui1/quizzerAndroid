@@ -49,7 +49,6 @@ import com.asu1.quizzer.util.exitToRightTransition
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
-import com.asu1.quizzer.viewModels.RegisterViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel

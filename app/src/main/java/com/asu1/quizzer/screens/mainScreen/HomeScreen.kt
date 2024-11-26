@@ -1,7 +1,5 @@
 package com.asu1.quizzer.screens.mainScreen
 
-import HorizontalQuizCardItemLarge
-import HorizontalQuizCardItemVertical
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
+import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
-import loadImageAsByteArray
 
 @Composable
 fun HomeScreen(

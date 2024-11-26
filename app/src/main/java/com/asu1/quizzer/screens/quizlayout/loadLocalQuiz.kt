@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -49,7 +50,7 @@ fun LoadItems(
     quizLoadViewModel: QuizLoadViewModel = viewModel(),
     onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { quizData, quizTheme, scoreCard -> },
 ) {
-    val quizSerializerList by quizLoadViewModel.quizList.collectAsState()
+    val quizSerializerList by quizLoadViewModel.quizList.collectAsStateWithLifecycle()
     val quizList = quizSerializerList?.map{
         QuizCard(
             id = it.quizData.uuid,
@@ -60,7 +61,7 @@ fun LoadItems(
             count = 0,
         )
     } ?: emptyList()
-    val loadComplete by quizLoadViewModel.loadComplete.collectAsState()
+    val loadComplete by quizLoadViewModel.loadComplete.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     var deleteIndex by remember { mutableStateOf(-1) }

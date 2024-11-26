@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
@@ -48,7 +49,7 @@ fun Quiz1Creator(
     quiz: Quiz1ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
-    val quiz1State by quiz.quiz1State.collectAsState()
+    val quiz1State by quiz.quiz1State.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
     Box(

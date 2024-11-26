@@ -1,5 +1,9 @@
 package com.asu1.quizzer.composables
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,13 +30,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -43,6 +53,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.core.graphics.red
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
@@ -57,8 +69,18 @@ import kotlin.math.round
 @Composable
 fun ScoreCardBackground(
     scoreCard: ScoreCard,
-    time: Float
+    time: Float,
+    width: Dp,
+    height: Dp,
 ) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val widthPx = remember{with(density) { width.toPx().toInt() }}
+    val heightPx = remember{with(density) { height.toPx().toInt() }}
+    val bitmapShader = remember(scoreCard.background.color, scoreCard.background.color2) {
+        loadBitmapShader(context, R.drawable.cloud_map_portrait, widthPx, heightPx,
+            color1 = scoreCard.background.color, color2 = scoreCard.background.color2)
+    }
     Image(
         painter = ColorPainter(Color.Transparent),
         contentDescription = stringResource(R.string.background),
@@ -68,10 +90,36 @@ fun ScoreCardBackground(
                 imageColor = scoreCard.background,
                 shaderOption = scoreCard.shaderType,
                 time = time,
+                bitmap = bitmapShader
             )
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp))
     )
+}
+
+fun loadBitmapShader(context: Context, drawable: Int, width: Int, height: Int,
+                     color1: Color, color2: Color): Bitmap {
+    // Decode the drawable resource into a Bitmap
+    val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, drawable)
+    val blendedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            val pixel = blendedBitmap.getPixel(x, y)
+
+            // Extract grayscale intensity (all RGB components are equal in a grayscale image)
+            val gray = pixel.red // Red, Green, and Blue are identical in grayscale
+
+            // Linear interpolation between color1 and color2 based on grayscale intensity
+            val blendedRed = color1.red * (gray / 255f) + color2.red * (1 - gray / 255f)
+            val blendedGreen = color1.green * (gray / 255f) + color2.green * (1 - gray / 255f)
+            val blendedBlue = color1.blue * (gray / 255f) + color2.blue * (1 - gray / 255f)
+
+            // Set the blended color to the new bitmap
+            val blendedPixel = Color(blendedRed, blendedGreen, blendedBlue).toArgb()
+            blendedBitmap.setPixel(x, y, blendedPixel)
+        }
+    }
+    return blendedBitmap
 }
 
 @Composable
@@ -113,7 +161,9 @@ fun ScoreCardComposable(
     ) {
         ScoreCardBackground(
             scoreCard = scoreCard,
-            time = time
+            time = time,
+            width = width,
+            height = height,
         )
         Column(
             modifier = Modifier
@@ -187,7 +237,7 @@ fun ScoreCardComposable(
 @Composable
 fun ScoreCardComposablePreview() {
     val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
+    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     ScoreCardComposable(
         width = 300.dp,
         height = 600.dp,
@@ -199,7 +249,7 @@ fun ScoreCardComposablePreview() {
 @Composable
 fun ScoreCardComposableAnswerCheckPreview() {
     val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
+    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     ScoreCardComposable(
         width = 300.dp,
         height = 600.dp,
@@ -212,7 +262,7 @@ fun ScoreCardComposableAnswerCheckPreview() {
 @Composable
 fun ScoreCardComposableGraphPreview() {
     val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
+    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     ScoreCardComposable(
         width = 300.dp,
         height = 600.dp,

@@ -31,8 +31,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
@@ -55,9 +58,11 @@ fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu
         1 -> {
             TextWithBorder(
                 text = text,
+                fontFamily = textStyle.fontFamily,
+                fontSize = textStyle.fontSize,
                 textColor = textStyle.contentColor,
-                borderColor = textStyle.addColor,
-                borderWidth = 4f,
+                containerColor = textStyle.addColor,
+                borderWidth = 6f,
                 modifier = modifier
                     .then(textStyle.borderModifier)
                     .padding(8.dp)
@@ -67,6 +72,7 @@ fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu
             TextWithContour(
                 text = text,
                 textColor = textStyle.addColor,
+                fontSize = textStyle.fontSize,
                 contourColor = textStyle.contentColor,
                 contourWidth = 8f,
                 modifier = modifier
@@ -115,8 +121,10 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
             TextWithBorder(
                 text = text,
                 textColor = contentColor,
-                borderColor = addColor,
-                borderWidth = 4f,
+                containerColor = addColor,
+                fontSize = fontSize,
+                borderWidth = 8f,
+                fontFamily = fontFamily,
                 modifier = modifier
                     .then(borderModifier)
                     .padding(8.dp)
@@ -126,6 +134,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
             TextWithContour(
                 text = text,
                 textColor = addColor,
+                fontSize = fontSize,
                 contourColor = contentColor,
                 contourWidth = 8f,
                 modifier = modifier
@@ -160,12 +169,12 @@ fun PreviewGetTextStyle(){
 fun PreviewGetTextStyleWithBorder(){
     QuizzerAndroidTheme {
         GetTextStyle(
-            text = "Hello World",
+            text = "Hello World, 가나다라마바사",
             textStyle = com.asu1.quizzer.model.TextStyle(
                 fontFamily = getFontFamily(0),
-                contentColor = Color.Black,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 backgroundColor = Color.Transparent,
-                addColor = Color.Red,
+                addColor = MaterialTheme.colorScheme.primaryContainer,
                 borderModifier = Modifier,
                 fontSize = 24.sp,
                 contourStyle = 1
@@ -235,33 +244,104 @@ fun getColor(colorScheme: ColorScheme, color: Int): List<Color> {
 fun TextWithBorder(
     text: String,
     textColor: Color,
-    borderColor: Color,
+    fontFamily: FontFamily,
+    containerColor: Color,
     borderWidth: Float,
+    fontSize: TextUnit = 24.sp,
     modifier: Modifier = Modifier
 ) {
+    val outlineColor = MaterialTheme.colorScheme.outline
     BasicText(
         text = text,
         style = TextStyle(
-            color = textColor,
-            fontSize = 24.sp,
+            color = Color.Transparent,
+            fontSize = fontSize,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Default
         ),
         modifier = modifier
             .drawBehind {
-                drawTextWithContour(
-                    text, textColor, borderColor,
+                drawTextWithShadow(
+                    text,
+                    textColor = containerColor,
+                    contourColor = textColor,
+                    outlineColor = outlineColor,
                     borderWidth,
-                    maxWidth = size.width,
-                    withoutDescent = false)
+                    fontFamily = fontFamily,
+                    fontSize = fontSize,
+                    maxWidth = size.width,)
             }
     )
+}
+
+fun DrawScope.drawTextWithShadow(
+    text: String,
+    textColor: Color,
+    contourColor: Color,
+    outlineColor: Color,
+    contourWidth: Float,
+    maxWidth: Float,
+    fontFamily: FontFamily,
+    fontSize: TextUnit = 24.sp,
+) {
+    drawIntoCanvas { canvas ->
+        val contourPaint = android.graphics.Paint().apply {
+            this.color = textColor.toArgb()
+            this.style = android.graphics.Paint.Style.STROKE
+            this.strokeWidth = contourWidth
+            this.textSize = fontSize.toPx()
+            this.isAntiAlias = true
+        }
+        val textPaint = android.graphics.Paint().apply {
+            this.color = contourColor.toArgb()
+            this.textSize = fontSize.toPx()
+            this.isAntiAlias = true
+        }
+        val shadowPaint = android.graphics.Paint().apply {
+            this.color = outlineColor.toArgb()
+            this.style = android.graphics.Paint.Style.STROKE
+            this.strokeWidth = contourWidth + 4
+            this.textSize = fontSize.toPx()
+            this.isAntiAlias = true
+        }
+
+        val contourLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(contourPaint), maxWidth.toInt())
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(false)
+            .build()
+
+        val textLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(textPaint), maxWidth.toInt())
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(false)
+            .build()
+
+        val shadowLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(shadowPaint), maxWidth.toInt())
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(false)
+            .build()
+
+        canvas.nativeCanvas.save()
+        shadowLayout.draw(canvas.nativeCanvas)
+        canvas.nativeCanvas.restore()
+
+        canvas.nativeCanvas.save()
+        contourLayout.draw(canvas.nativeCanvas)
+        canvas.nativeCanvas.restore()
+
+        canvas.nativeCanvas.save()
+        textLayout.draw(canvas.nativeCanvas)
+        canvas.nativeCanvas.restore()
+    }
 }
 
 @Composable
 fun TextWithContour(
     text: String,
     textColor: Color,
+    fontSize: TextUnit = 24.sp,
     contourColor: Color,
     contourWidth: Float,
     modifier: Modifier = Modifier
@@ -271,15 +351,15 @@ fun TextWithContour(
         modifier = modifier
             .drawBehind {
                 drawTextWithContour(text, textColor, contourColor, contourWidth,
-                    maxWidth = size.width,
-                    withoutDescent = true)
+                    fontSize = fontSize,
+                    maxWidth = size.width,)
             }
     ){
         Text(
             text = text,
             style = TextStyle(
                 color = Color.Transparent,
-                fontSize = 24.sp,
+                fontSize = fontSize,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Default
             ),
@@ -291,20 +371,19 @@ fun DrawScope.drawTextWithContour(
     text: String, textColor: Color,
     contourColor: Color, contourWidth: Float,
     maxWidth: Float,
-    withoutDescent: Boolean = true,
-    paddingSize: Dp = 4.dp) {
+    fontSize: TextUnit = 24.sp,
+) {
     drawIntoCanvas { canvas ->
-        val textSizePx = 24.sp.toPx()
         val paint = android.graphics.Paint().apply {
             this.color = contourColor.toArgb()
             this.style = android.graphics.Paint.Style.STROKE
             this.strokeWidth = contourWidth
-            this.textSize = 24.sp.toPx()
+            this.textSize = fontSize.toPx()
             this.isAntiAlias = true
         }
         val textPaint = android.graphics.Paint().apply {
             this.color = textColor.toArgb()
-            this.textSize = 24.sp.toPx()
+            this.textSize = fontSize.toPx()
             this.isAntiAlias = true
         }
         val textLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(paint), maxWidth.toInt())
@@ -312,8 +391,6 @@ fun DrawScope.drawTextWithContour(
             .setLineSpacing(0f, 1f)
             .setIncludePad(false)
             .build()
-        val x = 0f
-        val y = if(withoutDescent) textSizePx - paint.descent() else textSizePx
 
         canvas.nativeCanvas.save()
         textLayout.draw(canvas.nativeCanvas)

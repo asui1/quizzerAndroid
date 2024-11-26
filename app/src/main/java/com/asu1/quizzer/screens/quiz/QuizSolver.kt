@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -39,9 +40,9 @@ fun QuizSolver(
     initIndex: Int = 0,
     navigateToScoreCard: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
-    val quizData by quizLayoutViewModel.quizData.collectAsState()
+    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
+    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme

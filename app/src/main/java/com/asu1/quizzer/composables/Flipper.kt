@@ -29,29 +29,9 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit,
             key: String = "",
             ) {
-    var accumulatedDrag by remember { mutableStateOf(0f) }
-    val dragThreshold = 100f // Set your desired drag threshold here
-
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragEnd = {
-                        accumulatedDrag = 0f // Reset drag distance on drag end
-                    }
-                ) { change, dragAmount ->
-                    change.consume()
-                    accumulatedDrag += dragAmount.x
-                    if (accumulatedDrag > dragThreshold) {
-                        onPrevious(currentIndex)
-                        accumulatedDrag = 0f // Reset drag distance after triggering change
-                    } else if (accumulatedDrag < -dragThreshold) {
-                        onNext(currentIndex)
-                        accumulatedDrag = 0f // Reset drag distance after triggering change
-                    }
-                }
-            },
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

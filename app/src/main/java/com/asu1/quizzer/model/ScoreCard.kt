@@ -2,6 +2,7 @@ package com.asu1.quizzer.model
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import cloudShader
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.ShaderTypeSerializer
@@ -28,7 +29,7 @@ enum class ShaderType(val shaderName: Int, val index: Int) {
     fun getShader(): String {
         return when(this){
             Brush1 -> basicShader
-            Brush2 -> leftBottomShader
+            Brush2 -> cloudShader
             Brush3 -> bottomShader
             Brush4 -> centerShader
             Brush5 -> repeatShader

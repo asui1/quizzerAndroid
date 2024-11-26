@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
@@ -55,7 +56,7 @@ fun Quiz4Creator(
     quiz: Quiz4ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ) {
-    val quizState by quiz.quiz4State.collectAsState()
+    val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }

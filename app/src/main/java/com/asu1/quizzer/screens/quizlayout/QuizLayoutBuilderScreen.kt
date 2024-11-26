@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -63,8 +64,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             navigateToQuizLoad: () -> Unit = {},
                             scoreCardViewModel: ScoreCardViewModel = viewModel(),
 ) {
-    val quizData by quizLayoutViewModel.quizData.collectAsState()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val policyAgreed by quizLayoutViewModel.policyAgreement.observeAsState(false)
     val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }

@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.mainScreen
 
-import QuizCardHorizontalList
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,15 +47,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalList
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.SearchViewModel
-import loadImageAsByteArray
 
 @Composable
 fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
@@ -64,7 +64,7 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
     var searchTextField by remember {mutableStateOf(TextFieldValue(searchText))}
-    val searchResult by searchViewModel.searchResult.collectAsState()
+    val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
     val focusRequester = remember{ FocusRequester() }
 
     LaunchedEffect(Unit) {

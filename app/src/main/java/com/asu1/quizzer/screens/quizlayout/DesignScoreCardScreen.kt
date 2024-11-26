@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -71,7 +72,7 @@ fun DesignScoreCardScreen(
     scoreCardViewModel: ScoreCardViewModel = viewModel(),
     onUpload: () -> Unit = { }
 ) {
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsState()
+    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp

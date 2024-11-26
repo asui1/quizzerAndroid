@@ -1,6 +1,8 @@
 package com.asu1.quizzer.model
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -88,7 +90,7 @@ fun Modifier.asBackgroundModifier(imageColor: ImageColor): Modifier {
     }
 }
 
-fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float): Modifier {
+fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float, bitmap: Bitmap): Modifier {
     return when(imageColor.state) {
         ImageColorState.COLOR -> this.background(imageColor.color, shape = RoundedCornerShape(16.dp))
         ImageColorState.COLOR2 -> {
@@ -107,6 +109,12 @@ fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOpti
                     shaderOption.getShader(),
                 )
                 this.graphicsLayer {
+                    if(shaderOption == ShaderType.Brush1) {
+                        renderEffect = RenderEffect.createBitmapEffect(bitmap).asComposeRenderEffect()
+                        shape = RoundedCornerShape(16.dp)
+                        clip = true
+                        return@graphicsLayer
+                    }
                     shader.setFloatUniform("resolution", size.width, size.height)
                     if(shaderOption != ShaderType.Brush1) {
                         shader.setFloatUniform("time", time)

@@ -54,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -77,8 +78,8 @@ fun QuizBuilderScreen(navController: NavController,
                       scoreCardViewModel: ScoreCardViewModel = viewModel(),
                       navigateToQuizLoad: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
+    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
     var curIndex by remember{mutableStateOf(0)}
@@ -235,7 +236,9 @@ fun QuizBuilderScreen(navController: NavController,
                         .fillMaxWidth()
                         .padding(start = padding, end = padding, top = 8.dp),
                 ) {
-                    items(quizzes.size) {
+                    items(quizzes.size,
+
+                    ) {
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier

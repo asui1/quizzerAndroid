@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
@@ -66,7 +67,7 @@ fun Quiz2Creator(
     quiz: Quiz2ViewModel = viewModel(),
     onSave: (Quiz) -> Unit
 ){
-    val quiz2State by quiz.quiz2State.collectAsState()
+    val quiz2State by quiz.quiz2State.collectAsStateWithLifecycle()
     var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
     val focusManager = LocalFocusManager.current
 

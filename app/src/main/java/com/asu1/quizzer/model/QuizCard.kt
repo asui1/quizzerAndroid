@@ -3,12 +3,11 @@ package com.asu1.quizzer.model
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.quizcards.loadImageAsByteArray
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-import loadImageAsByteArray
 import java.util.UUID
-
 
 @Serializable(with = KQuizCardDeserializer::class)
 data class QuizCard(

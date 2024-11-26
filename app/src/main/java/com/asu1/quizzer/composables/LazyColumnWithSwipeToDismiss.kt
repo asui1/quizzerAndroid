@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables
 
-import QuizCardHorizontal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.quizcards.QuizCardHorizontal
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch

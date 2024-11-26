@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.TextStyleManager
@@ -40,7 +41,7 @@ fun Quiz4Viewer(
     quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
 ) {
-    val quizState by quiz.quiz4State.collectAsState()
+    val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }

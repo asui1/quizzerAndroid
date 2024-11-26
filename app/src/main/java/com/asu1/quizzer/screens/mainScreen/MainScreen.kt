@@ -96,6 +96,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -143,9 +144,9 @@ fun MainScreen(
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val quizCards by quizCardMainViewModel.quizCards.collectAsState()
-    val quizTrends by quizCardMainViewModel.quizTrends.collectAsState()
-    val userRanks by quizCardMainViewModel.userRanks.collectAsState()
+    val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
+    val quizTrends by quizCardMainViewModel.quizTrends.collectAsStateWithLifecycle()
+    val userRanks by quizCardMainViewModel.userRanks.collectAsStateWithLifecycle()
     var backPressedTime by remember { mutableStateOf(0L) }
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn

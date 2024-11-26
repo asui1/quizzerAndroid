@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -23,8 +24,8 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
 fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex:Int, quizType: QuizType, insertIndex: Int, navController: NavHostController) {
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsState()
-    val quizzes by quizLayoutViewModel.quizzes.collectAsState()
+    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
+    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
 
     val quiz: Quiz? = if (loadIndex != -1 && quizzes.size > loadIndex
     ) {

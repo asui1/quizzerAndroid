@@ -84,7 +84,7 @@ fun CustomSnackbarHost(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 0.3f * screenHeight, start = 32.dp, end = 32.dp),
+            .padding(top = 0.7f * screenHeight, start = 32.dp, end = 32.dp),
     ) {
         SnackbarHost(
             hostState = hostState,

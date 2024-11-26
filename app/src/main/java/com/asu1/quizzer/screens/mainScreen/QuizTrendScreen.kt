@@ -1,9 +1,9 @@
 package com.asu1.quizzer.screens.mainScreen
 
-import VerticalQuizCardLargeColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.asu1.quizzer.composables.quizcards.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme

@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
@@ -33,6 +34,7 @@ fun ColorPicker(
     initialColor: Color,
     testTag: String = "",
     onColorSelected: (Color) -> Unit,
+    height: Dp = 300.dp
 ) {
     val controller = rememberColorPickerController()
     var localColor by remember { mutableStateOf(Color.Red) }
@@ -55,7 +57,7 @@ fun ColorPicker(
         HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp),
+                .height(height),
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
                 val color: Color = colorEnvelope.color
@@ -101,5 +103,5 @@ fun ColorPicker(
 @Preview
 @Composable
 fun ColorPickerPreview() {
-    ColorPicker(Color.Red) {}
+    ColorPicker(Color.Red, onColorSelected =  {})
 }

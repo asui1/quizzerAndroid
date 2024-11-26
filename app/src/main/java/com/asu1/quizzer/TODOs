@@ -6,11 +6,7 @@ First aim to make app launchable without some features that are not essential.
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:
 
-홈화면 태그 받아오는거  다듬기. Most Viewed -> ??, With Tag : -> ?? Most Recent -> ??
-
 배경 그라데이션 설정? 아니면 SVG 파일 몇개 해서 데코 느낌으로 추가할 수 있게.
-
-텍스트 스타일에서 그림자 개선 필요. 너무 못생김.
 
 질문타입4도 최적화 더 할수 있을지도?
 
