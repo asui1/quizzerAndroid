@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ImageColorColor2.GradientBrush
 import com.asu1.quizzer.composables.ImageColorColor2.NightWithMoon
+import com.asu1.quizzer.composables.ImageColorColor2.NightWithShootingStar
 import com.asu1.quizzer.composables.ImageColorColor2.SkyWithClouds
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
@@ -122,7 +123,16 @@ fun ScoreCardBackground(
                             time = time
                         )
                     }
-                    ShaderType.Brush4 -> TODO()
+                    ShaderType.Brush4 -> {
+                        NightWithShootingStar(
+                            colorMatrix1 = colorMatrix1,
+                            colorMatrix2 = colorMatrix2,
+                            imageWidthPx = imageWidthPx,
+                            imageHeightPx = imageHeightPx,
+                            width = width,
+                            time = time
+                        )
+                    }
                     ShaderType.Brush5 -> TODO()
                     ShaderType.Brush6 -> TODO()
                     ShaderType.Brush7 -> TODO()
