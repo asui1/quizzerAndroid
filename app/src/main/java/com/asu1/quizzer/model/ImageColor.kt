@@ -10,10 +10,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asComposeRenderEffect
@@ -35,6 +37,9 @@ import kotlinx.serialization.Serializable
 enum class ImageColorState {
     COLOR, COLOR2, IMAGE
 }
+
+
+// 1. Simple Gradient. 2. Cloud 3. Snow 4. Space(star) 5. Fireworks 6. Space(moon) 7. 스포트라이트?
 
 @Serializable
 data class ImageColor(
@@ -90,7 +95,7 @@ fun Modifier.asBackgroundModifier(imageColor: ImageColor): Modifier {
     }
 }
 
-fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float, bitmap: Bitmap): Modifier {
+fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float): Modifier {
     return when(imageColor.state) {
         ImageColorState.COLOR -> this.background(imageColor.color, shape = RoundedCornerShape(16.dp))
         ImageColorState.COLOR2 -> {
@@ -105,33 +110,7 @@ fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOpti
                     shape = RoundedCornerShape(16.dp)
                 )
             } else {
-                val shader = RuntimeShader(
-                    shaderOption.getShader(),
-                )
-                this.graphicsLayer {
-                    if(shaderOption == ShaderType.Brush1) {
-                        renderEffect = RenderEffect.createBitmapEffect(bitmap).asComposeRenderEffect()
-                        shape = RoundedCornerShape(16.dp)
-                        clip = true
-                        return@graphicsLayer
-                    }
-                    shader.setFloatUniform("resolution", size.width, size.height)
-                    if(shaderOption != ShaderType.Brush1) {
-                        shader.setFloatUniform("time", time)
-                    }
-                    shader.setColorUniform(
-                        "color",
-                        imageColor.color.toArgb(),
-                    )
-                    shader.setColorUniform(
-                        "color2",
-                        imageColor.color2.toArgb()
-                    )
-
-                    renderEffect = RenderEffect.createShaderEffect(shader).asComposeRenderEffect()
-                    shape = RoundedCornerShape(16.dp)
-                    clip = true
-                }
+                this
             }
         }
         ImageColorState.IMAGE -> if (imageColor.imageData.isNotEmpty()) {

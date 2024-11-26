@@ -35,15 +35,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -72,54 +76,60 @@ fun ScoreCardBackground(
     time: Float,
     width: Dp,
     height: Dp,
+    modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val widthPx = remember{with(density) { width.toPx().toInt() }}
-    val heightPx = remember{with(density) { height.toPx().toInt() }}
-    val bitmapShader = remember(scoreCard.background.color, scoreCard.background.color2) {
-        loadBitmapShader(context, R.drawable.cloud_map_portrait, widthPx, heightPx,
-            color1 = scoreCard.background.color, color2 = scoreCard.background.color2)
+    val colorMatrix = remember(scoreCard.background.color2) {
+        createBlendingColorMatrix(scoreCard.background.color2)
     }
-    Image(
-        painter = ColorPainter(Color.Transparent),
-        contentDescription = stringResource(R.string.background),
-        contentScale = ContentScale.FillBounds,
-        modifier = Modifier
-            .asBackgroundModifierForScoreCard(
-                imageColor = scoreCard.background,
-                shaderOption = scoreCard.shaderType,
-                time = time,
-                bitmap = bitmapShader
-            )
-            .fillMaxSize()
+    val density = LocalDensity.current
+    val imageWidthPx = remember(density){with(density) { width.toPx() }}
+    val xVal = ((time * 100) % imageWidthPx) * 2
+    Box(
+        modifier = modifier
+            .size(width = width, height = height)
             .clip(RoundedCornerShape(16.dp))
-    )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.cloud_nobackground),
+            colorFilter = ColorFilter.colorMatrix(colorMatrix),
+            contentDescription = stringResource(R.string.background),
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = 2f
+                    translationX = -xVal
+                }
+                .size(height = height, width = width)
+        )
+        Image(
+            painter = painterResource(id = R.drawable.cloud_nobackground),
+            colorFilter = ColorFilter.colorMatrix(colorMatrix),
+            contentDescription = stringResource(R.string.background),
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = 2f
+                    translationX = -xVal + imageWidthPx*2
+                }
+                .size(height = height, width = width)
+        )
+    }
 }
 
-fun loadBitmapShader(context: Context, drawable: Int, width: Int, height: Int,
-                     color1: Color, color2: Color): Bitmap {
-    // Decode the drawable resource into a Bitmap
-    val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, drawable)
-    val blendedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
-    for (x in 0 until width) {
-        for (y in 0 until height) {
-            val pixel = blendedBitmap.getPixel(x, y)
+fun createBlendingColorMatrix(color: Color): ColorMatrix {
 
-            // Extract grayscale intensity (all RGB components are equal in a grayscale image)
-            val gray = pixel.red // Red, Green, and Blue are identical in grayscale
+    val r = color.red
+    val g = color.green
+    val b = color.blue
 
-            // Linear interpolation between color1 and color2 based on grayscale intensity
-            val blendedRed = color1.red * (gray / 255f) + color2.red * (1 - gray / 255f)
-            val blendedGreen = color1.green * (gray / 255f) + color2.green * (1 - gray / 255f)
-            val blendedBlue = color1.blue * (gray / 255f) + color2.blue * (1 - gray / 255f)
-
-            // Set the blended color to the new bitmap
-            val blendedPixel = Color(blendedRed, blendedGreen, blendedBlue).toArgb()
-            blendedBitmap.setPixel(x, y, blendedPixel)
-        }
-    }
-    return blendedBitmap
+    // Create a ColorMatrix that applies the given color
+    val matrix = ColorMatrix(floatArrayOf(
+        r, 0f, 0f, 0f, 0f,
+        0f, g, 0f, 0f, 0f,
+        0f, 0f, b, 0f, 0f,
+        0f, 0f, 0f, 1f, 0f
+    ))
+    return matrix
 }
 
 @Composable
@@ -242,32 +252,6 @@ fun ScoreCardComposablePreview() {
         width = 300.dp,
         height = 600.dp,
         scoreCard = scoreCard,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ScoreCardComposableAnswerCheckPreview() {
-    val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
-    ScoreCardComposable(
-        width = 300.dp,
-        height = 600.dp,
-        scoreCard = scoreCard,
-        pagerInit = 1,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ScoreCardComposableGraphPreview() {
-    val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
-    ScoreCardComposable(
-        width = 300.dp,
-        height = 600.dp,
-        scoreCard = scoreCard,
-        pagerInit = 2,
     )
 }
 
