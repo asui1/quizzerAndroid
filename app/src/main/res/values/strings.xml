@@ -17,7 +17,7 @@
     <string name="logout_confirmation_body">Are you sure you want to logout?</string>
     <string name="logout_confirm">Confirm</string>
     <string name="logout_cancel">Cancel</string>
-    <string name="quizGenPolicyBody">When creating a quiz, if the content of the quiz contains content that may cause social controversy such as disparagement or ridicule, or if it contains content that infringes on rights such as copyright, portrait rights, or pornography, the quiz may be deleted without the consent of the creator.\\nIn addition, problems arising from the quizzes you have created are entirely the user\'s responsibility and quizzer is not responsible for them.\\nIf you agree to this, please click the AGREE button.</string>
+    <string name="quizGenPolicyBody">When creating a quiz, if the content of the quiz contains content that may cause social controversy such as disparagement or ridicule, or if it contains content that infringes on rights such as copyright, portrait rights, or pornography, the quiz may be deleted without the consent of the creator.\nIn addition, problems arising from the quizzes you have created are entirely the user\'s responsibility and quizzer is not responsible for them.\\nIf you agree to this, please click the AGREE button.</string>
     <string name="agree">Agree</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="set_quiz_title">Quiz Title</string>

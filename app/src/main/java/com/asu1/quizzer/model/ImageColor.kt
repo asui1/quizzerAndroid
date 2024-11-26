@@ -83,24 +83,10 @@ fun Modifier.asBackgroundModifier(imageColor: ImageColor): Modifier {
     }
 }
 
-fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor, shaderOption: ShaderType, time: Float): Modifier {
+fun Modifier.asBackgroundModifierForScoreCard(imageColor: ImageColor): Modifier {
     return when(imageColor.state) {
         ImageColorState.COLOR -> this.background(imageColor.color, shape = RoundedCornerShape(16.dp))
-        ImageColorState.COLOR2 -> {
-            if (Build.VERSION_CODES.TIRAMISU > Build.VERSION.SDK_INT) {
-                this.background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(imageColor.color, imageColor.color2),
-                        start = Offset(0f, 0f),
-                        end = Offset(100f, 100f),
-                        tileMode = TileMode.Clamp
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                )
-            } else {
-                this
-            }
-        }
+        ImageColorState.COLOR2 -> this
         ImageColorState.IMAGE -> if (imageColor.imageData.isNotEmpty()) {
             val bitmap = BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size)
             this.paint(BitmapPainter(bitmap.asImageBitmap()),

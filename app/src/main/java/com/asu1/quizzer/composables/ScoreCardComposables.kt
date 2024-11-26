@@ -29,11 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -45,17 +45,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.ImageColorColor2.GradientBrush
+import com.asu1.quizzer.composables.ImageColorColor2.NightWithMoon
+import com.asu1.quizzer.composables.ImageColorColor2.SkyWithClouds
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
+import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
-import com.materialkolor.ktx.darken
-import com.materialkolor.ktx.lighten
 import java.util.Locale
 import kotlin.math.round
 
@@ -75,10 +77,7 @@ fun ScoreCardBackground(
     }
     val density = LocalDensity.current
     val imageWidthPx = remember(density){with(density) { width.toPx() }}
-    val xVal1 = ((time * 100) % imageWidthPx) * 2 - imageWidthPx
-    val xVal2 = (((time * 1.1f) * 100) % imageWidthPx) * 2 - imageWidthPx
-    val xVal3 = (((time * 1.3f) * 100) % imageWidthPx) * 2 - imageWidthPx
-    val imagePositions = listOf(xVal1, xVal2, xVal3)
+    val imageHeightPx = remember(density){with(density) { height.toPx() }}
 
     // 배경 이미지를 설정하고, 그 위를 지나가는 구름을 랜덤하게 만드는 방향으로 해야겠다. Canvas 설정하고 그 위에 구름을 그리는 방식으로
     Box(
@@ -86,34 +85,53 @@ fun ScoreCardBackground(
             .size(width = width, height = height)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.sky_background),
-            colorFilter = ColorFilter.colorMatrix(colorMatrix1),
-            contentDescription = stringResource(R.string.background),
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
-        imagePositions.forEachIndexed { index, position ->
-            Image(
-                painter = painterResource(id = R.drawable.single_cloud_nobackground),
-                colorFilter = ColorFilter.colorMatrix(colorMatrix2),
-                contentDescription = stringResource(R.string.background),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .graphicsLayer {
-                        translationX = position
-                        translationY = when(index){
-                            0 -> 0f
-                            1 -> imageWidthPx/4
-                            else -> imageWidthPx/2
-                        }
-
+        when(scoreCard.background.state){
+            ImageColorState.IMAGE -> {
+                Image(
+                    painter = remember(scoreCard.background.imageData){scoreCard.background.getAsImage()},
+                    contentDescription = "ScoreCard Background",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            ImageColorState.COLOR -> {
+                Image(
+                    painter = ColorPainter(scoreCard.background.color),
+                    contentDescription = "ScoreCard Background",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            ImageColorState.COLOR2 -> {
+                when(scoreCard.shaderType){
+                    ShaderType.Brush1 -> {
+                        GradientBrush(
+                            imageColor = scoreCard.background,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
-                    .size(width)
-            )
+                    ShaderType.Brush2 -> {
+                        SkyWithClouds(colorMatrix1, colorMatrix2, imageWidthPx, width, time)
+                    }
+                    ShaderType.Brush3 -> {
+                        NightWithMoon(
+                            colorMatrix1 = colorMatrix1,
+                            colorMatrix2 = colorMatrix2,
+                            imageWidthPx = imageWidthPx,
+                            imageHeightPx = imageHeightPx,
+                            width = width,
+                            time = time
+                        )
+                    }
+                    ShaderType.Brush4 -> TODO()
+                    ShaderType.Brush5 -> TODO()
+                    ShaderType.Brush6 -> TODO()
+                    ShaderType.Brush7 -> TODO()
+                }
+            }
         }
     }
 }
+
 
 fun createBlendingColorMatrix(color: Color): ColorMatrix {
 
