@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -66,8 +67,13 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
                 modifier = Modifier.size(size/2)
             )
         } else {
+            val bitmap = remember(image) {
+                BitmapFactory.decodeByteArray(image, 0, image.size).asImageBitmap().apply {
+                    prepareToDraw()
+                }
+            }
             Image(
-                bitmap = BitmapFactory.decodeByteArray(image, 0, image.size).asImageBitmap(),
+                bitmap = bitmap,
                 contentDescription = stringResource(R.string.selected_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

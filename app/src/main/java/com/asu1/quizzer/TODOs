@@ -14,6 +14,8 @@ Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:
 그라데이션을 배경에서 쓰는 SVG 기반 데코 + 그레이스케일 이미지 기반 그래픽레이어 하는걸 확인하기.
 스코어 스크린은 타임 기반으로 돌아가게 하고 싶음.
 
+horizontally seamless / tileable -> Keyword for generating scorecard.
+
 ---------------MINIMUM FOR APP RELEASE----------------
 
 - maybe put some gradients to color backgrounds at mainScreen to make it more beautiful.

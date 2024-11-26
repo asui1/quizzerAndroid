@@ -5,10 +5,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onIdle
-import com.asu1.quizzer.datacreation.fakertestData
-import com.asu1.quizzer.datacreation.iutestdata1
-import com.asu1.quizzer.datacreation.iutestdata2
-import com.asu1.quizzer.datacreation.iutestdata3
 import com.asu1.quizzer.datacreation.springTest
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel

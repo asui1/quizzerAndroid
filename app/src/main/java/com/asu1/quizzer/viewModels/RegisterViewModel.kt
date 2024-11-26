@@ -1,6 +1,7 @@
 package com.asu1.quizzer.viewModels
 
 import ToastManager
+import ToastType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.UserRegister
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {

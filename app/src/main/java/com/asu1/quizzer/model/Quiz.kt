@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizJson
 import com.asu1.quizzer.data.json
-import com.asu1.quizzer.util.Logger
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Base64

@@ -1,10 +1,7 @@
 package com.asu1.quizzer.viewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance

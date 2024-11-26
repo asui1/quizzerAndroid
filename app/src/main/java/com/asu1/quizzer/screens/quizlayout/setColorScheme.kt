@@ -81,7 +81,7 @@ fun QuizLayoutSetColorScheme(
     onColorSchemeUpdate: (ColorScheme) -> Unit = { },
     backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundImageUpdate: (ImageColor) -> Unit = { },
-    ) {
+) {
     val colorSchemeState = colorScheme.primary
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -208,9 +208,7 @@ fun BackgroundRow(
                         modifier = Modifier
                             .size(24.dp)
                             .paint(
-                                painter = selectedColor?.getAsImage() ?: ColorPainter(
-                                    MaterialTheme.colorScheme.surface
-                                )
+                                painter = remember(selectedColor){selectedColor.getAsImage()}
                             )
                     )
                     Icon(
@@ -362,6 +360,7 @@ fun GenerateColorScheme(
     val context = LocalContext.current
     val paletteStyleStringMap = remember{getPaletteStyleStringMap(context)}
     val contrastStringMap = remember{getContrastStringMap(context)}
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
 
@@ -378,9 +377,11 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_title_image),
                 onClick = {
-                    val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
-                    val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
-                    setColorScheme(titleImageColorScheme)
+                    coroutineScope.launch {
+                        val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
+                        val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
+                        setColorScheme(titleImageColorScheme)
+                    }
                 },
                 enabled = isTitleImageSet,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithTitleImage"
@@ -389,8 +390,15 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_primary_color),
                 onClick = {
-                    val primaryColorScheme = randomDynamicColorScheme(primaryColor, paletteLevel, contrastLevel, isDark)
-                    setColorScheme(primaryColorScheme)
+                    coroutineScope.launch {
+                        val primaryColorScheme = randomDynamicColorScheme(
+                            primaryColor,
+                            paletteLevel,
+                            contrastLevel,
+                            isDark
+                        )
+                        setColorScheme(primaryColorScheme)
+                    }
                 },
                 enabled = true,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithPrimaryColor"

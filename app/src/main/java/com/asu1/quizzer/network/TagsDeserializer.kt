@@ -1,12 +1,10 @@
 package com.asu1.quizzer.model
 
 import android.util.Base64
-import android.util.Base64.encodeToString
+import com.asu1.quizzer.model.QuizCard
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import java.lang.reflect.Type
-import com.asu1.quizzer.model.QuizCard
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
@@ -17,6 +15,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import java.lang.reflect.Type
 
 class UserInfoDeserializer: JsonDeserializer<UserInfo>{
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): UserInfo {

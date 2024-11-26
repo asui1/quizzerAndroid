@@ -11,7 +11,6 @@ import com.asu1.quizzer.util.basicShader
 import com.asu1.quizzer.util.bottomShader
 import com.asu1.quizzer.util.centerShader
 import com.asu1.quizzer.util.horizontalWaveShader
-import com.asu1.quizzer.util.leftBottomShader
 import com.asu1.quizzer.util.repeatShader
 import com.asu1.quizzer.util.verticalWaveShader
 import kotlinx.serialization.Contextual

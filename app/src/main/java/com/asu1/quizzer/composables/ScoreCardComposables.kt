@@ -1,9 +1,5 @@
 package com.asu1.quizzer.composables
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.BitmapShader
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,26 +23,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -56,63 +45,73 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.zIndex
-import androidx.core.graphics.red
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.asBackgroundModifierForScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import com.materialkolor.ktx.darken
+import com.materialkolor.ktx.lighten
 import java.util.Locale
-import kotlin.math.ceil
 import kotlin.math.round
 
 @Composable
 fun ScoreCardBackground(
     scoreCard: ScoreCard,
-    time: Float,
     width: Dp,
     height: Dp,
+    time: Float = 0f,
     modifier: Modifier = Modifier,
 ) {
-    val colorMatrix = remember(scoreCard.background.color2) {
+    val colorMatrix1 = remember(scoreCard.background.color) {
+        createBlendingColorMatrix(scoreCard.background.color)
+    }
+    val colorMatrix2 = remember(scoreCard.background.color2) {
         createBlendingColorMatrix(scoreCard.background.color2)
     }
     val density = LocalDensity.current
     val imageWidthPx = remember(density){with(density) { width.toPx() }}
-    val xVal = ((time * 100) % imageWidthPx) * 2
+    val xVal1 = ((time * 100) % imageWidthPx) * 2 - imageWidthPx
+    val xVal2 = (((time * 1.1f) * 100) % imageWidthPx) * 2 - imageWidthPx
+    val xVal3 = (((time * 1.3f) * 100) % imageWidthPx) * 2 - imageWidthPx
+    val imagePositions = listOf(xVal1, xVal2, xVal3)
+
+    // 배경 이미지를 설정하고, 그 위를 지나가는 구름을 랜덤하게 만드는 방향으로 해야겠다. Canvas 설정하고 그 위에 구름을 그리는 방식으로
     Box(
         modifier = modifier
             .size(width = width, height = height)
             .clip(RoundedCornerShape(16.dp))
     ) {
         Image(
-            painter = painterResource(id = R.drawable.cloud_nobackground),
-            colorFilter = ColorFilter.colorMatrix(colorMatrix),
+            painter = painterResource(id = R.drawable.sky_background),
+            colorFilter = ColorFilter.colorMatrix(colorMatrix1),
             contentDescription = stringResource(R.string.background),
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = 2f
-                    translationX = -xVal
-                }
-                .size(height = height, width = width)
+            modifier = Modifier.fillMaxSize()
         )
-        Image(
-            painter = painterResource(id = R.drawable.cloud_nobackground),
-            colorFilter = ColorFilter.colorMatrix(colorMatrix),
-            contentDescription = stringResource(R.string.background),
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = 2f
-                    translationX = -xVal + imageWidthPx*2
-                }
-                .size(height = height, width = width)
-        )
+        imagePositions.forEachIndexed { index, position ->
+            Image(
+                painter = painterResource(id = R.drawable.single_cloud_nobackground),
+                colorFilter = ColorFilter.colorMatrix(colorMatrix2),
+                contentDescription = stringResource(R.string.background),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .graphicsLayer {
+                        translationX = position
+                        translationY = when(index){
+                            0 -> 0f
+                            1 -> imageWidthPx/4
+                            else -> imageWidthPx/2
+                        }
+
+                    }
+                    .size(width)
+            )
+        }
     }
 }
 
@@ -146,13 +145,6 @@ fun ScoreCardComposable(
         3
     }
 
-    val time by produceState(0f) {
-        while(true){
-            withInfiniteAnimationFrameMillis {
-                value = it/1000f
-            }
-        }
-    }
     val formattedScore = if (quizResult.score % 1 == 0f) {
         quizResult.score.toInt().toString()
     } else {
@@ -164,16 +156,22 @@ fun ScoreCardComposable(
     val greened = scoreCard.textColor.copy(
         blue = (scoreCard.textColor.blue + 0.5f).coerceAtMost(1f),
     )
-
+    val time by produceState(0f) {
+        while(true){
+            withInfiniteAnimationFrameMillis {
+                value = it/1000f
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .size(width = width, height = height)
     ) {
         ScoreCardBackground(
             scoreCard = scoreCard,
-            time = time,
             width = width,
             height = height,
+            time = time,
         )
         Column(
             modifier = Modifier

@@ -1,6 +1,5 @@
 package com.asu1.quizzer.datacreation
 
-import com.asu1.quizzer.R
 import com.asu1.quizzer.TestQuiz1
 import com.asu1.quizzer.TestQuiz2
 import com.asu1.quizzer.allInOneForTest

@@ -6,7 +6,6 @@ import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.RecommendationList
-import com.asu1.quizzer.model.Recommendations
 import com.asu1.quizzer.model.UserInfo
 import com.asu1.quizzer.model.UserRankList
 import com.asu1.quizzer.model.UserRegister

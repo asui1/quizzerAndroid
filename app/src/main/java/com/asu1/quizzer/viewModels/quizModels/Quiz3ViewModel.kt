@@ -2,7 +2,6 @@ package com.asu1.quizzer.viewModels.quizModels
 
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

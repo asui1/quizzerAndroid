@@ -23,14 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.model.sampleQuiz1
-import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -100,8 +98,10 @@ fun BuildBody(
         BodyType.NONE -> {}
         BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizState.bodyText, modifier = Modifier.fillMaxWidth())
         BodyType.IMAGE -> {
-            val image = remember{
-                BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap()
+            val image = remember(quizState.bodyImage){
+                BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap().apply{
+                    prepareToDraw()
+                }
             }
             Image(
                 bitmap = image,

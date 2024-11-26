@@ -1,6 +1,7 @@
 package com.asu1.quizzer
 
 import ToastManager
+import ToastType
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,20 +26,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.asu1.quizzer.composables.CustomSnackbarHost
-import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
 import com.asu1.quizzer.screens.mainScreen.PrivacyPolicy
 import com.asu1.quizzer.screens.mainScreen.RegisterScreen
+import com.asu1.quizzer.screens.mainScreen.SearchScreen
 import com.asu1.quizzer.screens.quiz.QuizBuilderScreen
-import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
+import com.asu1.quizzer.screens.quiz.QuizCaller
 import com.asu1.quizzer.screens.quiz.QuizSolver
 import com.asu1.quizzer.screens.quiz.ScoringScreen
-import com.asu1.quizzer.screens.mainScreen.SearchScreen
-import com.asu1.quizzer.screens.quiz.QuizCaller
+import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
+import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
 import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer

@@ -1,34 +1,21 @@
 package com.asu1.quizzer.model
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.BitmapShader
-import android.graphics.RenderEffect
-import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSerializer
 import kotlinx.serialization.Serializable
 
@@ -38,8 +25,9 @@ enum class ImageColorState {
     COLOR, COLOR2, IMAGE
 }
 
-
-// 1. Simple Gradient. 2. Cloud 3. Snow 4. Space(star) 5. Fireworks 6. Space(moon) 7. 스포트라이트?
+// 1. Simple Gradient.
+// 2. Moving tileable images : Cloud, Space(star), Space(moon)
+// 3. Graphics with AGSL needs : Snow, Fireworks, maybe spotlight
 
 @Serializable
 data class ImageColor(

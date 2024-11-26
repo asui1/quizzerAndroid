@@ -2,7 +2,6 @@ package com.asu1.quizzer
 
 import android.content.Context
 import android.net.Uri
-import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
@@ -18,25 +17,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.Espresso.onIdle
 import com.asu1.quizzer.model.BodyType
-import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
-import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
-import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
-import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
