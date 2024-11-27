@@ -48,10 +48,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.ImageColorColor2.Fireworks
 import com.asu1.quizzer.composables.ImageColorColor2.GradientBrush
 import com.asu1.quizzer.composables.ImageColorColor2.NightWithMoon
 import com.asu1.quizzer.composables.ImageColorColor2.NightWithShootingStar
 import com.asu1.quizzer.composables.ImageColorColor2.SkyWithClouds
+import com.asu1.quizzer.composables.ImageColorColor2.Snowflake
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.ImageColorState
@@ -133,9 +135,31 @@ fun ScoreCardBackground(
                             time = time
                         )
                     }
-                    ShaderType.Brush5 -> TODO()
-                    ShaderType.Brush6 -> TODO()
-                    ShaderType.Brush7 -> TODO()
+// 1. Simple Gradient.
+// 2. Moving tileable images : Cloud, Space(star), Space(moon)
+// 3. Graphics with AGSL needs : Snow, Fireworks, maybe spotlight
+
+                    ShaderType.Brush5 -> {
+                        Snowflake(
+                            colorMatrix1 = colorMatrix1,
+                            color2 = scoreCard.background.color2,
+                            imageWidthPx = imageWidthPx,
+                            imageHeightPx = imageHeightPx,
+                            width = width,
+                            time = time
+                        )
+                    }
+                    ShaderType.Brush6 -> {
+                        Fireworks(
+                            colorMatrix1 = colorMatrix1,
+                            color2 = scoreCard.background.color2,
+                            imageWidthPx = imageWidthPx,
+                            imageHeightPx = imageHeightPx,
+                            width = width,
+                            time = time
+                        )
+                    }
+                    ShaderType.Brush7 -> TODO("Make Flower")
                 }
             }
         }

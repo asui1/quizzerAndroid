@@ -25,10 +25,6 @@ enum class ImageColorState {
     COLOR, COLOR2, IMAGE
 }
 
-// 1. Simple Gradient.
-// 2. Moving tileable images : Cloud, Space(star), Space(moon)
-// 3. Graphics with AGSL needs : Snow, Fireworks, maybe spotlight
-
 @Serializable
 data class ImageColor(
     @Serializable(with = ColorSerializer::class) val color: Color,

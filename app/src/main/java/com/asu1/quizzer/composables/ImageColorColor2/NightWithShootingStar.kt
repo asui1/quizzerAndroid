@@ -51,7 +51,7 @@ fun NightWithShootingStar(
                     translationX = position
                     translationY = yPositions[index]
                 }
-                .size(width)
+                .size(width /2)
         )
     }
 }

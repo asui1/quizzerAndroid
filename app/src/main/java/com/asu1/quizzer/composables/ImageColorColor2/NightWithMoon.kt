@@ -45,6 +45,6 @@ fun NightWithMoon(
                 translationX = xVal
                 translationY = yVal
             }
-            .size(width)
+            .size(width * 0.8f)
     )
 }

@@ -117,6 +117,7 @@ dependencies {
     implementation("com.kizitonwose.calendar:compose:2.6.0")
     implementation("sh.calvin.reorderable:reorderable:2.3.3")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.wear.compose:compose-material-core:1.4.0")
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))
