@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables
+package com.asu1.quizzer.composables.mainscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -43,26 +43,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.ColorPicker
-import com.asu1.quizzer.composables.ColorSchemeSheet
+import com.asu1.quizzer.composables.base.ColorPicker
+import com.asu1.quizzer.composables.base.ColorSchemeSheet
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.model.ImageColor
+import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.byteArrayToImageBitmap
@@ -80,7 +76,10 @@ fun QuizLayoutSetColorScheme(
     onColorUpdate: (String, Color) -> Unit = {_, _ -> },
     onColorSchemeUpdate: (ColorScheme) -> Unit = { },
     backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
-    onBackgroundImageUpdate: (ImageColor) -> Unit = { },
+    onBackgroundColorUpdate: (Color) -> Unit = { },
+    onGradientColorUpdate: (Color) -> Unit = { },
+    onImageUpdate: (ByteArray) -> Unit = { },
+    onImageColorStateUpdate: (ImageColorState) -> Unit = { },
 ) {
     val colorSchemeState = colorScheme.primary
     val listState = rememberLazyListState()
@@ -97,7 +96,6 @@ fun QuizLayoutSetColorScheme(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 8.dp)
-                .background(color = MaterialTheme.colorScheme.surface)
         ) {
             item {
                 GenerateColorScheme(
@@ -118,13 +116,22 @@ fun QuizLayoutSetColorScheme(
                 BackgroundRow(
                     text = stringResource(R.string.background),
                     background = backgroundImage,
-                    onImageSelected = { imageColor ->
-                        onBackgroundImageUpdate(imageColor)
+                    onBackgroundColorUpdate = {color ->
+                        onBackgroundColorUpdate(color)
+                    },
+                    onGradientColorUpdate = {gradientColor ->
+                        onGradientColorUpdate(gradientColor)
+                    },
+                    onImageUpdate = {image ->
+                        onImageUpdate(image)
                     },
                     onOpen = {
                         coroutineScope.launch {
                             listState.animateScrollToItem(1)
                         }
+                    },
+                    updateBackgroundType = { imageColorState ->
+                        onImageColorStateUpdate(imageColorState)
                     }
                 )
             }
@@ -134,7 +141,7 @@ fun QuizLayoutSetColorScheme(
                     text = colorName,
                     imageColor = colorSchemeState,
                     onColorSelected = {color ->
-                        onColorUpdate(colorName, color)
+                        onColorUpdate("Primary Color", color)
                     },
                     onOpen = {
                         coroutineScope.launch {
@@ -163,21 +170,20 @@ fun QuizLayoutSetColorScheme(
 fun BackgroundRow(
     text: String,
     background: ImageColor,
-    onImageSelected: (ImageColor) -> Unit,
     onOpen: () -> Unit,
+    onBackgroundColorUpdate: (Color) -> Unit,
+    onGradientColorUpdate: (Color) -> Unit,
+    onImageUpdate: (ByteArray) -> Unit,
+    updateBackgroundType: (ImageColorState) -> Unit = { },
 ) {
     var isOpen by remember { mutableStateOf(false) }
-    var selectedColor by remember { mutableStateOf(background) }
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    val gradient = Brush.linearGradient(
-        colors = listOf(Color.Red, Color.Blue)
-    )
-    LaunchedEffect(background) {
-        selectedColor = background
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    LaunchedEffect(background.state) {
         selectedTabIndex = when (background.state) {
             ImageColorState.COLOR -> 0
-            ImageColorState.COLOR2 -> 1
+            ImageColorState.GRADIENT -> 1
             ImageColorState.IMAGE -> 2
+            else -> 0
         }
     }
     Box(
@@ -204,12 +210,9 @@ fun BackgroundRow(
                         modifier = Modifier.width(200.dp),
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .paint(
-                                painter = remember(selectedColor){selectedColor.getAsImage()}
-                            )
+                    ImageColorBackground(
+                        imageColor = background,
+                        modifier = Modifier.size(24.dp)
                     )
                     Icon(
                         imageVector = if (isOpen) Icons.Default.ArrowDropDown
@@ -220,117 +223,15 @@ fun BackgroundRow(
                 }
             }
             if (isOpen) {
-                //SET 3 Tabs for 1 color, 2 colors with gradient, image
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TabRow(
-                        selectedTabIndex = selectedTabIndex,
-                        indicator = { tabPositions ->
-                            SecondaryIndicator(
-                                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            )
-                        }
-                    ) {
-                        Tab(selected = selectedTabIndex == 0, onClick = {
-                            onImageSelected(
-                                ImageColor(
-                                    color = background.color,
-                                    imageData = background.imageData,
-                                    color2 = background.color2,
-                                    state = ImageColorState.COLOR
-                                )
-                            )
-                        }) {
-                            Text(stringResource(R.string.single_color))
-                        }
-                        Tab(selected = selectedTabIndex == 1, onClick = {
-                            onImageSelected(
-                                ImageColor(
-                                    color = background.color,
-                                    imageData = background.imageData,
-                                    color2 = background.color2,
-                                    state = ImageColorState.COLOR
-                                )
-                            )
-                        }) {
-                            Text(
-                                stringResource(R.string.gradient),
-                                style = TextStyle(
-                                    brush = gradient,
-                                    textDecoration = TextDecoration.LineThrough
-                                ),
-                            )
-                        }
-                        Tab(selected = selectedTabIndex == 2, onClick = {
-                            onImageSelected(
-                                ImageColor(
-                                    color = background.color,
-                                    imageData = background.imageData,
-                                    color2 = background.color2,
-                                    state = ImageColorState.IMAGE
-                                )
-                            )
-                        }) {
-                            Text(stringResource(R.string.image))
-                        }
-                    }
-                    when (selectedTabIndex) {
-                        0 -> {
-                            // Single Color Picker
-                            ColorPicker(
-                                initialColor = selectedColor.color,
-                                onColorSelected = { color ->
-                                    onImageSelected(
-                                        ImageColor(
-                                            color = color,
-                                            imageData = selectedColor.imageData,
-                                            color2 = selectedColor.color2,
-                                            state = ImageColorState.COLOR
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        1 -> {
-                            Text(stringResource(R.string.gradient_picker_placeholder_to_be_implemented))
-                        }
-
-                        2 -> {
-                            // Image Picker (Placeholder)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            ImageGetter(
-                                image = selectedColor.imageData,
-                                onImageUpdate = { byteArray ->
-                                    onImageSelected(
-                                        ImageColor(
-                                            color = selectedColor.color,
-                                            imageData = byteArray,
-                                            color2 = selectedColor.color2,
-                                            state = ImageColorState.IMAGE
-                                        )
-                                    )
-                                },
-                                onImageDelete = {
-                                    onImageSelected(
-                                        ImageColor(
-                                            color = selectedColor.color,
-                                            imageData = ByteArray(0),
-                                            color2 = selectedColor.color2,
-                                            state = ImageColorState.IMAGE
-                                        )
-                                    )
-                                },
-                            )
-                        }
-                    }
-                }
+                BackgroundTabs(
+                    selectedTabIndex,
+                    updateBackgroundType,
+                    background,
+                    onBackgroundColorUpdate,
+                    onGradientColorUpdate,
+                    onImageUpdate
+                )
             }
-
         }
     }
 }
@@ -366,7 +267,6 @@ fun GenerateColorScheme(
 
     )
     {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

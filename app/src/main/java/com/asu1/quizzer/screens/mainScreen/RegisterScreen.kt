@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.RowWithAppIconAndName
+import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
@@ -103,7 +103,7 @@ fun RegisterScreen(
         }
     }
     Scaffold(
-        topBar = {RowWithAppIconAndName()},
+        topBar = { RowWithAppIconAndName() },
     )
     { paddingValues ->
         HorizontalPager(

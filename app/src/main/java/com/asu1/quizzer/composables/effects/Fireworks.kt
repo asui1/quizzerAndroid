@@ -1,24 +1,14 @@
-package com.asu1.quizzer.composables.ImageColorColor2
+package com.asu1.quizzer.composables.effects
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.materialcore.toRadians
-import com.asu1.quizzer.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Math.toRadians
@@ -31,23 +21,23 @@ data class Explosion(
     val alpha: Animatable<Float, AnimationVector1D>,
     val centerX: Float,
     val centerY: Float,
-    val particles: List<Float>
+    val particles: List<Float>,
+    var randoms1: List<Float> = List(5) { Random.nextFloat()  * 2f },
+    var randoms2: List<Float> = List(5) { Random.nextFloat()  * 2f },
+    var randoms3: List<Float> = List(5) { Random.nextFloat() * 2f  },
+    var randoms4: List<Float> = List(5) { Random.nextFloat() * 2f  }
 )
 
 @Composable
 fun Fireworks(
-    colorMatrix1: ColorMatrix,
     color2: Color,
     imageWidthPx: Float,
     imageHeightPx: Float,
-    width: Dp,
-    time: Float,
     modifier: Modifier = Modifier
 ) {
     val explosions = remember { mutableStateListOf<Explosion>() }
     val coroutineScope = rememberCoroutineScope()
-    val distanceModifiers = remember{ listOf(0.2f, 0.5f, 0.7f, 0.9f, 1f) }
-    val angleModifiers = remember{ listOf(0.8f, 1f, 1.2f) }
+    val distanceModifiers = remember{ listOf(0.3f, 0.6f, 0.8f, 1f) }
     val explosionCount = remember{ 10 }
 
     LaunchedEffect(Unit) {
@@ -56,7 +46,7 @@ fun Fireworks(
             val centerY = imageHeightPx * (0.1f + Random.nextFloat() * 0.4f)
             val targetDistance = 100f + Random.nextFloat() * 70f
             val explosionParticles = List(explosionCount) { index ->
-                index * (360 / explosionCount).toFloat() + Random.nextFloat() * 10f - 5f
+                index * (360 / explosionCount).toFloat() + Random.nextFloat() * 20f - 10f
             }
             val explosion = Explosion(
                 distance = Animatable(0f),
@@ -84,22 +74,21 @@ fun Fireworks(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.empty_city_sky),
-            colorFilter = ColorFilter.colorMatrix(colorMatrix1),
-            contentDescription = stringResource(R.string.background),
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
         Canvas(modifier = Modifier.fillMaxSize()) {
             explosions.forEach { explosion ->
                 explosion.particles.forEach { angle ->
-                    distanceModifiers.forEach{ distMod ->
-                        angleModifiers.forEach{angleMod ->
+                    distanceModifiers.forEachIndexed { index, distMod ->
+                        val randoms = when(index){
+                            0 -> explosion.randoms1
+                            1 -> explosion.randoms2
+                            2 -> explosion.randoms3
+                            else -> explosion.randoms4
+                        }
+                        randoms.forEach{angleMod ->
                             val path = Path().apply {
                                 moveTo(explosion.centerX, explosion.centerY)
-                                val endX = explosion.centerX + (distMod * explosion.distance.value * cos(angleMod * toRadians(angle.toDouble()))).toFloat()
-                                val endY = explosion.centerY - (distMod * explosion.distance.value * sin(angleMod * toRadians(angle.toDouble()))).toFloat()
+                                val endX = explosion.centerX + (distMod * explosion.distance.value * cos(angleMod +toRadians(angle.toDouble()))).toFloat()
+                                val endY = explosion.centerY - (distMod * explosion.distance.value * sin(angleMod + toRadians(angle.toDouble()))).toFloat()
                                 quadraticTo(
                                     explosion.centerX, explosion.centerY - 50, // Control point
                                     endX, endY // End point

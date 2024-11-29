@@ -77,13 +77,13 @@
     <string name="correct_answer_not_selected">정답이 선택되지 않았습니다.</string>
     <string name="answer_date_cannot_be_empty">정답이 선택되지 않았습니다.</string>
     <string name="at_least_one_connection_must_be_made">최소한 1개를 연결해야 합니다.</string>
-    <string name="no_shader">기본</string>
-    <string name="left_bottom">좌측 하단</string>
-    <string name="bottom">하단</string>
-    <string name="center">중앙</string>
-    <string name="repeat">반복</string>
-    <string name="vertical_wave">세로 파도</string>
-    <string name="horizontal_wave">가로 파도</string>
+    <string name="left_bottom">왼쪽 아래부터</string>
+    <string name="left">왼쪽부터</string>
+    <string name="top">위부터</string>
+    <string name="diagonal">대각선으로 가르기</string>
+    <string name="horizontal">가로로 가르기</string>
+    <string name="vertical">세로로 가르기</string>
+    <string name="top_down">위 아래로 감싸기</string>
     <string name="sign_in">회원가입</string>
     <string name="press_back_again_to_exit">나가려면 다시 뒤로가기를 눌러주세요</string>
     <string name="enter_your_nickname">닉네임을 입력하세요</string>
@@ -105,8 +105,8 @@
     <string name="end_of_quiz_do_you_want_to_submit_your_answers">마지막입니다.\n정답을 제출하시겠습니까?</string>
     <string name="solve_again">다시 풀기</string>
     <string name="move_home">메인으로</string>
-    <string name="select_color1">색1 선택</string>
-    <string name="select_color2">색2 선택</string>
+    <string name="select_color1">배경 색 필터</string>
+    <string name="select_color2">효과 색</string>
     <string name="select_text_color">글자 색 선택</string>
     <string name="upload">업로드</string>
     <string name="searching_for_quizzes">검색 중 입니다…</string>
@@ -156,6 +156,20 @@
     <string name="logged_out">로그아웃되었습니다</string>
     <string name="please_login_first">먼저 로그인해 주세요</string>
     <string name="can_not_proceed_when_creating_quiz">퀴즈를 만들 때에는 진행할 수 없습니다.</string>
+    <string name="text_color">텍스트 색</string>
+    <string name="firework">불꽃놀이</string>
+    <string name="moon">달</string>
+    <string name="shooting_star">별똥별</string>
+    <string name="snow">눈</string>
+    <string name="cloud">구름</string>
+    <string name="none">없음</string>
+    <string name="effect">효과</string>
+    <string name="select_color3">그라데이션 색</string>
+    <string name="background_newline">배경</string>
+    <string name="your_score_is">당신의 점수는</string>
+    <string name="effects">효과</string>
+    <string name="scorecard_effect">ScoreCard Effect</string>
+    <string name="flowers">꽃</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

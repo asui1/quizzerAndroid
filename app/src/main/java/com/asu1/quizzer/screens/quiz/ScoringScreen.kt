@@ -30,7 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.ScoreCardComposable
+import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
@@ -117,7 +117,7 @@ fun ScoringScreen(
                             color = background.color,
                             imageData = scoreCard.background.imageData,
                             color2 = Color.Red,
-                            state = ImageColorState.COLOR2
+                            state = ImageColorState.BASEIMAGE
                         )
                     )
                 },
@@ -131,13 +131,13 @@ fun ScoringScreen(
                             color = Color.Red,
                             imageData = scoreCard.background.imageData,
                             color2 = background.color2,
-                            state = ImageColorState.COLOR2
+                            state = ImageColorState.BASEIMAGE
                         )
                     )
                 },
                 onClickButton3 = {
                     scoreCardViewModel.updateImageColorState(
-                        ImageColorState.COLOR2
+                        ImageColorState.BASEIMAGE
                     )
                 },
             )

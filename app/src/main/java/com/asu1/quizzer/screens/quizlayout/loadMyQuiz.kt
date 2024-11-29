@@ -32,9 +32,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.LazyColumnSwipeToDismissDialog
-import com.asu1.quizzer.composables.LazyColumnWithSwipeToDismiss
-import com.asu1.quizzer.composables.RowWithAppIconAndName
+import com.asu1.quizzer.composables.quizcards.LazyColumnSwipeToDismissDialog
+import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
+import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import kotlinx.coroutines.launch
 

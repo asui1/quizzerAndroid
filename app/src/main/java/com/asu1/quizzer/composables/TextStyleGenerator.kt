@@ -3,6 +3,7 @@ package com.asu1.quizzer.composables
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -40,9 +41,10 @@ fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu
             style = TextStyle(
                 fontFamily = textStyle.fontFamily,
                 color = textStyle.contentColor,
-                fontSize = textStyle.fontSize
+                fontSize = textStyle.fontSize,
             ),
             modifier = modifier
+                .background(textStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
                 .then(textStyle.borderModifier)
                 .padding(8.dp)
         )
@@ -105,6 +107,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
                 fontSize = fontSize
             ),
             modifier = modifier
+                .background(backgroundColor, shape = RoundedCornerShape(4.dp))
                 .then(borderModifier)
                 .padding(8.dp)
         )

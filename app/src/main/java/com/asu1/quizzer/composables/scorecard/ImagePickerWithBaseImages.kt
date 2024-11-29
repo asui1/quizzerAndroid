@@ -1,0 +1,108 @@
+package com.asu1.quizzer.composables.scorecard
+
+import android.text.Html
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.quizzer.model.BackgroundBase
+import com.asu1.quizzer.model.ImageColorState
+import com.asu1.quizzer.ui.theme.LightPrimary
+import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+
+@Composable
+fun ImagePickerWithBaseImages(
+    modifier: Modifier = Modifier,
+    onBaseImageSelected: (BackgroundBase) -> Unit = {},
+    onImageSelected: (ByteArray) -> Unit = {},
+    imageColorState: ImageColorState = ImageColorState.BASEIMAGE,
+    currentSelection: BackgroundBase = BackgroundBase.SKY,
+    currentImage: ByteArray = byteArrayOf(),
+    width: Dp = 200.dp,
+    height: Dp = 200.dp,
+) {
+    Column(
+        modifier = modifier
+            .size(width = width * 0.7f, height = height * 0.7f)
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp)
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier
+                .weight(7f)
+                .fillMaxWidth()
+        ) {
+            itemsIndexed(
+                BackgroundBase.entries.toTypedArray(),
+                key = { _, item -> item }
+            ) { _, item ->
+                val isSelected = (imageColorState == ImageColorState.BASEIMAGE && item == currentSelection)
+                Image(
+                    painter = painterResource(id = item.resourceId),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .aspectRatio(0.6f)
+                        .clickable { onBaseImageSelected(item) }
+                        .then(if (isSelected) Modifier.border(BorderStroke(4.dp, LightPrimary)) else Modifier)
+                )
+            }
+        }
+
+        // Placeholder for ImagePicker
+        Column(
+            modifier = Modifier
+                .weight(3f)
+                .fillMaxWidth()
+        ) {
+            val isSelected = (imageColorState == ImageColorState.IMAGE)
+            ImageGetter(
+                image = currentImage,
+                onImageUpdate = onImageSelected,
+                onImageDelete = {onImageSelected(byteArrayOf())},
+                width = width,
+                height = height,
+                modifier = Modifier.fillMaxSize()
+                    .then(if (isSelected) Modifier.border(BorderStroke(4.dp, LightPrimary)) else Modifier)
+            )
+            // Your ImagePicker implementation here
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ImagePickerWithBaseImagesPreview() {
+    QuizzerAndroidTheme {
+        Dialog(
+            onDismissRequest = { },
+        ) {
+            ImagePickerWithBaseImages()
+        }
+    }
+}

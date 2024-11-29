@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables
+package com.asu1.quizzer.composables.base
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -34,7 +34,8 @@ fun ColorPicker(
     initialColor: Color,
     testTag: String = "",
     onColorSelected: (Color) -> Unit,
-    height: Dp = 300.dp
+    height: Dp = 300.dp,
+    modifier: Modifier = Modifier,
 ) {
     val controller = rememberColorPickerController()
     var localColor by remember { mutableStateOf(Color.Red) }
@@ -50,7 +51,7 @@ fun ColorPicker(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {

@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables
+package com.asu1.quizzer.composables.base
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

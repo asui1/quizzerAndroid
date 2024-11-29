@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.composables.HorizontalPagerIndicator
+import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
 

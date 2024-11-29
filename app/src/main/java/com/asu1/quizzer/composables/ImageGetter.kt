@@ -38,7 +38,8 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.launchPhotoPicker
 
 @Composable
-fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null) {
+fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null,
+                modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val photoPickerLauncher = launchPhotoPicker(context, width, height) { byteArray ->
         onImageUpdate(byteArray)
@@ -49,7 +50,7 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
     val size = min(localWidth, localHeight)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(localWidth)
             .height(localHeight)
             .clickable {

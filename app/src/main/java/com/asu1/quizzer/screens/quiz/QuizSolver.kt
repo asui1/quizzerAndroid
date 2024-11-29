@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.model.asBackgroundModifier
+import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -55,10 +55,11 @@ fun QuizSolver(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .asBackgroundModifier(
-                    quizTheme.backgroundImage,
-                )
         ) {
+            ImageColorBackground(
+                imageColor = quizTheme.backgroundImage,
+                modifier = Modifier.fillMaxSize()
+            )
             LazyRow(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

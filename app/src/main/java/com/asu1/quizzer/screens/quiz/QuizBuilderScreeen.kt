@@ -58,7 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.RowWithAppIconAndName
+import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer

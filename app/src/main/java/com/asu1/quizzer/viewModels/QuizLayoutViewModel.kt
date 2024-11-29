@@ -45,7 +45,6 @@ import com.asu1.quizzer.util.withOnSecondaryColor
 import com.asu1.quizzer.util.withOnTertiaryColor
 import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
-import com.asu1.quizzer.util.withSurfaceColor
 import com.asu1.quizzer.util.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +65,13 @@ import java.util.Base64
 
 @Serializable
 data class QuizTheme(
-    var backgroundImage: ImageColor = ImageColor(Color.White, byteArrayOf(), Color.White, ImageColorState.COLOR),
+    var backgroundImage: ImageColor = ImageColor(
+        imageData = byteArrayOf(),
+        color = Color.White,
+        color2 = Color.White,
+        colorGradient = Color.White,
+        state = ImageColorState.COLOR
+    ),
     var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 2),
     var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1, 0),
     var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
@@ -431,8 +436,24 @@ class QuizLayoutViewModel : ViewModel() {
         _quizData.value = _quizData.value.copy(tags = tags)
     }
 
-    fun setBackgroundImage(imageColor: ImageColor) {
-        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor, colorScheme = _quizTheme.value.colorScheme.withSurfaceColor(imageColor.color))
+    fun updateBackgroundImage(image: ByteArray){
+        val imageColor = _quizTheme.value.backgroundImage
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(imageData = image))
+    }
+
+    fun updateBackgroundColor(color: Color){
+        val imageColor = _quizTheme.value.backgroundImage
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(color = color))
+    }
+
+    fun updateImageColorState(state: ImageColorState){
+        val imageColor = _quizTheme.value.backgroundImage
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(state = state))
+    }
+
+    fun updateGradientColor(gradientColor: Color){
+        val imageColor = _quizTheme.value.backgroundImage
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(colorGradient = gradientColor))
     }
 
     fun setColorScheme(name: String, color: Color){
@@ -452,7 +473,10 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun setColorScheme(colorScheme: ColorScheme) {
-        _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme, backgroundImage = ImageColor(colorScheme.surface, _quizTheme.value.backgroundImage.imageData, _quizTheme.value.backgroundImage.color2, _quizTheme.value.backgroundImage.state))
+        _quizTheme.value = _quizTheme.value.copy(
+            colorScheme = colorScheme,
+            backgroundImage = _quizTheme.value.backgroundImage.copy(color = colorScheme.surface)
+        )
     }
 
     fun updateTextStyle(targetSelector: Int, indexSelector: Int, isIncrease: Boolean) {

@@ -76,13 +76,13 @@
     <string name="correct_answer_not_selected">Correct answer not selected</string>
     <string name="answer_date_cannot_be_empty">Answer date cannot be empty</string>
     <string name="at_least_one_connection_must_be_made">At least one connection must be made</string>
-    <string name="no_shader">No Shader</string>
-    <string name="left_bottom">Left Bottom</string>
-    <string name="bottom">Bottom</string>
-    <string name="center">Center</string>
-    <string name="repeat">Repeat</string>
-    <string name="vertical_wave">Vertical Wave</string>
-    <string name="horizontal_wave">Horizontal Wave</string>
+    <string name="left_bottom">From Left Bottom</string>
+    <string name="left">From Left</string>
+    <string name="top">From Top</string>
+    <string name="diagonal">Diagonal Half</string>
+    <string name="horizontal">Horizontal Half</string>
+    <string name="vertical">Vertical Half</string>
+    <string name="top_down">Surround TopDown</string>
     <string name="sign_in">Sign in</string>
     <string name="press_back_again_to_exit">Press back again to exit</string>
     <string name="enter_your_nickname">Enter your nickname</string>
@@ -104,8 +104,8 @@
     <string name="end_of_quiz_do_you_want_to_submit_your_answers">End of Quiz.\nDo you want to submit your answers?</string>
     <string name="solve_again">Solve Again</string>
     <string name="move_home">Move Home</string>
-    <string name="select_color1">Select Color1</string>
-    <string name="select_color2">Select Color2</string>
+    <string name="select_color1">Background Color Filter</string>
+    <string name="select_color2">Effect Color</string>
     <string name="select_text_color">Select Text Color</string>
     <string name="upload">Upload</string>
     <string name="searching_for_quizzes">Searching for quizzes...</string>
@@ -156,6 +156,20 @@
     <string name="logged_out">Logged out</string>
     <string name="please_login_first">Please login first</string>
     <string name="can_not_proceed_when_creating_quiz">Can not Proceed when Creating Quiz</string>
+    <string name="text_color">Text Color</string>
+    <string name="firework">Firework</string>
+    <string name="moon">Moon</string>
+    <string name="shooting_star">Shooting Star</string>
+    <string name="snow">Snow</string>
+    <string name="cloud">Cloud</string>
+    <string name="none">None</string>
+    <string name="effect">Effect</string>
+    <string name="select_color3">Gradient Color</string>
+    <string name="background_newline">Back\nground</string>
+    <string name="your_score_is">Your score is</string>
+    <string name="effects">Effects</string>
+    <string name="scorecard_effect">ScoreCard Effect</string>
+    <string name="flowers">Flowers</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

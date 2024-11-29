@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables
+package com.asu1.quizzer.composables.scorecard
 
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -48,14 +48,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.ImageColorColor2.Fireworks
-import com.asu1.quizzer.composables.ImageColorColor2.GradientBrush
-import com.asu1.quizzer.composables.ImageColorColor2.NightWithMoon
-import com.asu1.quizzer.composables.ImageColorColor2.NightWithShootingStar
-import com.asu1.quizzer.composables.ImageColorColor2.SkyWithClouds
-import com.asu1.quizzer.composables.ImageColorColor2.Snowflake
+import com.asu1.quizzer.composables.effects.Fireworks
+import com.asu1.quizzer.composables.effects.GradientBrush
+import com.asu1.quizzer.composables.effects.WithMoon
+import com.asu1.quizzer.composables.effects.WithShootingStar
+import com.asu1.quizzer.composables.effects.SkyWithClouds
+import com.asu1.quizzer.composables.effects.Snowflake
+import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
+import com.asu1.quizzer.model.Effect
+import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
@@ -66,103 +69,114 @@ import kotlin.math.round
 
 @Composable
 fun ScoreCardBackground(
-    scoreCard: ScoreCard,
+    backgroundImageColor: ImageColor,
     width: Dp,
     height: Dp,
-    time: Float = 0f,
     modifier: Modifier = Modifier,
 ) {
-    val colorMatrix1 = remember(scoreCard.background.color) {
-        createBlendingColorMatrix(scoreCard.background.color)
+    val colorMatrix1 = remember(backgroundImageColor.color) {
+        if(backgroundImageColor.color != Color.Transparent) {
+            createBlendingColorMatrix(backgroundImageColor.color)
+        } else {
+            ColorMatrix()
+        }
     }
-    val colorMatrix2 = remember(scoreCard.background.color2) {
-        createBlendingColorMatrix(scoreCard.background.color2)
+    val colorMatrix2 = remember(backgroundImageColor.color2) {
+        createBlendingColorMatrix(backgroundImageColor.color2)
     }
     val density = LocalDensity.current
     val imageWidthPx = remember(density){with(density) { width.toPx() }}
     val imageHeightPx = remember(density){with(density) { height.toPx() }}
+    val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
+        backgroundImageColor.backgroundBase.resourceId
+    }
 
-    // 배경 이미지를 설정하고, 그 위를 지나가는 구름을 랜덤하게 만드는 방향으로 해야겠다. Canvas 설정하고 그 위에 구름을 그리는 방식으로
     Box(
         modifier = modifier
             .size(width = width, height = height)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        when(scoreCard.background.state){
+        when(backgroundImageColor.state) {
             ImageColorState.IMAGE -> {
                 Image(
-                    painter = remember(scoreCard.background.imageData){scoreCard.background.getAsImage()},
+                    painter = remember(backgroundImageColor.imageData) { backgroundImageColor.getAsImage() },
+                    colorFilter = ColorFilter.colorMatrix(colorMatrix1),
+                    contentDescription = "ScoreCard Background",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            ImageColorState.COLOR -> {
+                Image(
+                    painter = ColorPainter(backgroundImageColor.color),
+                    contentDescription = "ScoreCard Background",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            ImageColorState.BASEIMAGE -> {
+                Image(
+                    painter = painterResource(id = baseBackgroundResourceId),
+                    colorFilter = ColorFilter.colorMatrix(colorMatrix1),
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            ImageColorState.COLOR -> {
-                Image(
-                    painter = ColorPainter(scoreCard.background.color),
-                    contentDescription = "ScoreCard Background",
+            ImageColorState.GRADIENT -> {
+                GradientBrush(
+                    imageColor = backgroundImageColor,
+                    shaderType = backgroundImageColor.shaderType,
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            ImageColorState.COLOR2 -> {
-                when(scoreCard.shaderType){
-                    ShaderType.Brush1 -> {
-                        GradientBrush(
-                            imageColor = scoreCard.background,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    ShaderType.Brush2 -> {
-                        SkyWithClouds(colorMatrix1, colorMatrix2, imageWidthPx, width, time)
-                    }
-                    ShaderType.Brush3 -> {
-                        NightWithMoon(
-                            colorMatrix1 = colorMatrix1,
-                            colorMatrix2 = colorMatrix2,
-                            imageWidthPx = imageWidthPx,
-                            imageHeightPx = imageHeightPx,
-                            width = width,
-                            time = time
-                        )
-                    }
-                    ShaderType.Brush4 -> {
-                        NightWithShootingStar(
-                            colorMatrix1 = colorMatrix1,
-                            colorMatrix2 = colorMatrix2,
-                            imageWidthPx = imageWidthPx,
-                            imageHeightPx = imageHeightPx,
-                            width = width,
-                            time = time
-                        )
-                    }
-// 1. Simple Gradient.
-// 2. Moving tileable images : Cloud, Space(star), Space(moon)
-// 3. Graphics with AGSL needs : Snow, Fireworks, maybe spotlight
-
-                    ShaderType.Brush5 -> {
-                        Snowflake(
-                            colorMatrix1 = colorMatrix1,
-                            color2 = scoreCard.background.color2,
-                            imageWidthPx = imageWidthPx,
-                            imageHeightPx = imageHeightPx,
-                            width = width,
-                            time = time
-                        )
-                    }
-                    ShaderType.Brush6 -> {
-                        Fireworks(
-                            colorMatrix1 = colorMatrix1,
-                            color2 = scoreCard.background.color2,
-                            imageWidthPx = imageWidthPx,
-                            imageHeightPx = imageHeightPx,
-                            width = width,
-                            time = time
-                        )
-                    }
-                    ShaderType.Brush7 -> TODO("Make Flower")
+        }
+            when(backgroundImageColor.effect) {
+                Effect.FIREWORKS->{
+                    Fireworks(
+                        color2 = backgroundImageColor.color2,
+                        imageWidthPx = imageWidthPx,
+                        imageHeightPx = imageHeightPx,
+                    )
+                }
+                Effect.MOON->{
+                    WithMoon(
+                        colorMatrix2 = colorMatrix2,
+                        imageHeightPx = imageHeightPx,
+                        width = width,
+                    )
+                }
+                Effect.SHOOTING_STAR-> {
+                    WithShootingStar(
+                        colorMatrix2 = colorMatrix2,
+                        imageWidthPx = imageWidthPx,
+                        imageHeightPx = imageHeightPx,
+                        width = width,
+                    )
+                }
+                Effect.CLOUDS->{
+                    SkyWithClouds(
+                        colorMatrix = colorMatrix2,
+                        imageWidthPx, width)
+                }
+                Effect.SNOWFLAKES ->{
+                    Snowflake(
+                        color2 = backgroundImageColor.color2,
+                        imageWidthPx = imageWidthPx,
+                        imageHeightPx = imageHeightPx,
+                    )
+                }
+                Effect.FLOWERS ->{
+                    WithFlowers(
+                        colorMatrix = colorMatrix2,
+                        imageWidthPx = imageWidthPx,
+                        imageHeightPx = imageHeightPx,
+                        width = width * 0.8f,
+                    )
+                }
+                else ->{
                 }
             }
-        }
     }
 }
 
@@ -197,33 +211,32 @@ fun ScoreCardComposable(
         3
     }
 
-    val formattedScore = if (quizResult.score % 1 == 0f) {
-        quizResult.score.toInt().toString()
-    } else {
-        String.format(Locale.US, "%.1f", round(quizResult.score * 10) / 10)
-    }
-    val redded = scoreCard.textColor.copy(
-        red = (scoreCard.textColor.red + 0.5f).coerceAtMost(1f),
-    )
-    val greened = scoreCard.textColor.copy(
-        blue = (scoreCard.textColor.blue + 0.5f).coerceAtMost(1f),
-    )
-    val time by produceState(0f) {
-        while(true){
-            withInfiniteAnimationFrameMillis {
-                value = it/1000f
-            }
+    val formattedScore = remember(quizResult.score){
+        if (quizResult.score % 1 == 0f) {
+            quizResult.score.toInt().toString()
+        } else {
+            String.format(Locale.US, "%.1f", round(quizResult.score * 10) / 10)
         }
     }
+    val redded = remember(scoreCard.textColor){
+        scoreCard.textColor.copy(
+            red = (scoreCard.textColor.red + 0.5f).coerceAtMost(1f),
+        )
+    }
+    val greened = remember(scoreCard.textColor){
+        scoreCard.textColor.copy(
+            blue = (scoreCard.textColor.blue + 0.5f).coerceAtMost(1f),
+        )
+    }
+
     Box(
         modifier = Modifier
             .size(width = width, height = height)
     ) {
         ScoreCardBackground(
-            scoreCard = scoreCard,
+            backgroundImageColor = scoreCard.background,
             width = width,
             height = height,
-            time = time,
         )
         Column(
             modifier = Modifier
@@ -275,16 +288,31 @@ fun ScoreCardComposable(
                             )
                         }
                         else -> {
-                            Text(
-                                text = formattedScore,
-                                style = TextStyle(
-                                    fontFamily = ongle_yunue,
-                                    fontSize = 200.sp,
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.your_score_is),
                                     color = scoreCard.textColor,
-                                ),
-                                modifier = Modifier
-                                    .zIndex(2f)
-                            )
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .zIndex(2f),
+                                )
+                                Text(
+                                    text = formattedScore,
+                                    style = TextStyle(
+                                        fontFamily = ongle_yunue,
+                                        fontSize = 200.sp,
+                                        color = scoreCard.textColor,
+                                    ),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .zIndex(2f)
+                                )
+                            }
                         }
                     }
                 }
