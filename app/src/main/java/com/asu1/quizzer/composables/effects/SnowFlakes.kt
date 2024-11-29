@@ -2,6 +2,7 @@ package com.asu1.quizzer.composables.effects
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -9,67 +10,59 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-data class Snowflake(
-    val x: Float,
-    val radius: Float,
-    val speed: Float,
-    val animation: Animatable<Float, AnimationVector1D>
-)
-
 @Composable
 fun Snowflake(
-    color2: Color,
-    imageWidthPx: Float,
-    imageHeightPx: Float,
+    rawResource: Int,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
-    val snowflakes = remember { mutableStateListOf<Snowflake>() }
-    val coroutineScope = rememberCoroutineScope()
-    val targetValue = remember(imageHeightPx) { imageHeightPx * 0.95f }
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(
+            rawResource
+        )
+    )
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever
+    )
 
-    DisposableEffect(Unit) {
-        val job = coroutineScope.launch {
-            while (snowflakes.size < 5) {
-                val snowflake = Snowflake(
-                    x = Random.nextFloat() * imageWidthPx,
-                    radius = Random.nextFloat() * 4 + 2,
-                    speed = Random.nextFloat() * 2 + 1,
-                    animation = Animatable(0f)
+    key(color){
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR_FILTER,
+                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    color.toArgb(),
+                    BlendModeCompat.SRC_ATOP
+                ),
+                keyPath = arrayOf(
+                    "**"
                 )
-                snowflakes.add(snowflake)
-                coroutineScope.launch {
-                    snowflake.animation.animateTo(
-                        targetValue = targetValue + snowflake.radius,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = (5000 / snowflake.speed).toInt(), easing = LinearEasing),
-                            repeatMode = RepeatMode.Restart
-                        )
-                    )
-                }
-                delay(100L)
-            }
-        }
-        onDispose {
-            job.cancel()
-        }
+            )
+        )
+        LottieAnimation(
+            contentScale = ContentScale.FillHeight,
+            composition = composition,
+            progress = { progress },
+            dynamicProperties = dynamicProperties,
+            modifier = modifier.fillMaxSize().background(Color.Transparent)
+        )
     }
 
-    Box(modifier = modifier.fillMaxSize()
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            snowflakes.forEach { snowflake ->
-                val y = snowflake.animation.value
-                drawCircle(
-                    color = color2,
-                    radius = snowflake.radius,
-                    center = Offset(snowflake.x, y)
-                )
-            }
-        }
-    }
 }

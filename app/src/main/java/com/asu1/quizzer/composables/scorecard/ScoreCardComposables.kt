@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables.scorecard
 
-import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +50,7 @@ import com.asu1.quizzer.composables.effects.Fireworks
 import com.asu1.quizzer.composables.effects.GradientBrush
 import com.asu1.quizzer.composables.effects.WithMoon
 import com.asu1.quizzer.composables.effects.WithShootingStar
-import com.asu1.quizzer.composables.effects.SkyWithClouds
+import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Snowflake
 import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.data.QuizResult
@@ -61,9 +59,7 @@ import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.ongle_yunue
-import com.asu1.quizzer.util.isTest
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import java.util.Locale
 import kotlin.math.round
@@ -82,12 +78,6 @@ fun ScoreCardBackground(
             ColorMatrix()
         }
     }
-    val colorMatrix2 = remember(backgroundImageColor.color2) {
-        createBlendingColorMatrix(backgroundImageColor.color2)
-    }
-    val density = LocalDensity.current
-    val imageWidthPx = remember(density){with(density) { width.toPx() }}
-    val imageHeightPx = remember(density){with(density) { height.toPx() }}
     val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
         backgroundImageColor.backgroundBase.resourceId
     }
@@ -135,44 +125,38 @@ fun ScoreCardBackground(
         when(backgroundImageColor.effect) {
             Effect.FIREWORKS->{
                 Fireworks(
-                    color2 = backgroundImageColor.color2,
-                    imageWidthPx = imageWidthPx,
-                    imageHeightPx = imageHeightPx,
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.firework,
                 )
             }
             Effect.MOON->{
                 WithMoon(
-                    colorMatrix2 = colorMatrix2,
-                    imageHeightPx = imageHeightPx,
-                    width = width,
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.moon,
                 )
             }
             Effect.SHOOTING_STAR-> {
                 WithShootingStar(
-                    colorMatrix2 = colorMatrix2,
-                    imageWidthPx = imageWidthPx,
-                    imageHeightPx = imageHeightPx,
-                    width = width,
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.shootingstar,
                 )
             }
             Effect.CLOUDS->{
-                SkyWithClouds(
-                    colorMatrix = colorMatrix2,
-                    imageWidthPx, width)
+                Clouds(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.clouds,
+                )
             }
             Effect.SNOWFLAKES ->{
                 Snowflake(
-                    color2 = backgroundImageColor.color2,
-                    imageWidthPx = imageWidthPx,
-                    imageHeightPx = imageHeightPx,
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.snowfalling,
                 )
             }
             Effect.FLOWERS ->{
                 WithFlowers(
-                    colorMatrix = colorMatrix2,
-                    imageWidthPx = imageWidthPx,
-                    imageHeightPx = imageHeightPx,
-                    width = width * 0.8f,
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.flowers,
                 )
             }
             else ->{

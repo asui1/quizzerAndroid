@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
@@ -118,6 +118,8 @@ dependencies {
     implementation("sh.calvin.reorderable:reorderable:2.3.3")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.wear.compose:compose-material-core:1.4.0")
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
+    implementation("com.github.LottieFiles:dotlottie-android:0.4.1")
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))

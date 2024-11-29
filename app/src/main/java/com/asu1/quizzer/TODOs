@@ -7,7 +7,7 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-1. 스코어카드 효과 가속당함. (우선 rendereffect = null로 수정 시도중)
+-> 스코어카드는 무조건 로티다.
 2. 자동으로 이미지 uri 생성 실패.
 
 - Doing optimization.

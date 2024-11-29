@@ -5,75 +5,94 @@ import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.asu1.quizzer.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-data class ShootingStar(
-    val startHeight: Float,
-    val angle: Float,
-    val sin: Float,
-    val cos: Float,
-    val distance: Animatable<Float, AnimationVector1D>
-)
-
 @Composable
 fun WithShootingStar(
-    colorMatrix2: ColorMatrix,
-    imageWidthPx: Float,
-    imageHeightPx: Float,
-    width: Dp,
+    rawResource: Int,
+    color: Color,
+    modifier: Modifier = Modifier
 ) {
-    val shootingStars = remember { mutableStateListOf<ShootingStar>() }
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(Unit){
-        while(true){
-            val angle = Math.random().toFloat() * 20f + 10f
-            val shootingStar = ShootingStar(
-                startHeight = imageHeightPx * 0.4f * Math.random().toFloat() - imageHeightPx * 0.1f,
-                angle = 90f + angle,
-                sin = Math.sin(Math.toRadians(angle.toDouble())).toFloat(),
-                cos = Math.cos(Math.toRadians(angle.toDouble())).toFloat(),
-                distance = Animatable(-imageWidthPx*0.5f)
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(
+            rawResource
+        )
+    )
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever
+    )
+
+    key(color){
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR_FILTER,
+                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    color.toArgb(),
+                    BlendModeCompat.SRC_ATOP
+                ),
+                keyPath = arrayOf(
+                    "**"
+                )
             )
-            shootingStars.add(shootingStar)
-            coroutineScope.launch {
-                shootingStar.distance.animateTo(imageWidthPx * 2f, animationSpec = tween(4000, easing = LinearEasing))
-                shootingStars.remove(shootingStar)
-            }
-            delay(1000L)
+        )
+        Box(
+            modifier = modifier.fillMaxSize()
+        ){
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                dynamicProperties = dynamicProperties,
+                modifier = Modifier.fillMaxSize().background(Color.Transparent)
+                    .graphicsLayer {
+                        translationX = -200f
+                        translationY = -500f
+                    }
+            )
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                dynamicProperties = dynamicProperties,
+                modifier = Modifier.fillMaxSize().background(Color.Transparent)
+                    .graphicsLayer {
+                        translationX = 200f
+                        translationY = -350f
+                    }
+            )
         }
     }
-    shootingStars.forEachIndexed { index, item ->
-        val translationX = item.distance.value * item.cos
-        val translationY = item.startHeight + item.distance.value * item.sin
 
-        Image(
-            painter = painterResource(id = R.drawable.starfall),
-            colorFilter = ColorFilter.colorMatrix(colorMatrix2),
-            contentDescription = stringResource(R.string.background),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .graphicsLayer {
-                    this.translationX = translationX
-                    this.translationY = translationY
-                    rotationZ = item.angle
-                }
-                .size(width / 2)
-        )
-    }
 }

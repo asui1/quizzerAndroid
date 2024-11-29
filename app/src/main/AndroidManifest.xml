@@ -14,7 +14,6 @@
             android:supportsRtl="true"
             android:theme="@style/theme.quizzer_android"
             android:enableOnBackInvokedCallback="true"
-            android:hardwareAccelerated="true"
             tools:targetApi="33">
         <profileable android:shell="true" />
         <activity
