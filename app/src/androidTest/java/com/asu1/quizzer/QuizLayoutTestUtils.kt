@@ -190,11 +190,11 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performScrollTo()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
         composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performClick()
         onIdle()
-        waitFor(100)
+        waitFor(50)
     }
 
     fun inputTextOnTag(tag: String, text: String, withIme: Boolean = false, checkFocus: Boolean = false) {
@@ -202,16 +202,16 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
         composeTestRule.onNodeWithTag(tag).performTextInput(text)
         onIdle()
-        waitFor(100)
+        waitFor(50)
         if(withIme) {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
     }
 
@@ -220,20 +220,20 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
         onIdle()
         composeTestRule.onNodeWithTag(tag).performTextClearance()
         onIdle()
-        waitFor(100)
+        waitFor(50)
         composeTestRule.onNodeWithTag(tag).performTextInput(newText)
         onIdle()
-        waitFor(100)
+        waitFor(50)
         if(withIme) {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
     }
 
@@ -242,18 +242,18 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
-            waitFor(100)
+            waitFor(50)
         }
         texts.forEach {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performTextInput(it)
             onIdle()
-            waitFor(100)
+            waitFor(50)
             if(withIme) {
                 onIdle()
                 composeTestRule.onNodeWithTag(tag).performImeAction()
                 onIdle()
-                waitFor(100)
+                waitFor(50)
             }
             onIdle()
         }

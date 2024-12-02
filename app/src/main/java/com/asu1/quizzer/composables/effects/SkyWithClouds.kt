@@ -41,7 +41,7 @@ fun SkyWithClouds(
         while(true){
             val cloud = Cloud(
                 startHeight = imageWidthPx * 0.7f * Math.random().toFloat() - imageWidthPx * 0.2f,
-                time = 4000 + (Math.random() * 3000).toInt(),
+                time = 6000 + (Math.random() * 3000).toInt(),
                 distance = Animatable(-imageWidthPx)
             )
             clouds.add(cloud)
@@ -49,7 +49,7 @@ fun SkyWithClouds(
                 cloud.distance.animateTo(imageWidthPx * 2f, animationSpec = tween(cloud.time, easing = LinearEasing))
                 clouds.remove(cloud)
             }
-            delay(1500L)
+            delay(2500L)
         }
     }
     clouds.forEachIndexed { index, cloud ->

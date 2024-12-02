@@ -131,7 +131,7 @@ class MyComposeTest {
         testUtils.setTextStyle(testQuizData.questionTextStyle, "setTextStyleQuestion")
         testUtils.setTextStyle(testQuizData.bodyTextStyle, "setTextStyleBody")
         testUtils.setTextStyle(testQuizData.answerTextStyle, "setTextStyleAnswer")
-        testUtils.waitFor(100)
+        testUtils.waitFor(3000)
 
         //QUIZ BUILDER
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")

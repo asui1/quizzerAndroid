@@ -34,13 +34,14 @@ enum class ImageColorState {
 enum class BackgroundBase(val resourceId: Int){
     CITY(R.drawable.empty_city_sky),
     NIGHT1(R.drawable.nightsky),
-    NIGHT2(R.drawable.nightsky2_background),
     SKY(R.drawable.sky_background),
     SNOW(R.drawable.snowbase),
     PICNIC(R.drawable.picnic2),
     FLOWER(R.drawable.prettyflower),
     SUNSET(R.drawable.sunset),
-    COAST(R.drawable.seacoast)
+    COAST(R.drawable.seacoast),
+    TROPHY(R.drawable.trophy),
+    NIGHT2(R.drawable.nightsky2_background),
 }
 
 @Serializable

@@ -119,7 +119,7 @@ fun ScoreCardBackground(
                     painter = painterResource(id = baseBackgroundResourceId),
                     colorFilter = ColorFilter.colorMatrix(colorMatrix1),
                     contentDescription = "ScoreCard Background",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxSize()
                 )
             }
