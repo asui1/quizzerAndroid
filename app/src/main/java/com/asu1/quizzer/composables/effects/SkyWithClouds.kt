@@ -54,7 +54,7 @@ fun SkyWithClouds(
     }
     clouds.forEachIndexed { index, cloud ->
         Image(
-            painter = painterResource(id = R.drawable.single_cloud_nobackground),
+            painter = painterResource(id = R.drawable.cloud1),
             colorFilter = ColorFilter.colorMatrix(colorMatrix),
             contentDescription = stringResource(R.string.background),
             contentScale = ContentScale.Fit,
@@ -63,7 +63,7 @@ fun SkyWithClouds(
                     translationX = cloud.distance.value
                     translationY = cloud.startHeight
                 }
-                .size(width)
+                .size(width * 0.8f)
         )
     }
 }

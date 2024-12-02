@@ -22,8 +22,7 @@ val iuquizzes2 = listOf(
             "슬픔에 잠긴 날들도 있겠지"
         ),
         ans = mutableListOf(false, false, false, true, false),
-        bodyType = BodyType.TEXT,
-        bodyText = "그럼에도 여전히 가끔은\n___________________________\n또 다시 헤매일지라도 돌아오는 길을 알아",
+        bodyType = BodyType.TEXT("그럼에도 여전히 가끔은\n___________________________\n또 다시 헤매일지라도 돌아오는 길을 알아"),
         question = "다음 빈칸에 들어갈 가사는?"
     ),
     TestQuiz1(
@@ -78,8 +77,7 @@ val iuquizzes2 = listOf(
             "네 모습 그립다"
         ),
         ans = mutableListOf(false, false, false, true, false),
-        bodyType = BodyType.TEXT,
-        bodyText = "손틈새로 비치는\n____________\n손끝으로 돌리며 시곗바늘아 달려봐",
+        bodyType = BodyType.TEXT( "손틈새로 비치는\n____________\n손끝으로 돌리며 시곗바늘아 달려봐"),
         question = "다음 빈칸에 들어갈 내용은?"
     ),
     TestQuiz1(
@@ -106,7 +104,7 @@ val iutestdata2 = allInOneForTest(
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
     primaryColor = "ff69548d",
-    gradientColor1 = "ffebdcff",
-    gradientColor2 = "ff240e45",
+    backgroundColorFilter = "ffebdcff",
+    effectColor = "ff240e45",
     textColor = "ffd4bbfc",
 )

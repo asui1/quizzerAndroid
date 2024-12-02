@@ -105,8 +105,9 @@ data class ImageColor(
             else -> ColorPainter(color)
         }
     }
-
 }
+
+val sampleImageColor = ImageColor(byteArrayOf(), Color.Red, Color.Blue, Color.Green, ImageColorState.GRADIENT, BackgroundBase.SKY, Effect.SNOWFLAKES, ShaderType.Brush1)
 
 @Composable
 fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){

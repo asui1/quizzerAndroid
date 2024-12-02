@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -59,7 +60,7 @@ fun ImagePickerWithBaseImages(
             itemsIndexed(
                 BackgroundBase.entries.toTypedArray(),
                 key = { _, item -> item }
-            ) { _, item ->
+            ) { index, item ->
                 val isSelected = (imageColorState == ImageColorState.BASEIMAGE && item == currentSelection)
                 Image(
                     painter = painterResource(id = item.resourceId),
@@ -69,6 +70,7 @@ fun ImagePickerWithBaseImages(
                         .padding(4.dp)
                         .aspectRatio(0.6f)
                         .clickable { onBaseImageSelected(item) }
+                        .testTag("DesignScoreCardBaseImage$index")
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp, LightPrimary)) else Modifier)
                 )
             }

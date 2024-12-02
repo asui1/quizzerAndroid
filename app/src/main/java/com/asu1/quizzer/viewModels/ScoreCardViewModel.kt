@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.BackgroundBase
 import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ImageColor
@@ -24,10 +23,6 @@ class ScoreCardViewModel : ViewModel() {
 
     private val _viewModelState = MutableLiveData(ViewModelState.IDLE)
     val viewModelState: MutableLiveData<ViewModelState> get() = _viewModelState
-
-    fun loadScoreCard(data: String) {
-        _scoreCard.value = json.decodeFromString(data)
-    }
 
     fun loadScoreCard(scoreCard: ScoreCard) {
         _scoreCard.value = scoreCard

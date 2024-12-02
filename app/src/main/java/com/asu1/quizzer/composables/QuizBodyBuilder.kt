@@ -39,14 +39,9 @@ import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 fun QuizBodyBuilder(
     bodyState: BodyType,
     updateBody: (BodyType) -> Unit,
-    bodyText: String,
     onBodyTextChange: (String) -> Unit,
-    imageBytes: ByteArray?,
     onImageSelected: (ByteArray) -> Unit,
-    youtubeId: String,
-    youtubeStartTime: Int,
     onYoutubeUpdate: (String, Int) -> Unit,
-    onRemoveBody: () -> Unit = {},
 ){
     var showBodyDialog by remember { mutableStateOf(false) }
 
@@ -54,15 +49,15 @@ fun QuizBodyBuilder(
         BodyTypeDialog(
             onDismissRequest = { showBodyDialog = false },
             onTextSelected = {
-                updateBody(BodyType.TEXT)
+                updateBody(BodyType.TEXT(""))
                 showBodyDialog = false
             },
             onImageSelected = {
-                updateBody(BodyType.IMAGE)
+                updateBody(BodyType.IMAGE(ByteArray(0)))
                 showBodyDialog = false
             },
             onYoutubeSelected = {
-                updateBody(BodyType.YOUTUBE)
+                updateBody(BodyType.YOUTUBE("", 0))
                 showBodyDialog = false
             }
         )
@@ -78,7 +73,9 @@ fun QuizBodyBuilder(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                    onClick = onRemoveBody,
+                    onClick = {
+                        updateBody(BodyType.NONE)
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Default.RemoveCircleOutline,
@@ -88,7 +85,33 @@ fun QuizBodyBuilder(
             }
         }
         when(bodyState){
-            BodyType.NONE -> {
+            is BodyType.TEXT -> {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("QuizCreatorBodyTextField"),
+                    value = bodyState.bodyText,
+                    onValueChange = {it ->
+                        onBodyTextChange(it)
+                    },
+                    label = { Text(stringResource(R.string.body_text)) }
+                )
+            }
+            is BodyType.IMAGE -> {
+                ImageGetter(
+                    image = bodyState.bodyImage,
+                    onImageUpdate = onImageSelected,
+                    onImageDelete = { onImageSelected(ByteArray(0)) },
+                )
+            }
+            is BodyType.YOUTUBE -> {
+                YoutubeLinkInput(
+                    youtubeId = bodyState.youtubeId,
+                    startTime = bodyState.youtubeStartTime,
+                    onYoutubeUpdate = onYoutubeUpdate
+                )
+            }
+            else -> {
                 TextButton(
                     modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
                     onClick = {showBodyDialog = true},
@@ -96,32 +119,8 @@ fun QuizBodyBuilder(
                     Text(stringResource(R.string.add_body))
                 }
             }
-            BodyType.TEXT -> {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("QuizCreatorBodyTextField"),
-                    value = bodyText,
-                    onValueChange = {it ->
-                        onBodyTextChange(it)
-                    },
-                    label = { Text(stringResource(R.string.body_text)) }
-                )
-            }
-            BodyType.IMAGE -> {
-                ImageGetter(
-                    image = imageBytes ?: ByteArray(0),
-                    onImageUpdate = onImageSelected,
-                    onImageDelete = { onImageSelected(ByteArray(0)) },
-                )
-            }
-            BodyType.YOUTUBE -> {
-                YoutubeLinkInput(
-                    youtubeId = youtubeId,
-                    startTime = youtubeStartTime,
-                    onYoutubeUpdate = onYoutubeUpdate
-                )
-            }
+
+
         }
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -133,48 +132,43 @@ fun BodyPreviews() {
     QuizzerAndroidTheme {
         Column(){
             QuizBodyBuilder(
-                bodyState = BodyType.TEXT,
+                bodyState = BodyType.TEXT(""),
                 updateBody = {},
-                bodyText = "Body Text",
                 onBodyTextChange = {},
-                imageBytes = null,
                 onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
                 onYoutubeUpdate = { _, _ -> }
             )
             Spacer(modifier = Modifier
                 .height(8.dp)
                 .background(color = Color.Black))
             QuizBodyBuilder(
-                bodyState = BodyType.IMAGE,
+                bodyState = BodyType.IMAGE(ByteArray(0)),
                 updateBody = {},
-                bodyText = "Body Text",
                 onBodyTextChange = {},
-                imageBytes = null,
                 onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
                 onYoutubeUpdate = { _, _ -> }
             )
             Spacer(modifier = Modifier
                 .height(8.dp)
                 .background(color = Color.Black))
             QuizBodyBuilder(
-                bodyState = BodyType.YOUTUBE,
+                bodyState = BodyType.YOUTUBE("", 0),
                 updateBody = {},
-                bodyText = "Body Text",
                 onBodyTextChange = {},
-                imageBytes = null,
                 onImageSelected = {},
-                youtubeId = "",
-                youtubeStartTime = 0,
                 onYoutubeUpdate = { _, _ -> }
             )
         }
 
     }
 }
+
+
+val mapItemToVector = mapOf(
+    1 to Icons.Default.TextFields,
+    2 to Icons.Default.Image,
+    3 to Icons.Default.VideoLibrary,
+)
 
 @Composable
 fun BodyTypeDialog(

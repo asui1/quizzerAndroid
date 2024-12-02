@@ -38,7 +38,8 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun addQuizBody(quiz: TestQuiz, youtubeLink: String = ""){
-        if(quiz.bodyType == BodyType.NONE || quiz.bodyType == BodyType.IMAGE) return
+        if(quiz.bodyType is BodyType.NONE) return
+        if(quiz.bodyType is BodyType.IMAGE) return
         clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
         when(quiz.bodyType.value){
             1 -> {
@@ -128,7 +129,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun setImage(context: Context, image: Int, onImagePicked: (ByteArray) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
+    fun setImage(context: Context, packageName: String, image: Int, onImagePicked: (ByteArray) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
         val mockRegistry = object : ActivityResultRegistry() {
             override fun <I : Any?, O : Any?> onLaunch(
                 requestCode: Int,
@@ -136,7 +137,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                 input: I,
                 options: ActivityOptionsCompat?
             ) {
-                val result = Uri.parse("android.resource://com.asu1.quizzer/${image}")
+                val result = Uri.parse("android.resource://$packageName/${image}")
                 dispatchResult(requestCode, result as O)
             }
         }

@@ -92,5 +92,7 @@ val fakertestData = allInOneForTest(
     colorInt = 3,
     quizzes = fakerquizzes,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-    bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", "")
+    bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
+    backgroundImageIndex = 3,
+    effectIndex = 3,
 )

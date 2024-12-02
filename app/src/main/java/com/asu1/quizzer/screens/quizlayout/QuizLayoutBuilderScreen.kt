@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -54,6 +56,7 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -141,49 +144,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
             )
         },
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding()
-                    .padding(16.dp))
-            {
-                IconButton(onClick = { if(step.ordinal > 1){
-                    quizLayoutViewModel.updateStep(step - 1)
-                }},
-                    enabled = step.ordinal > 1,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Move Back"
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {
-                        scope.launch{
-                            quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
-                        }
-                    }
-                ){
-                    Icon(
-                        imageVector = Icons.Default.Save,
-                        contentDescription = "Save Local."
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {
-                        proceed()
-                    },
-                    enabled = enabled,
-                    modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                        contentDescription = "Move Forward"
-                    )
-                }
-            }
+            QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, enabled, proceed = { proceed() })
         }
     ) {paddingValue ->
         Column(
@@ -245,7 +206,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         },
                         colorScheme = quizTheme.colorScheme,
                         proceed = {proceed()},
-                        )
+                    )
                     // Set Text Setting
                 }
             }
@@ -253,15 +214,78 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     }
 }
 
-@Preview
+@Composable
+private fun QuizLayoutBottomBar(
+    step: LayoutSteps,
+    quizLayoutViewModel: QuizLayoutViewModel,
+    scope: CoroutineScope,
+    context: Context,
+    scoreCardViewModel: ScoreCardViewModel,
+    enabled: Boolean,
+    proceed: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .imePadding()
+            .padding(16.dp)
+    )
+    {
+        IconButton(
+            onClick = {
+                if (step.ordinal > 1) {
+                    quizLayoutViewModel.updateStep(step - 1)
+                }
+            },
+            enabled = step.ordinal > 1,
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Move Back"
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            onClick = {
+                scope.launch {
+                    quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Save,
+                contentDescription = "Save Local."
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            onClick = {
+                proceed()
+            },
+            enabled = enabled,
+            modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = "Move Forward"
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 fun QuizLayoutBuilderScreenPreview() {
     QuizzerAndroidTheme {
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-            QuizLayoutBuilderScreen(
-                navController = rememberNavController(),
-            )
-        }
+        QuizLayoutBottomBar(
+            step = LayoutSteps.TITLE,
+            quizLayoutViewModel = QuizLayoutViewModel(),
+            scope = rememberCoroutineScope(),
+            context = LocalContext.current,
+            scoreCardViewModel = ScoreCardViewModel(),
+            enabled = false,
+            proceed = {}
+        )
     }
 }
 
@@ -292,7 +316,7 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun QuizPolicyAgreementPreview() {
     QuizzerAndroidTheme {
@@ -330,9 +354,11 @@ fun StepProgressBar(
                 showBackButton = true,
                 onBackPressed = {
                     showExitDialog()
-                }
+                },
+                modifier = Modifier.weight(1f),
             )
             IconButton(
+                modifier = Modifier.width(30.dp),
                 onClick = {
                     navigateToQuizLoad()
                 }
@@ -342,6 +368,7 @@ fun StepProgressBar(
                     contentDescription = "Load Local Save"
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
             text = buildString {
@@ -351,7 +378,7 @@ fun StepProgressBar(
             },
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, top = 8.dp),
             maxLines = 1,
         )
         Row(modifier = modifier.fillMaxWidth()) {
@@ -368,7 +395,7 @@ fun StepProgressBar(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun StepProgressBarPreview() {
     QuizzerAndroidTheme {
@@ -384,7 +411,6 @@ fun StepProgressBarPreview() {
                 stringResource(R.string.set_color_setting),
                 stringResource(R.string.set_text_setting),
             )
-
         )
     }
 }

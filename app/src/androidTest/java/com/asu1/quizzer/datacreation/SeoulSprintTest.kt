@@ -103,7 +103,7 @@ val springTest = allInOneForTest(
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
     primaryColor = "ff156683",
-    gradientColor1 = "ff001f2b",
-    gradientColor2 = "ff1b1736",
+    backgroundColorFilter = "ff001f2b",
+    effectColor = "ff1b1736",
     textColor = "ffd0e6f3",
 )

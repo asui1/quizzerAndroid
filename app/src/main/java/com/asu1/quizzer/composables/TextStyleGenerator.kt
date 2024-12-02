@@ -94,7 +94,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
     val contourStyle = style[4]
     val addColor = when(contourStyle){
         0 -> Color.Transparent
-        1 -> if(backgroundColor == Color.Transparent) contentColor.flipAlpha() else backgroundColor
+        1 -> if(backgroundColor == Color.Transparent) if(isSystemInDarkTheme()) Color.Black else Color.White else backgroundColor
         2 -> if(backgroundColor == Color.Transparent) if(isSystemInDarkTheme()) Color.Black else Color.White else backgroundColor
         else -> Color.Transparent
     }
@@ -293,8 +293,7 @@ fun DrawScope.drawTextWithShadow(
         }
         val shadowPaint = android.graphics.Paint().apply {
             this.color = outlineColor.toArgb()
-            this.style = android.graphics.Paint.Style.STROKE
-            this.strokeWidth = contourWidth + 4
+            this.strokeWidth = contourWidth + 2
             this.textSize = fontSize.toPx()
             this.isAntiAlias = true
         }

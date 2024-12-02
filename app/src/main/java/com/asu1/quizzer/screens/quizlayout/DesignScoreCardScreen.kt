@@ -3,6 +3,7 @@ package com.asu1.quizzer.screens.quizlayout
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.ColorLens
@@ -138,9 +140,11 @@ fun DesignScoreCardScreen(
                         modifier = Modifier,
                         onBaseImageSelected = { baseImage ->
                             scoreCardViewModel.updateBackgroundBase(baseImage)
+                            showImagePicker = false
                         },
                         onImageSelected = {byteArray ->
                             scoreCardViewModel.updateBackgroundImage(byteArray)
+                            showImagePicker = false
                         },
                         imageColorState = scoreCard.background.state,
                         currentSelection = scoreCard.background.backgroundBase,
@@ -159,28 +163,39 @@ fun DesignScoreCardScreen(
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 ScoreCardComposable(
-                    width = screenWidth * 0.8f,
-                    height = screenHeight * 0.8f,
+                    width = screenWidth * 0.85f,
+                    height = screenHeight * 0.85f,
                     scoreCard = scoreCard,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                RowWithShares()
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = {
-                        scope.launch {
-                            quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
-                        }
-                    },
-                    modifier = Modifier
-                        .size(width = screenWidth * 0.6f, height = 48.dp)
-                        .padding(8.dp)
-                        .testTag("DesignScoreCardUploadButton")
-                ) {
-                    Text(
-                        text = stringResource(R.string.upload),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ){
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
+                            }
+                        },
+                        modifier = Modifier
+                            .size(width = screenWidth * 0.6f, height = 48.dp)
+                            .padding(8.dp)
+                            .testTag("DesignScoreCardUploadButton")
+                    ) {
+                        Text(
+                            text = stringResource(R.string.upload),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }
@@ -252,8 +267,8 @@ fun DesignScoreCardScreen(
                     imageVector = Icons.Default.ColorLens,
                     text = stringResource(colorName),
                     onClick = {
-                        showScoreCardColorPicker = true
                         colorChange = index
+                        showScoreCardColorPicker = true
                     },
                     description = "Set Color For ScoreCard",
                     modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
@@ -263,51 +278,6 @@ fun DesignScoreCardScreen(
         }
     }
 }
-
-
-@Composable
-fun RowWithShares(
-    onClickButton1: () -> Unit = { },
-    onClickButton2: () -> Unit = { },
-    onClickButton3: () -> Unit = { },
-){
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        IconButton(
-            onClick = onClickButton1
-        ) {
-            Icon(
-                imageVector = Icons.Default.Facebook,
-                contentDescription = "Share Facebook",
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(
-            onClick = onClickButton2
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.x_logo),
-                contentDescription = "Share X",
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(
-            onClick = onClickButton3
-        ) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share Link",
-                modifier = Modifier.size(24.dp),
-            )
-        }
-    }
-}
-
-
 
 @Preview(showBackground = true)
 @Composable

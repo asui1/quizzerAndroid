@@ -42,7 +42,7 @@ fun WithShootingStar(
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit){
         while(true){
-            val angle = Math.random().toFloat() * 40f
+            val angle = Math.random().toFloat() * 10f + 10f
             val shootingStar = ShootingStar(
                 startHeight = imageHeightPx * 0.4f * Math.random().toFloat() - imageHeightPx * 0.1f,
                 angle = 90f + angle,
@@ -55,7 +55,7 @@ fun WithShootingStar(
                 shootingStar.distance.animateTo(imageWidthPx * 2f, animationSpec = tween(4000, easing = LinearEasing))
                 shootingStars.remove(shootingStar)
             }
-            delay(700L)
+            delay(1400L)
         }
     }
     shootingStars.forEachIndexed { index, item ->
@@ -63,7 +63,7 @@ fun WithShootingStar(
         val translationY = item.startHeight + item.distance.value * item.sin
 
         Image(
-            painter = painterResource(id = R.drawable.shootingstar_rotated),
+            painter = painterResource(id = R.drawable.starfall),
             colorFilter = ColorFilter.colorMatrix(colorMatrix2),
             contentDescription = stringResource(R.string.background),
             contentScale = ContentScale.Fit,

@@ -1,7 +1,12 @@
 TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
-// APP TEST LINK : https://quizzer.co.kr/?resultId=b407d82491b7b51756996155706df72258445f7e7d1998c9934d6a6fababd676
+// APP TEST LINK :
+
+https://quizzer.co.kr/?resultId=
+b407d82491b7b51756996155706df72258445f7e7d1998c9934d6a6fababd676
+
+https://quizzer.co.kr/?quizId=
 
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:

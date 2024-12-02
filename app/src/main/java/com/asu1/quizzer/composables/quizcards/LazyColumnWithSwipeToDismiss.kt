@@ -3,7 +3,10 @@ package com.asu1.quizzer.composables.quizcards
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.DismissDirection
@@ -42,8 +45,16 @@ fun LazyColumnWithSwipeToDismiss(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
+        item{
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.my_quizzes),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+            )
+        }
         if (quizList.isEmpty()) {
             item {
                 Text(
@@ -58,6 +69,7 @@ fun LazyColumnWithSwipeToDismiss(
                 SwipeToDismiss(
                     state = currentDismissState,
                     directions = setOf(DismissDirection.EndToStart),
+                    modifier = Modifier.padding(vertical = 2.dp),
                     background = {
                         val color = when (currentDismissState.dismissDirection) {
                             DismissDirection.EndToStart -> MaterialTheme.colorScheme.surfaceContainer

@@ -16,6 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import com.asu1.quizzer.R
+import androidx.compose.animation.core.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun WithMoon(
@@ -23,17 +26,19 @@ fun WithMoon(
     imageHeightPx: Float,
     width: Dp,
 ) {
-    val time by produceState(0f) {
-        while(true){
-            withInfiniteAnimationFrameMillis {
-                value = it/1000f
-            }
-        }
-    }
-    val radius = remember(imageHeightPx){imageHeightPx/2}
-    val angle = ((time * 0.1f) % 1f - 0.5f) * Math.PI - 1.57f
-    val xVal = radius * Math.cos(angle).toFloat()
-    val yVal = radius * Math.sin(angle).toFloat() + imageHeightPx / 2
+    val infiniteTransition = rememberInfiniteTransition()
+    val time by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+    val radius = remember(imageHeightPx) { imageHeightPx / 2 }
+    val angle = (((time - 0.25f) * 2 * Math.PI) - Math.PI / 2).toDouble()
+    val xVal = radius * cos(angle).toFloat()
+    val yVal = radius * sin(angle).toFloat() + imageHeightPx / 2
     Image(
         painter = painterResource(id = R.drawable.moon_nobackground),
         colorFilter = ColorFilter.colorMatrix(colorMatrix2),

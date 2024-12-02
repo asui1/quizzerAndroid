@@ -9,6 +9,7 @@ import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.sampleImageColor
 import junit.framework.TestCase.assertEquals
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -17,7 +18,7 @@ import org.junit.Test
 class SaveLoadTests {
     @Test
     fun imageColorSaveTest(){
-        val imageColor = ImageColor(Color.Red, byteArrayOf(), Color.Blue, ImageColorState.COLOR)
+        val imageColor = sampleImageColor
         val json = Json.encodeToString(imageColor)
         val imageColor2 = Json.decodeFromString<ImageColor>(json)
         assertEquals(imageColor, imageColor2)

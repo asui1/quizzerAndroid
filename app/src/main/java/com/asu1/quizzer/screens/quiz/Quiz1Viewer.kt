@@ -95,11 +95,10 @@ fun BuildBody(
     val context = LocalContext.current
 
     when(quizState.bodyType){
-        BodyType.NONE -> {}
-        BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizState.bodyText, modifier = Modifier.fillMaxWidth())
-        BodyType.IMAGE -> {
-            val image = remember(quizState.bodyImage){
-                BitmapFactory.decodeByteArray(quizState.bodyImage, 0, quizState.bodyImage!!.size).asImageBitmap().apply{
+        is BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, (quizState.bodyType as BodyType.TEXT).bodyText, modifier = Modifier.fillMaxWidth())
+        is BodyType.IMAGE -> {
+            val image = remember((quizState.bodyType as BodyType.IMAGE).bodyImage[0]){
+                BitmapFactory.decodeByteArray((quizState.bodyType as BodyType.IMAGE).bodyImage, 0, (quizState.bodyType as BodyType.IMAGE).bodyImage.size).asImageBitmap().apply{
                     prepareToDraw()
                 }
             }
@@ -110,17 +109,18 @@ fun BuildBody(
                 contentScale = ContentScale.Crop
             )
         }
-        BodyType.YOUTUBE -> {
+        is BodyType.YOUTUBE -> {
             AndroidView(factory = {
                 val youTubePlayerView = YouTubePlayerView(context)
                 youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                     override fun onReady(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.cueVideo(quizState.youtubeId, quizState.youtubeStartTime.toFloat())
+                        youTubePlayer.cueVideo((quizState.bodyType as BodyType.YOUTUBE).youtubeId, (quizState.bodyType as BodyType.YOUTUBE).youtubeStartTime.toFloat())
                     }
                 })
                 youTubePlayerView
             })
         }
+        else -> {}
     }
 }
 

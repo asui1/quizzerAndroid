@@ -148,8 +148,8 @@ fun QuizLayoutSetColorScheme(
                             listState.animateScrollToItem(2)
                         }
                     },
-                    buttonTestTag = "QuizLayoutSetColorSchemeButton$colorName",
-                    colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextField$colorName"
+                    buttonTestTag = "QuizLayoutSetColorSchemeButtonPrimaryColor",
+                    colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextFieldPrimaryColor"
                 )
             }
             item{

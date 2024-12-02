@@ -54,22 +54,13 @@ fun LoadMyQuiz(
 
     Scaffold(
         topBar = {
-            Column(
+            RowWithAppIconAndName(
+                showBackButton = true,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Top
-            ) {
-                RowWithAppIconAndName(
-                    showBackButton = true,
-                    onBackPressed = {
-                        navController.popBackStack()
-                    }
-                )
-                Text(
-                    text = stringResource(R.string.my_quizzes),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+            )
         }
     ) { paddingValue ->
         Box(

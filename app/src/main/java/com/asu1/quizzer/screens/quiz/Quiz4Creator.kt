@@ -102,18 +102,11 @@ fun Quiz4Creator(
                 QuizBodyBuilder(
                     bodyState = quizState.bodyType,
                     updateBody = { quiz.updateBodyState(it) },
-                    bodyText = quizState.bodyText,
                     onBodyTextChange = { quiz.updateBodyText(it) },
-                    imageBytes = quizState.bodyImage,
                     onImageSelected = { quiz.updateBodyImage(it) },
-                    youtubeId = quizState.youtubeId,
-                    youtubeStartTime = quizState.youtubeStartTime,
                     onYoutubeUpdate = { id, time ->
                         quiz.updateBodyYoutube(id, time)
                     },
-                    onRemoveBody = {
-                        quiz.updateBodyState(BodyType.NONE)
-                    }
                 )
             }
             items(quizState.answers.size) { index ->

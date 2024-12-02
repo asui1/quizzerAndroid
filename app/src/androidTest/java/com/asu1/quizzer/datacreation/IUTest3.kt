@@ -41,7 +41,7 @@ val iuquizzes3 = listOf(
             "안녕 라일락 지은이 아이유"
         ),
         ans = mutableListOf(false, true, false, false, false),
-        bodyType = BodyType.YOUTUBE,
+        bodyType = BodyType.YOUTUBE("", 0),
         bodyText = "나리는 꽃가루에 눈이 따끔해 (아야)눈물이 고여도 꾹 참을래 (아.이.유)",
         question = "아이유 라일락 노래 응원법 시작하는 법은?"
     ),
@@ -73,8 +73,7 @@ val iuquizzes3 = listOf(
             "영원히! 유애나!"
         ),
         ans = mutableListOf(false, false, false, false, true),
-        bodyType = BodyType.TEXT,
-        bodyText = "I'm stanning, just stanning you\n(_________________)\n\n오늘도 스치듯 그 말이",
+        bodyType = BodyType.TEXT("I'm stanning, just stanning you\n(_________________)\n\n오늘도 스치듯 그 말이"),
         question = "다음 두 가사 사이에 들어갈 응원법은?"
     ),
     TestQuiz1(
@@ -117,7 +116,7 @@ val iutestdata3 = allInOneForTest(
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     bodyYoutubeLinks = listOf("", "", "", "https://youtu.be/v7bnOxV4jAc?si=GeUOZSCNCPmcVpkd", "", "", "", "", "", ""),
     primaryColor = "ff8d4a5b",
-    gradientColor1 = "ffffd9e0",
-    gradientColor2 = "ff3a0719",
+    backgroundColorFilter = "ffffd9e0",
+    effectColor = "ff3a0719",
     textColor = "ffffb1c2",
 )

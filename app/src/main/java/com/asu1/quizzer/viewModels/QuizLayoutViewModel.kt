@@ -403,8 +403,7 @@ class QuizLayoutViewModel : ViewModel() {
         _quizzes.update {
             it.toMutableList().apply {
                 val firstQuiz = this[0]
-                firstQuiz.bodyType = BodyType.IMAGE
-                firstQuiz.bodyImage = image
+                firstQuiz.bodyType = BodyType.IMAGE(image)
                 this[0] = firstQuiz
             }
         }

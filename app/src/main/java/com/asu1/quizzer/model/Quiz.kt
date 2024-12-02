@@ -4,9 +4,10 @@ import androidx.compose.ui.geometry.Offset
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizJson
 import com.asu1.quizzer.data.json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.YearMonth
-import java.util.Base64
 
 enum class QuizType(val value: Int) {
     QUIZ1(0),
@@ -15,6 +16,7 @@ enum class QuizType(val value: Int) {
     QUIZ4(3),
 }
 
+
 abstract class Quiz(
     open var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     open var question: String = "",
@@ -22,10 +24,6 @@ abstract class Quiz(
     open var point: Int = 5,
     open val layoutType: QuizType = QuizType.QUIZ1,
     open var bodyType: BodyType = BodyType.NONE,
-    open var bodyText: String = "",
-    open var bodyImage: ByteArray = byteArrayOf(),
-    open var youtubeId: String = "",
-    open var youtubeStartTime: Int = 0,
 ) {
     operator fun get(index: Int): String {
         return answers[index]
@@ -35,11 +33,24 @@ abstract class Quiz(
         answers[index] = value
     }
     fun validateBody() {
-        if (bodyType == BodyType.YOUTUBE && youtubeId.isEmpty()) {
-            bodyType = BodyType.NONE
-        }
-        if(bodyType == BodyType.IMAGE && bodyImage.size < 5){
-            bodyType = BodyType.NONE
+        when(bodyType){
+            is BodyType.TEXT -> {
+                if((bodyType as BodyType.TEXT).bodyText.isEmpty()){
+                    bodyType = BodyType.NONE
+                }
+            }
+            is BodyType.IMAGE -> {
+                if((bodyType as BodyType.IMAGE).bodyImage.isEmpty()){
+                    bodyType = BodyType.NONE
+                }
+            }
+            is BodyType.YOUTUBE -> {
+                if((bodyType as BodyType.YOUTUBE).youtubeId.isEmpty()){
+                    bodyType = BodyType.NONE
+                }
+            }
+            is BodyType.NONE -> bodyType = BodyType.NONE
+            else -> bodyType = BodyType.NONE
         }
     }
     abstract fun initViewState()
@@ -47,13 +58,6 @@ abstract class Quiz(
     abstract fun changeToJson() : QuizJson
     abstract fun load(data: String)
     abstract fun gradeQuiz(): Boolean
-}
-
-enum class BodyType(val value: Int) {
-    NONE(0),
-    TEXT(1),
-    IMAGE(2),
-    YOUTUBE(3),
 }
 
 //BASIC MULTIPLE CHOICE QUIZ
@@ -66,10 +70,6 @@ data class Quiz1(
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ1,
     override var bodyType: BodyType = BodyType.NONE,
-    override var bodyText: String = "",
-    override var bodyImage: ByteArray = byteArrayOf(),
-    override var youtubeId: String = "",
-    override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ) : Quiz(answers, question){
 
@@ -107,16 +107,12 @@ data class Quiz1(
     override fun changeToJson(): QuizJson {
         val quiz1Json = QuizJson.Quiz1Json(
             body = QuizJson.Quiz1Body(
-                bodyType = bodyType.value,
-                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
-                bodyText = bodyText,
+                bodyValue = Json.encodeToString(bodyType),
                 shuffleAnswers = shuffleAnswers,
                 answers = answers,
                 ans = ans,
                 question = question,
                 points = point,
-                youtubeId = youtubeId,
-                youtubeStartTime = youtubeStartTime,
             )
         )
         return quiz1Json
@@ -126,15 +122,11 @@ data class Quiz1(
         val quiz1Json = json.decodeFromString<QuizJson.Quiz1Json>(data)
         val body = quiz1Json.body
 
-        bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
-        bodyText = body.bodyText
+        bodyType = Json.decodeFromString(body.bodyValue)
         shuffleAnswers = body.shuffleAnswers
         answers = body.answers.toMutableList()
         ans = body.ans.toMutableList()
         question = body.question
-        youtubeId = body.youtubeId
-        youtubeStartTime = body.youtubeStartTime
         initViewState()
     }
 
@@ -144,13 +136,9 @@ data class Quiz1(
         if (this === other) return true
         if (other !is Quiz1) return false
 
-        if (bodyType != other.bodyType) return false
-        if (!bodyImage.contentEquals(other.bodyImage)) return false
+        if (!bodyType.equals(other.bodyType)) return false
         if (ans != other.ans) return false
         if (shuffleAnswers != other.shuffleAnswers) return false
-        if (bodyText != other.bodyText) return false
-        if (youtubeId != other.youtubeId) return false
-        if (youtubeStartTime != other.youtubeStartTime) return false
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
@@ -168,10 +156,6 @@ data class Quiz1(
         result = 31 * result + question.hashCode()
         result = 31 * result + layoutType.hashCode()
         result = 31 * result + bodyType.hashCode()
-        result = 31 * result + bodyText.hashCode()
-        result = 31 * result + (bodyImage.contentHashCode() ?: 0)
-        result = 31 * result + youtubeId.hashCode()
-        result = 31 * result + youtubeStartTime
         result = 31 * result + point
         return result
     }
@@ -192,8 +176,7 @@ val sampleQuiz1 = Quiz1(
     shuffledAnswers = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai"),
     userAns = mutableListOf(false, false, false, false),
     ans = mutableListOf(true, false, false, false),
-    bodyText = "This is a sample question",
-    bodyType = BodyType.TEXT,
+    bodyType = BodyType.TEXT("This is a sample body text"),
 )
 
 //SELECTING DATE FROM CALENDAR
@@ -311,10 +294,6 @@ data class Quiz3(
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ3,
     override var bodyType: BodyType = BodyType.NONE,
-    override var bodyText: String = "",
-    override var bodyImage: ByteArray = byteArrayOf(),
-    override var youtubeId: String = "",
-    override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ): Quiz(answers, question){
     fun swap(index1: Int, index2: Int){
@@ -355,11 +334,7 @@ data class Quiz3(
                 ans = listOf(),
                 points = point,
                 question = question,
-                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
-                bodyText = bodyText,
-                youtubeId = youtubeId,
-                youtubeStartTime = youtubeStartTime,
-                bodyType = bodyType.value
+                bodyValue = Json.encodeToString(bodyType),
             )
         )
         return quiz3Json
@@ -372,11 +347,7 @@ data class Quiz3(
 
         answers = body.answers.toMutableList()
         question = body.question
-        bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
-        bodyText = body.bodyText
-        youtubeId = body.youtubeId
-        youtubeStartTime = body.youtubeStartTime
+        bodyType = Json.decodeFromString(body.bodyValue)
         point = body.points
 
         initViewState()
@@ -390,11 +361,7 @@ data class Quiz3(
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
         if (shuffledAnswers != other.shuffledAnswers) return false
-        if (bodyType != other.bodyType) return false
-        if (bodyText != other.bodyText) return false
-        if (!bodyImage.contentEquals(other.bodyImage)) return false
-        if (youtubeId != other.youtubeId) return false
-        if (youtubeStartTime != other.youtubeStartTime) return false
+        if (!bodyType.equals(other.bodyType)) return false
         if (point != other.point) return false
         if (uuid != other.uuid) return false
 
@@ -422,10 +389,6 @@ data class Quiz3(
         result = 31 * result + question.hashCode()
         result = 31 * result + layoutType.hashCode()
         result = 31 * result + bodyType.hashCode()
-        result = 31 * result + bodyText.hashCode()
-        result = 31 * result + bodyImage.contentHashCode()
-        result = 31 * result + youtubeId.hashCode()
-        result = 31 * result + youtubeStartTime
         result = 31 * result + point
         return result
     }
@@ -447,10 +410,6 @@ data class Quiz4(
     override var question: String = "",
     override var layoutType: QuizType = QuizType.QUIZ4,
     override var bodyType: BodyType = BodyType.NONE,
-    override var bodyText: String = "",
-    override var bodyImage: ByteArray = byteArrayOf(),
-    override var youtubeId: String = "",
-    override var youtubeStartTime: Int = 0,
     override var point: Int = 5,
 ): Quiz(answers, question){
     fun updateUserConnection(from: Int, to: Int?){
@@ -488,11 +447,7 @@ data class Quiz4(
                 ans = listOf(),
                 points = point,
                 question = question,
-                bodyImage = bodyImage.let { Base64.getEncoder().encodeToString(it) },
-                bodyText = bodyText,
-                youtubeId = youtubeId,
-                youtubeStartTime = youtubeStartTime,
-                bodyType = bodyType.value
+                bodyValue = Json.encodeToString(bodyType),
             )
         )
         return quiz4Json
@@ -506,11 +461,7 @@ data class Quiz4(
         connectionAnswerIndex = body.connectionAnswerIndex.toMutableList()
         answers = body.answers.toMutableList()
         question = body.question
-        bodyType = BodyType.entries.first { it.value == body.bodyType }
-        bodyImage = body.bodyImage.let { Base64.getDecoder().decode(it) }
-        bodyText = body.bodyText
-        youtubeId = body.youtubeId
-        youtubeStartTime = body.youtubeStartTime
+        bodyType = Json.decodeFromString(body.bodyValue)
         point = body.points
 
         initViewState()
@@ -525,11 +476,7 @@ data class Quiz4(
         if (answers != other.answers) return false
         if (question != other.question) return false
         if (layoutType != other.layoutType) return false
-        if (bodyType != other.bodyType) return false
-        if (bodyText != other.bodyText) return false
-        if (!bodyImage.contentEquals(other.bodyImage)) return false
-        if (youtubeId != other.youtubeId) return false
-        if (youtubeStartTime != other.youtubeStartTime) return false
+        if (!bodyType.equals(other.bodyType)) return false
         if (point != other.point) return false
         if (userConnectionIndex != other.userConnectionIndex) return false
         if (dotPairOffsets != other.dotPairOffsets) return false
@@ -565,10 +512,6 @@ data class Quiz4(
         result = 31 * result + question.hashCode()
         result = 31 * result + layoutType.hashCode()
         result = 31 * result + bodyType.hashCode()
-        result = 31 * result + bodyText.hashCode()
-        result = 31 * result + bodyImage.contentHashCode()
-        result = 31 * result + youtubeId.hashCode()
-        result = 31 * result + youtubeStartTime
         result = 31 * result + point
         return result
     }

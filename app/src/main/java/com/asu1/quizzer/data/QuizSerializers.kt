@@ -10,6 +10,7 @@ import com.asu1.quizzer.model.Quiz4
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonClassDiscriminator
 import kotlinx.serialization.modules.SerializersModule
@@ -67,11 +68,7 @@ sealed class QuizJson {
                 answers = body.answers.toMutableList(),
                 ans = body.ans.toMutableList(),
                 shuffleAnswers = body.shuffleAnswers,
-                bodyImage = Base64.getDecoder().decode(body.bodyImage),
-                bodyText = body.bodyText,
-                bodyType = BodyType.entries[body.bodyType],
-                youtubeId = body.youtubeId,
-                youtubeStartTime = body.youtubeStartTime,
+                bodyType = Json.decodeFromString(body.bodyValue),
                 point = body.points
             )
             quiz.initViewState()
@@ -86,11 +83,7 @@ sealed class QuizJson {
         val answers: List<String>,
         val ans: List<Boolean>,
         val question: String,
-        val bodyImage: String = "",
-        val bodyText: String = "",
-        val bodyType: Int = 0,
-        val youtubeId: String = "",
-        val youtubeStartTime: Int = 0,
+        val bodyValue: String,
         val points: Int = 10,
     )
 
@@ -147,12 +140,8 @@ sealed class QuizJson {
             val quiz = Quiz3(
                 question = body.question,
                 answers = body.answers.toMutableList(),
-                bodyImage = Base64.getDecoder().decode(body.bodyImage),
-                bodyText = body.bodyText,
-                bodyType = BodyType.entries[body.bodyType],
-                youtubeId = body.youtubeId,
-                youtubeStartTime = body.youtubeStartTime,
-                point = body.points
+                bodyType = Json.decodeFromString(body.bodyValue),
+                point = body.points,
             )
             quiz.initViewState()
             return quiz
@@ -166,11 +155,7 @@ sealed class QuizJson {
         val answers: List<String>,
         val ans: List<Boolean>,
         val question: String,
-        val bodyImage: String = "",
-        val bodyText: String = "",
-        val bodyType: Int = 0,
-        val youtubeId: String = "",
-        val youtubeStartTime: Int = 0,
+        val bodyValue: String,
         val points: Int = 10,
     )
 
@@ -194,11 +179,7 @@ sealed class QuizJson {
                 dotPairOffsets = mutableListOf<Pair<Offset?, Offset?>>().apply {
                     body.connectionAnswers.forEach { add(null to null) }
                 },
-                bodyImage = Base64.getDecoder().decode(body.bodyImage),
-                bodyText = body.bodyText,
-                bodyType = BodyType.entries[body.bodyType],
-                youtubeId = body.youtubeId,
-                youtubeStartTime = body.youtubeStartTime,
+                bodyType = Json.decodeFromString(body.bodyValue),
                 point = body.points
             )
             quiz.initViewState()
@@ -215,11 +196,7 @@ sealed class QuizJson {
         val answers: List<String>,
         val ans: List<Boolean>,
         val question: String,
-        val bodyImage: String = "",
-        val bodyText: String = "",
-        val bodyType: Int = 0,
-        val youtubeId: String = "",
-        val youtubeStartTime: Int = 0,
+        val bodyValue: String,
         val points: Int = 10,
     )
 }

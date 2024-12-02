@@ -191,22 +191,22 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     }
 
     override fun updateBodyText(bodyText: String){
-        _quiz4State.value = _quiz4State.value.copy(bodyText = bodyText)
+        _quiz4State.value = _quiz4State.value.copy(bodyType = BodyType.TEXT(bodyText = bodyText))
     }
 
     override fun updateBodyImage(image: ByteArray){
-        _quiz4State.value = _quiz4State.value.copy(bodyImage = image)
+        _quiz4State.value = _quiz4State.value.copy(bodyType = BodyType.IMAGE(bodyImage = image))
     }
 
     override fun updateBodyYoutube(youtubeId: String, startTime: Int){
         if(youtubeId == "DELETE"){
-            _quiz4State.value = _quiz4State.value.copy(youtubeId = "", youtubeStartTime = 0)
+            _quiz4State.value = _quiz4State.value.copy(bodyType = BodyType.YOUTUBE("", 0))
             return
         }
         if(youtubeId == ""){
             return
         }
-        _quiz4State.value = _quiz4State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+        _quiz4State.value = _quiz4State.value.copy(bodyType = BodyType.YOUTUBE(youtubeId, startTime))
     }
     override fun setPoint(point: Int){
         _quiz4State.update{

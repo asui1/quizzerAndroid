@@ -93,7 +93,7 @@
     <string name="searching">Searching...</string>
     <string name="no_search_result">No search result</string>
     <string name="add_answer">Add Answer</string>
-    <string name="shuffle_answers">Shuffle Answers?</string>
+    <string name="shuffle_answers">Shuffle Answers: </string>
     <string name="current_start">"Current Start: "</string>
     <string name="selected_answers">Selected Answers</string>
     <string name="select_question_type">Select Question Type</string>
@@ -170,6 +170,13 @@
     <string name="effects">Effects</string>
     <string name="scorecard_effect">ScoreCard Effect</string>
     <string name="flowers">Flowers</string>
+    <string name="text">Text</string>
+    <string name="youtube">Youtube</string>
+    <string name="share">Share</string>
+    <string name="can_not_load_quiz">Can not load quiz</string>
+    <string name="copy_quiz_link">Copy quiz link</string>
+    <string name="copy_quiz_result_link">Copy quiz result link</string>
+    <string name="link_copied_to_clipboard">Link copied to clipboard</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

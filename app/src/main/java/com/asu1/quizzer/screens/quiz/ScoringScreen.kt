@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quiz
 
+import ToastManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +22,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,16 +32,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
+import com.asu1.quizzer.composables.scorecard.ShareDialog
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.screens.quizlayout.RowWithShares
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
@@ -57,15 +65,9 @@ fun ScoringScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
-    var uniqueId = remember{""}
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val scoreCardViewModelState by scoreCardViewModel.viewModelState.observeAsState()
-
-    LaunchedEffect(scoreCard.quizUuid){
-        if(scoreCard.quizUuid != null){
-            uniqueId = generateUniqueId(email = email, uuid = scoreCard.quizUuid!!)
-        }
-    }
+    var showShareDIalog by remember{ mutableStateOf(false) }
 
     LaunchedEffect(quizLayoutViewModelState){
         if(quizLayoutViewModelState == ViewModelState.ERROR){
@@ -74,7 +76,7 @@ fun ScoringScreen(
         }
     }
 
-    DisposableEffect(key1 = uniqueId){
+    DisposableEffect(key1 = Unit) {
         onDispose {
             scoreCardViewModel.resetScoreCard()
             quizLayoutViewModel.resetQuizResult()
@@ -84,6 +86,18 @@ fun ScoringScreen(
     MaterialTheme(
         colorScheme = scoreCard.colorScheme
     ) {
+        if(showShareDIalog){
+            Dialog(
+                onDismissRequest = {
+                    showShareDIalog = false
+                }
+            ) {
+                ShareDialog(
+                    quizId = scoreCard.quizUuid ?: "",
+                    userName = email
+                )
+            }
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -100,56 +114,30 @@ fun ScoringScreen(
                 )
             } else {
                 ScoreCardComposable(
-                    width = screenWidth * 0.8f,
-                    height = screenHeight * 0.8f,
+                    width = screenWidth * 0.85f,
+                    height = screenHeight * 0.85f,
                     scoreCard = scoreCard,
                     quizResult = quizResult!!
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            RowWithShares(
-                onClickButton1 = {
-                    val background = scoreCard.background
-                    Logger().debug(background.color.toString())
-                    Logger().debug(background.color2.toString())
-                    scoreCardViewModel.updateBackground(
-                        ImageColor(
-                            color = background.color,
-                            imageData = scoreCard.background.imageData,
-                            color2 = Color.Red,
-                            state = ImageColorState.BASEIMAGE
-                        )
-                    )
-                },
-                onClickButton2 = {
-                    val background = scoreCard.background
-                    Logger().debug(background.color.toString())
-                    Logger().debug(background.color2.toString())
-                    Logger().debug(Color.Red.toString())
-                    scoreCardViewModel.updateBackground(
-                        ImageColor(
-                            color = Color.Red,
-                            imageData = scoreCard.background.imageData,
-                            color2 = background.color2,
-                            state = ImageColorState.BASEIMAGE
-                        )
-                    )
-                },
-                onClickButton3 = {
-                    scoreCardViewModel.updateImageColorState(
-                        ImageColorState.BASEIMAGE
-                    )
-                },
-            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.width(screenWidth * 0.7f)
+                modifier = Modifier.width(screenWidth * 0.9f)
             ) {
                 Button(
                     onClick = {
-//                        Logger().debug(scoreCard.toString())
-                        loadQuiz(scoreCard.quizUuid!!)
+                        if(scoreCard.quizUuid != null){
+                            loadQuiz(scoreCard.quizUuid!!)
+                        }
+                        else{
+                            ToastManager.showToast(
+                                message = R.string.can_not_load_quiz,
+                                type = ToastType.ERROR,
+                            )
+                        }
                     },
                     modifier = Modifier
                         .height(height = 36.dp)
@@ -182,7 +170,18 @@ fun ScoringScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
-
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
+                IconButton(onClick = {
+                    showShareDIalog = true
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
         }

@@ -1,10 +1,13 @@
 package com.asu1.quizzer.composables.base
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -24,11 +27,14 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> Unit = {}) {
+fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> Unit = {},
+                          modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Start,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
         if(showBackButton){
             IconButton(onClick = onBackPressed) {

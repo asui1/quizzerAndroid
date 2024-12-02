@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,6 +32,55 @@ fun IconButtonWithText(
     description: String? = null,
     iconSize: Dp = 32.dp
 ) {
+    IconWithTextBody(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        iconSize = iconSize,
+    ){
+        Icon(
+            imageVector = imageVector,
+            contentDescription = description,
+            modifier = Modifier.size(iconSize)
+        )
+    }
+}
+
+@Composable
+fun IconButtonWithText(
+    resourceId: Int,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    description: String? = null,
+    iconSize: Dp = 32.dp
+) {
+    IconWithTextBody(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        iconSize = iconSize,
+    ){
+        Icon(
+            painter = painterResource(id = resourceId),
+            contentDescription = description,
+            modifier = Modifier.size(iconSize)
+        )
+    }
+}
+
+@Composable
+fun IconWithTextBody(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    iconSize: Dp = 32.dp,
+    icon: @Composable () -> Unit,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.clickable {
@@ -38,11 +89,7 @@ fun IconButtonWithText(
             .wrapContentHeight()
             .width(iconSize * 1.7f)
     ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = description,
-            modifier = Modifier.size(iconSize)
-        )
+        icon()
         Text(
             text = text,
             textAlign = TextAlign.Center,

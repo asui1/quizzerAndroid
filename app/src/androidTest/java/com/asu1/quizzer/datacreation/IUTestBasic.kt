@@ -77,7 +77,7 @@ val iutestdata1 = allInOneForTest(
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
     primaryColor = "FF874b6c",
-    gradientColor1 = "FFffd8e9",
-    gradientColor2 = "ffe5d6db",
+    backgroundColorFilter = "FFffd8e9",
+    effectColor = "ffe5d6db",
     textColor = "ff380727",
 )

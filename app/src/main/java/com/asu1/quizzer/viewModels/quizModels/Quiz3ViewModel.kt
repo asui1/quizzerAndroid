@@ -78,22 +78,22 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun updateBodyText(bodyText: String){
-        _quiz3State.value = _quiz3State.value.copy(bodyText = bodyText)
+        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.TEXT(bodyText = bodyText))
     }
 
     override fun updateBodyImage(image: ByteArray){
-        _quiz3State.value = _quiz3State.value.copy(bodyImage = image)
+        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.IMAGE(bodyImage = image))
     }
 
     override fun updateBodyYoutube(youtubeId: String, startTime: Int){
         if(youtubeId == "DELETE"){
-            _quiz3State.value = _quiz3State.value.copy(youtubeId = "", youtubeStartTime = 0)
+            _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.YOUTUBE("", 0))
             return
         }
         if(youtubeId == ""){
             return
         }
-        _quiz3State.value = _quiz3State.value.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.YOUTUBE(youtubeId = youtubeId, youtubeStartTime = startTime))
     }
     override fun setPoint(point: Int){
         _quiz3State.update{

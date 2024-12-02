@@ -19,15 +19,17 @@ val scoreCard = ScoreCard(
     title = "페이커 퀴즈",
     solver = "Guest",
     score = 100f,
-    background = ImageColor(Color.Red, byteArrayOf(), Color.Blue, ImageColorState.COLOR),
+    background = ImageColor(
+        imageData = byteArrayOf(),
+        color = Color.Red,
+        colorGradient = Color.Blue,
+        state = ImageColorState.GRADIENT
+    ),
     imageStateval = 0,
     colorScheme = LightColorScheme,
-    shaderType = ShaderType.Brush1,
 )
 val quiz1 = Quiz1(
     bodyType = BodyType.NONE,
-    bodyImage = byteArrayOf(),
-    bodyText = "",
     shuffleAnswers = false,
     answers = mutableListOf(
         "오리아나",
@@ -44,8 +46,6 @@ val quiz1 = Quiz1(
         false
     ),
     question = "페이커가 데뷔전 첫 킬을 딴 챔피언은?",
-    youtubeId = null.toString(),
-    youtubeStartTime = 0,
 )
 val quiz2 = Quiz2(
     centerDate = YearMonth.of(1996, 5),
@@ -97,12 +97,6 @@ val quiz4 = Quiz4(
 
 fun getQuizLayoutViewModelSample(): QuizLayoutViewModel{
     val quizLayoutViewModel = QuizLayoutViewModel()
-    quizLayoutViewModel.setBackgroundImage(ImageColor(
-        color = Color(0xFF000000),
-        imageData = byteArrayOf(),
-        color2 = Color(0xFFFFFFFF),
-        state = ImageColorState.COLOR
-    ))
     quizLayoutViewModel.updateShuffleQuestions(false)
     quizLayoutViewModel.quizData.value.title = "페이커 퀴즈"
     quizLayoutViewModel.quizTheme.value.colorScheme = LightColorScheme

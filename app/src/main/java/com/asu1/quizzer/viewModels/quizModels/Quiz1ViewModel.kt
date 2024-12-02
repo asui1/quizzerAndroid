@@ -94,7 +94,7 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
 
     override fun updateBodyText(bodyText: String){
         _quiz1State.update{
-            it.copy(bodyText = bodyText)
+            it.copy(bodyType = BodyType.TEXT(bodyText))
         }
     }
 
@@ -102,18 +102,18 @@ class Quiz1ViewModel : BaseQuizViewModel<Quiz1>(){
         Logger().debug("Quiz1ViewModel ${image.size}")
         Logger().debug("Quiz1ViewModel ${_quiz1State.value.question}")
         _quiz1State.update{
-            it.copy(bodyImage = image)
+            it.copy(bodyType = BodyType.IMAGE(image))
         }
     }
 
     override fun updateBodyYoutube(youtubeId: String, startTime: Int){
         _quiz1State.update{
             if(youtubeId == "DELETE"){
-                it.copy(youtubeId = "", youtubeStartTime = 0)
+                it.copy(bodyType = BodyType.YOUTUBE("", 0))
             }else if(youtubeId == ""){
                 it
             }else{
-                it.copy(youtubeId = youtubeId, youtubeStartTime = startTime)
+                it.copy(bodyType = BodyType.YOUTUBE(youtubeId, startTime))
             }
         }
     }
