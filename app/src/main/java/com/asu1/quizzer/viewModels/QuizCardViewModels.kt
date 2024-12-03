@@ -1,5 +1,6 @@
 package com.asu1.quizzer.viewModels
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.model.QuizCard
@@ -18,6 +19,12 @@ class QuizCardMainViewModel : ViewModel() {
         val quizCards: List<QuizCard>
     )
 
+    private val _loadResultId = MutableLiveData<String?>(null)
+    val loadResultId: MutableLiveData<String?> get() = _loadResultId
+
+    private val _loadQuizId = MutableLiveData<String?>(null)
+    val loadQuizId: MutableLiveData<String?> get() = _loadQuizId
+
     private val _quizCards = MutableStateFlow<List<QuizCardsWithTag>>(emptyList())
     val quizCards: StateFlow<List<QuizCardsWithTag>> get() = _quizCards.asStateFlow()
 
@@ -26,6 +33,14 @@ class QuizCardMainViewModel : ViewModel() {
 
     private val _userRanks = MutableStateFlow<List<UserRank>>(emptyList())
     val userRanks: StateFlow<List<UserRank>> get() = _userRanks.asStateFlow()
+
+    fun setLoadResultId(resultId: String?){
+        _loadResultId.value = resultId
+    }
+
+    fun setLoadQuizId(quizId: String?){
+        _loadQuizId.value = quizId
+    }
 
     fun tryUpdate(index: Int, language: String = "ko"){
         if(index == 0){

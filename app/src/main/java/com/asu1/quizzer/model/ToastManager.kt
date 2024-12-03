@@ -12,10 +12,10 @@ object ToastManager {
     val toastMessage: LiveData<Pair<Int, ToastType>?> = _toastMessage
 
     fun showToast(message: Int, type: ToastType = ToastType.INFO) {
-        _toastMessage.value = Pair(message, type)
+        _toastMessage.postValue(Pair(message, type))
     }
 
     fun toastShown() {
-        _toastMessage.value = null
+        _toastMessage.postValue(null)
     }
 }

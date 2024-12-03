@@ -47,6 +47,7 @@ val quizUrlBase = "https://quizzer.co.kr/?quizId="
 fun ShareDialog(
     quizId: String,
     userName: String = "Guest",
+    onDismiss: () -> Unit = { },
 ){
     val quizUrl = remember(quizId){quizUrlBase + quizId}
     val resultUrl = remember(quizId){resultUrlBase + generateUniqueId(quizId, userName)}
@@ -81,6 +82,7 @@ fun ShareDialog(
                     setPackage("com.facebook.katana")
                 }
                 context.startActivity(intent)
+                onDismiss()
             },
             onClickShareX = {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -88,7 +90,10 @@ fun ShareDialog(
                     setPackage("com.twitter.android")
                 }
                 context.startActivity(intent)
+                onDismiss()
             },
+            modifier = Modifier
+                .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -100,6 +105,7 @@ fun ShareDialog(
                         message = R.string.link_copied_to_clipboard,
                         type = ToastType.SUCCESS,
                     )
+                    onDismiss()
                 },
         ) {
             Icon(
@@ -128,6 +134,7 @@ fun ShareDialog(
                             message = R.string.link_copied_to_clipboard,
                             type = ToastType.SUCCESS,
                         )
+                        onDismiss()
                     },
             ) {
                 Icon(
@@ -152,11 +159,12 @@ fun ShareDialog(
 fun RowWithShares(
     onClickShareFaceBook: () -> Unit = { },
     onClickShareX: () -> Unit = { },
+    modifier: Modifier = Modifier,
 ){
     LazyRow(
         horizontalArrangement = Arrangement.Start,
         contentPadding = PaddingValues(8.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         item{
             IconButtonWithText(

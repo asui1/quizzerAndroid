@@ -68,8 +68,6 @@ class MainActivity : ComponentActivity() {
     private val scoreCardViewModel: ScoreCardViewModel by viewModels()
     private val quizLoadViewModel: QuizLoadViewModel by viewModels()
     private lateinit var navController: NavHostController
-    private var loadResultId: String? = null
-    private var loadQuizId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,7 +137,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
-                                loadResultId = null
+                                quizCardMainViewModel.setLoadResultId(null)
                             }
                         }
 
@@ -152,7 +150,7 @@ class MainActivity : ComponentActivity() {
                                 if (popUpToHome) popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
                             }
-                            loadQuizId = null
+                            quizCardMainViewModel.setLoadQuizId(null)
                         }
 
                         fun getHome(fetchData: Boolean = true) {
@@ -185,12 +183,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
-                                if (loadResultId != null) {
-                                    getQuizResult(loadResultId!!)
-                                }
-                                if (loadQuizId != null) {
-                                    loadQuiz(loadQuizId!!)
-                                }
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
@@ -229,6 +221,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     },
                                     loadQuiz = { loadQuiz(it) },
+                                    loadQuizResult = { getQuizResult(it) },
                                     moveHome = { getHome() }
                                 )
                             }
@@ -473,10 +466,10 @@ class MainActivity : ComponentActivity() {
                 val resultId = it.getQueryParameter("resultId") ?: ""
                 val quizId = it.getQueryParameter("quizId") ?: ""
                 if(resultId.isNotEmpty()){
-                    loadResultId = resultId
+                    quizCardMainViewModel.setLoadResultId(resultId)
                 }
                 if(quizId.isNotEmpty()){
-                    loadQuizId = quizId
+                    quizCardMainViewModel.setLoadQuizId(quizId)
                 }
             }
         }

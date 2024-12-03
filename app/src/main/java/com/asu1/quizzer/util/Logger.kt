@@ -6,9 +6,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import java.util.logging.Logger
 
+val isTest = false
+
 class Logger {
-    private val tag = "quizzer"
     private val isDebug = true
+    private val tag = "quizzer"
 
     fun debug(input: Any) {
         if (isDebug) {

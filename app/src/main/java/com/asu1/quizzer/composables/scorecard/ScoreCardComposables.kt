@@ -63,6 +63,7 @@ import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.ongle_yunue
+import com.asu1.quizzer.util.isTest
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import java.util.Locale
 import kotlin.math.round
@@ -131,52 +132,53 @@ fun ScoreCardBackground(
                 )
             }
         }
-            when(backgroundImageColor.effect) {
-                Effect.FIREWORKS->{
-                    Fireworks(
-                        color2 = backgroundImageColor.color2,
-                        imageWidthPx = imageWidthPx,
-                        imageHeightPx = imageHeightPx,
-                    )
-                }
-                Effect.MOON->{
-                    WithMoon(
-                        colorMatrix2 = colorMatrix2,
-                        imageHeightPx = imageHeightPx,
-                        width = width,
-                    )
-                }
-                Effect.SHOOTING_STAR-> {
-                    WithShootingStar(
-                        colorMatrix2 = colorMatrix2,
-                        imageWidthPx = imageWidthPx,
-                        imageHeightPx = imageHeightPx,
-                        width = width,
-                    )
-                }
-                Effect.CLOUDS->{
-                    SkyWithClouds(
-                        colorMatrix = colorMatrix2,
-                        imageWidthPx, width)
-                }
-                Effect.SNOWFLAKES ->{
-                    Snowflake(
-                        color2 = backgroundImageColor.color2,
-                        imageWidthPx = imageWidthPx,
-                        imageHeightPx = imageHeightPx,
-                    )
-                }
-                Effect.FLOWERS ->{
-                    WithFlowers(
-                        colorMatrix = colorMatrix2,
-                        imageWidthPx = imageWidthPx,
-                        imageHeightPx = imageHeightPx,
-                        width = width * 0.8f,
-                    )
-                }
-                else ->{
-                }
+        when(backgroundImageColor.effect) {
+            Effect.FIREWORKS->{
+                Fireworks(
+                    color2 = backgroundImageColor.color2,
+                    imageWidthPx = imageWidthPx,
+                    imageHeightPx = imageHeightPx,
+                )
             }
+            Effect.MOON->{
+                WithMoon(
+                    colorMatrix2 = colorMatrix2,
+                    imageHeightPx = imageHeightPx,
+                    width = width,
+                )
+            }
+            Effect.SHOOTING_STAR-> {
+                WithShootingStar(
+                    colorMatrix2 = colorMatrix2,
+                    imageWidthPx = imageWidthPx,
+                    imageHeightPx = imageHeightPx,
+                    width = width,
+                )
+            }
+            Effect.CLOUDS->{
+                SkyWithClouds(
+                    colorMatrix = colorMatrix2,
+                    imageWidthPx, width)
+            }
+            Effect.SNOWFLAKES ->{
+                Snowflake(
+                    color2 = backgroundImageColor.color2,
+                    imageWidthPx = imageWidthPx,
+                    imageHeightPx = imageHeightPx,
+                )
+            }
+            Effect.FLOWERS ->{
+                WithFlowers(
+                    colorMatrix = colorMatrix2,
+                    imageWidthPx = imageWidthPx,
+                    imageHeightPx = imageHeightPx,
+                    width = width * 0.8f,
+                )
+            }
+            else ->{
+            }
+        }
+
     }
 }
 
@@ -186,13 +188,14 @@ fun createBlendingColorMatrix(color: Color): ColorMatrix {
     val r = color.red
     val g = color.green
     val b = color.blue
+    val a = color.alpha
 
     // Create a ColorMatrix that applies the given color
     val matrix = ColorMatrix(floatArrayOf(
         r, 0f, 0f, 0f, 0f,
         0f, g, 0f, 0f, 0f,
         0f, 0f, b, 0f, 0f,
-        0f, 0f, 0f, 1f, 0f
+        0f, 0f, 0f, a, 0f
     ))
     return matrix
 }
@@ -422,6 +425,7 @@ fun PointDistribution(
                 ) {
                     Text(
                         text = i,
+                        color = textColor,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

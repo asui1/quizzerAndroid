@@ -40,36 +40,44 @@ fun Fireworks(
     val explosionCount = 24
     val angle = 360f / explosionCount
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            val centerX = Random.nextFloat() * imageWidthPx
-            val centerY = imageHeightPx * Random.nextFloat() * 0.25f
-            val targetDistance = 150f + Random.nextFloat() * 70f
-            val explosionParticles = List(explosionCount) { index ->
-                index * angle
-            }
-            val explosion = Explosion(
-                distance = Animatable(0f),
-                alpha = Animatable(1f),
-                centerX = centerX,
-                centerY = centerY,
-                particles = explosionParticles
-            )
-            explosions.add(explosion)
-            coroutineScope.launch {
-                launch {
+    DisposableEffect(Unit) {
+        val job = coroutineScope.launch {
+            while (true) {
+                if (explosions.size > 5) {
+                    delay(1000L)
+                    continue
+                }
+                val centerX = Random.nextFloat() * imageWidthPx
+                val centerY = imageHeightPx * Random.nextFloat() * 0.25f
+                val targetDistance = 150f + Random.nextFloat() * 70f
+                val explosionParticles = List(explosionCount) { index ->
+                    index * angle
+                }
+                val explosion = Explosion(
+                    distance = Animatable(0f),
+                    alpha = Animatable(1f),
+                    centerX = centerX,
+                    centerY = centerY,
+                    particles = explosionParticles
+                )
+                explosions.add(explosion)
+                coroutineScope.launch {
                     explosion.distance.animateTo(
                         targetValue = targetDistance,
                         animationSpec = tween(durationMillis = 3000, easing = LinearEasing)
                     )
+                    explosion.alpha.animateTo(
+                        targetValue = 0f,
+                        animationSpec = tween(durationMillis = 1000, easing = FastOutLinearInEasing)
+                    )
+                    delay(4000L)
+                    explosions.remove(explosion)
                 }
-                explosion.alpha.animateTo(
-                    targetValue = 0f,
-                    animationSpec = tween(durationMillis = 4000, easing = FastOutLinearInEasing)
-                )
-                explosions.remove(explosion)
+                delay(750L)
             }
-            delay(750L)
+        }
+        onDispose {
+            job.cancel()
         }
     }
 
@@ -78,26 +86,26 @@ fun Fireworks(
             explosions.forEach { explosion ->
                 explosion.particles.forEach { angle ->
                     distanceModifiers.forEachIndexed { index, distMod ->
-                            val angleMod = if (index == 0) angle + 7.5f else angle
-                            val endX = explosion.centerX + (distMod * explosion.distance.value * cos(toRadians(angleMod.toDouble()))).toFloat()
-                            val endY = explosion.centerY - (distMod * explosion.distance.value * sin(toRadians(angleMod.toDouble()))).toFloat()
-                            val path = Path().apply {
-                                moveTo(explosion.centerX, explosion.centerY)
-                                lineTo(endX, endY)
-                            }
-                            val brush = Brush.linearGradient(
-                                colors = listOf(Color.Transparent, color2),
-                                start = Offset(explosion.centerX, explosion.centerY),
-                                end = Offset(endX, endY)
+                        val angleMod = if (index == 0) angle + 7.5f else angle
+                        val endX = explosion.centerX + (distMod * explosion.distance.value * cos(toRadians(angleMod.toDouble()))).toFloat()
+                        val endY = explosion.centerY - (distMod * explosion.distance.value * sin(toRadians(angleMod.toDouble()))).toFloat()
+                        val path = Path().apply {
+                            moveTo(explosion.centerX, explosion.centerY)
+                            lineTo(endX, endY)
+                        }
+                        val brush = Brush.linearGradient(
+                            colors = listOf(Color.Transparent, color2),
+                            start = Offset(explosion.centerX, explosion.centerY),
+                            end = Offset(endX, endY)
+                        )
+                        drawPath(
+                            path = path,
+                            brush = brush,
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                                width = 2.dp.toPx(),
+                                pathEffect = PathEffect.cornerPathEffect(10f)
                             )
-                            drawPath(
-                                path = path,
-                                brush = brush,
-                                style = androidx.compose.ui.graphics.drawscope.Stroke(
-                                    width = 2.dp.toPx(),
-                                    pathEffect = PathEffect.cornerPathEffect(10f)
-                                )
-                            )
+                        )
                     }
                 }
             }

@@ -162,12 +162,10 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun setTextStyle(textStyle: List<Int>, targetTag: String){
-        val randomFont = Random.nextInt(0, 5)
-        val randomColor = Random.nextInt(0, 10)
-        for(i in 0 until randomFont){
+        for(i in 0 until textStyle[0]){
             clickOnTag(targetTag + "FontFlipperNext", checkFocus = true)
         }
-        for(i in 0 until randomColor){
+        for(i in 0 until textStyle[1]){
             clickOnTag(targetTag + "ColorFlipperNext", checkFocus = true)
         }
         for(i in 0 until textStyle[2]){

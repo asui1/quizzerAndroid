@@ -10,6 +10,7 @@ import com.asu1.quizzer.datacreation.fakertestData
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -131,7 +132,8 @@ class MyComposeTest {
         testUtils.setTextStyle(testQuizData.questionTextStyle, "setTextStyleQuestion")
         testUtils.setTextStyle(testQuizData.bodyTextStyle, "setTextStyleBody")
         testUtils.setTextStyle(testQuizData.answerTextStyle, "setTextStyleAnswer")
-        testUtils.waitFor(3000)
+        onIdle()
+        testUtils.waitFor(100)
 
         //QUIZ BUILDER
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
@@ -187,12 +189,7 @@ class MyComposeTest {
         Espresso.pressBack()
         onIdle()
 
-        testUtils.clickOnTag("DesignScoreCardAnimationButton")
-        testUtils.waitFor(100)
-        testUtils.clickOnTag("DesignScoreCardAnimationButton${testQuizData.effectIndex}", useUnmergedTree = true)
-
         //SET COLOR FOR EFFECT FILTER
-        testUtils.waitUntilTag("DesignScoreCardSetColorButton1")
         onIdle()
         testUtils.clickOnTag("DesignScoreCardSetColorButton1")
         testUtils.waitFor(100)
@@ -202,9 +199,16 @@ class MyComposeTest {
         Espresso.pressBack()
         onIdle()
 
+        testUtils.clickOnTag("DesignScoreCardAnimationButton")
+        testUtils.waitFor(100)
+        testUtils.clickOnTag("DesignScoreCardAnimationButton${testQuizData.effectIndex}", useUnmergedTree = true)
+        onIdle()
+        testUtils.waitFor(100)
+
+
 
         //UPLOAD
-//        testUtils.clickOnTag("DesignScoreCardUploadButton")
+        testUtils.clickOnTag("DesignScoreCardUploadButton")
         onIdle()
 
         onIdle()

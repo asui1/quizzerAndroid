@@ -181,12 +181,12 @@ class QuizLayoutViewModel : ViewModel() {
                     }
                 } else {
                     Logger().debug("Failed to load quiz result ${response.errorBody()?.string()}")
-                    _viewModelState.value = ViewModelState.ERROR
+                    _viewModelState.postValue(ViewModelState.ERROR)
                     ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
                 }
             } catch (e: Exception) {
                 Logger().debug("Failed to load quiz result $e")
-                _viewModelState.value = ViewModelState.ERROR
+                _viewModelState.postValue(ViewModelState.ERROR)
                 ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
             }
         }
@@ -244,7 +244,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun loadQuiz(quizId: String, scoreCardViewModel: ScoreCardViewModel) {
-        _viewModelState.value = ViewModelState.LOADING
+        _viewModelState.postValue(ViewModelState.LOADING)
         viewModelScope.launch(Dispatchers.IO){
             try {
                 val response = RetrofitInstance.api.getQuizData(quizId)
@@ -254,13 +254,13 @@ class QuizLayoutViewModel : ViewModel() {
                         val loadQuizDataDeferred = async { loadQuizData(response.body()!!.quizData, response.body()!!.quizTheme) }
                         loadScoreCardDeferred.await()
                         loadQuizDataDeferred.await()
-                        _viewModelState.value = ViewModelState.IDLE
+                        _viewModelState.postValue(ViewModelState.IDLE)
                     }
                 } else {
                     val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
                     Logger().debug("Failed to load quiz: $errorMessage")
                     ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
-                    _viewModelState.value = ViewModelState.ERROR
+                    _viewModelState.postValue(ViewModelState.ERROR)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -618,7 +618,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
     fun updateQuizResult(quizResult: QuizResult){
         _quizResult.value = quizResult
-        _viewModelState.value = ViewModelState.IDLE
+        _viewModelState.postValue(ViewModelState.IDLE)
     }
 }
 

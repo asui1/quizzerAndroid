@@ -24,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -81,6 +83,7 @@ fun MainScreen(
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
     loadQuiz: (String) -> Unit = { },
+    loadQuizResult: (String) -> Unit = { },
     moveHome: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -98,6 +101,20 @@ fun MainScreen(
         pageCount = { 3 },
     )
     val coroutineScope = rememberCoroutineScope()
+    val loadQuizId by quizCardMainViewModel.loadQuizId.observeAsState()
+    val loadResultId by quizCardMainViewModel.loadResultId.observeAsState()
+
+    LaunchedEffect(loadQuizId){
+        if(loadQuizId != null){
+            loadQuiz(loadQuizId!!)
+        }
+    }
+
+    LaunchedEffect(loadResultId){
+        if(loadResultId != null){
+            loadQuizResult(loadResultId!!)
+        }
+    }
 
     fun updateSelectedTab(index: Int) {
         coroutineScope.launch {

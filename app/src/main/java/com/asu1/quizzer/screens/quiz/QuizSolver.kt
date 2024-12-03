@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
@@ -41,9 +43,16 @@ fun QuizSolver(
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
+    val viewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme
+
+    LaunchedEffect(viewModelState) {
+        if(viewModelState == ViewModelState.ERROR){
+            navController.popBackStack()
+        }
+    }
 
     LaunchedEffect(initIndex) {
         snapLayoutInfoProvider.scrollToItem(initIndex)
