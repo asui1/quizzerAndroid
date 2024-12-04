@@ -27,8 +27,8 @@ data class ScoreCard (
     var background: ImageColor = ImageColor(
         imageData = ByteArray(0),
         color = Color.White,
-        color2 = LightColorScheme.secondary,
-        colorGradient = LightColorScheme.tertiary,
+        color2 = Color.White,
+        colorGradient = Color.White,
         state = ImageColorState.COLOR,
         backgroundBase = BackgroundBase.SKY,
         effect = Effect.SNOWFLAKES,

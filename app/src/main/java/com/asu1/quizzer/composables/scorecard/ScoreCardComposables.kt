@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -206,14 +206,10 @@ fun ScoreCardComposable(
         }
     }
     val redded = remember(scoreCard.textColor){
-        scoreCard.textColor.copy(
-            red = (scoreCard.textColor.red + 0.5f).coerceAtMost(1f),
-        )
+        rotateHue(scoreCard.textColor, -30f)
     }
     val greened = remember(scoreCard.textColor){
-        scoreCard.textColor.copy(
-            blue = (scoreCard.textColor.blue + 0.5f).coerceAtMost(1f),
-        )
+        rotateHue(scoreCard.textColor, 30f)
     }
 
     Box(
@@ -280,14 +276,6 @@ fun ScoreCardComposable(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
                             ) {
-                                Text(
-                                    text = stringResource(R.string.your_score_is),
-                                    color = scoreCard.textColor,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                        .zIndex(2f),
-                                )
                                 Text(
                                     text = formattedScore,
                                     style = TextStyle(
@@ -386,7 +374,8 @@ fun PointDistribution(
                 .padding(16.dp)
         ) {
             distribution.forEachIndexed { index, value ->
-                val color = if ((index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()) errorColor else textColor
+                val isSelected = (index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()
+                val color = if (isSelected) errorColor else textColor
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -416,4 +405,33 @@ fun PointDistribution(
             }
         }
     }
+}
+
+fun shiftColor(originalColor: Color): Color {
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(originalColor.toArgb(), hsv)
+
+    // Adjust the hue slightly to get a different color
+    hsv[0] = (hsv[0] + 30) % 360 // Change hue by 30 degrees
+
+    // Optionally, you can also adjust saturation and value (brightness)
+    hsv[1] = (hsv[1] * 0.9f).coerceIn(0f, 1f) // Slightly reduce saturation
+    hsv[2] = (hsv[2] * 1.1f).coerceIn(0f, 1f) // Slightly increase brightness
+
+    val newColorInt = android.graphics.Color.HSVToColor(hsv)
+    return Color(newColorInt)
+}
+
+fun rotateHue(color: Color, degrees: Float): Color {
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(color.toArgb(), hsv)
+
+    // Rotate the hue
+    hsv[0] = (hsv[0] + degrees) % 360
+
+    // Ensure saturation and brightness are not zero
+    if (hsv[1] == 0f) hsv[1] = 0.5f
+    if (hsv[2] == 0f) hsv[2] = 0.5f
+
+    return Color(android.graphics.Color.HSVToColor(hsv))
 }

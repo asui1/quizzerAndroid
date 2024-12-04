@@ -120,6 +120,7 @@ dependencies {
     implementation("androidx.wear.compose:compose-material-core:1.4.0")
     implementation("com.airbnb.android:lottie-compose:6.0.0")
     implementation("com.github.LottieFiles:dotlottie-android:0.4.1")
+    implementation("com.google.android.libraries.places:places:4.1.0")
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))

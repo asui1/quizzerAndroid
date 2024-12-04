@@ -63,7 +63,7 @@ data class ImageColor(
     @Serializable(with = ColorSerializer::class) val colorGradient: Color = Color.Black,
     val state: ImageColorState = ImageColorState.COLOR,
     val backgroundBase: BackgroundBase = BackgroundBase.SKY,
-    val effect: Effect = Effect.SNOWFLAKES,
+    val effect: Effect = Effect.NONE,
     @Serializable(with = ShaderTypeSerializer::class) var shaderType: ShaderType = ShaderType.Brush1,
 ) {
     override fun equals(other: Any?): Boolean {

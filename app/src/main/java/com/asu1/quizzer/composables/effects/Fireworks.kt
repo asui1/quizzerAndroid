@@ -37,7 +37,6 @@ fun Fireworks(
 
     val progress by animateLottieCompositionAsState(
         composition,
-        speed = 1.5f,
         iterations = LottieConstants.IterateForever
     )
 
@@ -47,7 +46,7 @@ fun Fireworks(
                 property = LottieProperty.COLOR_FILTER,
                 value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
                     color.toArgb(),
-                    BlendModeCompat.COLOR
+                    BlendModeCompat.MULTIPLY
                 ),
                 keyPath = arrayOf(
                     "**"

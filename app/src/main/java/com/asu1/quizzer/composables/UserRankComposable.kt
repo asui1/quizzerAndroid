@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,10 +33,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.animations.UserRankAnimation
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.model.userRankSample
 import com.asu1.quizzer.screens.mainScreen.UriImageButton
@@ -50,21 +55,18 @@ fun UserRankComposable(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
-    val minSize = minOf(screenWidth, screenHeight).times(0.3f)
-//    1 -> Color(0xFFFFCC33)
-    val backgroundColor = when(rank){
-        1 -> Color(0xFFFFCC33)
-        2 -> Color(0xFFBCC6CC)
-        3 -> Color(0xFFCE8946)
+    val minSize = remember(screenWidth){
+        minOf(minOf(screenWidth, screenHeight).times(0.2f), 200.dp)
+    }
+    val backgroundColor = when(rank%2){
+        0 -> Color.Transparent
+        1 -> MaterialTheme.colorScheme.surfaceContainerHigh
         else -> Color.Transparent
     }
-    Logger().debug(userRank.profileImageUri)
-    val score = String.format(Locale.US, "%.1f", round(userRank.totalScore * 10) / 10)
     val average = String.format(Locale.US, "%.1f", round(userRank.totalScore / userRank.quizzesSolved * 10) / 10)
     Card(
-        colors = if(backgroundColor != Color.Transparent) CardDefaults.cardColors(containerColor = Color.Transparent) else CardDefaults.cardColors(),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         modifier = Modifier
-            .GlitteringBackground(baseColor = backgroundColor)
             .wrapContentHeight()
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
@@ -74,16 +76,22 @@ fun UserRankComposable(
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = "${rank}.",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.width(24.dp)
+                text = when (rank) {
+                    1 -> "\uD83E\uDD47"
+                    2 -> "\uD83E\uDD48"
+                    3 -> "\uD83E\uDD49"
+                    else -> "${rank}."
+                },
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.width(40.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             UriImageButton(
                 urlToImage = userRank.profileImageUri,
                 modifier = Modifier
                     .size(minSize)
-                    .clip(shape = RoundedCornerShape(8.dp)),
+                    .clip(shape = RoundedCornerShape(16.dp)),
                 nickname = userRank.nickname[0]
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -92,16 +100,17 @@ fun UserRankComposable(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-            ){
+            ) {
                 Text(
                     text = userRank.nickname,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight(700),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = buildString{
+                    text = buildString {
                         append(stringResource(R.string.points))
                         append(userRank.orderScore)
                     },
@@ -109,7 +118,7 @@ fun UserRankComposable(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.average))
@@ -119,17 +128,7 @@ fun UserRankComposable(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = buildString {
-                        append(stringResource(R.string.total_score))
-                        append(score)
-                    },
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.solved_quizzes))
@@ -141,7 +140,6 @@ fun UserRankComposable(
                 )
             }
         }
-
     }
 }
 
@@ -151,15 +149,20 @@ fun UserRankComposableList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(4.dp),
         modifier = modifier.fillMaxSize()
     ) {
+        item{
+            UserRankAnimation(
+                modifier = Modifier.fillMaxWidth().height(100.dp)
+            )
+        }
         items(userRanks.size){index ->
             UserRankComposable(
                 userRank = userRanks[index],
                 rank = index + 1
             )
-            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
@@ -168,55 +171,22 @@ fun UserRankComposableList(
 @Composable
 fun UserRankComposablePreview() {
     val userRank = userRankSample
-    UserRankComposableList(
-        listOf(userRank, userRank, userRank, userRank, userRank)
-    )
-}
-
-fun Modifier.GlitteringBackground(
-    baseColor: Color,
-): Modifier {
-    if(baseColor == Color.Transparent) return this
-    return this
-        .graphicsLayer { alpha = 0.99f } // Enable hardware acceleration
-        .background(
-            shape = RoundedCornerShape(8.dp),
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    baseColor.copy(alpha = 0.9f),
-                    baseColor.copy(alpha = 0.6f),
-                    baseColor.copy(alpha = 0.8f)
-                )
-            )
+    val userRanks = mutableListOf<UserRank>()
+    for (i in 1..20) {
+        userRanks.add(
+            userRank
         )
-        .drawWithCache {
-            onDrawWithContent {
-                drawContent()
-
-                // Overlay with noise-like shimmer
-                val glitterColor = baseColor.copy(alpha = 0.3f)
-                val glitterPaint = Paint().apply {
-                    shader = android.graphics.LinearGradient(
-                        0f,
-                        0f,
-                        size.width,
-                        size.height,
-                        glitterColor.toArgb(),
-                        Color.White
-                            .copy(alpha = 0.1f)
-                            .toArgb(),
-                        android.graphics.Shader.TileMode.MIRROR
-                    )
-                }
-
-                drawRect(
-                    brush = Brush.linearGradient(
-                        listOf(glitterColor, Color.White),
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, size.height)
-                    ),
-                    alpha = 0.2f
-                )
-            }
+    }
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(4.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(userRanks.size){index ->
+            UserRankComposable(
+                userRank = userRanks[index],
+                rank = index + 1
+            )
         }
+    }
 }
