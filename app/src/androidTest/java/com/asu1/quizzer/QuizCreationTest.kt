@@ -145,7 +145,7 @@ class MyComposeTest {
                     testUtils.addQuiz1(quiz, testQuizData.bodyYoutubeLinks[i])
                 }
                 is TestQuiz2 -> {
-                    testUtils.addQuiz2(quiz, activity)
+                    testUtils.addQuiz2(quiz)
                 }
                 is TestQuiz3 -> {
                     testUtils.addQuiz3(quiz, testQuizData.bodyYoutubeLinks[i])

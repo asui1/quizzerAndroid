@@ -52,7 +52,6 @@ fun ShareDialog(
 ){
     val quizUrl = remember(quizId){quizUrlBase + quizId}
     val resultUrl = remember(quizId){resultUrlBase + generateUniqueId(quizId, userName)}
-    val context = LocalContext.current
     val shareLink = if(userName == "Guest") quizUrl else resultUrl
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
@@ -61,11 +60,6 @@ fun ShareDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(
-                MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
             .padding(vertical = 16.dp, horizontal = 24.dp)
     ){
         Text(
@@ -77,28 +71,15 @@ fun ShareDialog(
         )
         Spacer(modifier = Modifier.height(8.dp))
         RowWithShares(
-            onClickShareFaceBook = {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://www.facebook.com/sharer/sharer.php?u=$shareLink")
-                    setPackage("com.facebook.katana")
-                }
-                context.startActivity(intent)
-                onDismiss()
-            },
-            onClickShareX = {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://twitter.com/intent/tweet?url=$shareLink")
-                    setPackage("com.twitter.android")
-                }
-                context.startActivity(intent)
-                onDismiss()
-            },
+            shareLink = shareLink,
+            onDismiss = onDismiss,
             modifier = Modifier
                 .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 8.dp)
                 .clickable {
                     clipboardManager.setText(AnnotatedString(resultUrl))
@@ -158,10 +139,11 @@ fun ShareDialog(
 
 @Composable
 fun RowWithShares(
-    onClickShareFaceBook: () -> Unit = { },
-    onClickShareX: () -> Unit = { },
+    shareLink: String = "",
+    onDismiss: () -> Unit = { },
     modifier: Modifier = Modifier,
 ){
+    val context = LocalContext.current
     LazyRow(
         horizontalArrangement = Arrangement.Start,
         contentPadding = PaddingValues(8.dp),
@@ -170,7 +152,14 @@ fun RowWithShares(
         item{
             IconButtonWithText(
                 text = "Facebook",
-                onClick = onClickShareFaceBook,
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse("https://www.facebook.com/sharer/sharer.php?u=$shareLink")
+                        setPackage("com.facebook.katana")
+                    }
+                    context.startActivity(intent)
+                    onDismiss()
+                },
                 imageVector = Icons.Default.Facebook,
                 iconSize = 40.dp,
             )
@@ -179,7 +168,14 @@ fun RowWithShares(
             IconButtonWithText(
                 resourceId = R.drawable.x_logo,
                 text = "X",
-                onClick = onClickShareX,
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse("https://twitter.com/intent/tweet?url=$shareLink")
+                        setPackage("com.twitter.android")
+                    }
+                    context.startActivity(intent)
+                    onDismiss()
+                },
                 iconSize = 40.dp,
             )
         }

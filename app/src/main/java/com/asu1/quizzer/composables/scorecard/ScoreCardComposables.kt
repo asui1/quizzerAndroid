@@ -407,21 +407,6 @@ fun PointDistribution(
     }
 }
 
-fun shiftColor(originalColor: Color): Color {
-    val hsv = FloatArray(3)
-    android.graphics.Color.colorToHSV(originalColor.toArgb(), hsv)
-
-    // Adjust the hue slightly to get a different color
-    hsv[0] = (hsv[0] + 30) % 360 // Change hue by 30 degrees
-
-    // Optionally, you can also adjust saturation and value (brightness)
-    hsv[1] = (hsv[1] * 0.9f).coerceIn(0f, 1f) // Slightly reduce saturation
-    hsv[2] = (hsv[2] * 1.1f).coerceIn(0f, 1f) // Slightly increase brightness
-
-    val newColorInt = android.graphics.Color.HSVToColor(hsv)
-    return Color(newColorInt)
-}
-
 fun rotateHue(color: Color, degrees: Float): Color {
     val hsv = FloatArray(3)
     android.graphics.Color.colorToHSV(color.toArgb(), hsv)

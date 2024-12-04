@@ -228,9 +228,9 @@ fun DesignScoreCardScreen(
                     FastCreateDropDown(
                         showDropdownMenu = showEffectDropdown,
                         labelText = stringResource(R.string.effects),
-                        onClick = {index ->
+                        onClick = {dropdownIndex ->
                             showEffectDropdown = false
-                            scoreCardViewModel.updateEffect(Effect.entries[index])
+                            scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
                         },
                         onChangeDropDown = { showEffectDropdown = it },
                         inputItems = remember{ Effect.entries.map { it.stringId }},
@@ -245,9 +245,9 @@ fun DesignScoreCardScreen(
                     FastCreateDropDown(
                         showDropdownMenu = showGradientDropdown,
                         labelText = stringResource(R.string.gradient),
-                        onClick = {index ->
+                        onClick = {dropdownIndex ->
                             showGradientDropdown = false
-                            scoreCardViewModel.updateShaderType(ShaderType.entries[index])
+                            scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
                         },
                         onChangeDropDown = { showGradientDropdown = it },
                         inputItems = remember{ ShaderType.entries.map { it.shaderName }},

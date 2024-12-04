@@ -205,7 +205,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                             quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
                         },
                         colorScheme = quizTheme.colorScheme,
-                        proceed = {proceed()},
                     )
                     // Set Text Setting
                 }

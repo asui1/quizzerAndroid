@@ -70,7 +70,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     // CURRENT CODE NEEDS answerDate to be on screen. No swiping around.
-    fun addQuiz2(quiz: TestQuiz2, activity: MainActivity){
+    fun addQuiz2(quiz: TestQuiz2){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
         clickOnTag("YearMonthDropDownMonthText")
@@ -128,6 +128,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun setImage(context: Context, packageName: String, image: Int, onImagePicked: (ByteArray) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
         val mockRegistry = object : ActivityResultRegistry() {
             override fun <I : Any?, O : Any?> onLaunch(

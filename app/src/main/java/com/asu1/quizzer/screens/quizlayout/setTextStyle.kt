@@ -44,7 +44,6 @@ fun QuizLayoutSetTextStyle(
     answerStyle: List<Int> = listOf(0, 0, 0, 2),
     updateStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
-    proceed: () -> Unit = {},
     ) {
     Column(
         modifier = Modifier

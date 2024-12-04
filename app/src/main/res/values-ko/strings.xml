@@ -130,7 +130,7 @@
     <string name="question">질문, ABC</string>
     <string name="body">예제, ABC</string>
     <string name="enter_quiz_title">제목을 입력하세요</string>
-    <string name="set_quiz_image_80_kb">표지 설정 (80 kb)</string>
+    <string name="set_quiz_image_80_kb">표지 (80 kb)</string>
     <string name="inquiry_sent_successfully">문의를 전달했습니다.</string>
     <string name="failed_to_send_inquiry">문의를 보내지 못했습니다.</string>
     <string name="failed_to_load_quiz_result">퀴즈 결과를 불러오지 못했습니다.</string>

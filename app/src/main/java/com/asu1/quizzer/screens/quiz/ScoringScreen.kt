@@ -28,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +49,6 @@ import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleQuizLayoutViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +88,7 @@ fun ScoringScreen(
     ) {
         if(showShareBottomSheet) {
             ModalBottomSheet(onDismissRequest = {showShareBottomSheet = false },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.imePadding()
             ) {
                 ShareDialog(

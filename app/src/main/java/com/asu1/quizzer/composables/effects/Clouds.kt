@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -53,6 +54,9 @@ fun Clouds(
             progress = { progress },
             dynamicProperties = dynamicProperties,
             modifier = modifier.fillMaxSize().background(Color.Transparent)
+                .graphicsLayer {
+                    translationX = -200f
+                }
         )
     }
 
