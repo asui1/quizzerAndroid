@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DismissState
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -36,7 +35,6 @@ import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoadMyQuiz(
     navController: NavController,
@@ -45,10 +43,6 @@ fun LoadMyQuiz(
     email: String = "",
 ) {
     val quizList by quizLoadViewModel.myQuizList.observeAsState()
-    var showDialog by remember { mutableStateOf(false) }
-    var deleteIndex by remember { mutableStateOf(-1) }
-    val dismissStates = remember { mutableStateMapOf<String, DismissState>() }
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -83,39 +77,14 @@ fun LoadMyQuiz(
                     onLoadQuiz = { index ->
                         onLoadQuiz(index)
                     },
-                    getOrPutDismiss = { id, index->
-                        dismissStates.getOrPut(id) {
-                            rememberDismissState(
-                                confirmStateChange = {
-                                    if (it == DismissValue.DismissedToStart) {
-                                        deleteIndex = index
-                                        showDialog = true
-                                    }
-                                    true
-                                }
-                            )
-                        }
-                    },
+                    deleteQuiz = {deleteIndex ->
+                        quizLoadViewModel.deleteMyQuiz(deleteIndex, email)
+                    }
                 )
             }
         }
     }
 
-    if (showDialog) {
-        LazyColumnSwipeToDismissDialog(
-            quizList = quizList ?: mutableListOf(),
-            deleteIndex = deleteIndex,
-            onDelete = {index ->
-                quizLoadViewModel.deleteMyQuiz(deleteIndex, email)
-            },
-            updateDialog = { showDialog = it },
-            resetDismiss = { uuid ->
-                scope.launch {
-                    dismissStates[uuid]?.reset()
-                }
-            }
-        )
-    }
 }
 
 fun getSampleMyQuizLoadViewModel(): QuizLoadViewModel{
@@ -126,7 +95,7 @@ fun getSampleMyQuizLoadViewModel(): QuizLoadViewModel{
 
 @Preview(showBackground = true)
 @Composable
-fun loadMyQuizPreview(){
+fun LoadMyQuizPreview(){
     val quizLoadViewModel = getSampleMyQuizLoadViewModel()
     LoadMyQuiz(
         navController = rememberNavController(),

@@ -27,6 +27,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,7 +93,7 @@ fun MainScreen(
     val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
     val quizTrends by quizCardMainViewModel.quizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.userRanks.collectAsStateWithLifecycle()
-    var backPressedTime by remember { mutableStateOf(0L) }
+    var backPressedTime by remember { mutableLongStateOf(0L) }
     val userData by loginActivityState.userData
     val isUserLoggedIn by loginActivityState.isUserLoggedIn
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}

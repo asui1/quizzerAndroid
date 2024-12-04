@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,7 +81,7 @@ fun QuizBuilderScreen(navController: NavController,
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
-    var curIndex by remember{mutableStateOf(0)}
+    var curIndex by remember{ mutableIntStateOf(0) }
     val screenWidthHalf = LocalConfiguration.current.screenWidthDp.dp/2
     val padding = screenWidthHalf - 150.dp
     val snapLayoutInfoProvider = rememberLazyListState()

@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,7 +71,7 @@ fun DesignScoreCardScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
-    var colorChange by remember{ mutableStateOf(0)}
+    var colorChange by remember{ mutableIntStateOf(0) }
     var showEffectDropdown by remember { mutableStateOf(false) }
     var showGradientDropdown by remember { mutableStateOf(false) }
     var showTextColorPicker by remember { mutableStateOf(false) }

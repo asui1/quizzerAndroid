@@ -9,18 +9,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,13 +38,32 @@ import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.model.QuizCard
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LazyColumnWithSwipeToDismiss(
     quizList: List<QuizCard>,
     onLoadQuiz: (Int) -> Unit,
-    getOrPutDismiss: @Composable (String, Int) -> DismissState,
+    deleteQuiz: (Int) -> Unit = {},
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var deleteIndex by remember { mutableIntStateOf(-1) }
+    val dismissStates = remember { mutableStateMapOf<String, SwipeToDismissBoxState>() }
+    val scope = rememberCoroutineScope()
+
+    @Composable
+    fun getOrPutDismiss(uuid: String, index: Int): SwipeToDismissBoxState {
+        return dismissStates.getOrPut(uuid) {
+            rememberSwipeToDismissBoxState(
+                confirmValueChange = {
+                    if (it == SwipeToDismissBoxValue.EndToStart) {
+                        deleteIndex = index
+                        showDialog = true
+                    }
+                    true
+                }
+            )
+        }
+    }
+
     LazyColumn(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
@@ -66,13 +90,11 @@ fun LazyColumnWithSwipeToDismiss(
             items(quizList.size) { index ->
                 val quizCard = quizList[index]
                 val currentDismissState = getOrPutDismiss(quizCard.id, index)
-                SwipeToDismiss(
+                SwipeToDismissBox(
                     state = currentDismissState,
-                    directions = setOf(DismissDirection.EndToStart),
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    background = {
+                    backgroundContent =  {
                         val color = when (currentDismissState.dismissDirection) {
-                            DismissDirection.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
+                            SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
                             else -> Color.Transparent
                         }
                         Box(
@@ -89,7 +111,9 @@ fun LazyColumnWithSwipeToDismiss(
                             )
                         }
                     },
-                    dismissContent = {
+                    enableDismissFromStartToEnd = false,
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    content = {
                         QuizCardHorizontal(
                             quizCard = quizCard,
                             onClick = {
@@ -101,9 +125,23 @@ fun LazyColumnWithSwipeToDismiss(
             }
         }
     }
+    if (showDialog) {
+        LazyColumnSwipeToDismissDialog(
+            quizList = quizList,
+            deleteIndex = deleteIndex,
+            onDelete = {
+                deleteQuiz(deleteIndex)
+            },
+            updateDialog = { showDialog = it },
+            resetDismiss = { uuid ->
+                scope.launch {
+                    dismissStates[uuid]?.reset()
+                }
+            }
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Preview(showBackground = true)
 @Composable
 fun LazyColumnWithSwipeToDismissPreview() {
@@ -125,15 +163,9 @@ fun LazyColumnWithSwipeToDismissPreview() {
             count = 0,
         ),
     )
-    val dismissStates = SnapshotStateMap<String, DismissState>()
     LazyColumnWithSwipeToDismiss(
         quizList = quizList,
         onLoadQuiz = {},
-        getOrPutDismiss = { uuid, index ->
-            dismissStates.getOrPut(uuid) {
-                rememberDismissState()
-            }
-        }
     )
 }
 
@@ -141,7 +173,7 @@ fun LazyColumnWithSwipeToDismissPreview() {
 fun LazyColumnSwipeToDismissDialog(
     quizList: List<QuizCard>,
     deleteIndex: Int,
-    onDelete: (Int) -> Unit,
+    onDelete: () -> Unit,
     updateDialog: (Boolean) -> Unit,
     resetDismiss: (String) -> Unit,
 ){
@@ -153,7 +185,7 @@ fun LazyColumnSwipeToDismissDialog(
             val uuid = quizList[deleteIndex].id
             scope.launch {
                 resetDismiss(uuid)
-                onDelete(deleteIndex)
+                onDelete()
             }
             updateDialog(false)
         },

@@ -4,10 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DismissState
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,11 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,22 +22,19 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizzer.composables.quizcards.LazyColumnSwipeToDismissDialog
 import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
-import kotlinx.coroutines.launch
 import java.util.Base64
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoadItems(
     navController: NavController,
     quizLoadViewModel: QuizLoadViewModel = viewModel(),
-    onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { quizData, quizTheme, scoreCard -> },
+    onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { _, _, _ -> },
 ) {
     val quizSerializerList by quizLoadViewModel.quizList.collectAsStateWithLifecycle()
     val quizList = quizSerializerList?.map{
@@ -60,10 +48,6 @@ fun LoadItems(
         )
     } ?: emptyList()
     val loadComplete by quizLoadViewModel.loadComplete.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
-    var deleteIndex by remember { mutableStateOf(-1) }
-    val dismissStates = remember { mutableStateMapOf<String, DismissState>() }
 
     LaunchedEffect(loadComplete) {
         if (loadComplete) {
@@ -109,38 +93,12 @@ fun LoadItems(
                             quizLayout.scoreCard
                         )
                     },
-                    getOrPutDismiss = { id, index->
-                        dismissStates.getOrPut(id) {
-                            rememberDismissState(
-                                confirmStateChange = {
-                                    if (it == DismissValue.DismissedToStart) {
-                                        deleteIndex = index
-                                        showDialog = true
-                                    }
-                                    true
-                                }
-                            )
-                        }
-                    }
+                    deleteQuiz = { deleteIndex ->
+                        quizLoadViewModel.deleteLocalQuiz(deleteIndex)
+                    },
                 )
             }
         }
-    }
-
-    if (showDialog) {
-        LazyColumnSwipeToDismissDialog(
-            quizList = quizList,
-            deleteIndex = deleteIndex,
-            onDelete = {index ->
-                quizLoadViewModel.deleteLocalQuiz(deleteIndex)
-            },
-            updateDialog = { showDialog = it },
-            resetDismiss = { uuid ->
-                scope.launch {
-                    dismissStates[uuid]?.reset()
-                }
-            }
-        )
     }
 }
 
@@ -153,7 +111,7 @@ fun getSampleQuizLoadViewModel(): QuizLoadViewModel{
 
 @Preview(showBackground = true)
 @Composable
-fun loadItemsPreview(){
+fun LoadItemsPreview(){
     val quizLoadViewModel = getSampleQuizLoadViewModel()
     LoadItems(
         navController = rememberNavController(),

@@ -141,7 +141,7 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
             modifier = Modifier.width(250.dp),
         ) {
             Image(
-                painter = painterResource(id = R.drawable.android_neutral_rd_si), // Replace with your drawable resource
+                painter = painterResource(id = R.drawable.android_neutral_rd_si),
                 contentDescription = "Sign in with Google",
                 modifier = Modifier
                     .width(250.dp)

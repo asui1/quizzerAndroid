@@ -114,9 +114,11 @@ fun Quiz3Viewer(
                                 modifier = Modifier.draggableHandle(
                                     enabled = !isPreview,
                                     onDragStarted = {
-                                        view.performHapticFeedback(HapticFeedbackConstants.DRAG_START)
+                                        if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
+                                        view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
                                     },
                                     onDragStopped = {
+                                        if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
                                         view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
                                     },
                                 ),
