@@ -46,13 +46,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Fireworks
 import com.asu1.quizzer.composables.effects.GradientBrush
-import com.asu1.quizzer.composables.effects.WithMoon
-import com.asu1.quizzer.composables.effects.WithShootingStar
-import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Snowflake
 import com.asu1.quizzer.composables.effects.WithFlowers
+import com.asu1.quizzer.composables.effects.WithMoon
+import com.asu1.quizzer.composables.effects.WithShootingStar
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.Effect

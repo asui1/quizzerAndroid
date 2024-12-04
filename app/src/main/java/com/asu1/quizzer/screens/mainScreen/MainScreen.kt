@@ -49,9 +49,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
-import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.composables.animations.ScoringAnimation
-import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.mainscreen.DrawerContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar

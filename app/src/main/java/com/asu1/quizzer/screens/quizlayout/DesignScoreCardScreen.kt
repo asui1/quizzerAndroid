@@ -3,7 +3,6 @@ package com.asu1.quizzer.screens.quizlayout
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,11 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material.icons.filled.ImageSearch
@@ -35,9 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +50,6 @@ import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
 import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel

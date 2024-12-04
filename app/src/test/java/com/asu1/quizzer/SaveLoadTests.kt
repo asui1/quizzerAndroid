@@ -1,9 +1,7 @@
 package com.asu1.quizzer
 
-import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3

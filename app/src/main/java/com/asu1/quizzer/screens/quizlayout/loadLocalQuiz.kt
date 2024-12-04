@@ -30,9 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.composables.quizcards.LazyColumnSwipeToDismissDialog
 import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
-import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard

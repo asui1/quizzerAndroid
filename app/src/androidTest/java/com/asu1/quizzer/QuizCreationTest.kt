@@ -10,7 +10,6 @@ import com.asu1.quizzer.datacreation.fakertestData
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 

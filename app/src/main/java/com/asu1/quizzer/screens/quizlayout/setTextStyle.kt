@@ -28,8 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.base.Flipper
 import com.asu1.quizzer.composables.GetTextStyle
+import com.asu1.quizzer.composables.base.Flipper
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 val fonts = listOf("Gothic A1", "Noto Sans", "Maruburi", "Spoqahans", "EF-diary", "Ongle-Yunue", "Ongle-Eyeon")

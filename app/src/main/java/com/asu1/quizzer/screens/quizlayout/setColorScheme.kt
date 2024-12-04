@@ -27,10 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -56,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.ColorPicker
 import com.asu1.quizzer.composables.base.ColorSchemeSheet
-import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState

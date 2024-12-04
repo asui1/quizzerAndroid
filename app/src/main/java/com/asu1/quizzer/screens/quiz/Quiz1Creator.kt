@@ -37,7 +37,6 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
-import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel

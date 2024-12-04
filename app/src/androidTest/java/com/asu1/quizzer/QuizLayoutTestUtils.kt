@@ -22,7 +22,6 @@ import androidx.test.espresso.Espresso.onIdle
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
-import kotlin.random.Random
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 

@@ -23,9 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.composables.animations.ScoringAnimation
-import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
 import com.asu1.quizzer.model.getSampleQuizCard

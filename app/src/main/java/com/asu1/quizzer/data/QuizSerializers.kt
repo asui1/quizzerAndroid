@@ -1,7 +1,6 @@
 package com.asu1.quizzer.data
 
 import androidx.compose.ui.geometry.Offset
-import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.model.Quiz1
 import com.asu1.quizzer.model.Quiz2
@@ -10,7 +9,6 @@ import com.asu1.quizzer.model.Quiz4
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonClassDiscriminator
 import kotlinx.serialization.modules.SerializersModule
@@ -19,7 +17,6 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import java.time.LocalDate
 import java.time.YearMonth
-import java.util.Base64
 
 val quizSerializersModule = SerializersModule {
     polymorphic(QuizJson::class) {
