@@ -80,8 +80,8 @@ fun DesignScoreCardScreen(
 ) {
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = (configuration.screenWidthDp.dp).coerceAtMost(screenHeight/2)
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
     var colorChange by remember{ mutableIntStateOf(0) }
     var showEffectDropdown by remember { mutableStateOf(false) }

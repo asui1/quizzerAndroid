@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
+import com.asu1.quizzer.model.getSampleQuizCardList
 
 @Composable
 fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -48,21 +50,12 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
             .wrapContentHeight()
     ){
         HorizontalPager(
-            pageSize = object : PageSize {
-                override fun Density.calculateMainAxisPageSize(
-                    availableSpace: Int,
-                    pageSpacing: Int
-                ): Int {
-                    return ((availableSpace - 2 * pageSpacing) * 0.95f).toInt()
-                }
-            },
             pageSpacing = 4.dp,
             state = listState,
             key = {index -> quizCards[index].id},
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                .wrapContentHeight(),
         ) { page ->
             QuizCardLarge(quizCards[page], onClick)
         }
@@ -82,11 +75,12 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
     val screenHeight = remember{configuration.screenHeightDp.dp}
     val minSize = minOf(screenWidth, screenHeight).times(0.55f)
     Card(
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
         modifier = modifier
             .wrapContentHeight()
             .fillMaxWidth()
+            .padding(4.dp)
             .clickable { onClick(quizCard.id) }
     ) {
         Row(modifier = Modifier) {
@@ -97,7 +91,7 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
                     .size(minSize) // Square shape
                     .clip(RoundedCornerShape(8.dp))
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(4.dp))
             Column(modifier = Modifier
                 .padding(top = 4.dp)
                 .height(minSize - 4.dp),
@@ -109,13 +103,14 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.creator,
                     style = MaterialTheme.typography.labelSmall,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(2f))
                 TagsView(
                     tags = quizCard.tags,
                     modifier = Modifier
@@ -124,7 +119,7 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
                         .padding(horizontal = 4.dp),
                     maxLines = 2
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(2f))
                 Text(
                     text = quizCard.description,
                     style = MaterialTheme.typography.bodySmall,
@@ -137,11 +132,11 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
 }
 
 
-@Preview(name = "QuizCardLarge Preview")
+@Preview(showBackground = true)
 @Composable
 fun QuizCardLargePreview() {
-    val quizCard = getSampleQuizCard()
+    val quizCards = getSampleQuizCardList()
 
-    HorizontalQuizCardItemLarge(quizCards = listOf(quizCard, quizCard, quizCard))
+    HorizontalQuizCardItemLarge(quizCards = quizCards)
 }
 

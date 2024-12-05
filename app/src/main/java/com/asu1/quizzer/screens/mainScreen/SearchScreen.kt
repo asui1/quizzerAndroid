@@ -50,12 +50,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalList
+import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
+import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
+import com.asu1.quizzer.model.getSampleQuizCardList
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.SearchViewModel
 
 @Composable
-fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
+fun  SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
                  onQuizClick: (quizId: String) -> Unit = {}, searchText: String = "") {
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
@@ -107,7 +110,7 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {
-                        QuizCardHorizontalList(
+                        QuizCardHorizontalVerticalShareList(
                             quizCards = searchResult ?: emptyList(),
                             onClick = {
                                 searchViewModel.reset()
@@ -125,9 +128,9 @@ fun SearchScreen(navController: NavHostController, searchViewModel: SearchViewMo
 @Composable
 fun PreviewSearchScreen(){
     val searchViewModel: SearchViewModel = viewModel()
-    val quizCard = getSampleQuizCard()
+    val quizCards = getSampleQuizCardList()
     searchViewModel.setSearchResult(
-        listOf(quizCard, quizCard, quizCard, quizCard, quizCard)
+        quizCards
     )
 
     QuizzerAndroidTheme {

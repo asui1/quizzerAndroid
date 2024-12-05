@@ -56,22 +56,19 @@ fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) 
 }
 
 @Composable
-fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier:Modifier = Modifier) {
+fun QuizCardItemVertical(quizCard: QuizCard,
+                         onClick: (String) -> Unit = {},
+                         modifier:Modifier = Modifier
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = remember{configuration.screenWidthDp.dp / 3}
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .wrapContentHeight()
             .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface,
-                shape = RoundedCornerShape(8.dp)
-            )
     ) {
         Column(modifier = Modifier
             .wrapContentHeight()
@@ -108,6 +105,13 @@ fun QuizCardItemVertical(quizCard: QuizCard, onClick: (String) -> Unit = {}, mod
             )
         }
     }
+}
+
+@Composable
+fun QuizCardHorizontalWithSharedTransition(
+
+){
+
 }
 
 @Preview(name = "QuizCardItemVertical Preview", showBackground = true)

@@ -67,11 +67,10 @@ fun ScoringScreen(
 ) {
     val quizResult by quizLayoutViewModel.quizResult.collectAsStateWithLifecycle()
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = (configuration.screenWidthDp.dp).coerceAtMost(screenHeight/2)
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
-    val scoreCardViewModelState by scoreCardViewModel.viewModelState.observeAsState()
     var showShareBottomSheet by remember{ mutableStateOf(false) }
 
     LaunchedEffect(quizLayoutViewModelState){
@@ -176,7 +175,7 @@ fun ScoringScreen(
                     },
                     modifier = Modifier
                         .height(height = 36.dp)
-                        .weight(1f)
+                        .weight(2f)
                 ) {
                     Text(
                         text = stringResource(R.string.move_home),

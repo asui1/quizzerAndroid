@@ -222,18 +222,7 @@ private fun LoginBody(
     }
 }
 
-@Composable
-fun getLoginActivityState(): LoginActivityState {
-    return LoginActivityState(
-        isUserLoggedIn = rememberSaveable { mutableStateOf(false) },
-        userData = rememberSaveable  { mutableStateOf(emptyUserDataTest) },
-        login = { _, _ -> },
-        logout = { },
-        signout = { },
-    )
-}
-
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
     QuizzerAndroidTheme {

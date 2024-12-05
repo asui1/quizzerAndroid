@@ -31,17 +31,20 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.getSampleQuizCard
+import com.asu1.quizzer.model.getSampleQuizCardList
 
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
     val configuration = LocalConfiguration.current
     val screenWidth = remember{configuration.screenWidthDp.dp}
     val screenHeight = remember{configuration.screenHeightDp.dp}
-    val minSize = remember{minOf(screenWidth, screenHeight).times(0.4f)}
+    val minSize = remember{minOf(screenWidth, screenHeight).times(0.45f).coerceAtMost(400.dp)}
     val borderColor = MaterialTheme.colorScheme.onSurface
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -50,16 +53,7 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                val y = size.height - strokeWidth / 2
-                drawLine(
-                    color = borderColor,
-                    start = Offset(size.width * 0.05f, y),
-                    end = Offset(size.width * 0.95f, y),
-                    strokeWidth = strokeWidth
-                )
-            }
+            .drawUnderBar(borderColor)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -70,71 +64,82 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(end = 8.dp)
             )
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ){
-                Row(){
-                    QuizImage(
-                        uuid = quizCard.id,
-                        title = quizCard.title,
-                        modifier = Modifier
-                            .size(minSize) // Square shape
-                            .clip(RoundedCornerShape(8.dp))
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column(modifier = Modifier
-                        .height(minSize),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = quizCard.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 3,
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = quizCard.creator,
-                            style = MaterialTheme.typography.labelMedium,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 3,
-                        )
-                        Spacer(modifier = Modifier.weight(2f))
-                        TagsView(
-                            tags = quizCard.tags,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(32.dp)
-                                .padding(horizontal = 4.dp),
-                            maxLines = 3,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = buildString {
-                                append(stringResource(R.string.solved))
-                                append(quizCard.count)
-                            },
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
+            VerticalQuizCardLargeBody(quizCard, minSize){
+                QuizImage(
+                    uuid = quizCard.id,
+                    title = quizCard.title,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                    text = quizCard.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    minLines = 1,
-                    maxLines = 6,
+                        .size(minSize)
+                        .clip(RoundedCornerShape(8.dp))
                 )
             }
         }
+    }
+}
 
+@Composable
+fun VerticalQuizCardLargeBody(
+    quizCard: QuizCard,
+    minSize: Dp,
+    imageComposable: @Composable () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Row() {
+            imageComposable()
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(
+                modifier = Modifier
+                    .height(minSize),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = quizCard.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = quizCard.creator,
+                    style = MaterialTheme.typography.labelMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3,
+                )
+                Spacer(modifier = Modifier.weight(2f))
+                TagsView(
+                    tags = quizCard.tags,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp)
+                        .padding(horizontal = 4.dp),
+                    maxLines = 3,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = buildString {
+                        append(stringResource(R.string.solved))
+                        append(quizCard.count)
+                    },
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            text = quizCard.description,
+            style = MaterialTheme.typography.bodySmall,
+            minLines = 1,
+            maxLines = 6,
+        )
     }
 }
 
@@ -159,13 +164,7 @@ fun VerticalQuizCardLargeColumn(quizCards: List<QuizCard>, onClick: (String) -> 
 @Preview(showBackground = true)
 @Composable
 fun VerticalQuizCardLargePreview() {
-    val quizCard = getSampleQuizCard()
-    val quizCards = mutableListOf<QuizCard>()
-    for (i in 1..3) {
-        quizCards.add(
-            quizCard.copy(id = i.toString())
-        )
-    }
+    val quizCards = getSampleQuizCardList()
     VerticalQuizCardLargeColumn(quizCards, {})
 }
 

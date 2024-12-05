@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,8 +52,9 @@ fun HomeScreen(
         ) { index ->
             Text(
                 text = remember{if(isKo) changeTagToText(quizCards[index].tag) else quizCards[index].tag},
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                style = MaterialTheme.typography.headlineSmall
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
             )
             if (index == 0) {
                 HorizontalQuizCardItemLarge(quizCards = quizCards[index].quizCards,

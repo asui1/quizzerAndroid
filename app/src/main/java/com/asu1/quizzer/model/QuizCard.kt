@@ -72,3 +72,13 @@ fun getSampleQuizCard(): QuizCard {
         description = "This is a sample quiz card. Please check how this is shown on screen."
     )
 }
+
+@Composable
+fun getSampleQuizCardList(): List<QuizCard> {
+    val sampleCard = getSampleQuizCard()
+    val cards = mutableListOf<QuizCard>()
+    for(i in 1 until 5){
+        cards.add(sampleCard.copy(id = i.toString()))
+    }
+    return cards
+}
