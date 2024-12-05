@@ -173,7 +173,6 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable<Route.Init> {
                                 InitializationScreen(
-                                    navController,
                                     navigateToHome = {
                                         getHome(
                                             fetchData = false  // FOR DEBUG MODES

@@ -117,8 +117,8 @@ fun ScoringScreen(
                 )
             } else {
                 ScoreCardComposable(
-                    width = screenWidth * 0.85f,
-                    height = screenHeight * 0.85f,
+                    width = screenWidth,
+                    height = screenHeight * 0.9f,
                     scoreCard = scoreCard,
                     quizResult = quizResult!!
                 )

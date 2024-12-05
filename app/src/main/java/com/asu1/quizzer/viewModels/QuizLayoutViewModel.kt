@@ -302,7 +302,9 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun tryUpload(navController: NavController, scoreCard: ScoreCard, onUpload: () -> Unit) {
+        _viewModelState.value = ViewModelState.UPLOADING
         if(!validateQuizLayout()){
+            _viewModelState.postValue(ViewModelState.IDLE)
             navController.popBackStack()
             return
         }
@@ -318,23 +320,28 @@ class QuizLayoutViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         ToastManager.showToast(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
                         onUpload()
+                        _viewModelState.postValue(ViewModelState.IDLE)
                     } else {
+                        _viewModelState.postValue(ViewModelState.IDLE)
                         val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
                         Logger().debug("Failed to upload quiz: $errorMessage")
                         ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }
             } catch (e: Exception) {
+                _viewModelState.postValue(ViewModelState.IDLE)
                 ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
             }
         }
     }
 
     suspend fun saveLocal(context: Context, scoreCard: ScoreCard) {
+        _viewModelState.postValue(ViewModelState.LOADING)
         val jsoned = Json.encodeToString(toJson(scoreCard))
         val fileName = "${quizData.value.uuid}_${quizData.value.creator}_quizSave.json"
         val file = File(context.filesDir, fileName)
         file.writeText(jsoned)
+        _viewModelState.postValue(ViewModelState.IDLE)
         ToastManager.showToast(R.string.save_success, ToastType.SUCCESS)
     }
 

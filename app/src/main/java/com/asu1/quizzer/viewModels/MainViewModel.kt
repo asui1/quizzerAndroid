@@ -42,7 +42,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     val currentVersion = currentVersionDeferred.await()
 
                     if (response.isSuccessful && response.body() != null && response.body()?.latestVersion != null) {
-                        if (isUpdateNeeded(response.body()!!.latestVersion, currentVersion)) {
+                        val latestVersion = response.body()?.latestVersion ?: ""
+                        if (isUpdateNeeded(latestVersion, currentVersion ?: "1.0.0")) {
                             _isUpdateAvailable.postValue(true)
                         } else {
                             _isUpdateAvailable.postValue(false)

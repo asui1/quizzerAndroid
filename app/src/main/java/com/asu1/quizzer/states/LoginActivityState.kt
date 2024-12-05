@@ -17,7 +17,6 @@ data class LoginActivityState(
 )
 
 //KEEP STATE FOR LOGIN ACTIVITY TO USE USERVIEWMODEL AS ANDROIDVIEWMODEL
-//
 @Composable
 fun rememberLoginActivityState(
     userViewModel: UserViewModel = viewModel(),

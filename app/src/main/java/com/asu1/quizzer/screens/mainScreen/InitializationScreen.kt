@@ -3,25 +3,29 @@ package com.asu1.quizzer.screens.mainScreen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.composables.LoadComposable
 import com.asu1.quizzer.composables.UpdateDialog
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
-fun InitializationScreen(navHostController: NavHostController, initViewModel: MainViewModel = viewModel(),
+fun InitializationScreen(initViewModel: MainViewModel = viewModel(),
                          navigateToHome: () -> Unit = {},
                          ) {
     val isUpdateAvailable by initViewModel.isUpdateAvailable.observeAsState(null)
 
     when (isUpdateAvailable) {
         null -> {
-            LoadComposable()
+            LoadingAnimation()
         }
         true -> UpdateDialog(
             onUpdate = { redirectToPlayStore(it) },
@@ -38,5 +42,6 @@ private fun redirectToPlayStore(context: Context) {
         data = Uri.parse("https://play.google.com/store/apps/details?id=com.asu1.quizzer")
         setPackage("com.android.vending")
     }
+    // TODO: START ACTIVITY DEPRECATED
     ContextCompat.startActivity(context, intent, null)
 }

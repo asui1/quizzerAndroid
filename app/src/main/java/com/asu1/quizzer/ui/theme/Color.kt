@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.asu1.quizzer.ui.theme
 
 import androidx.compose.ui.graphics.Color

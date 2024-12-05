@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
@@ -19,7 +21,10 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 fun LoadingAnimation(modifier: Modifier = Modifier, size: Dp = 200.dp) {
     val assetPath = if(isSystemInDarkTheme()) "load_dark.lottie" else "load_light.lottie"
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .pointerInput(Unit) { }
+            .zIndex(2f)
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         DotLottieAnimation(

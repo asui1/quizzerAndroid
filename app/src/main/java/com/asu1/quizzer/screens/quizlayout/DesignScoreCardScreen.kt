@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.ColorLens
@@ -25,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,11 +48,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.base.FastCreateDropDown
 import com.asu1.quizzer.composables.base.IconButtonWithText
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -77,6 +83,7 @@ fun DesignScoreCardScreen(
     var showTextColorPicker by remember { mutableStateOf(false) }
     var showImagePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
 
     MaterialTheme(
         colorScheme = scoreCard.colorScheme
@@ -148,7 +155,6 @@ fun DesignScoreCardScreen(
                         height = screenHeight,
                     )
                 }
-
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -156,10 +162,9 @@ fun DesignScoreCardScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Spacer(modifier = Modifier.weight(1f))
                 ScoreCardComposable(
-                    width = screenWidth * 0.85f,
-                    height = screenHeight * 0.85f,
+                    width = screenWidth,
+                    height = screenHeight * 0.9f,
                     scoreCard = scoreCard,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -194,81 +199,86 @@ fun DesignScoreCardScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }
-        }
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 4.dp)
-        ){
-            val iconSize = 32.dp
-            IconButtonWithText(
-                imageVector = Icons.Default.FormatColorText,
-                text = stringResource(R.string.text_color),
-                onClick = {
-                    showTextColorPicker = true
-                },
-                description = "Set Text Color For ScoreCard",
-                modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
-                iconSize = iconSize,
-            )
-            IconButtonWithText(
-                imageVector = Icons.Default.ImageSearch,
-                text = stringResource(R.string.background_newline),
-                onClick = {
-                    showImagePicker = true
-                },
-                description = "Set Background Image For ScoreCard",
-                modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
-                iconSize = iconSize,
-            )
-            colorNames.forEachIndexed { index, colorName ->
-                if(colorName == R.string.effect){
-                    FastCreateDropDown(
-                        showDropdownMenu = showEffectDropdown,
-                        labelText = stringResource(R.string.effects),
-                        onClick = {dropdownIndex ->
-                            showEffectDropdown = false
-                            scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
-                        },
-                        onChangeDropDown = { showEffectDropdown = it },
-                        inputItems = remember{ Effect.entries.map { it.stringId }},
-                        imageVector = Icons.Filled.Animation,
-                        modifier = Modifier.width(iconSize * 1.7f),
-                        testTag = "DesignScoreCardAnimationButton",
-                        iconSize = iconSize,
-                        currentSelection = scoreCard.background.effect.ordinal
-                    )
-                }
-                else if(colorName == R.string.gradient){
-                    FastCreateDropDown(
-                        showDropdownMenu = showGradientDropdown,
-                        labelText = stringResource(R.string.gradient),
-                        onClick = {dropdownIndex ->
-                            showGradientDropdown = false
-                            scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
-                        },
-                        onChangeDropDown = { showGradientDropdown = it },
-                        inputItems = remember{ ShaderType.entries.map { it.shaderName }},
-                        imageVector = Icons.Filled.Gradient,
-                        modifier = Modifier.width(iconSize * 1.7f),
-                        testTag = "DesignScoreCardShaderButton",
-                        iconSize = iconSize,
-                        currentSelection = scoreCard.background.shaderType.index
-                    )
-                }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                modifier = Modifier
+                    .wrapContentSize()
+                    .align(Alignment.CenterEnd)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(4.dp))
+                    .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
+            ){
+                val iconSize = 32.dp
                 IconButtonWithText(
-                    imageVector = Icons.Default.ColorLens,
-                    text = stringResource(colorName),
+                    imageVector = Icons.Default.FormatColorText,
+                    text = stringResource(R.string.text_color),
                     onClick = {
-                        colorChange = index
-                        showScoreCardColorPicker = true
+                        showTextColorPicker = true
                     },
-                    description = "Set Color For ScoreCard",
-                    modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
+                    description = "Set Text Color For ScoreCard",
+                    modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
                     iconSize = iconSize,
                 )
+                IconButtonWithText(
+                    imageVector = Icons.Default.ImageSearch,
+                    text = stringResource(R.string.background_newline),
+                    onClick = {
+                        showImagePicker = true
+                    },
+                    description = "Set Background Image For ScoreCard",
+                    modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
+                    iconSize = iconSize,
+                )
+                colorNames.forEachIndexed { index, colorName ->
+                    if(colorName == R.string.effect){
+                        FastCreateDropDown(
+                            showDropdownMenu = showEffectDropdown,
+                            labelText = stringResource(R.string.effects),
+                            onClick = {dropdownIndex ->
+                                showEffectDropdown = false
+                                scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
+                            },
+                            onChangeDropDown = { showEffectDropdown = it },
+                            inputItems = remember{ Effect.entries.map { it.stringId }},
+                            imageVector = Icons.Filled.Animation,
+                            modifier = Modifier.width(iconSize * 1.7f),
+                            testTag = "DesignScoreCardAnimationButton",
+                            iconSize = iconSize,
+                            currentSelection = scoreCard.background.effect.ordinal
+                        )
+                    }
+                    else if(colorName == R.string.gradient){
+                        FastCreateDropDown(
+                            showDropdownMenu = showGradientDropdown,
+                            labelText = stringResource(R.string.gradient),
+                            onClick = {dropdownIndex ->
+                                showGradientDropdown = false
+                                scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
+                            },
+                            onChangeDropDown = { showGradientDropdown = it },
+                            inputItems = remember{ ShaderType.entries.map { it.shaderName }},
+                            imageVector = Icons.Filled.Gradient,
+                            modifier = Modifier.width(iconSize * 1.7f),
+                            testTag = "DesignScoreCardShaderButton",
+                            iconSize = iconSize,
+                            currentSelection = scoreCard.background.shaderType.index
+                        )
+                    }
+                    IconButtonWithText(
+                        imageVector = Icons.Default.ColorLens,
+                        text = stringResource(colorName),
+                        onClick = {
+                            colorChange = index
+                            showScoreCardColorPicker = true
+                        },
+                        description = "Set Color For ScoreCard",
+                        modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
+                        iconSize = iconSize,
+                    )
+                }
+            }
+            if(quizLayoutViewModelState == ViewModelState.UPLOADING){
+                UploadingAnimation()
             }
         }
     }

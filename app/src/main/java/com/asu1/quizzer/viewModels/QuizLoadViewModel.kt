@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizLayoutSerializer
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
@@ -26,15 +27,15 @@ class QuizLoadViewModel: ViewModel() {
     private val _quizList = MutableStateFlow<MutableList<QuizLayoutSerializer>?>(null)
     val quizList: StateFlow<MutableList<QuizLayoutSerializer>?> = _quizList.asStateFlow()
 
-    private val _loadComplete = MutableStateFlow(false)
-    val loadComplete: StateFlow<Boolean> = _loadComplete.asStateFlow()
+    private val _loadComplete = MutableLiveData(ViewModelState.IDLE)
+    val loadComplete: MutableLiveData<ViewModelState> get() = _loadComplete
 
-    private val _myQuizList = MutableLiveData<MutableList<QuizCard>?>(null)
-    val myQuizList: LiveData<MutableList<QuizCard>?> = _myQuizList
+    private val _myQuizList = MutableStateFlow<MutableList<QuizCard>?>(null)
+    val myQuizList: StateFlow<MutableList<QuizCard>?> = _myQuizList.asStateFlow()
 
     fun reset(){
         _quizList.value = null
-        _loadComplete.value = false
+        _loadComplete.postValue(ViewModelState.IDLE)
         _myQuizList.value = null
     }
 
@@ -64,43 +65,37 @@ class QuizLoadViewModel: ViewModel() {
     }
 
     fun loadComplete(){
-        _loadComplete.value = true
+        _loadComplete.postValue(ViewModelState.SUCCESS)
     }
 
-    fun deleteLocalQuiz(index: Int){
+    fun deleteLocalQuiz(context: Context, uuid: String){
         if(_quizList.value == null) return
-        if(index < 0 || index >= _quizList.value!!.size) return
+        val quiz = quizList.value?.find { it.quizData.uuid == uuid }
+        if(quiz == null) return
         viewModelScope.launch(Dispatchers.IO) {
-            val quiz = _quizList.value?.get(index)
-            if (quiz != null) {
-                val file = File("${quiz.quizData.uuid}_quizSave.json")
-                if (file.exists()) {
-                    file.delete()
-                    val updatedList = _quizList.value?.toMutableList()
-                    updatedList?.removeAt(index)
-                    _quizList.value = updatedList
-                }
+            val fileName = "${quiz.quizData.uuid}_${quiz.quizData.creator}_quizSave.json"
+            val file = File(context.filesDir, fileName)
+            if (file.exists()) {
+                file.delete()
+                val updatedList = _quizList.value?.toMutableList()
+                updatedList?.remove(quiz)
+                ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
+                _quizList.value = updatedList
             }
         }
     }
 
-    fun deleteMyQuiz(index: Int, email: String){
+    fun deleteMyQuiz(uuid: String, email: String){
         if(_myQuizList.value == null) return
-        if(index < 0 || index >= _myQuizList.value!!.size) return
+        val quiz = _myQuizList.value?.find { it.id == uuid }
+        if(quiz == null) return
         viewModelScope.launch {
-            val quiz = _myQuizList.value?.get(index)
-
-            if (quiz != null) {
-                val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
-                if(response.isSuccessful){
-                    val updatedList = _myQuizList.value?.toMutableList()
-                    updatedList?.removeAt(index)
-                    _myQuizList.value = updatedList
-                    ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
-                }
-                else{
-                    ToastManager.showToast(R.string.delete_failed, ToastType.ERROR)
-                }
+            val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
+            if(response.isSuccessful){
+                val updatedList = _myQuizList.value?.toMutableList()
+                updatedList?.remove(quiz)
+                _myQuizList.value = updatedList
+                ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
             }
             else{
                 ToastManager.showToast(R.string.delete_failed, ToastType.ERROR)

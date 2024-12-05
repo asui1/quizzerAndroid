@@ -49,7 +49,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
@@ -69,6 +71,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val policyAgreed by quizLayoutViewModel.policyAgreement.observeAsState(false)
+    val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }
     val layoutSteps = listOf(
@@ -93,6 +96,10 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         } else {
             navController.popBackStack()
         }
+    }
+
+    if(quizLayoutViewModelState == ViewModelState.LOADING) {
+        LoadingAnimation()
     }
 
     if (showExitDialog) {
@@ -135,7 +142,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     Scaffold(
         topBar = {
             StepProgressBar(
-                navController = navController,
                 totalSteps = 6,
                 currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
                 layoutSteps = layoutSteps,
@@ -327,7 +333,6 @@ fun QuizPolicyAgreementPreview() {
 
 @Composable
 fun StepProgressBar(
-    navController: NavController,
     totalSteps: Int,
     currentStep: Int,
     modifier: Modifier = Modifier,
@@ -399,7 +404,6 @@ fun StepProgressBar(
 fun StepProgressBarPreview() {
     QuizzerAndroidTheme {
         StepProgressBar(
-            navController = rememberNavController(),
             totalSteps = 6,
             currentStep = 3,
             layoutSteps = listOf(

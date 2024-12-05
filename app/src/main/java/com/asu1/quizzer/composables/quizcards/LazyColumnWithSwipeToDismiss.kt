@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,26 +35,34 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.model.QuizCard
 import kotlinx.coroutines.launch
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import com.asu1.quizzer.util.Logger
 
 @Composable
 fun LazyColumnWithSwipeToDismiss(
     quizList: List<QuizCard>,
     onLoadQuiz: (Int) -> Unit,
-    deleteQuiz: (Int) -> Unit = {},
+    deleteQuiz: (String) -> Unit = {},
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    var deleteIndex by remember { mutableIntStateOf(-1) }
+    var deleteUuid by remember { mutableStateOf("") }
     val dismissStates = remember { mutableStateMapOf<String, SwipeToDismissBoxState>() }
     val scope = rememberCoroutineScope()
+    val visibleItems = remember { mutableStateMapOf<String, Boolean>().apply {
+        quizList.forEach { put(it.id, true) }
+    } }
 
     @Composable
-    fun getOrPutDismiss(uuid: String, index: Int): SwipeToDismissBoxState {
+    fun getOrPutDismiss(uuid: String): SwipeToDismissBoxState {
         return dismissStates.getOrPut(uuid) {
             rememberSwipeToDismissBoxState(
                 confirmValueChange = {
                     if (it == SwipeToDismissBoxValue.EndToStart) {
-                        deleteIndex = index
+                        deleteUuid = uuid
                         showDialog = true
+                        Logger().debug("SHOW DIALOG")
                     }
                     true
                 }
@@ -86,55 +93,66 @@ fun LazyColumnWithSwipeToDismiss(
                 )
             }
         } else {
-            items(quizList.size) { index ->
+            items(quizList.size, key = {index -> quizList[index].id}) { index ->
                 val quizCard = quizList[index]
-                val currentDismissState = getOrPutDismiss(quizCard.id, index)
-                SwipeToDismissBox(
-                    state = currentDismissState,
-                    backgroundContent =  {
-                        val color = when (currentDismissState.dismissDirection) {
-                            SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
-                            else -> Color.Transparent
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = stringResource(R.string.delete),
-                                tint = Color.White
+                val currentDismissState = getOrPutDismiss(quizCard.id)
+                val isVisible = visibleItems[quizCard.id] ?: true
+
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    SwipeToDismissBox(
+                        state = currentDismissState,
+                        backgroundContent =  {
+                            val color = when (currentDismissState.dismissDirection) {
+                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
+                                else -> Color.Transparent
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color)
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete),
+                                )
+                            }
+                        },
+                        enableDismissFromStartToEnd = false,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        content = {
+                            QuizCardHorizontal(
+                                quizCard = quizCard,
+                                onClick = {
+                                    onLoadQuiz(index)
+                                }
                             )
                         }
-                    },
-                    enableDismissFromStartToEnd = false,
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    content = {
-                        QuizCardHorizontal(
-                            quizCard = quizCard,
-                            onClick = {
-                                onLoadQuiz(index)
-                            }
-                        )
-                    }
-                )
+                    )
+                }
             }
         }
     }
     if (showDialog) {
         LazyColumnSwipeToDismissDialog(
-            quizList = quizList,
-            deleteIndex = deleteIndex,
+            deleteUuid = deleteUuid,
             onDelete = {
-                deleteQuiz(deleteIndex)
+                val uuid = deleteUuid
+                visibleItems[uuid] = false
+                scope.launch {
+                    deleteQuiz(deleteUuid)
+                }
             },
-            updateDialog = { showDialog = it },
             resetDismiss = { uuid ->
+                Logger().debug("RESET DISMISS")
                 scope.launch {
                     dismissStates[uuid]?.reset()
+                    showDialog = false
                 }
             }
         )
@@ -170,10 +188,8 @@ fun LazyColumnWithSwipeToDismissPreview() {
 
 @Composable
 fun LazyColumnSwipeToDismissDialog(
-    quizList: List<QuizCard>,
-    deleteIndex: Int,
+    deleteUuid: String,
     onDelete: () -> Unit,
-    updateDialog: (Boolean) -> Unit,
     resetDismiss: (String) -> Unit,
 ){
     val scope = rememberCoroutineScope()
@@ -181,19 +197,16 @@ fun LazyColumnSwipeToDismissDialog(
         titleResource = R.string.delete_save,
         messageResource = R.string.delete_save_body,
         onContinue = {
-            val uuid = quizList[deleteIndex].id
+            val uuid = deleteUuid
             scope.launch {
-                resetDismiss(uuid)
                 onDelete()
+                resetDismiss(uuid)
             }
-            updateDialog(false)
         },
         onContinueResource = R.string.delete,
         onCancel = {
-            updateDialog(false)
-            val uuid = quizList[deleteIndex].id
             scope.launch {
-                resetDismiss(uuid)
+                resetDismiss(deleteUuid)
             }
         },
         onCancelResource = R.string.cancel
@@ -222,10 +235,8 @@ fun LazyColumnSwipeToDismissDialogPreview(){
         ),
     )
     LazyColumnSwipeToDismissDialog(
-        quizList = quizList,
-        deleteIndex = 0,
+        deleteUuid = "",
         onDelete = {},
-        updateDialog = {},
         resetDismiss = {},
     )
 }
