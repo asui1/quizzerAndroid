@@ -8,6 +8,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +46,7 @@ import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
@@ -169,7 +172,9 @@ class MainActivity : ComponentActivity() {
                         }
                         NavHost(
                             navController = navController,
-                            startDestination = Route.Init
+                            startDestination = Route.Init,
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
                         ) {
                             composable<Route.Init> {
                                 InitializationScreen(
@@ -299,9 +304,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.QuizBuilder>(
-                                enterTransition = enterFromRightTransition(),
+                                enterTransition = enterFadeInTransition(),
                                 exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFromRightTransition(),
+                                popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 QuizBuilderScreen(navController, quizLayoutViewModel,
@@ -402,9 +407,9 @@ class MainActivity : ComponentActivity() {
                                     })
                             }
                             composable<Route.LoadLocalQuiz>(
-                                enterTransition = enterFromRightTransition(),
+                                enterTransition = enterFadeInTransition(),
                                 exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFromRightTransition(),
+                                popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 LoadItems(
@@ -419,9 +424,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             composable<Route.LoadUserQuiz>(
-                                enterTransition = enterFromRightTransition(),
+                                enterTransition = enterFadeInTransition(),
                                 exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFromRightTransition(),
+                                popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 LoadMyQuiz(
@@ -431,9 +436,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.ScoringScreen>(
-                                enterTransition = enterFromRightTransition(),
+                                enterTransition = enterFadeInTransition(),
                                 exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFromRightTransition(),
+                                popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 ScoringScreen(

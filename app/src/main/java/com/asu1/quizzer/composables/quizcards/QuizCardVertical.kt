@@ -95,14 +95,14 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 3,
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = quizCard.creator,
                             style = MaterialTheme.typography.labelMedium,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 3,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.weight(2f))
                         TagsView(
                             tags = quizCard.tags,
                             modifier = Modifier
@@ -163,7 +163,7 @@ fun VerticalQuizCardLargePreview() {
     val quizCards = mutableListOf<QuizCard>()
     for (i in 1..3) {
         quizCards.add(
-            quizCard
+            quizCard.copy(id = i.toString())
         )
     }
     VerticalQuizCardLargeColumn(quizCards, {})

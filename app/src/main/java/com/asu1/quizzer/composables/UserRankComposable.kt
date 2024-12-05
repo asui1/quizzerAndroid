@@ -90,7 +90,7 @@ fun UserRankComposable(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .height(minSize)
             ) {
                 Text(
                     text = userRank.nickname,
@@ -99,7 +99,7 @@ fun UserRankComposable(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.weight(2f))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.points))
@@ -109,7 +109,7 @@ fun UserRankComposable(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(1.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.average))
@@ -119,7 +119,7 @@ fun UserRankComposable(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(1.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.solved_quizzes))

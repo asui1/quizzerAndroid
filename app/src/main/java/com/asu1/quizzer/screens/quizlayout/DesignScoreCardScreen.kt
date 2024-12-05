@@ -1,5 +1,10 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -85,203 +90,217 @@ fun DesignScoreCardScreen(
     val scope = rememberCoroutineScope()
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
 
-    MaterialTheme(
-        colorScheme = scoreCard.colorScheme
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            if(showScoreCardColorPicker){
-                Dialog(
-                    onDismissRequest = {
-                        showScoreCardColorPicker = false
-                    },
-                    properties = DialogProperties(dismissOnBackPress = true)
+    AnimatedContent(
+        targetState = quizLayoutViewModelState,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
+        },
+        label = "Design Scorecard",
+    ) { targetState ->
+        when(targetState){
+            ViewModelState.UPLOADING -> UploadingAnimation()
+            else -> {
+                MaterialTheme(
+                    colorScheme = scoreCard.colorScheme
                 ) {
-                    TextColorPickerModalSheet(
-                        initialColor = when(colorChange) {
-                            1 -> scoreCard.background.color2
-                            2 -> scoreCard.background.colorGradient
-                            else -> scoreCard.background.color
-                        },
-                        onColorSelected = { color ->
-                            scoreCardViewModel.updateColor(color, colorChange)
-                        },
-                        text = stringResource(
-                            when(colorChange) {
-                                1 -> R.string.select_color2
-                                2 -> R.string.select_color3
-                                else -> R.string.select_color1
-                            }
-                        )
-                    )
-                }
-            }
-            if(showTextColorPicker){
-                Dialog(
-                    onDismissRequest = {
-                        showTextColorPicker = false
-                    }
-                ) {
-                    TextColorPickerModalSheet(
-                        initialColor = scoreCard.textColor,
-                        onColorSelected = { color ->
-                            scoreCardViewModel.updateTextColor(color)
-                        },
-                        text = stringResource(R.string.select_text_color)
-                    )
-                }
-            }
-            if(showImagePicker){
-                Dialog(
-                    onDismissRequest = {
-                        showImagePicker = false
-                    }
-                ) {
-                    ImagePickerWithBaseImages(
-                        modifier = Modifier,
-                        onBaseImageSelected = { baseImage ->
-                            scoreCardViewModel.updateBackgroundBase(baseImage)
-                            showImagePicker = false
-                        },
-                        onImageSelected = {byteArray ->
-                            scoreCardViewModel.updateBackgroundImage(byteArray)
-                            showImagePicker = false
-                        },
-                        imageColorState = scoreCard.background.state,
-                        currentSelection = scoreCard.background.backgroundBase,
-                        currentImage = scoreCard.background.imageData,
-                        width = screenWidth,
-                        height = screenHeight,
-                    )
-                }
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                ScoreCardComposable(
-                    width = screenWidth,
-                    height = screenHeight * 0.9f,
-                    scoreCard = scoreCard,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ){
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
-                            }
-                        },
-                        modifier = Modifier
-                            .size(width = screenWidth * 0.6f, height = 48.dp)
-                            .padding(8.dp)
-                            .testTag("DesignScoreCardUploadButton")
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Text(
-                            text = stringResource(R.string.upload),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share",
-                            modifier = Modifier.size(24.dp)
-                        )
+                        if(showScoreCardColorPicker){
+                            Dialog(
+                                onDismissRequest = {
+                                    showScoreCardColorPicker = false
+                                },
+                                properties = DialogProperties(dismissOnBackPress = true)
+                            ) {
+                                TextColorPickerModalSheet(
+                                    initialColor = when(colorChange) {
+                                        1 -> scoreCard.background.color2
+                                        2 -> scoreCard.background.colorGradient
+                                        else -> scoreCard.background.color
+                                    },
+                                    onColorSelected = { color ->
+                                        scoreCardViewModel.updateColor(color, colorChange)
+                                    },
+                                    text = stringResource(
+                                        when(colorChange) {
+                                            1 -> R.string.select_color2
+                                            2 -> R.string.select_color3
+                                            else -> R.string.select_color1
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                        if(showTextColorPicker){
+                            Dialog(
+                                onDismissRequest = {
+                                    showTextColorPicker = false
+                                }
+                            ) {
+                                TextColorPickerModalSheet(
+                                    initialColor = scoreCard.textColor,
+                                    onColorSelected = { color ->
+                                        scoreCardViewModel.updateTextColor(color)
+                                    },
+                                    text = stringResource(R.string.select_text_color)
+                                )
+                            }
+                        }
+                        if(showImagePicker){
+                            Dialog(
+                                onDismissRequest = {
+                                    showImagePicker = false
+                                }
+                            ) {
+                                ImagePickerWithBaseImages(
+                                    modifier = Modifier,
+                                    onBaseImageSelected = { baseImage ->
+                                        scoreCardViewModel.updateBackgroundBase(baseImage)
+                                        showImagePicker = false
+                                    },
+                                    onImageSelected = {byteArray ->
+                                        scoreCardViewModel.updateBackgroundImage(byteArray)
+                                        showImagePicker = false
+                                    },
+                                    imageColorState = scoreCard.background.state,
+                                    currentSelection = scoreCard.background.backgroundBase,
+                                    currentImage = scoreCard.background.imageData,
+                                    width = screenWidth,
+                                    height = screenHeight,
+                                )
+                            }
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            ScoreCardComposable(
+                                width = screenWidth,
+                                height = screenHeight * 0.9f,
+                                scoreCard = scoreCard,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            ){
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .size(width = screenWidth * 0.6f, height = 48.dp)
+                                        .padding(8.dp)
+                                        .testTag("DesignScoreCardUploadButton")
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.upload),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                IconButton(onClick = {}) {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = "Share",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .align(Alignment.CenterEnd)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(4.dp))
+                                .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
+                        ){
+                            val iconSize = 32.dp
+                            IconButtonWithText(
+                                imageVector = Icons.Default.FormatColorText,
+                                text = stringResource(R.string.text_color),
+                                onClick = {
+                                    showTextColorPicker = true
+                                },
+                                description = "Set Text Color For ScoreCard",
+                                modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
+                                iconSize = iconSize,
+                            )
+                            IconButtonWithText(
+                                imageVector = Icons.Default.ImageSearch,
+                                text = stringResource(R.string.background_newline),
+                                onClick = {
+                                    showImagePicker = true
+                                },
+                                description = "Set Background Image For ScoreCard",
+                                modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
+                                iconSize = iconSize,
+                            )
+                            colorNames.forEachIndexed { index, colorName ->
+                                if(colorName == R.string.effect){
+                                    FastCreateDropDown(
+                                        showDropdownMenu = showEffectDropdown,
+                                        labelText = stringResource(R.string.effects),
+                                        onClick = {dropdownIndex ->
+                                            showEffectDropdown = false
+                                            scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
+                                        },
+                                        onChangeDropDown = { showEffectDropdown = it },
+                                        inputItems = remember{ Effect.entries.map { it.stringId }},
+                                        imageVector = Icons.Filled.Animation,
+                                        modifier = Modifier.width(iconSize * 1.7f),
+                                        testTag = "DesignScoreCardAnimationButton",
+                                        iconSize = iconSize,
+                                        currentSelection = scoreCard.background.effect.ordinal
+                                    )
+                                }
+                                else if(colorName == R.string.gradient){
+                                    FastCreateDropDown(
+                                        showDropdownMenu = showGradientDropdown,
+                                        labelText = stringResource(R.string.gradient),
+                                        onClick = {dropdownIndex ->
+                                            showGradientDropdown = false
+                                            scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
+                                        },
+                                        onChangeDropDown = { showGradientDropdown = it },
+                                        inputItems = remember{ ShaderType.entries.map { it.shaderName }},
+                                        imageVector = Icons.Filled.Gradient,
+                                        modifier = Modifier.width(iconSize * 1.7f),
+                                        testTag = "DesignScoreCardShaderButton",
+                                        iconSize = iconSize,
+                                        currentSelection = scoreCard.background.shaderType.index
+                                    )
+                                }
+                                IconButtonWithText(
+                                    imageVector = Icons.Default.ColorLens,
+                                    text = stringResource(colorName),
+                                    onClick = {
+                                        colorChange = index
+                                        showScoreCardColorPicker = true
+                                    },
+                                    description = "Set Color For ScoreCard",
+                                    modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
+                                    iconSize = iconSize,
+                                )
+                            }
+                        }
+                        if(quizLayoutViewModelState == ViewModelState.UPLOADING){
+                            UploadingAnimation()
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-            }
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .align(Alignment.CenterEnd)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(4.dp))
-                    .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
-            ){
-                val iconSize = 32.dp
-                IconButtonWithText(
-                    imageVector = Icons.Default.FormatColorText,
-                    text = stringResource(R.string.text_color),
-                    onClick = {
-                        showTextColorPicker = true
-                    },
-                    description = "Set Text Color For ScoreCard",
-                    modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
-                    iconSize = iconSize,
-                )
-                IconButtonWithText(
-                    imageVector = Icons.Default.ImageSearch,
-                    text = stringResource(R.string.background_newline),
-                    onClick = {
-                        showImagePicker = true
-                    },
-                    description = "Set Background Image For ScoreCard",
-                    modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
-                    iconSize = iconSize,
-                )
-                colorNames.forEachIndexed { index, colorName ->
-                    if(colorName == R.string.effect){
-                        FastCreateDropDown(
-                            showDropdownMenu = showEffectDropdown,
-                            labelText = stringResource(R.string.effects),
-                            onClick = {dropdownIndex ->
-                                showEffectDropdown = false
-                                scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
-                            },
-                            onChangeDropDown = { showEffectDropdown = it },
-                            inputItems = remember{ Effect.entries.map { it.stringId }},
-                            imageVector = Icons.Filled.Animation,
-                            modifier = Modifier.width(iconSize * 1.7f),
-                            testTag = "DesignScoreCardAnimationButton",
-                            iconSize = iconSize,
-                            currentSelection = scoreCard.background.effect.ordinal
-                        )
-                    }
-                    else if(colorName == R.string.gradient){
-                        FastCreateDropDown(
-                            showDropdownMenu = showGradientDropdown,
-                            labelText = stringResource(R.string.gradient),
-                            onClick = {dropdownIndex ->
-                                showGradientDropdown = false
-                                scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
-                            },
-                            onChangeDropDown = { showGradientDropdown = it },
-                            inputItems = remember{ ShaderType.entries.map { it.shaderName }},
-                            imageVector = Icons.Filled.Gradient,
-                            modifier = Modifier.width(iconSize * 1.7f),
-                            testTag = "DesignScoreCardShaderButton",
-                            iconSize = iconSize,
-                            currentSelection = scoreCard.background.shaderType.index
-                        )
-                    }
-                    IconButtonWithText(
-                        imageVector = Icons.Default.ColorLens,
-                        text = stringResource(colorName),
-                        onClick = {
-                            colorChange = index
-                            showScoreCardColorPicker = true
-                        },
-                        description = "Set Color For ScoreCard",
-                        modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
-                        iconSize = iconSize,
-                    )
-                }
-            }
-            if(quizLayoutViewModelState == ViewModelState.UPLOADING){
-                UploadingAnimation()
             }
         }
     }
+
 }
 
 @Preview(showBackground = true)
