@@ -259,7 +259,6 @@ fun GenerateColorScheme(
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-
     )
     {
         Row(
@@ -273,6 +272,7 @@ fun GenerateColorScheme(
                 text = stringResource(R.string.gen_with_title_image),
                 onClick = {
                     coroutineScope.launch {
+                        if(quizImage == null) return@launch
                         val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
                         val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
                         setColorScheme(titleImageColorScheme)

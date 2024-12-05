@@ -1,10 +1,12 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +48,7 @@ import com.asu1.quizzer.util.Route
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 fun handleSignIn(result: GetCredentialResponse, login: (String, String) -> Unit) {
@@ -106,6 +109,61 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
         .addCredentialOption(googleIdOption)
         .build()
 
+    LoginBody(
+        onClickSignin = {
+            coroutineScope.launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        request = request,
+                        context = context,
+                    )
+                    handleSignIn(result, loginActivityState.login)
+
+                } catch (e: GetCredentialException) {
+                    Log.e("Quizzer", "Error getting credential", e)
+                }
+            }
+        },
+        onClickRegister = {
+            coroutineScope.launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        request = request,
+                        context = context,
+                    )
+                    val googleIdTokenCredential =
+                        GoogleIdTokenCredential.createFrom(result.credential.data)
+
+                    val email =
+                        googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
+                    if (email == null) {
+                        Log.e("Quizzer", "Received an invalid google id token response")
+
+                        return@launch
+                    }
+                    val profileUri = googleIdTokenCredential.profilePictureUri
+
+                    NavMultiClickPreventer.navigate(
+                        navController, Route.Register(
+                            email,
+                            profileUri.toString()
+                        )
+                    )
+                } catch (e: GetCredentialException) {
+                    Log.e("Quizzer", "Error getting credential", e)
+                }
+            }
+        }
+    )
+
+
+}
+
+@Composable
+private fun LoginBody(
+    onClickSignin: () -> Unit = {},
+    onClickRegister: () -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,58 +181,31 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
             text = stringResource(R.string.sign_in),
             style = MaterialTheme.typography.headlineMedium,
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            coroutineScope.launch {
-                try {
-                    val result = credentialManager.getCredential(
-                        request = request,
-                        context = context,
-                    )
-                    handleSignIn(result, loginActivityState.login)
-
-                } catch (e: GetCredentialException) {
-                    Log.e("Quizzer", "Error getting credential", e)
-                }
-            }
-        },
-            modifier = Modifier.width(250.dp),
+        Spacer(modifier = Modifier.height(4.dp))
+        Button(
+            onClick = {
+                onClickSignin()
+            },
+            modifier = Modifier.width(200.dp),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_rd_si),
                 contentDescription = "Sign in with Google",
                 modifier = Modifier
-                    .width(250.dp)
-                    .fillMaxWidth()
+                    .width(200.dp)
+                    .height(30.dp)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            coroutineScope.launch {
-                try {
-                    val result = credentialManager.getCredential(
-                        request = request,
-                        context = context,
-                    )
-                    val googleIdTokenCredential =
-                        GoogleIdTokenCredential.createFrom(result.credential.data)
-
-                    val email = googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-                    if(email == null) {
-                        Log.e("Quizzer", "Received an invalid google id token response")
-
-                        return@launch
-                    }
-                    val profileUri = googleIdTokenCredential.profilePictureUri
-
-                    NavMultiClickPreventer.navigate(navController, Route.Register(email,
-                        profileUri.toString()
-                    ))
-                } catch (e: GetCredentialException) {
-                    Log.e("Quizzer", "Error getting credential", e)
-                }
-            }
-        },
+        Text(
+            text = stringResource(R.string.register_with_google),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Button(
+            onClick = {
+                onClickRegister()
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
             )
@@ -182,20 +213,20 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_sq_ctn), // Replace with your drawable resource
                 contentDescription = "Continue with Google",
-                modifier = Modifier.width(130.dp),
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(50.dp),
                 contentScale = ContentScale.Fit
             )
         }
     }
-
-
 }
 
 @Composable
 fun getLoginActivityState(): LoginActivityState {
     return LoginActivityState(
-        isUserLoggedIn = rememberSaveable { mutableStateOf(true) },
-        userData = rememberSaveable()  { mutableStateOf(userDataTest) },
+        isUserLoggedIn = rememberSaveable { mutableStateOf(false) },
+        userData = rememberSaveable  { mutableStateOf(emptyUserDataTest) },
         login = { _, _ -> },
         logout = { },
         signout = { },
@@ -205,12 +236,8 @@ fun getLoginActivityState(): LoginActivityState {
 @Preview
 @Composable
 fun PreviewLoginScreen() {
-    val navController = rememberNavController()
-    val loginActivityState = getLoginActivityState()
     QuizzerAndroidTheme {
-        LoginScreen(
-            navController = navController,
-            loginActivityState = loginActivityState
+        LoginBody(
         )
     }
 }

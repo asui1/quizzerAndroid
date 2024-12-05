@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.asu1.quizzer.composables.LoadComposable
 import com.asu1.quizzer.composables.UpdateDialog
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.viewModels.MainViewModel

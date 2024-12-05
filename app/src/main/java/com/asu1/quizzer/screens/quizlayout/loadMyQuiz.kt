@@ -1,5 +1,10 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 
 @Composable
@@ -34,6 +40,7 @@ fun LoadMyQuiz(
     email: String = "",
 ) {
     val quizList by quizLoadViewModel.myQuizList.collectAsStateWithLifecycle()
+    val quizLoadViewModelState by quizLoadViewModel.loadComplete.observeAsState()
 
     Scaffold(
         topBar = {
@@ -52,26 +59,37 @@ fun LoadMyQuiz(
                 .padding(paddingValue)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            if (quizList == null) {
-                Text(
-                    stringResource(R.string.searching_for_quizzes),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            } else {
-                LazyColumnWithSwipeToDismiss(
-                    quizList = quizList ?: mutableListOf(),
-                    onLoadQuiz = { index ->
-                        onLoadQuiz(index)
-                    },
-                    deleteQuiz = {deleteUuid ->
-                        quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
+            AnimatedContent(
+                targetState = quizLoadViewModelState,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
+                },
+                label = "Load My Quiz Screen",
+            ) {targetState ->
+                when(targetState){
+                    ViewModelState.LOADING -> {
+                        Text(
+                            stringResource(R.string.searching_for_quizzes),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
-                )
+                    else ->{
+                        LazyColumnWithSwipeToDismiss(
+                            quizList = quizList ?: mutableListOf(),
+                            onLoadQuiz = { index ->
+                                onLoadQuiz(index)
+                            },
+                            deleteQuiz = {deleteUuid ->
+                                quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
+                            }
+                        )
+                    }
+                }
             }
         }
     }

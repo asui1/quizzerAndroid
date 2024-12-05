@@ -86,13 +86,14 @@ fun IconWithTextBody(
             if (enabled) onClick()
         }
             .wrapContentHeight()
-            .width(iconSize * 1.7f)
+            .width(iconSize * 1.9f)
     ) {
         icon()
         Text(
             text = text,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodySmall,
+            maxLines = 2,
         )
     }
 }

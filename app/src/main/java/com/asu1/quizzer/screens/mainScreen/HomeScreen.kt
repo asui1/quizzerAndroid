@@ -72,7 +72,7 @@ fun HomeScreen(
 fun changeTagToText(tag: String): String{
     val newTag = when {
         tag.startsWith("Most Viewed") -> "인기순"
-        tag.startsWith("Most Recent") -> "업데이트 순"
+        tag.startsWith("Most Recent") -> "최신 퀴즈"
         tag.startsWith("With Tag : ") -> buildString {
             append("이런 주제는 어떠세요? \"")
             append(tag.removePrefix("With Tag : "))

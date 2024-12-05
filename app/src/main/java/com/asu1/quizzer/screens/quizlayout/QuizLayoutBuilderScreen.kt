@@ -2,6 +2,11 @@ package com.asu1.quizzer.screens.quizlayout
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -98,121 +103,132 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         }
     }
 
-    if(quizLayoutViewModelState == ViewModelState.LOADING) {
-        LoadingAnimation()
-    }
-
-    if (showExitDialog) {
-        DialogComposable(
-            titleResource = R.string.warning,
-            messageResource = R.string.warn_progress_not_saved,
-            onContinue = {
-                showExitDialog = false
-                navController.popBackStack()
-            },
-            onContinueResource = R.string.proceed,
-            onCancel = { showExitDialog = false },
-            onCancelResource = R.string.cancel
-        )
-    }
-
-    if(!policyAgreed) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                navController.popBackStack()
-            },
-            modifier = Modifier.imePadding()
-        ) {
-
-            QuizPolicyAgreement(onAgree = {
-                quizLayoutViewModel.updatePolicyAgreement(true)
-            })
-        }
-    }
-
-    fun proceed() {
-        if(step.ordinal < 6) {
-            quizLayoutViewModel.updateStep(step + 1)
-        } else {
-            quizLayoutViewModel.initTextStyleManager()
-            NavMultiClickPreventer.navigate(navController, Route.QuizBuilder)
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            StepProgressBar(
-                totalSteps = 6,
-                currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
-                layoutSteps = layoutSteps,
-                showExitDialog = { showExitDialog = true },
-                navigateToQuizLoad = { navigateToQuizLoad() }
-            )
+    AnimatedContent(
+        targetState = quizLayoutViewModelState,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
         },
-        bottomBar = {
-            QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, enabled, proceed = { proceed() })
-        }
-    ) {paddingValue ->
-        Column(
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(paddingValue)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            when(step.ordinal) {
-                0 -> {}
-                1 -> {
-                    QuizLayoutTitle(
-                        title = quizData.title,
-                        onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
-                        proceed = {proceed()},
-                    )
-                }
-                2 ->{
-                    QuizLayoutSetDescription(
-                        quizDescription = quizData.description,
-                        onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
-                        proceed = {proceed()}
-                    )
-                }
-                3 -> {
-                    QuizLayoutSetTags(
-                        quizTags = quizData.tags,
-                        onTagChange = { quizLayoutViewModel.updateTag(it) },
-                        proceed = {proceed()})
-                }
-                4 -> {
-                    QuizLayoutSetTitleImage(
-                        quizTitleImage = quizData.image,
-                        onImageChange = { quizLayoutViewModel.setQuizImage(it) },
-                        proceed = {proceed()})
-                }
-                5 -> {
-                    // Set Color Setting
-                    QuizLayoutSetColorScheme(
-                        colorScheme = quizTheme.colorScheme,
-                        onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
-                        onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
-                        backgroundImage = quizTheme.backgroundImage,
-                        onBackgroundColorUpdate = { quizLayoutViewModel.updateBackgroundColor(it) },
-                        onGradientColorUpdate = { quizLayoutViewModel.updateGradientColor(it) },
-                        onImageUpdate = { quizLayoutViewModel.updateBackgroundImage(it) },
-                        onImageColorStateUpdate = { quizLayoutViewModel.updateImageColorState(it) },
-                    )
-                }
-                6 -> {
-                    QuizLayoutSetTextStyle(
-                        questionStyle = quizTheme.questionTextStyle,
-                        bodyStyle = quizTheme.bodyTextStyle,
-                        answerStyle = quizTheme.answerTextStyle,
-                        updateStyle = { targetSelector, index, isIncrease ->
-                            quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
+        label = "QuizLayout Building Screen",
+    ) {targetState ->
+        when(targetState){
+            ViewModelState.LOADING -> {
+                LoadingAnimation()
+            }
+            else -> {
+                if (showExitDialog) {
+                    DialogComposable(
+                        titleResource = R.string.warning,
+                        messageResource = R.string.warn_progress_not_saved,
+                        onContinue = {
+                            showExitDialog = false
+                            navController.popBackStack()
                         },
-                        colorScheme = quizTheme.colorScheme,
+                        onContinueResource = R.string.proceed,
+                        onCancel = { showExitDialog = false },
+                        onCancelResource = R.string.cancel
                     )
-                    // Set Text Setting
+                }
+
+                if(!policyAgreed) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            navController.popBackStack()
+                        },
+                        modifier = Modifier.imePadding()
+                    ) {
+
+                        QuizPolicyAgreement(onAgree = {
+                            quizLayoutViewModel.updatePolicyAgreement(true)
+                        })
+                    }
+                }
+
+                fun proceed() {
+                    if(step.ordinal < 6) {
+                        quizLayoutViewModel.updateStep(step + 1)
+                    } else {
+                        quizLayoutViewModel.initTextStyleManager()
+                        NavMultiClickPreventer.navigate(navController, Route.QuizBuilder)
+                    }
+                }
+
+                Scaffold(
+                    topBar = {
+                        StepProgressBar(
+                            totalSteps = 6,
+                            currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
+                            layoutSteps = layoutSteps,
+                            showExitDialog = { showExitDialog = true },
+                            navigateToQuizLoad = { navigateToQuizLoad() }
+                        )
+                    },
+                    bottomBar = {
+                        QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, enabled, proceed = { proceed() })
+                    }
+                ) {paddingValue ->
+                    Column(
+                        verticalArrangement = Arrangement.Top,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(paddingValue)
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        when(step.ordinal) {
+                            0 -> {}
+                            1 -> {
+                                QuizLayoutTitle(
+                                    title = quizData.title,
+                                    onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
+                                    proceed = {proceed()},
+                                )
+                            }
+                            2 ->{
+                                QuizLayoutSetDescription(
+                                    quizDescription = quizData.description,
+                                    onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
+                                    proceed = {proceed()}
+                                )
+                            }
+                            3 -> {
+                                QuizLayoutSetTags(
+                                    quizTags = quizData.tags,
+                                    onTagChange = { quizLayoutViewModel.updateTag(it) },
+                                    proceed = {proceed()})
+                            }
+                            4 -> {
+                                QuizLayoutSetTitleImage(
+                                    quizTitleImage = quizData.image,
+                                    onImageChange = { quizLayoutViewModel.setQuizImage(it) },
+                                    proceed = {proceed()})
+                            }
+                            5 -> {
+                                // Set Color Setting
+                                QuizLayoutSetColorScheme(
+                                    colorScheme = quizTheme.colorScheme,
+                                    onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
+                                    onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
+                                    backgroundImage = quizTheme.backgroundImage,
+                                    onBackgroundColorUpdate = { quizLayoutViewModel.updateBackgroundColor(it) },
+                                    onGradientColorUpdate = { quizLayoutViewModel.updateGradientColor(it) },
+                                    onImageUpdate = { quizLayoutViewModel.updateBackgroundImage(it) },
+                                    onImageColorStateUpdate = { quizLayoutViewModel.updateImageColorState(it) },
+                                )
+                            }
+                            6 -> {
+                                QuizLayoutSetTextStyle(
+                                    questionStyle = quizTheme.questionTextStyle,
+                                    bodyStyle = quizTheme.bodyTextStyle,
+                                    answerStyle = quizTheme.answerTextStyle,
+                                    updateStyle = { targetSelector, index, isIncrease ->
+                                        quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
+                                    },
+                                    colorScheme = quizTheme.colorScheme,
+                                )
+                                // Set Text Setting
+                            }
+                        }
+                    }
                 }
             }
         }

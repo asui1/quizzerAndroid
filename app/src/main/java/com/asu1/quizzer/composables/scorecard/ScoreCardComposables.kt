@@ -85,7 +85,10 @@ fun ScoreCardBackground(
     Box(
         modifier = modifier
             .size(width = width, height = height)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp,
+            ))
     ) {
         when(backgroundImageColor.state) {
             ImageColorState.IMAGE -> {

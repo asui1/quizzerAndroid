@@ -73,6 +73,7 @@ import java.util.Locale
 import kotlin.random.Random
 
 val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
+val emptyUserDataTest = UserViewModel.UserDatas(null, null, null, setOf())
 
 @Composable
 fun MainScreen(

@@ -2,6 +2,11 @@ package com.asu1.quizzer.screens.quiz
 
 import ToastManager
 import ToastType
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.composables.scorecard.ShareDialog
 import com.asu1.quizzer.data.ViewModelState
@@ -102,26 +108,32 @@ fun ScoringScreen(
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(8.dp))
-            if (quizLayoutViewModelState == ViewModelState.LOADING || scoreCardViewModelState == ViewModelState.LOADING || quizResult == null) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(
-                        width = screenWidth * 0.8f,
-                        height = screenHeight * 0.8f
-                    )
-                )
-            } else {
-                ScoreCardComposable(
-                    width = screenWidth,
-                    height = screenHeight * 0.9f,
-                    scoreCard = scoreCard,
-                    quizResult = quizResult!!
-                )
+            AnimatedContent(
+                targetState = quizLayoutViewModelState,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
+                },
+                label = "Design Scorecard",
+
+                ) { targetState ->
+                when(targetState) {
+                    ViewModelState.LOADING -> {
+                        LoadingAnimation()
+                    }
+                    else -> {
+                        if(scoreCard.quizUuid != null)
+                            ScoreCardComposable(
+                                width = screenWidth,
+                                height = screenHeight * 0.9f,
+                                scoreCard = scoreCard,
+                                quizResult = quizResult!!
+                            )
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
