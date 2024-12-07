@@ -169,7 +169,15 @@ fun ScoreCardBackground(
             else ->{
             }
         }
-
+        if(backgroundImageColor.overlayImage.isNotEmpty()){
+            Image(
+                painter = remember(backgroundImageColor.overlayImage) { backgroundImageColor.getAsImage() },
+                contentDescription = "ScoreCard Background",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
+                    .align(Alignment.BottomCenter)
+            )
+        }
     }
 }
 
@@ -195,8 +203,6 @@ const val pageNum = 4
 
 @Composable
 fun ScoreCardComposable(
-    width: Dp,
-    height: Dp,
     scoreCard: ScoreCard,
     quizResult: QuizResult = sampleResult,
     pagerInit: Int = 0,
@@ -327,8 +333,6 @@ fun ScoreCardComposablePreview() {
     val scoreCardViewModel = createSampleScoreCardViewModel()
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     ScoreCardComposable(
-        width = 300.dp,
-        height = 600.dp,
         scoreCard = scoreCard,
     )
 }

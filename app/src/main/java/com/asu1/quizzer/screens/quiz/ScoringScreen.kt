@@ -126,8 +126,6 @@ fun ScoringScreen(
                     else -> {
                         if(scoreCard.quizUuid != null)
                             ScoreCardComposable(
-                                width = screenWidth,
-                                height = screenHeight * 0.9f,
                                 scoreCard = scoreCard,
                                 quizResult = quizResult!!
                             )

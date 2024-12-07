@@ -54,7 +54,7 @@ enum class Effect(val stringId: Int){
 
 @Serializable
 data class ImageColor(
-    val imageData: ByteArray,
+    val imageData: ByteArray = byteArrayOf(),
     @Serializable(with = ColorSerializer::class) val color: Color = Color.Transparent,
     @Serializable(with = ColorSerializer::class) val color2: Color = Color.White,
     @Serializable(with = ColorSerializer::class) val colorGradient: Color = Color.Black,
@@ -62,6 +62,7 @@ data class ImageColor(
     val backgroundBase: BackgroundBase = BackgroundBase.SKY,
     val effect: Effect = Effect.NONE,
     @Serializable(with = ShaderTypeSerializer::class) var shaderType: ShaderType = ShaderType.Brush1,
+    val overlayImage: ByteArray = byteArrayOf()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

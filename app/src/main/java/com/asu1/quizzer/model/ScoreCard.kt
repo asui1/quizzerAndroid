@@ -54,3 +54,22 @@ data class ScoreCard (
         return true
     }
 }
+
+val sampleScoreCard = ScoreCard(
+    title = "Sample Quiz",
+    solver = "John Doe",
+    score = 80f,
+    background = ImageColor(
+        imageData = ByteArray(0),
+        color = Color.White,
+        color2 = Color.Black,
+        colorGradient = Color.White,
+        state = ImageColorState.COLOR,
+        backgroundBase = BackgroundBase.SKY,
+        effect = Effect.SNOWFLAKES,
+        shaderType = ShaderType.Brush1
+    ),
+    imageStateval = 0,
+    textColor = Color.Black,
+    colorScheme = LightColorScheme
+)
