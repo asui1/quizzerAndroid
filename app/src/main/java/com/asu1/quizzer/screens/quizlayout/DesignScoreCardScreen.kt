@@ -1,11 +1,14 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +67,9 @@ import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ShaderType
+import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.disableImmersiveMode
+import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
@@ -81,7 +88,7 @@ fun DesignScoreCardScreen(
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = (configuration.screenWidthDp.dp).coerceAtMost(screenHeight/2)
+    val screenWidth = (configuration.screenWidthDp.dp).coerceAtMost(screenHeight * 0.6f)
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
     var colorChange by remember{ mutableIntStateOf(0) }
     var showEffectDropdown by remember { mutableStateOf(false) }
@@ -91,6 +98,9 @@ fun DesignScoreCardScreen(
     val scope = rememberCoroutineScope()
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var expanded by remember {mutableStateOf(true)}
+    Logger().debug("ScreenHEIGHT", screenHeight)
+    var immerseMode by remember { mutableStateOf(false) }
+    val context = LocalContext.current as Activity
 
     AnimatedContent(
         targetState = quizLayoutViewModelState,
@@ -107,6 +117,17 @@ fun DesignScoreCardScreen(
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                if(immerseMode) {
+                                    context.disableImmersiveMode()
+                                }else{
+                                    context.enableImmersiveMode()
+                                }
+                                immerseMode = !immerseMode
+                            }
                     ) {
                         if(showScoreCardColorPicker){
                             Dialog(
@@ -181,33 +202,36 @@ fun DesignScoreCardScreen(
                         ) {
                             ScoreCardComposable(
                                 width = screenWidth,
-                                height = screenHeight * 0.9f,
+                                height = screenHeight,
                                 scoreCard = scoreCard,
+                                modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            ){
-                                Button(
-                                    onClick = {
-                                        scope.launch {
-                                            quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .size(width = screenWidth * 0.4f, height = 48.dp)
-                                        .padding(8.dp)
-                                        .testTag("DesignScoreCardUploadButton")
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.upload),
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
+                            if(!immerseMode){
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                        .padding(horizontal = 16.dp)
+                                ){
+                                    Button(
+                                        onClick = {
+                                            scope.launch {
+                                                quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .size(width = screenWidth * 0.4f, height = 48.dp)
+                                            .padding(8.dp)
+                                            .testTag("DesignScoreCardUploadButton")
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.upload),
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
                                 }
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
-                            Spacer(modifier = Modifier.weight(1f))
                         }
                         OpenCloseColumn(
                             isOpen = expanded,

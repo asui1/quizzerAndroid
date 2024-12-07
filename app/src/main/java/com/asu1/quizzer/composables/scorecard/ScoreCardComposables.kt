@@ -1,7 +1,11 @@
 package com.asu1.quizzer.composables.scorecard
 
+import android.app.Activity
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +28,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +40,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -53,6 +60,7 @@ import com.asu1.quizzer.composables.effects.Snowflake
 import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.composables.effects.WithMoon
 import com.asu1.quizzer.composables.effects.WithShootingStar
+import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.Effect
@@ -60,6 +68,8 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
+import com.asu1.quizzer.util.disableImmersiveMode
+import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import java.util.Locale
 import kotlin.math.round
@@ -67,8 +77,6 @@ import kotlin.math.round
 @Composable
 fun ScoreCardBackground(
     backgroundImageColor: ImageColor,
-    width: Dp,
-    height: Dp,
     modifier: Modifier = Modifier,
 ) {
     val colorMatrix1 = remember(backgroundImageColor.color) {
@@ -84,11 +92,7 @@ fun ScoreCardBackground(
 
     Box(
         modifier = modifier
-            .size(width = width, height = height)
-            .clip(RoundedCornerShape(
-                bottomStart = 16.dp,
-                bottomEnd = 16.dp,
-            ))
+            .fillMaxSize()
     ) {
         when(backgroundImageColor.state) {
             ImageColorState.IMAGE -> {
@@ -187,6 +191,8 @@ fun createBlendingColorMatrix(color: Color): ColorMatrix {
     return matrix
 }
 
+const val pageNum = 4
+
 @Composable
 fun ScoreCardComposable(
     width: Dp,
@@ -194,13 +200,13 @@ fun ScoreCardComposable(
     scoreCard: ScoreCard,
     quizResult: QuizResult = sampleResult,
     pagerInit: Int = 0,
+    modifier: Modifier = Modifier,
 ){
     val pagerState = rememberPagerState(
         initialPage = pagerInit,
     ){
-        3
+        pageNum
     }
-
     val formattedScore = remember(quizResult.score){
         if (quizResult.score % 1 == 0f) {
             quizResult.score.toInt().toString()
@@ -216,13 +222,16 @@ fun ScoreCardComposable(
     }
 
     Box(
-        modifier = Modifier
-            .size(width = width, height = height)
+        modifier = modifier
+            .animateContentSize()
+            .fillMaxSize()
+            .clip(RoundedCornerShape(
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp,
+            ))
     ) {
         ScoreCardBackground(
             backgroundImageColor = scoreCard.background,
-            width = width,
-            height = height,
         )
         Column(
             modifier = Modifier
@@ -273,6 +282,9 @@ fun ScoreCardComposable(
                                 errorColor = redded,
                             )
                         }
+                        3 -> {
+
+                        }
                         else -> {
                             Column(
                                 verticalArrangement = Arrangement.Center,
@@ -296,6 +308,16 @@ fun ScoreCardComposable(
                 }
             }
         }
+        HorizontalPagerIndicator(
+            pageCount = pageNum,
+            currentPage = pagerState.currentPage,
+            targetPage = pagerState.targetPage,
+            currentPageOffsetFraction = pagerState.currentPageOffsetFraction,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .align(Alignment.BottomCenter),
+            indicatorColor = scoreCard.textColor,
+        )
     }
 }
 

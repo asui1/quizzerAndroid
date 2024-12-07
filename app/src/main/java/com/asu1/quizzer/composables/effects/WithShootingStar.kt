@@ -59,8 +59,8 @@ fun WithShootingStar(
                 dynamicProperties = dynamicProperties,
                 modifier = Modifier.fillMaxSize().background(Color.Transparent)
                     .graphicsLayer {
-                        translationX = -200f
-                        translationY = -500f
+                        translationX = -size.width * 0.25f
+                        translationY = -size.height * 0.3f
                     }
             )
             LottieAnimation(
@@ -69,8 +69,8 @@ fun WithShootingStar(
                 dynamicProperties = dynamicProperties,
                 modifier = Modifier.fillMaxSize().background(Color.Transparent)
                     .graphicsLayer {
-                        translationX = 200f
-                        translationY = -350f
+                        translationX = size.width * 0.25f
+                        translationY = -size.height * 0.15f
                     }
             )
         }

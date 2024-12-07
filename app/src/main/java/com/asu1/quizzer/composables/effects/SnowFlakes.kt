@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.BlendModeColorFilterCompat
@@ -50,11 +51,14 @@ fun Snowflake(
             )
         )
         LottieAnimation(
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.Crop,
             composition = composition,
             progress = { progress },
             dynamicProperties = dynamicProperties,
-            modifier = modifier.fillMaxSize().background(Color.Transparent)
+            modifier = modifier.fillMaxSize()
+                .graphicsLayer {
+                    scaleX = 1.1f
+                }
         )
     }
 

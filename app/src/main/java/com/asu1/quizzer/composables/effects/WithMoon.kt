@@ -56,9 +56,10 @@ fun WithMoon(
             progress = { progress },
             dynamicProperties = dynamicProperties,
             modifier = modifier.fillMaxSize().background(Color.Transparent)
-                .padding(30.dp)
                 .graphicsLayer {
-                    translationY = -300f
+                    translationY = -size.height * 0.25f
+                    scaleX = 0.7f
+                    scaleY = 0.7f
                 }
         )
     }

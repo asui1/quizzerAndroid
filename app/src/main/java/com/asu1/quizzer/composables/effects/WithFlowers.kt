@@ -50,7 +50,7 @@ fun WithFlowers(
             )
         )
         LottieAnimation(
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.Crop,
             composition = composition,
             progress = { progress },
             dynamicProperties = dynamicProperties,

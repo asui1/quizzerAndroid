@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import com.airbnb.lottie.LottieProperty
@@ -50,12 +51,13 @@ fun Clouds(
             )
         )
         LottieAnimation(
+            contentScale = ContentScale.FillWidth,
             composition = composition,
             progress = { progress },
             dynamicProperties = dynamicProperties,
-            modifier = modifier.fillMaxSize().background(Color.Transparent)
+            modifier = modifier.fillMaxSize()
                 .graphicsLayer {
-                    translationX = -200f
+                    translationY = -size.height * 0.2f
                 }
         )
     }

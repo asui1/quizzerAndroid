@@ -55,9 +55,8 @@ fun Fireworks(
             progress = { progress },
             dynamicProperties = dynamicProperties,
             modifier = modifier.fillMaxSize()
-                .background(Color.Transparent)
                 .graphicsLayer {
-                    translationY = -300f
+                    translationY = -size.height * 0.25f
                 }
         )
     }

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -64,6 +65,7 @@ import com.asu1.quizzer.ui.theme.UserBackground7
 import com.asu1.quizzer.ui.theme.UserBackground8
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
@@ -104,6 +106,8 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val loadQuizId by quizCardMainViewModel.loadQuizId.observeAsState()
     val loadResultId by quizCardMainViewModel.loadResultId.observeAsState()
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+    val view = LocalView.current
 
     LaunchedEffect(loadQuizId){
         if(loadQuizId != null){
@@ -115,6 +119,13 @@ fun MainScreen(
         if(loadResultId != null){
             loadQuizResult(loadResultId!!)
         }
+    }
+
+    LaunchedEffect(Unit){
+        setTopBarColor(
+            view = view,
+            color = primaryContainer
+        )
     }
 
     fun updateSelectedTab(index: Int) {

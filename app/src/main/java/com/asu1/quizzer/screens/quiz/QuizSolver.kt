@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
+import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 
 @Composable
@@ -47,6 +49,7 @@ fun QuizSolver(
     val snapLayoutInfoProvider = rememberLazyListState()
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme
+    val view = LocalView.current
 
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
@@ -57,6 +60,14 @@ fun QuizSolver(
     LaunchedEffect(initIndex) {
         snapLayoutInfoProvider.scrollToItem(initIndex)
     }
+
+    LaunchedEffect(colorScheme.primaryContainer) {
+        setTopBarColor(
+            view = view,
+            color = colorScheme.primaryContainer
+        )
+    }
+
 
     MaterialTheme(
         colorScheme = colorScheme

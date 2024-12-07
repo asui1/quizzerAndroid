@@ -85,12 +85,14 @@ fun QuizzerAndroidTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // TODO: START ACTIVITY DEPRECATED
-            window.statusBarColor = colorScheme.primary.toArgb()
+
+            // CHECK: statusBarColor DEPRECATED (no more use in api 35)
+            window.statusBarColor = colorScheme.primaryContainer.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
