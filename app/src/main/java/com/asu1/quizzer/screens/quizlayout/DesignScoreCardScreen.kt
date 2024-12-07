@@ -2,6 +2,7 @@ package com.asu1.quizzer.screens.quizlayout
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -332,6 +333,7 @@ private fun DesignScoreCardBody(
         ScoreCardComposable(
             scoreCard = scoreCard,
             modifier = Modifier.fillMaxWidth().weight(1f)
+                .animateContentSize()
         )
         if (!immerseMode) {
             Spacer(modifier = Modifier.height(8.dp))

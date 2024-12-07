@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +68,7 @@ import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.sampleScoreCard
 import com.asu1.quizzer.ui.theme.ongle_yunue
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
@@ -235,6 +237,23 @@ fun ScoreCardComposable(
                 bottomStart = 16.dp,
                 bottomEnd = 16.dp,
             ))
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val width = placeable.width
+                val height = placeable.height
+                val ratio = width.toFloat() / height
+
+                if (ratio > 0.7f) {
+                    val newWidth = (height * 0.7f).toInt()
+                    layout(newWidth, height) {
+                        placeable.placeRelative(0, 0)
+                    }
+                } else {
+                    layout(width, height) {
+                        placeable.placeRelative(0, 0)
+                    }
+                }
+            }
     ) {
         ScoreCardBackground(
             backgroundImageColor = scoreCard.background,
@@ -330,8 +349,7 @@ fun ScoreCardComposable(
 @Preview(showBackground = true)
 @Composable
 fun ScoreCardComposablePreview() {
-    val scoreCardViewModel = createSampleScoreCardViewModel()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
+    val scoreCard = sampleScoreCard
     ScoreCardComposable(
         scoreCard = scoreCard,
     )
