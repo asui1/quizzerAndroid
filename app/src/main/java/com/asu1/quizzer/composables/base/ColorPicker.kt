@@ -3,6 +3,7 @@ package com.asu1.quizzer.composables.base
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.asu1.quizzer.util.Logger
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -57,10 +59,11 @@ fun ColorPicker(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
+        Spacer(modifier = Modifier.height(4.dp))
         HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height),
+                .aspectRatio(1f),
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
                 val color: Color = colorEnvelope.color
@@ -68,7 +71,7 @@ fun ColorPicker(
                 onColorSelected(color)
             }
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         BrightnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
