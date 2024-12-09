@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -35,6 +36,7 @@ fun ColorPicker(
     testTag: String = "",
     onColorSelected: (Color) -> Unit,
     height: Dp = 300.dp,
+    onClose: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val controller = rememberColorPickerController()
@@ -97,6 +99,9 @@ fun ColorPicker(
                 keyboardType = KeyboardType.Ascii,
                 imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions {
+                onClose()
+            }
         )
     }
 }

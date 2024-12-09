@@ -110,7 +110,6 @@
     <string name="select_text_color">글자 색 선택</string>
     <string name="upload">업로드</string>
     <string name="searching_for_quizzes">검색 중 입니다…</string>
-    <string name="primary_color">메인 색</string>
     <string name="will_be_using_colors">"사용할 색상표 : "</string>
     <string name="single_color">단색</string>
     <string name="gradient">그라데이션</string>
@@ -179,6 +178,9 @@
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
     <string name="this_week_s_ranks">"랭킹: "</string>
     <string name="register_with_google">Register With Google</string>
+    <string name="image_on_top">Image on Top</string>
+    <string name="score_is">Score is</string>
+    <string name="strict">Strict</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>
@@ -195,5 +197,10 @@
         <item>보통</item>
         <item>높은</item>
         <item>낮은</item>
+    </string-array>
+    <string-array name="Colors">
+        <item>Primary Color</item>
+        <item>Secondary Color</item>
+        <item>Tertiary Color</item>
     </string-array>
 </resources>

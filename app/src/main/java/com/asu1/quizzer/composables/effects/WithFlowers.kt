@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables.effects
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,11 +49,11 @@ fun WithFlowers(
             )
         )
         LottieAnimation(
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             composition = composition,
             progress = { progress },
             dynamicProperties = dynamicProperties,
-            modifier = modifier.fillMaxSize().background(Color.Transparent)
+            modifier = modifier.fillMaxSize()
         )
     }
 }

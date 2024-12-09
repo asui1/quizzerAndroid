@@ -1,8 +1,6 @@
 package com.asu1.quizzer.util
 
 import android.app.Activity
-import android.os.Build
-import android.view.View
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat

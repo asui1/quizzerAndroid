@@ -1,11 +1,9 @@
 package com.asu1.quizzer.composables.scorecard
 
-import android.app.Activity
+import android.graphics.BitmapFactory
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,24 +24,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +46,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Fireworks
@@ -69,10 +62,7 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleScoreCard
-import com.asu1.quizzer.ui.theme.ongle_yunue
-import com.asu1.quizzer.util.disableImmersiveMode
-import com.asu1.quizzer.util.enableImmersiveMode
-import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import com.asu1.quizzer.ui.theme.notosans
 import java.util.Locale
 import kotlin.math.round
 
@@ -172,11 +162,17 @@ fun ScoreCardBackground(
             }
         }
         if(backgroundImageColor.overlayImage.isNotEmpty()){
+            val bitmap = remember(backgroundImageColor.overlayImage.take(4)) {
+                BitmapFactory.decodeByteArray(backgroundImageColor.overlayImage, 0, backgroundImageColor.overlayImage.size).asImageBitmap().apply {
+                    prepareToDraw()
+                }
+            }
             Image(
-                painter = remember(backgroundImageColor.overlayImage) { backgroundImageColor.getAsImage() },
+                bitmap = bitmap,
                 contentDescription = "ScoreCard Background",
                 contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .align(Alignment.BottomCenter)
             )
         }
@@ -233,10 +229,12 @@ fun ScoreCardComposable(
         modifier = modifier
             .animateContentSize()
             .fillMaxSize()
-            .clip(RoundedCornerShape(
-                bottomStart = 16.dp,
-                bottomEnd = 16.dp,
-            ))
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 16.dp,
+                    bottomEnd = 16.dp,
+                )
+            )
             .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
                 val width = placeable.width
@@ -269,12 +267,14 @@ fun ScoreCardComposable(
                 text = scoreCard.title,
                 color = scoreCard.textColor,
                 style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
                 text = quizResult.nickname,
                 color = scoreCard.textColor,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.End)
             )
@@ -314,18 +314,28 @@ fun ScoreCardComposable(
                             Column(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
                             ) {
                                 Text(
-                                    text = formattedScore,
-                                    style = TextStyle(
-                                        fontFamily = ongle_yunue,
-                                        fontSize = 200.sp,
-                                        color = scoreCard.textColor,
-                                    ),
+                                    text = stringResource(R.string.score_is),
+                                    color = scoreCard.textColor,
+                                    fontSize = 30.sp,
+                                    fontStyle = FontStyle.Italic,
+                                    fontFamily = notosans,
+                                    maxLines = 1,
                                     modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                        .zIndex(2f)
+                                        .zIndex(2f),
+                                )
+                                Text(
+                                    text = formattedScore,
+                                    color = scoreCard.textColor,
+                                    fontSize = 100.sp,
+                                    fontFamily = notosans,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .zIndex(2f),
                                 )
                             }
                         }

@@ -1,5 +1,8 @@
 package com.asu1.quizzer.composables.quizcards
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,11 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.model.QuizCard
-import kotlinx.coroutines.launch
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import com.asu1.quizzer.util.Logger
+import kotlinx.coroutines.launch
 
 @Composable
 fun LazyColumnWithSwipeToDismiss(

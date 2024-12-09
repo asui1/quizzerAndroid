@@ -49,10 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalList
 import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
-import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.model.getSampleQuizCardList
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.SearchViewModel

@@ -56,8 +56,10 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.byteArrayToImageBitmap
-import com.asu1.quizzer.util.calculateSeedColor
+import com.asu1.quizzer.util.ColorList
+import com.asu1.quizzer.util.GenerateWith
+import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.paletteSize
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
@@ -67,20 +69,26 @@ import kotlin.random.Random
 @Composable
 fun QuizLayoutSetColorScheme(
     colorScheme: ColorScheme = lightColorScheme(),
-    quizImage: ByteArray? = null,
+    isTitleImageSet: Boolean = false,
     onColorUpdate: (String, Color) -> Unit = {_, _ -> },
-    onColorSchemeUpdate: (ColorScheme) -> Unit = { },
     backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundColorUpdate: (Color) -> Unit = { },
     onGradientColorUpdate: (Color) -> Unit = { },
     onImageUpdate: (ByteArray) -> Unit = { },
     onImageColorStateUpdate: (ImageColorState) -> Unit = { },
+    generateColorScheme: (genWith:GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
 ) {
-    val colorSchemeState = colorScheme.primary
+    val context = LocalContext.current
+    val colors = listOf(
+        colorScheme.primary,
+        colorScheme.secondary,
+        colorScheme.tertiary
+    )
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    var paletteLevel by remember { mutableIntStateOf(7) }
+    var paletteLevel by remember { mutableIntStateOf(paletteSize) }
     var contrastLevel by remember { mutableIntStateOf(0) }
+    val colorNames = context.resources.getStringArray(R.array.Colors)
 
     MaterialTheme(
         colorScheme = colorScheme
@@ -94,9 +102,7 @@ fun QuizLayoutSetColorScheme(
         ) {
             item {
                 GenerateColorScheme(
-                    quizImage = quizImage,
-                    setColorScheme = onColorSchemeUpdate,
-                    primaryColor = colorScheme.primary,
+                    isTitleImageSet = isTitleImageSet,
                     contrastLevel = contrastLevel,
                     onContrastLevelUpdate = { level ->
                         contrastLevel = level
@@ -104,7 +110,8 @@ fun QuizLayoutSetColorScheme(
                     paletteLevel = paletteLevel,
                     onPaletteLevelUpdate = { level ->
                         paletteLevel = level
-                    }
+                    },
+                    generateColorScheme = generateColorScheme
                 )
             }
             item{
@@ -130,22 +137,23 @@ fun QuizLayoutSetColorScheme(
                     }
                 )
             }
-            item{
-                val colorName = stringResource(R.string.primary_color)
-                ColorPickerRowOpener(
-                    text = colorName,
-                    imageColor = colorSchemeState,
-                    onColorSelected = {color ->
-                        onColorUpdate("Primary Color", color)
-                    },
-                    onOpen = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(2)
-                        }
-                    },
-                    buttonTestTag = "QuizLayoutSetColorSchemeButtonPrimaryColor",
-                    colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextFieldPrimaryColor"
-                )
+            items(ColorList.size, key = { index -> ColorList[index] }) { index ->
+                if (index == 0 || paletteLevel == paletteSize) {
+                    ColorPickerRowOpener(
+                        text = colorNames[index],
+                        imageColor = colors[index],
+                        onColorSelected = { color ->
+                            onColorUpdate(ColorList[index], color)
+                        },
+                        onOpen = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(2 + index)
+                            }
+                        },
+                        buttonTestTag = "QuizLayoutSetColorSchemeButton${ColorList[index]}",
+                        colorSchemeTextFieldTestTag = "QuizLayoutSetColorSchemeTextField${ColorList[index]}"
+                    )
+                }
             }
             item{
                 Text(
@@ -243,20 +251,17 @@ fun getContrastStringMap(context: Context): Map<Contrast, String>{
 
 @Composable
 fun GenerateColorScheme(
-    quizImage: ByteArray? = byteArrayOf(),
-    setColorScheme: (ColorScheme) -> Unit = {},
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
+    isTitleImageSet: Boolean = false,
     contrastLevel: Int = 2,
     onContrastLevelUpdate: (Int) -> Unit = {},
     paletteLevel: Int = 2,
     onPaletteLevelUpdate: (Int) -> Unit = {},
+    generateColorScheme: (genWith:GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
 ){
-    val isTitleImageSet = quizImage != null
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
     val paletteStyleStringMap = remember{getPaletteStyleStringMap(context)}
     val contrastStringMap = remember{getContrastStringMap(context)}
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
     )
@@ -271,12 +276,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_title_image),
                 onClick = {
-                    coroutineScope.launch {
-                        if(quizImage == null) return@launch
-                        val seedColor = calculateSeedColor(byteArrayToImageBitmap(quizImage!!))
-                        val titleImageColorScheme = randomDynamicColorScheme(seedColor, paletteLevel, contrastLevel, isDark)
-                        setColorScheme(titleImageColorScheme)
-                    }
+                    generateColorScheme(GenerateWith.TITLE_IMAGE, paletteLevel, contrastLevel, isDark)
                 },
                 enabled = isTitleImageSet,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithTitleImage"
@@ -285,15 +285,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_primary_color),
                 onClick = {
-                    coroutineScope.launch {
-                        val primaryColorScheme = randomDynamicColorScheme(
-                            primaryColor,
-                            paletteLevel,
-                            contrastLevel,
-                            isDark
-                        )
-                        setColorScheme(primaryColorScheme)
-                    }
+                    generateColorScheme(GenerateWith.COLOR, paletteLevel, contrastLevel, isDark)
                 },
                 enabled = true,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithPrimaryColor"
@@ -301,8 +293,11 @@ fun GenerateColorScheme(
         }
         LevelSelector(
             prefix = stringResource(R.string.palette),
-            items = PaletteStyle.entries.map { paletteStyleStringMap[it] ?: "" },
+            items = PaletteStyle.entries.map { paletteStyleStringMap[it] ?: "" } + stringResource(
+                R.string.strict
+            ),
             onUpdateLevel = { level ->
+                Logger().debug("Palette Level: $level")
                 onPaletteLevelUpdate(level)
             },
             selectedLevel = paletteLevel,
@@ -317,7 +312,6 @@ fun GenerateColorScheme(
         )
     }
 }
-
 @Composable
 fun LevelSelector(
     prefix: String = "Level : ",
@@ -347,7 +341,7 @@ fun LevelSelector(
                 .pointerInput(Unit) {
                     detectDragGestures { change, _ ->
                         val newLevel = (change.position.x / (size.width / items.size)).toInt()
-                        if (newLevel in 0..items.size) {
+                        if (newLevel in items.indices) {
                             onUpdateLevel(newLevel)
                         }
                     }
@@ -379,9 +373,7 @@ fun LevelSelector(
 
 fun randomDynamicColorScheme(seedColor: Color, paletteLevel: Int = 2, contrastLevel: Int = 2, isDark: Boolean): ColorScheme {
     val style = PaletteStyle.entries[paletteLevel]
-
     val contrast = Contrast.entries[contrastLevel].value
-
     return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
         style = style,
         contrastLevel = contrast,
@@ -477,6 +469,9 @@ fun ColorPickerRowOpener(
                         onColorSelected = { color ->
                             selectedColor = color
                             onColorSelected(color)
+                        },
+                        onClose = {
+                            isOpen = false
                         },
                         testTag = colorSchemeTextFieldTestTag
                     )

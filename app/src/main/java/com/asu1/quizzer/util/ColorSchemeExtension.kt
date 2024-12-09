@@ -97,9 +97,9 @@ fun ColorScheme.withSurfaceColor(newSurfaceColor: Color): ColorScheme {
     )
 }
 
-fun calculateSeedColor(bitmap: ImageBitmap): Color {
+fun calculateSeedColor(bitmap: ImageBitmap): List<Color> {
     val suitableColors = bitmap.themeColors(fallback = Color.Blue)
-    return suitableColors.first()
+    return suitableColors.take(3)
 }
 fun byteArrayToImageBitmap(byteArray: ByteArray): ImageBitmap {
     val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)

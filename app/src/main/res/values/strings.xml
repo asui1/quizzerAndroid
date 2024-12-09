@@ -109,7 +109,6 @@
     <string name="select_text_color">Select Text Color</string>
     <string name="upload">Upload</string>
     <string name="searching_for_quizzes">Searching for quizzes…</string>
-    <string name="primary_color">Primary Color</string>
     <string name="will_be_using_colors">"Will be using colors : "</string>
     <string name="single_color">Single Color</string>
     <string name="gradient">Gradient</string>
@@ -179,6 +178,9 @@
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
     <string name="this_week_s_ranks">"Rank of: "</string>
     <string name="register_with_google">Register With Google</string>
+    <string name="image_on_top">Image on Top</string>
+    <string name="score_is">Score is</string>
+    <string name="strict">Strict</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>
@@ -195,5 +197,10 @@
         <item>Medium</item>
         <item>High</item>
         <item>Reduced</item>
+    </string-array>
+    <string-array name="Colors">
+        <item>Primary Color</item>
+        <item>Secondary Color</item>
+        <item>Tertiary Color</item>
     </string-array>
 </resources>

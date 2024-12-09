@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.animations.LoadingAnimation
@@ -79,6 +78,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }
+    val titleImageColors by quizLayoutViewModel.titleImageColors.collectAsStateWithLifecycle()
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
         stringResource(R.string.set_quiz_description),
@@ -206,13 +206,21 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                 // Set Color Setting
                                 QuizLayoutSetColorScheme(
                                     colorScheme = quizTheme.colorScheme,
+                                    isTitleImageSet = quizData.image.isNotEmpty(),
                                     onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
-                                    onColorSchemeUpdate = { quizLayoutViewModel.setColorScheme(it) },
                                     backgroundImage = quizTheme.backgroundImage,
                                     onBackgroundColorUpdate = { quizLayoutViewModel.updateBackgroundColor(it) },
                                     onGradientColorUpdate = { quizLayoutViewModel.updateGradientColor(it) },
                                     onImageUpdate = { quizLayoutViewModel.updateBackgroundImage(it) },
                                     onImageColorStateUpdate = { quizLayoutViewModel.updateImageColorState(it) },
+                                    generateColorScheme = {base, paletteLevel, contrastLevel, isDark ->
+                                        quizLayoutViewModel.generateColorScheme(
+                                            base = base,
+                                            paletteLevel = paletteLevel,
+                                            contrastLevel = contrastLevel,
+                                            isDark = isDark
+                                        )
+                                    }
                                 )
                             }
                             6 -> {

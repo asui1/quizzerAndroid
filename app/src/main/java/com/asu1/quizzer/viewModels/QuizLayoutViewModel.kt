@@ -36,13 +36,16 @@ import com.asu1.quizzer.screens.quizlayout.borders
 import com.asu1.quizzer.screens.quizlayout.colors
 import com.asu1.quizzer.screens.quizlayout.fonts
 import com.asu1.quizzer.screens.quizlayout.outlines
+import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.quizzer.util.ColorList
+import com.asu1.quizzer.util.GenerateWith
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.withErrorColor
-import com.asu1.quizzer.util.withOnErrorColor
-import com.asu1.quizzer.util.withOnPrimaryColor
-import com.asu1.quizzer.util.withOnSecondaryColor
-import com.asu1.quizzer.util.withOnTertiaryColor
+import com.asu1.quizzer.util.byteArrayToImageBitmap
+import com.asu1.quizzer.util.calculateSeedColor
+import com.asu1.quizzer.util.contrastSize
+import com.asu1.quizzer.util.paletteSize
+import com.asu1.quizzer.util.toScheme
 import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
 import com.asu1.quizzer.util.withTertiaryColor
@@ -148,6 +151,9 @@ class QuizLayoutViewModel : ViewModel() {
     val quizResult: StateFlow<QuizResult?> = _quizResult.asStateFlow()
 
     private val textStyleManager = TextStyleManager()
+
+    private val _titleImageColors = MutableStateFlow<List<Color>>(emptyList())
+    val titleImageColors: StateFlow<List<Color>> get() = _titleImageColors.asStateFlow()
 
     fun initialize(){
         initTextStyleManager()
@@ -404,6 +410,17 @@ class QuizLayoutViewModel : ViewModel() {
             return
         }
         _quizData.value = _quizData.value.copy(image = image)
+        if(image.isEmpty()){
+            _titleImageColors.value = emptyList()
+            return
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            val seedColor = calculateSeedColor(byteArrayToImageBitmap(image))
+            if(seedColor.size < 3){
+                _titleImageColors.value = seedColor + List(3 - seedColor.size) { seedColor[0] }
+            }
+            _titleImageColors.value = seedColor
+        }
     }
 
     fun setQuizBodyImage(image: ByteArray){
@@ -468,24 +485,70 @@ class QuizLayoutViewModel : ViewModel() {
     fun setColorScheme(name: String, color: Color){
         val colorScheme = _quizTheme.value.colorScheme
         val updateColorScheme = when(name){
-            "Primary Color" -> colorScheme.withPrimaryColor(color)
-            "Secondary Color" -> colorScheme.withSecondaryColor(color)
-            "Tertiary Color" -> colorScheme.withTertiaryColor(color)
-            "onPrimary Color" -> colorScheme.withOnPrimaryColor(color)
-            "onSecondary Color" -> colorScheme.withOnSecondaryColor(color)
-            "onTertiary Color" -> colorScheme.withOnTertiaryColor(color)
-            "Error Color" -> colorScheme.withErrorColor(color)
-            "onError Color" -> colorScheme.withOnErrorColor(color)
+            ColorList[0] -> colorScheme.withPrimaryColor(color)
+            ColorList[1] -> colorScheme.withSecondaryColor(color)
+            ColorList[2] -> colorScheme.withTertiaryColor(color)
             else -> colorScheme
         }
         _quizTheme.value = _quizTheme.value.copy(colorScheme = updateColorScheme)
     }
 
+    fun generateColorScheme(
+        base: GenerateWith,
+        paletteLevel: Int,
+        contrastLevel: Int,
+        isDark: Boolean,
+    ){
+        viewModelScope.launch {
+            if(contrastLevel in 0 until contrastSize && paletteLevel in 0 .. paletteSize){
+                when(base){
+                    GenerateWith.TITLE_IMAGE -> {
+                        if(_titleImageColors.value.isEmpty()){
+                            return@launch
+                        }
+                        val titleImageColorScheme =
+                            if(paletteLevel == paletteSize){ toScheme(
+                                primary = _titleImageColors.value[0],
+                                secondary = _titleImageColors.value[1],
+                                tertiary = _titleImageColors.value[2],
+                                isLight = !isDark
+                            )
+                            }else{
+                                randomDynamicColorScheme(titleImageColors.value[0], paletteLevel, contrastLevel, isDark)
+                            }
+                        setColorScheme(titleImageColorScheme)
+                    }
+                    GenerateWith.COLOR -> {
+                        val colorScheme = _quizTheme.value.colorScheme
+                        val primaryColorScheme =
+                            if (paletteLevel == paletteSize) {
+                                toScheme(
+                                    primary = colorScheme.primary,
+                                    secondary = colorScheme.secondary,
+                                    tertiary = colorScheme.tertiary,
+                                    isLight = !isDark
+                                )
+                            } else {
+                                randomDynamicColorScheme(
+                                    colorScheme.primary,
+                                    paletteLevel,
+                                    contrastLevel,
+                                    isDark
+                                )
+                            }
+                        setColorScheme(primaryColorScheme)
+                    }
+                }
+            }
+        }
+    }
+
     fun setColorScheme(colorScheme: ColorScheme) {
-        _quizTheme.value = _quizTheme.value.copy(
-            colorScheme = colorScheme,
-            backgroundImage = _quizTheme.value.backgroundImage.copy(color = colorScheme.surface)
-        )
+        _quizTheme.update {
+            it.copy(colorScheme = colorScheme,
+                backgroundImage = it.backgroundImage.copy(color = colorScheme.surface)
+            )
+        }
     }
 
     fun updateTextStyle(targetSelector: Int, indexSelector: Int, isIncrease: Boolean) {

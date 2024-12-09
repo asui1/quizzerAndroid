@@ -242,6 +242,9 @@ fun QuizBuilderScreen(navController: NavController,
                         Box(
                             modifier = Modifier
                                 .size(width = 280.dp, height = bodyHeight)
+                                .background(
+                                    colorScheme.surface
+                                )
                                 .border(
                                     width = 2.dp,
                                     color = Color.Gray,

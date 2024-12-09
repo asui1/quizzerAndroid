@@ -125,6 +125,10 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(effect = effect))
     }
 
+    fun updateOverLayImage(image: ByteArray){
+        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = image))
+    }
+
     fun updateImageColorState(imageColorState: ImageColorState){
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(state = imageColorState))
     }

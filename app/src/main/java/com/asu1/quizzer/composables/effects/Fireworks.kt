@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables.effects
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

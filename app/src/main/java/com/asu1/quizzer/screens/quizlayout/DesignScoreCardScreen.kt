@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +55,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.animations.OpenCloseColumn
 import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.base.FastCreateDropDown
@@ -73,7 +74,6 @@ import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 val colorNames: List<Int> = listOf(R.string.background_newline,
@@ -110,14 +110,15 @@ fun DesignScoreCardScreen(
                     colorScheme = scoreCard.colorScheme
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
                             ) {
-                                if(immerseMode) {
+                                if (immerseMode) {
                                     context.disableImmersiveMode()
-                                }else{
+                                } else {
                                     context.enableImmersiveMode()
                                 }
                                 immerseMode = !immerseMode
@@ -169,6 +170,7 @@ private fun DesignScoreCardTools(
     var showScoreCardColorPicker by remember { mutableStateOf(false) }
     var showTextColorPicker by remember { mutableStateOf(false) }
     var showBackgroundImagePicker by remember { mutableStateOf(false) }
+    var showOverlayImagePicker by remember { mutableStateOf(false) }
     var colorChange by remember{ mutableIntStateOf(0) }
 
     if(showScoreCardColorPicker){
@@ -194,6 +196,25 @@ private fun DesignScoreCardTools(
                         else -> R.string.select_color1
                     }
                 )
+            )
+        }
+    }
+    if(showOverlayImagePicker){
+        Dialog(
+            onDismissRequest = {
+                showOverlayImagePicker = false
+            }
+        ){
+            ImageGetter(
+                image = scoreCard.background.overlayImage,
+                onImageUpdate = {scoreCardViewModel.updateOverLayImage(it)},
+                onImageDelete = {scoreCardViewModel.updateOverLayImage(byteArrayOf())},
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .border(2.dp, MaterialTheme.colorScheme.onSurface, shape = RoundedCornerShape(8.dp))
             )
         }
     }
@@ -256,6 +277,16 @@ private fun DesignScoreCardTools(
             },
             description = "Set Text Color For ScoreCard",
             modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
+            iconSize = iconSize,
+        )
+        IconButtonWithText(
+            imageVector = Icons.Default.ImageSearch,
+            text = stringResource(R.string.image_on_top),
+            onClick = {
+                showOverlayImagePicker = true
+            },
+            description = "Set Image to go on top",
+            modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
             iconSize = iconSize,
         )
         IconButtonWithText(
@@ -332,7 +363,9 @@ private fun DesignScoreCardBody(
     ) {
         ScoreCardComposable(
             scoreCard = scoreCard,
-            modifier = Modifier.fillMaxWidth().weight(1f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
                 .animateContentSize()
         )
         if (!immerseMode) {

@@ -130,7 +130,7 @@ fun MainScreen(
 
     fun updateSelectedTab(index: Int) {
         coroutineScope.launch {
-            pagerState.animateScrollToPage(index)
+            pagerState.scrollToPage(index)
         }
         quizCardMainViewModel.tryUpdate(index, language = lang)
     }

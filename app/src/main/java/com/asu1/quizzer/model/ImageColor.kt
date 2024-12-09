@@ -76,6 +76,7 @@ data class ImageColor(
         if(backgroundBase != other.backgroundBase) return false
         if(effect != other.effect) return false
         if(shaderType != other.shaderType) return false
+        if(!overlayImage.contentEquals(other.overlayImage)) return false
         return true
     }
 
@@ -88,6 +89,7 @@ data class ImageColor(
         result = 31 * result + backgroundBase.hashCode()
         result = 31 * result + effect.hashCode()
         result = 31 * result + shaderType.hashCode()
+        result = 31 * result + overlayImage.contentHashCode()
         return result
     }
 
@@ -113,7 +115,7 @@ fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){
     when(imageColor.state) {
         ImageColorState.IMAGE -> {
             if (imageColor.imageData.isNotEmpty()) {
-                val bitmap = remember(imageColor.imageData[0], imageColor.imageData[1]){BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()}
+                val bitmap = remember(imageColor.imageData.take(4), imageColor.imageData[1]){BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()}
                 Image(
                     bitmap = bitmap,
                     contentDescription = stringResource(R.string.selected_image),

@@ -89,7 +89,7 @@ fun QuizSolver(
                     .fillMaxSize()
                     .padding(8.dp)
             ) {
-                items(quizzes.size) {
+                items(quizzes.size, key = { it }) {
                     Box(
                         modifier = Modifier
                             .fillParentMaxSize()
@@ -116,10 +116,12 @@ fun QuizSolver(
                                 append(quizzes[it].point)
                                 append(stringResource(R.string.pt))
                             },
+                            style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.TopEnd)
                         )
                         Text(
                             text = "${it + 1}/${quizzes.size}",
+                            style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.BottomEnd)
                         )
                     }
