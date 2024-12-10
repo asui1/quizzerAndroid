@@ -186,7 +186,7 @@ fun MainScreen(
                                             userRanks = userRanks,
                                             getMoreUserRanks = {
                                                 quizCardMainViewModel.getMoreUserRanks()
-                                            }
+                                            },
                                             modifier = Modifier.fillMaxSize(),
                                         )
                                     }

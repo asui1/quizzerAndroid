@@ -162,12 +162,12 @@ fun UserRankComposableList(
         contentPadding = PaddingValues(4.dp),
         modifier = modifier
     ) {
-        item{
+        item(key = "UserRankAnimation"){
             UserRankAnimation(
                 modifier = Modifier.fillMaxWidth().height(100.dp)
             )
         }
-        items(userRanks.size){index ->
+        items(userRanks.size, key = {index -> userRanks[index].nickname}){index ->
             UserRankComposable(
                 userRank = userRanks[index],
                 rank = index + 1
