@@ -42,7 +42,6 @@ import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
-import com.asu1.quizzer.states.rememberLoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
@@ -119,10 +118,6 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(it).fillMaxSize()
                     ) {
                         val colorScheme = MaterialTheme.colorScheme
-                        val loginActivityState = rememberLoginActivityState(
-                            userViewModel = userViewModel,
-                        )
-
                         fun hasVisitedRoute(
                             navController: NavController,
                             route: Route
@@ -190,7 +185,7 @@ class MainActivity : ComponentActivity() {
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
-                                    loginActivityState = loginActivityState,
+                                    userViewModel = userViewModel,
                                     navigateToQuizLayoutBuilder = {
                                         if (userViewModel.userData.value?.email == null) {
                                             ToastManager.showToast(
@@ -249,7 +244,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) {
-                                LoginScreen(navController, loginActivityState)
+                                LoginScreen(navController, userViewModel)
                             }
                             composable<Route.PrivacyPolicy>(
                                 enterTransition = enterFromRightTransition(),
@@ -277,7 +272,7 @@ class MainActivity : ComponentActivity() {
                                     email = email,
                                     profileUri = profileUri,
                                     login = {
-                                        loginActivityState.login(email, profileUri)
+                                        userViewModel.logIn(email, profileUri)
                                     }
                                 )
                             }

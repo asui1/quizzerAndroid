@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import ToastManager
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,16 +37,16 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
-import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.viewModels.UserViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import kotlinx.coroutines.launch
 
-fun handleSignIn(result: GetCredentialResponse, login: (String, String) -> Unit) {
+fun handleSignIn(result: GetCredentialResponse, login: (email: String, profileUri: String) -> Unit) {
     // Handle the successfully returned credential.
     when (val credential = result.credential) {
         is CustomCredential -> {
@@ -80,9 +82,11 @@ fun handleSignIn(result: GetCredentialResponse, login: (String, String) -> Unit)
 }
 
 @Composable
-fun LoginScreen(navController: NavController, loginActivityState: LoginActivityState) {
+fun LoginScreen(navController: NavController,
+                userViewModel: UserViewModel
+) {
     val context = LocalContext.current
-    val isUserLoggedIn by loginActivityState.isUserLoggedIn
+    val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
 
     LaunchedEffect(isUserLoggedIn) {
         if (isUserLoggedIn) {
@@ -110,9 +114,10 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
                         request = request,
                         context = context,
                     )
-                    handleSignIn(result, loginActivityState.login)
+                    handleSignIn(result, {email, profileUri ->  userViewModel.logIn(email, profileUri)})
 
                 } catch (e: GetCredentialException) {
+                    ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
                     Log.e("Quizzer", "Error getting credential", e)
                 }
             }
@@ -130,6 +135,7 @@ fun LoginScreen(navController: NavController, loginActivityState: LoginActivityS
                     val email =
                         googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
                     if (email == null) {
+                        ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
                         Log.e("Quizzer", "Received an invalid google id token response")
 
                         return@launch

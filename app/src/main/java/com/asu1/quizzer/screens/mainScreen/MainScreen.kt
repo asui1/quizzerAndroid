@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -53,7 +54,6 @@ import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.mainscreen.DrawerContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
-import com.asu1.quizzer.states.LoginActivityState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.ui.theme.UserBackground1
 import com.asu1.quizzer.ui.theme.UserBackground2
@@ -63,6 +63,7 @@ import com.asu1.quizzer.ui.theme.UserBackground5
 import com.asu1.quizzer.ui.theme.UserBackground6
 import com.asu1.quizzer.ui.theme.UserBackground7
 import com.asu1.quizzer.ui.theme.UserBackground8
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
@@ -74,15 +75,13 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.random.Random
 
-val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
-val emptyUserDataTest = UserViewModel.UserDatas(null, null, null, setOf())
 
 @Composable
 fun MainScreen(
     navController: NavController,
     quizCardMainViewModel: QuizCardMainViewModel = viewModel(),
     inquiryViewModel: InquiryViewModel = viewModel(),
-    loginActivityState: LoginActivityState,
+    userViewModel: UserViewModel = viewModel(),
     navigateToQuizLayoutBuilder: () -> Unit = {},
     navigateToMyQuizzes: () -> Unit = {},
     loadQuiz: (String) -> Unit = { },
@@ -96,8 +95,8 @@ fun MainScreen(
     val quizTrends by quizCardMainViewModel.quizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.userRanks.collectAsStateWithLifecycle()
     var backPressedTime by remember { mutableLongStateOf(0L) }
-    val userData by loginActivityState.userData
-    val isUserLoggedIn by loginActivityState.isUserLoggedIn
+    val userData by userViewModel.userData.observeAsState()
+    val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -167,8 +166,8 @@ fun MainScreen(
                 DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
                     userData = userData,
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
-                    logOut = { loginActivityState.logout() },
-                    signOut = { email -> loginActivityState.signout(email) },
+                    logOut = { userViewModel.logOut() },
+                    signOut = { email -> userViewModel.signout(email) },
                     navigateToMyQuizzes = { navigateToMyQuizzes() }
                 )
             },

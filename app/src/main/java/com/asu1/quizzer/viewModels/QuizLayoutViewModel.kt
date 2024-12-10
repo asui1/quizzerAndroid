@@ -138,6 +138,11 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
     val quizzes: StateFlow<List<Quiz>> get() = _quizzes.asStateFlow()
 
+    private val _visibleQuizzes = MutableStateFlow<List<Quiz>>(emptyList())
+    val visibleQuizzes: StateFlow<List<Quiz>> = _visibleQuizzes
+
+    private val pageSize = 4
+
     private val _policyAgreement = MutableLiveData(false)
     val policyAgreement: LiveData<Boolean> get() = _policyAgreement
 
@@ -166,6 +171,32 @@ class QuizLayoutViewModel : ViewModel() {
             answerStyle = quizTheme.value.answerTextStyle,
             bodyStyle = quizTheme.value.bodyTextStyle
         )
+    }
+
+    fun resetVisibleQuizzes(){
+        _visibleQuizzes.update {
+            it.toMutableList().apply {
+                clear()
+            }
+        }
+    }
+
+    fun loadMoreQuizzes(size: Int){
+        viewModelScope.launch {
+            val start = _visibleQuizzes.value.size
+            val end = minOf(start + size, _quizzes.value.size)
+            if (start < end) {
+                _visibleQuizzes.update {
+                    it.toMutableList().apply {
+                        addAll(_quizzes.value.subList(start, end))
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadMoreQuizzes() {
+        loadMoreQuizzes(pageSize)
     }
 
     fun getTextStyleManager(): TextStyleManager {
@@ -304,6 +335,7 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun initQuizLayout(email: String?, colorScheme: ColorScheme) {
         _quizData.value = _quizData.value.copy(creator = email ?: "GUEST")
+        _visibleQuizzes.value = emptyList()
         _quizTheme.value = _quizTheme.value.copy(colorScheme = colorScheme)
         _policyAgreement.value = false
         _initIndex.value = 0
@@ -395,6 +427,7 @@ class QuizLayoutViewModel : ViewModel() {
         _quizTheme.value = QuizTheme()
         _quizData.value = QuizData()
         _quizzes.value = emptyList()
+        _visibleQuizzes.value = emptyList()
         _viewModelState.value = ViewModelState.IDLE
         _policyAgreement.value = false
         _step.value = LayoutSteps.POLICY
@@ -614,6 +647,7 @@ class QuizLayoutViewModel : ViewModel() {
             val quizzes = quizzes.value!!.toMutableList()
             quizzes.add(quiz)
             _quizzes.value = quizzes
+
             return
         } else{
             val quizzes = quizzes.value!!.toMutableList()

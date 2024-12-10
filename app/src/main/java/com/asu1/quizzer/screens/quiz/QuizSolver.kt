@@ -17,6 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -34,6 +38,8 @@ import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun QuizSolver(
@@ -43,6 +49,7 @@ fun QuizSolver(
     navigateToScoreCard: () -> Unit = {},
 ) {
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
+    val visibleQuizzes by quizLayoutViewModel.visibleQuizzes.collectAsStateWithLifecycle()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
     val viewModelState by quizLayoutViewModel.viewModelState.observeAsState()
@@ -50,6 +57,13 @@ fun QuizSolver(
     val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme
     val view = LocalView.current
+    val scope = rememberCoroutineScope()
+    var initialScrollPerformed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit){
+        quizLayoutViewModel.resetVisibleQuizzes()
+        quizLayoutViewModel.loadMoreQuizzes(maxOf(initIndex+2, 4))
+    }
 
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
@@ -57,8 +71,11 @@ fun QuizSolver(
         }
     }
 
-    LaunchedEffect(initIndex) {
-        snapLayoutInfoProvider.scrollToItem(initIndex)
+    LaunchedEffect(visibleQuizzes.size) {
+        if (visibleQuizzes.isNotEmpty() && !initialScrollPerformed) {
+            snapLayoutInfoProvider.scrollToItem(initIndex)
+            initialScrollPerformed = true
+        }
     }
 
     LaunchedEffect(colorScheme.primaryContainer) {
@@ -68,6 +85,15 @@ fun QuizSolver(
         )
     }
 
+    LaunchedEffect(snapLayoutInfoProvider) {
+        scope.launch {
+            snapLayoutInfoProvider.interactionSource.interactions.collect { interaction ->
+                if (snapLayoutInfoProvider.layoutInfo.visibleItemsInfo.lastOrNull()?.index == visibleQuizzes.size - 1) {
+                    quizLayoutViewModel.loadMoreQuizzes()
+                }
+            }
+        }
+    }
 
     MaterialTheme(
         colorScheme = colorScheme
@@ -89,38 +115,38 @@ fun QuizSolver(
                     .fillMaxSize()
                     .padding(8.dp)
             ) {
-                items(quizzes.size, key = { it }) {
+                items(visibleQuizzes.size, key = {quizIndex -> quizIndex }) {quizIndex ->
                     Box(
                         modifier = Modifier
                             .fillParentMaxSize()
                     ) {
                         QuizViewer(
-                            quiz = quizzes[it],
+                            quiz = visibleQuizzes[quizIndex],
                             quizTheme = quizTheme,
                             updateQuiz1 = { index ->
-                                quizLayoutViewModel.updateQuiz1(it, index)
+                                quizLayoutViewModel.updateQuiz1(quizIndex, index)
                             },
                             updateQuiz2 = { date ->
-                                quizLayoutViewModel.updateQuiz2(it, date)
+                                quizLayoutViewModel.updateQuiz2(quizIndex, date)
                             },
                             updateQuiz3 = { first, second ->
-                                quizLayoutViewModel.updateQuiz3(it, first, second)
+                                quizLayoutViewModel.updateQuiz3(quizIndex, first, second)
                             },
                             updateQuiz4 = { first, second ->
-                                quizLayoutViewModel.updateQuiz4(it, first, second)
+                                quizLayoutViewModel.updateQuiz4(quizIndex, first, second)
                             },
                             quizStyleManager = quizLayoutViewModel.getTextStyleManager()
                         )
                         Text(
                             text = buildString {
-                                append(quizzes[it].point)
+                                append(visibleQuizzes[quizIndex].point)
                                 append(stringResource(R.string.pt))
                             },
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.TopEnd)
                         )
                         Text(
-                            text = "${it + 1}/${quizzes.size}",
+                            text = "${quizIndex + 1}/${quizzes.size}",
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.align(Alignment.BottomEnd)
                         )
