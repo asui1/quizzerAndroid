@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -137,12 +140,27 @@ fun UserRankComposable(
 @Composable
 fun UserRankComposableList(
     userRanks: List<UserRank>,
+    getMoreUserRanks: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val columnState = rememberLazyListState()
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val lastVisibleItemIndex = columnState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleItemIndex >= (userRanks.size - 1)
+        }
+    }
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value) {
+            getMoreUserRanks()
+        }
+    }
+
     LazyColumn(
+        state = columnState,
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(4.dp),
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         item{
             UserRankAnimation(

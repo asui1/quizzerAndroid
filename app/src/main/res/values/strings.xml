@@ -181,6 +181,8 @@
     <string name="image_on_top">Image on Top</string>
     <string name="score_is">Score is</string>
     <string name="strict">Strict</string>
+    <string name="failed_to_fetch_quiz_trends">Failed to fetch quiz trends</string>
+    <string name="failed_to_get_user_ranks">Failed to get user ranks</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

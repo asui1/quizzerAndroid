@@ -56,9 +56,9 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.ColorList
 import com.asu1.quizzer.util.constants.GenerateWith
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.paletteSize
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle

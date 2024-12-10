@@ -1,8 +1,11 @@
 package com.asu1.quizzer.viewModels
 
+import ToastManager
+import ToastType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance
@@ -10,6 +13,7 @@ import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class QuizCardMainViewModel : ViewModel() {
@@ -29,10 +33,44 @@ class QuizCardMainViewModel : ViewModel() {
     val quizCards: StateFlow<List<QuizCardsWithTag>> get() = _quizCards.asStateFlow()
 
     private val _quizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
-    val quizTrends: StateFlow<List<QuizCard>> get() = _quizTrends.asStateFlow()
+
+    private val trendPageCount = 5
+    private val _visibleQuizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
+    val visibleQuizTrends: StateFlow<List<QuizCard>> get() = _visibleQuizTrends.asStateFlow()
 
     private val _userRanks = MutableStateFlow<List<UserRank>>(emptyList())
-    val userRanks: StateFlow<List<UserRank>> get() = _userRanks.asStateFlow()
+
+    private val userRankPageCount = 8
+    private val _visibleUserRanks = MutableStateFlow<List<UserRank>>(emptyList())
+    val visibleUserRanks: StateFlow<List<UserRank>> get() = _visibleUserRanks.asStateFlow()
+
+    fun getMoreQuizTrends(){
+        viewModelScope.launch {
+            val start = _visibleQuizTrends.value.size
+            val end = minOf(start + trendPageCount, _quizTrends.value.size)
+            if (start < end) {
+                _visibleQuizTrends.update {
+                    it.toMutableList().apply {
+                        addAll(_quizTrends.value.subList(start, end))
+                    }
+                }
+            }
+        }
+    }
+
+    fun getMoreUserRanks(){
+        viewModelScope.launch {
+            val start = _visibleUserRanks.value.size
+            val end = minOf(start + userRankPageCount, _userRanks.value.size)
+            if (start < end) {
+                _visibleUserRanks.update {
+                    it.toMutableList().apply {
+                        addAll(_userRanks.value.subList(start, end))
+                    }
+                }
+            }
+        }
+    }
 
     fun setLoadResultId(resultId: String?){
         _loadResultId.value = resultId
@@ -58,36 +96,40 @@ class QuizCardMainViewModel : ViewModel() {
 
     fun fetchUserRanks(){
         _userRanks.value = emptyList()
+        _visibleUserRanks.value = emptyList()
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getUserRanks()
                 if (response.isSuccessful && response.body() != null) {
                     _userRanks.value = response.body()!!.searchResult
+                    _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
                 } else {
-                    _userRanks.value = emptyList()
+                    ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
                     Logger().debug("Search No Response ${response.errorBody()}")
                 }
             } catch (e: Exception) {
                 Logger().debug("Search Failed: $e")
-                _userRanks.value = emptyList()
+                ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
             }
         }
     }
 
     fun fetchQuizTrends(language: String){
         _quizTrends.value = emptyList()
+        _visibleQuizTrends.value = emptyList()
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getTrends(language)
                 if (response.isSuccessful && response.body() != null) {
                     _quizTrends.value = response.body()!!.searchResult
+                    _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
                 } else {
-                    _quizTrends.value = emptyList()
+                    ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
                     Logger().debug("Search No Response ${response.errorBody()}")
                 }
             } catch (e: Exception) {
                 Logger().debug("Search Failed: $e")
-                _quizTrends.value = emptyList()
+                ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
             }
         }
     }

@@ -38,11 +38,11 @@ import com.asu1.quizzer.screens.quizlayout.fonts
 import com.asu1.quizzer.screens.quizlayout.outlines
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
-import com.asu1.quizzer.util.constants.ColorList
-import com.asu1.quizzer.util.constants.GenerateWith
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.byteArrayToImageBitmap
 import com.asu1.quizzer.util.calculateSeedColor
+import com.asu1.quizzer.util.constants.ColorList
+import com.asu1.quizzer.util.constants.GenerateWith
 import com.asu1.quizzer.util.constants.contrastSize
 import com.asu1.quizzer.util.constants.paletteSize
 import com.asu1.quizzer.util.toScheme

@@ -45,9 +45,11 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
+import com.asu1.quizzer.composables.UserRankComposableList
 import com.asu1.quizzer.composables.mainscreen.DrawerContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
+import com.asu1.quizzer.composables.quizcards.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.ui.theme.UserBackground1
 import com.asu1.quizzer.ui.theme.UserBackground2
@@ -78,11 +80,10 @@ fun MainScreen(
     loadQuizResult: (String) -> Unit = { },
     moveHome: () -> Unit = {},
 ) {
-    val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
-    val quizTrends by quizCardMainViewModel.quizTrends.collectAsStateWithLifecycle()
-    val userRanks by quizCardMainViewModel.userRanks.collectAsStateWithLifecycle()
+    val quizTrends by quizCardMainViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
+    val userRanks by quizCardMainViewModel.visibleUserRanks.collectAsStateWithLifecycle()
     val userData by userViewModel.userData.observeAsState()
     val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
@@ -171,14 +172,22 @@ fun MainScreen(
                                         )
                                     }
                                     1 -> {
-                                        QuizTrendScreen(
-                                            quizTrends = quizTrends,
-                                            loadQuiz = loadQuiz,
+                                        VerticalQuizCardLargeColumn(
+                                            quizCards = quizTrends,
+                                            onClick = loadQuiz,
+                                            getMoreTrends = {
+                                                quizCardMainViewModel.getMoreQuizTrends()
+                                            },
+                                            modifier = Modifier.fillMaxSize()
                                         )
                                     }
                                     2 -> {
-                                        UserRankScreen(
+                                        UserRankComposableList(
                                             userRanks = userRanks,
+                                            getMoreUserRanks = {
+                                                quizCardMainViewModel.getMoreUserRanks()
+                                            }
+                                            modifier = Modifier.fillMaxSize(),
                                         )
                                     }
                                 }

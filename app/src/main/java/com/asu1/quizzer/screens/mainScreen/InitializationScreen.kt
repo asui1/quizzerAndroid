@@ -6,11 +6,9 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.UpdateDialog
 import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
