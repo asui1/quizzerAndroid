@@ -2,10 +2,12 @@ package com.asu1.quizzer
 
 import ToastManager
 import ToastType
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
@@ -17,7 +19,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
@@ -43,6 +49,7 @@ import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFadeInTransition
@@ -55,6 +62,7 @@ import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -82,6 +90,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val snackbarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+            var backPressedTime by remember { mutableLongStateOf(0L) }
 
             // Observe ToastManager for Toast messages
             LaunchedEffect(Unit) {
@@ -143,7 +153,7 @@ class MainActivity : ComponentActivity() {
                             quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel)
                             NavMultiClickPreventer.navigate(
                                 navController,
-                                Route.QuizSolver(0)
+                                Route.QuizSolver()
                             ) {
                                 if (popUpToHome) popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
@@ -175,13 +185,26 @@ class MainActivity : ComponentActivity() {
                                 InitializationScreen(
                                     navigateToHome = {
                                         getHome(
-                                            fetchData = false  // FOR DEBUG MODES
-//                                            fetchData = loadResultId == null // ONLY IN DEBUG MODES
+                                            fetchData = false
                                         )
                                     }
                                 )
                             }
                             composable<Route.Home> {
+                                BackHandler(
+                                ) {
+                                    val currentTime = System.currentTimeMillis()
+                                    ToastManager.showToast(R.string.press_back_again_to_exit, ToastType.INFO)
+                                    if (currentTime - backPressedTime < 3000) {
+                                        (context as? Activity)?.finish()
+                                    } else {
+                                        backPressedTime = currentTime
+                                        scope.launch {
+                                            delay(3000)
+                                            backPressedTime = 0L
+                                        }
+                                    }
+                                }
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
@@ -202,8 +225,10 @@ class MainActivity : ComponentActivity() {
                                                 userViewModel.userData.value?.email,
                                                 colorScheme
                                             )
-                                            scoreCardViewModel.resetScoreCard()
-                                            quizLoadViewModel.reset()
+                                            scope.launch {
+                                                scoreCardViewModel.resetScoreCard()
+                                                quizLoadViewModel.reset()
+                                            }
                                             NavMultiClickPreventer.navigate(
                                                 navController,
                                                 Route.CreateQuizLayout
@@ -355,9 +380,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
-                                val loadIndex =
-                                    backStackEntry.toRoute<Route.QuizSolver>().initIndex
-                                QuizSolver(navController, quizLayoutViewModel, loadIndex,
+                                QuizSolver(navController, quizLayoutViewModel,
                                     navigateToScoreCard = {
                                         val creatingQuiz =
                                             hasVisitedRoute(navController, Route.QuizBuilder)

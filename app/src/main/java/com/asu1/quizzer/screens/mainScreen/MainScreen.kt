@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import ToastManager
 import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -90,11 +91,9 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
     val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
     val quizTrends by quizCardMainViewModel.quizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.userRanks.collectAsStateWithLifecycle()
-    var backPressedTime by remember { mutableLongStateOf(0L) }
     val userData by userViewModel.userData.observeAsState()
     val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
@@ -107,6 +106,8 @@ fun MainScreen(
     val loadResultId by quizCardMainViewModel.loadResultId.observeAsState()
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
     val view = LocalView.current
+    val scope = rememberCoroutineScope()
+
 
     LaunchedEffect(loadQuizId){
         if(loadQuizId != null){
@@ -132,25 +133,6 @@ fun MainScreen(
             pagerState.scrollToPage(index)
         }
         quizCardMainViewModel.tryUpdate(index, language = lang)
-    }
-    BackHandler(
-    ) {
-        val currentTime = System.currentTimeMillis()
-        
-        val toast = Toast.makeText(context,
-            context.getString(R.string.press_back_again_to_exit), Toast.LENGTH_LONG)
-        if (currentTime - backPressedTime < 3000) {
-            toast.cancel()
-            (context as? Activity)?.finish()
-        } else {
-            backPressedTime = currentTime
-            toast.show()
-            scope.launch {
-                delay(3000)
-                toast.cancel()
-                backPressedTime = 0L
-            }
-        }
     }
 
     fun openDrawer() {

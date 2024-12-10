@@ -28,6 +28,7 @@ import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.QuizTheme
 import java.util.Base64
@@ -64,7 +65,10 @@ fun LoadItems(
             RowWithAppIconAndName(
                 showBackButton = true,
                 onBackPressed = {
-                    navController.popBackStack()
+                    navController.popBackStack(
+                        Route.CreateQuizLayout,
+                        inclusive = false
+                    )
                 }
             )
         }

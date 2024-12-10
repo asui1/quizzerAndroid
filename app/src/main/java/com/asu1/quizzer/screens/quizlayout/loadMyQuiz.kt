@@ -30,6 +30,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.data.ViewModelState
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
 
 @Composable
@@ -47,7 +48,10 @@ fun LoadMyQuiz(
             RowWithAppIconAndName(
                 showBackButton = true,
                 onBackPressed = {
-                    navController.popBackStack()
+                    navController.popBackStack(
+                        Route.Home,
+                        inclusive = false
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
             )

@@ -57,6 +57,7 @@ import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.LayoutSteps
@@ -78,7 +79,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }
-    val titleImageColors by quizLayoutViewModel.titleImageColors.collectAsStateWithLifecycle()
     val layoutSteps = listOf(
         stringResource(R.string.set_quiz_title),
         stringResource(R.string.set_quiz_description),
@@ -99,7 +99,10 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         if(step > LayoutSteps.TITLE) {
             quizLayoutViewModel.updateStep(step - 1)
         } else {
-            navController.popBackStack()
+            navController.popBackStack(
+                Route.Home,
+                inclusive = false
+            )
         }
     }
 
@@ -132,7 +135,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 if(!policyAgreed) {
                     ModalBottomSheet(
                         onDismissRequest = {
-                            navController.popBackStack()
+                            Logger().debug("QuizLayoutBuilderScreen", "Policy Agreement Dismissed")
+                            navController.popBackStack(Route.Home, inclusive = false)
                         },
                         modifier = Modifier.imePadding()
                     ) {

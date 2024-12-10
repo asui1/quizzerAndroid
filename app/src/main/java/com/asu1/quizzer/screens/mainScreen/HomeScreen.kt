@@ -1,5 +1,8 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -98,6 +102,7 @@ fun HomeScreenPreview(){
 
 @Composable
 fun PrivacyPolicyRow(navController: NavController) {
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -118,7 +123,13 @@ fun PrivacyPolicyRow(navController: NavController) {
             },
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier.padding(start = 16.dp)
+                .clickable {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:whwkd122@gmail.com?subject=[Quizzer] ")
+                    }
+                    context.startActivity(intent)
+                },
         )
     }
 }

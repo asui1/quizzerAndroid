@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +41,10 @@ fun PrivacyPolicy(navController: NavController) {
                 ),
                 title = { Text(text = stringResource(R.string.privacy_policy)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.popBackStack(
+                        Route.Home,
+                        inclusive = false
+                    ) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Move Back to Home")
                     }
                 }

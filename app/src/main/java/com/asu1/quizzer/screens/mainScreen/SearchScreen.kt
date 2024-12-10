@@ -51,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.sampleQuizCardList
 import com.asu1.quizzer.viewModels.SearchViewModel
 
@@ -211,7 +212,10 @@ fun SearchTopBar(
                 modifier = Modifier.fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = { navController.popBackStack(
+                    Route.Home,
+                    inclusive = false
+                ) }) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }

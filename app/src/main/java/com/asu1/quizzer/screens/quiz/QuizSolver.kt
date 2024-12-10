@@ -1,6 +1,6 @@
 package com.asu1.quizzer.screens.quiz
 
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,19 +8,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -32,49 +32,46 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColorBackground
+import com.asu1.quizzer.model.Quiz
+import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.asu1.quizzer.viewModels.QuizTheme
+import java.time.LocalDate
 
 @Composable
 fun QuizSolver(
     navController: NavController,
     quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-    initIndex: Int = 0,
     navigateToScoreCard: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
     val visibleQuizzes by quizLayoutViewModel.visibleQuizzes.collectAsStateWithLifecycle()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
-    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
     val viewModelState by quizLayoutViewModel.viewModelState.observeAsState()
-    val snapLayoutInfoProvider = rememberLazyListState()
-    val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val colorScheme = quizTheme.colorScheme
     val view = LocalView.current
-    val scope = rememberCoroutineScope()
-    var initialScrollPerformed by remember { mutableStateOf(false) }
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+    ){
+        visibleQuizzes.size + 1
+    }
+    val textStyleManager by rememberUpdatedState(quizLayoutViewModel.getTextStyleManager())
 
     LaunchedEffect(Unit){
         quizLayoutViewModel.resetVisibleQuizzes()
-        quizLayoutViewModel.loadMoreQuizzes(maxOf(initIndex+2, 4))
+        quizLayoutViewModel.loadMoreQuizzes()
     }
 
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
             navController.popBackStack()
-        }
-    }
-
-    LaunchedEffect(visibleQuizzes.size) {
-        if (visibleQuizzes.isNotEmpty() && !initialScrollPerformed) {
-            snapLayoutInfoProvider.scrollToItem(initIndex)
-            initialScrollPerformed = true
         }
     }
 
@@ -85,83 +82,144 @@ fun QuizSolver(
         )
     }
 
-    LaunchedEffect(snapLayoutInfoProvider) {
-        scope.launch {
-            snapLayoutInfoProvider.interactionSource.interactions.collect { interaction ->
-                if (snapLayoutInfoProvider.layoutInfo.visibleItemsInfo.lastOrNull()?.index == visibleQuizzes.size - 1) {
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect{page ->
+                if(page == visibleQuizzes.size-1 && visibleQuizzes.size < quizzes.size){
                     quizLayoutViewModel.loadMoreQuizzes()
                 }
             }
-        }
     }
 
     MaterialTheme(
         colorScheme = colorScheme
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            ImageColorBackground(
-                imageColor = quizTheme.backgroundImage,
-                modifier = Modifier.fillMaxSize()
-            )
-            LazyRow(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                flingBehavior = snapFlingBehavior,
-                state = snapLayoutInfoProvider,
-                modifier = Modifier
+        Scaffold { paddingValues ->
+            Box(
+                modifier = modifier
+                    .padding(paddingValues)
                     .fillMaxSize()
-                    .padding(8.dp)
             ) {
-                items(visibleQuizzes.size, key = {quizIndex -> quizIndex }) {quizIndex ->
-                    Box(
-                        modifier = Modifier
-                            .fillParentMaxSize()
-                    ) {
-                        QuizViewer(
-                            quiz = visibleQuizzes[quizIndex],
+                ImageColorBackground(
+                    imageColor = quizTheme.backgroundImage,
+                    modifier = Modifier.fillMaxSize()
+                )
+                AnimatedContent(
+                    targetState = visibleQuizzes.isEmpty(),
+                    modifier = Modifier.fillMaxSize(),
+                    label = "Animation for Loading Quiz Solver",
+                ) { isEmpty ->
+                    if (isEmpty) {
+                        LoadingAnimation()
+                    } else {
+                        QuizViewerPager(
+                            pagerState = pagerState,
+                            quizSize = quizzes.size,
+                            visibleQuizzes = visibleQuizzes,
                             quizTheme = quizTheme,
-                            updateQuiz1 = { index ->
-                                quizLayoutViewModel.updateQuiz1(quizIndex, index)
+                            textStyleManager = textStyleManager,
+                            updateQuiz1 = { index, answerIndex ->
+                                quizLayoutViewModel.updateQuiz1(
+                                    index,
+                                    answerIndex
+                                )
                             },
-                            updateQuiz2 = { date ->
-                                quizLayoutViewModel.updateQuiz2(quizIndex, date)
+                            updateQuiz2 = { index, date ->
+                                quizLayoutViewModel.updateQuiz2(
+                                    index,
+                                    date
+                                )
                             },
-                            updateQuiz3 = { first, second ->
-                                quizLayoutViewModel.updateQuiz3(quizIndex, first, second)
+                            updateQuiz3 = { index, from, to ->
+                                quizLayoutViewModel.updateQuiz3(
+                                    index,
+                                    from,
+                                    to
+                                )
                             },
-                            updateQuiz4 = { first, second ->
-                                quizLayoutViewModel.updateQuiz4(quizIndex, first, second)
+                            updateQuiz4 = { index, from, to ->
+                                quizLayoutViewModel.updateQuiz4(
+                                    index,
+                                    from,
+                                    to
+                                )
                             },
-                            quizStyleManager = quizLayoutViewModel.getTextStyleManager()
-                        )
-                        Text(
-                            text = buildString {
-                                append(visibleQuizzes[quizIndex].point)
-                                append(stringResource(R.string.pt))
+                            modifier = Modifier.fillMaxSize(),
+                            isPreview = false,
+                            lastElement = {
+                                QuizSubmit(
+                                    title = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
+                                    modifier = Modifier.fillMaxSize(),
+                                    onSubmit = navigateToScoreCard
+                                )
                             },
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.align(Alignment.TopEnd)
-                        )
-                        Text(
-                            text = "${quizIndex + 1}/${quizzes.size}",
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.align(Alignment.BottomEnd)
                         )
                     }
                 }
-                item {
-                    QuizSubmit(
-                        title = quizData.title,
-                        modifier = Modifier.fillParentMaxSize(),
-                        onSubmit = {
-                            navigateToScoreCard()
-                        }
-                    )
-                }
             }
+        }
+    }
+}
+
+@Composable
+fun QuizViewerPager(
+    pagerState: PagerState,
+    quizSize: Int,
+    visibleQuizzes: List<Quiz>,
+    quizTheme: QuizTheme = QuizTheme(),
+    modifier: Modifier = Modifier,
+    textStyleManager: TextStyleManager,
+    updateQuiz1: (page: Int, index: Int) -> Unit,
+    updateQuiz2: (page: Int, date: LocalDate) -> Unit,
+    updateQuiz3: (page: Int, first: Int, second: Int) -> Unit,
+    updateQuiz4: (page: Int, first: Int, second: Int?) -> Unit,
+    lastElement: @Composable () -> Unit,
+    isPreview: Boolean = false,
+) {
+    HorizontalPager(
+        state = pagerState,
+        key = { index -> if (index in visibleQuizzes.indices) visibleQuizzes[index].uuid else "Add NewQuiz" },
+        modifier = modifier,
+    ) { page ->
+        if (page in visibleQuizzes.indices) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                QuizViewer(
+                    quiz = visibleQuizzes[page],
+                    quizTheme = quizTheme,
+                    updateQuiz1 = { index ->
+                        updateQuiz1(page, index)
+                    },
+                    updateQuiz2 = { date ->
+                        updateQuiz2(page, date)
+                    },
+                    updateQuiz3 = { first, second ->
+                        updateQuiz3(page, first, second)
+                    },
+                    updateQuiz4 = { first, second ->
+                        updateQuiz4(page, first, second)
+                    },
+                    quizStyleManager = textStyleManager,
+                    isPreview = isPreview
+                )
+                Text(
+                    text = buildString {
+                        append(visibleQuizzes[page].point)
+                        append(stringResource(R.string.pt))
+                    },
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)
+                )
+                Text(
+                    text = "${page + 1}/${quizSize}",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)
+                )
+            }
+        } else {
+            lastElement()
         }
     }
 }

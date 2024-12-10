@@ -1,5 +1,7 @@
 package com.asu1.quizzer.screens.quiz
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,6 +50,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -66,7 +69,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
+import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
@@ -97,6 +102,8 @@ fun QuizBuilderScreen(navController: NavController,
     ){
         quizzes.size + 1
     }
+    var isPreview by remember{ mutableStateOf(false) }
+    val textStyleManager by rememberUpdatedState(quizLayoutViewModel.getTextStyleManager())
 
     LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
@@ -122,140 +129,197 @@ fun QuizBuilderScreen(navController: NavController,
     MaterialTheme(
         colorScheme = colorScheme
     ) {
-        Scaffold(
-            topBar = {
-                Row(
+        if (isPreview) {
+            BackHandler {
+                isPreview = false
+            }
+            Scaffold { paddingValues ->
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = colorScheme.primaryContainer),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    RowWithAppIconAndName(
-                        showBackButton = true,
-                        onBackPressed = {
-                            navController.popBackStack()
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                ) {
+                    ImageColorBackground(
+                        imageColor = quizTheme.backgroundImage,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    QuizViewerPager(
+                        pagerState = pagerState,
+                        quizSize = quizzes.size,
+                        visibleQuizzes = quizzes,
+                        quizTheme = quizTheme,
+                        textStyleManager = textStyleManager,
+                        updateQuiz1 = { index, answerIndex ->
+                            quizLayoutViewModel.updateQuiz1(
+                                index,
+                                answerIndex
+                            )
+                        },
+                        updateQuiz2 = { index, date ->
+                            quizLayoutViewModel.updateQuiz2(
+                                index,
+                                date
+                            )
+                        },
+                        updateQuiz3 = { index, from, to ->
+                            quizLayoutViewModel.updateQuiz3(
+                                index,
+                                from,
+                                to
+                            )
+                        },
+                        updateQuiz4 = { index, from, to ->
+                            quizLayoutViewModel.updateQuiz4(
+                                index,
+                                from,
+                                to
+                            )
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                        isPreview = false,
+                        lastElement = {
+                            QuizSubmit(
+                                title = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
+                                modifier = Modifier.fillMaxSize(),
+                                onSubmit = {}
+                            )
                         }
                     )
-                    IconButton(
-                        onClick = {
-                            navigateToQuizLoad()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FileDownload,
-                            contentDescription = "Load Local Save"
-                        )
-                    }
                 }
-            },
-            bottomBar = {
-                QuizBuilderBottomBar(
-                    onPreview = {
-                        NavMultiClickPreventer.navigate(navController, Route.QuizSolver(
-                            initIndex = curIndex
-                        ))
-                    },
-                    onProceed = {
-                        onMoveToScoringScreen()
-                    },
-                    onLocalSave = {
-                        scope.launch {
-                            quizLayoutViewModel.saveLocal(
-                                context,
-                                scoreCardViewModel.scoreCard.value
-                            )
-                        }
-                    }
-                )
-            },
-
-            ) { innerPadding ->
-            if (showNewQuizDialog) {
-                AddNewQuizDialog(
-                    updateShowNewQuizDialog = {update ->
-                        showNewQuizDialog = update
-                    },
-                    backgroundColor = colorScheme.surfaceContainerHigh,
-                    moveToQuizCaller = {index ->
-                        moveToQuizCaller(
-                            loadIndex = -1,
-                            quizType = QuizType.entries[index],
-                            insertIndex = curIndex
-                        )
-                    })
             }
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalPager(
-                    state = pagerState,
-                    key = {index -> if(index in quizzes.indices) quizzes[index].uuid else "Add NewQuiz" },
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .weight(1f),
-                ) {page ->
-                    if(page in quizzes.indices){
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    colorScheme.surface
+        }
+        else {
+            Scaffold(
+                topBar = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = colorScheme.primaryContainer),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RowWithAppIconAndName(
+                            showBackButton = true,
+                            onBackPressed = {
+                                navController.popBackStack(
+                                    Route.CreateQuizLayout,
+                                    inclusive = false,
                                 )
-                                .border(
-                                    width = 2.dp,
-                                    color = Color.Gray,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                        ) {
-                            QuizViewer(
-                                quiz = quizzes[page],
-                                quizTheme = quizTheme,
-                                quizStyleManager = quizLayoutViewModel.getTextStyleManager(),
-                                isPreview = true,
-                            )
-                        }
-                    }else{
-                        NewQuizAdd(
-                            showDialog = {showDialog ->
-                                showNewQuizDialog = showDialog
                             }
                         )
-                    }
-                }
-                QuizEditIconsRow(
-                    deleteCurrentQuiz = {
-                        quizLayoutViewModel.removeQuizAt(curIndex)
-                    },
-                    curIndex = curIndex,
-                    totalQuizzes = quizzes.size,
-                    editCurrentQuiz = {
-                        if(curIndex >= quizzes.size){
-                            return@QuizEditIconsRow
+                        IconButton(
+                            onClick = {
+                                navigateToQuizLoad()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FileDownload,
+                                contentDescription = "Load Local Save"
+                            )
                         }
-                        moveToQuizCaller(
-                            loadIndex = curIndex,
-                            quizType = quizzes[curIndex].layoutType,
-                            insertIndex = curIndex
-                        )
-                    },
-                    addQuiz = {
-                        showNewQuizDialog = true
                     }
-                )
-                Text(
-                    stringResource(R.string.too_many_big_images_might_not_be_uploaded),
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                },
+                bottomBar = {
+                    QuizBuilderBottomBar(
+                        onPreview = {
+                            isPreview = true
+                        },
+                        onProceed = {
+                            onMoveToScoringScreen()
+                        },
+                        onLocalSave = {
+                            scope.launch {
+                                quizLayoutViewModel.saveLocal(
+                                    context,
+                                    scoreCardViewModel.scoreCard.value
+                                )
+                            }
+                        }
+                    )
+                },
+
+                ) { innerPadding ->
+                if (showNewQuizDialog) {
+                    AddNewQuizDialog(
+                        updateShowNewQuizDialog = { update ->
+                            showNewQuizDialog = update
+                        },
+                        backgroundColor = colorScheme.surfaceContainerHigh,
+                        moveToQuizCaller = { index ->
+                            moveToQuizCaller(
+                                loadIndex = -1,
+                                quizType = QuizType.entries[index],
+                                insertIndex = curIndex
+                            )
+                        })
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    QuizViewerPager(
+                        pagerState = pagerState,
+                        quizSize = quizzes.size,
+                        visibleQuizzes = quizzes,
+                        quizTheme = quizTheme,
+                        textStyleManager = textStyleManager,
+                        updateQuiz1 = { index, answerIndex ->
+                        },
+                        updateQuiz2 = { index, date ->
+                        },
+                        updateQuiz3 = { index, from, to ->
+                        },
+                        updateQuiz4 = { index, from, to ->
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .weight(1f)
+                            .border(
+                                width = 2.dp,
+                                color = colorScheme.outline,
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        isPreview = true,
+                        lastElement = {
+                            NewQuizAdd(
+                                showDialog = { showDialog ->
+                                    showNewQuizDialog = showDialog
+                                }
+                            )
+                        }
+                    )
+                    QuizEditIconsRow(
+                        deleteCurrentQuiz = {
+                            quizLayoutViewModel.removeQuizAt(curIndex)
+                        },
+                        curIndex = curIndex,
+                        totalQuizzes = quizzes.size,
+                        editCurrentQuiz = {
+                            if (curIndex >= quizzes.size) {
+                                return@QuizEditIconsRow
+                            }
+                            moveToQuizCaller(
+                                loadIndex = curIndex,
+                                quizType = quizzes[curIndex].layoutType,
+                                insertIndex = curIndex
+                            )
+                        },
+                        addQuiz = {
+                            showNewQuizDialog = true
+                        }
+                    )
+                    Text(
+                        stringResource(R.string.too_many_big_images_might_not_be_uploaded),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
         }
     }
-
 }
 
 @Composable

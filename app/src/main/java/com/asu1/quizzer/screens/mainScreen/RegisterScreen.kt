@@ -97,7 +97,10 @@ fun RegisterScreen(
             "Register ${registerStep}"
         )
         if(registerStep == 0){
-            navController.popBackStack()
+            navController.popBackStack(
+                Route.Login,
+                inclusive = false
+            )
         }else{
             registerViewModel.moveBack()
         }

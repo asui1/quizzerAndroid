@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.quizzer.composables.UpdateDialog
 import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.MainViewModel
 
 @Composable
@@ -37,6 +38,5 @@ private fun redirectToPlayStore(context: Context) {
         data = Uri.parse("https://play.google.com/store/apps/details?id=com.asu1.quizzer")
         setPackage("com.android.vending")
     }
-    // TODO: START ACTIVITY DEPRECATED
-    ContextCompat.startActivity(context, intent, null)
+    context.startActivity(intent)
 }
