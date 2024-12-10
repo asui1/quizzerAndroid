@@ -113,7 +113,6 @@
     <string name="single_color">Single Color</string>
     <string name="gradient">Gradient</string>
     <string name="image">Image</string>
-    <string name="gradient_picker_placeholder_to_be_implemented">Gradient Picker Placeholder\n To be implemented</string>
     <string name="gen_with_title_image">Gen. with\nTitle Image</string>
     <string name="gen_with_primary_color">Gen. with\nPrimary Color</string>
     <string name="palette">"Palette : "</string>

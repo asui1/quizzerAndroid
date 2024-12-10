@@ -26,6 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         activity?.finish()
     }
 
+    // TODO: Change to check app version on playstore.
     private fun checkForUpdates() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
