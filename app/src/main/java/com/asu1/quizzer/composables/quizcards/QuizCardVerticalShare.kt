@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.scorecard.ShareDialog
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCard
+import com.asu1.quizzer.util.constants.sampleQuizCard
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -149,7 +149,7 @@ fun VerticalQuizCardLargeShare(
 @Preview(showBackground = true)
 @Composable
 fun VerticalQuizCardLargeSharePreview() {
-    val quizCard = getSampleQuizCard()
+    val quizCard = sampleQuizCard
     SharedTransitionLayout {
         AnimatedContent(
             true,

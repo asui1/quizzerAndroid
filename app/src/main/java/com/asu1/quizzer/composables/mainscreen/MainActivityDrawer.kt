@@ -47,7 +47,7 @@ import com.asu1.quizzer.screens.mainScreen.UserProfilePic
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.userDataTest
+import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 import kotlinx.coroutines.launch
 

@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCardList
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 
 @Composable
 fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -132,7 +132,7 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
 @Preview(showBackground = true)
 @Composable
 fun QuizCardLargePreview() {
-    val quizCards = getSampleQuizCardList()
+    val quizCards = sampleQuizCardList
 
     HorizontalQuizCardItemLarge(quizCards = quizCards)
 }

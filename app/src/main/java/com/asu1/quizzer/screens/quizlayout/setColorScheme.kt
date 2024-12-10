@@ -56,10 +56,10 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.ColorList
-import com.asu1.quizzer.util.GenerateWith
+import com.asu1.quizzer.util.constants.ColorList
+import com.asu1.quizzer.util.constants.GenerateWith
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.paletteSize
+import com.asu1.quizzer.util.constants.paletteSize
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
@@ -76,7 +76,7 @@ fun QuizLayoutSetColorScheme(
     onGradientColorUpdate: (Color) -> Unit = { },
     onImageUpdate: (ByteArray) -> Unit = { },
     onImageColorStateUpdate: (ImageColorState) -> Unit = { },
-    generateColorScheme: (genWith:GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
+    generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
 ) {
     val context = LocalContext.current
     val colors = listOf(
@@ -256,7 +256,7 @@ fun GenerateColorScheme(
     onContrastLevelUpdate: (Int) -> Unit = {},
     paletteLevel: Int = 2,
     onPaletteLevelUpdate: (Int) -> Unit = {},
-    generateColorScheme: (genWith:GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
+    generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
 ){
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current

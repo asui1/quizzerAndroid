@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,9 +27,9 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
-import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.util.constants.sampleQuizCardsWithTagList
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
 
 @Composable
@@ -44,23 +45,22 @@ fun HomeScreen(
         contentPadding = PaddingValues(vertical = 12.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        items(
-            quizCards.size,
-            key = { quizCards ->
-                quizCards.hashCode()
+        itemsIndexed(
+            quizCards, key = { index, item ->
+                item.tag
             }
-        ) { index ->
+        ) {index, item ->
             Text(
-                text = remember{if(isKo) changeTagToText(quizCards[index].tag) else quizCards[index].tag},
+                text = remember{if(isKo) changeTagToText(item.tag) else item.tag},
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
             if (index == 0) {
-                HorizontalQuizCardItemLarge(quizCards = quizCards[index].quizCards,
+                HorizontalQuizCardItemLarge(quizCards = item.quizCards,
                     onClick = { uuid -> loadQuiz(uuid) })
             } else {
-                HorizontalQuizCardItemVertical(quizCards = quizCards[index].quizCards,
+                HorizontalQuizCardItemVertical(quizCards = item.quizCards,
                     onClick = { uuid -> loadQuiz(uuid) })
             }
         }
@@ -88,14 +88,9 @@ fun changeTagToText(tag: String): String{
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview(){
-    val quizCard = getSampleQuizCard()
-
-    val quizCardsWithTag = QuizCardsWithTag(
-        tag = "tag1",
-        quizCards = listOf(quizCard, quizCard, quizCard, quizCard, quizCard)
-    )
+    val quizCardsWithTagList = sampleQuizCardsWithTagList
     HomeScreen(
-        quizCards = listOf(quizCardsWithTag, quizCardsWithTag, quizCardsWithTag),
+        quizCards = quizCardsWithTagList,
         loadQuiz = {},
         navController = rememberNavController()
     )

@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.composables.quizcards.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCard
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.constants.sampleQuizCard
 
 @Composable
 fun QuizTrendScreen(
@@ -25,7 +25,7 @@ fun QuizTrendScreen(
 @Preview(showBackground = true)
 @Composable
 fun QuizTrendScreenPreview() {
-    val quizCard = getSampleQuizCard()
+    val quizCard = sampleQuizCard
     val quizCards = mutableListOf<QuizCard>()
     for (i in 1..5) {
         quizCards.add(

@@ -1,6 +1,7 @@
 package com.asu1.quizzer.composables.scorecard
 
 import android.graphics.BitmapFactory
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +25,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -224,8 +227,15 @@ fun ScoreCardComposable(
     val greened = remember(scoreCard.textColor){
         rotateHue(scoreCard.textColor, 30f)
     }
+    val showHorizontalIndicator by remember{
+        derivedStateOf{
+            pagerState.currentPage != 3
+        }
+    }
+
 
     Box(
+        contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .animateContentSize()
             .fillMaxSize()
@@ -311,47 +321,53 @@ fun ScoreCardComposable(
 
                         }
                         else -> {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.score_is),
-                                    color = scoreCard.textColor,
-                                    fontSize = 30.sp,
-                                    fontStyle = FontStyle.Italic,
-                                    fontFamily = notosans,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .zIndex(2f),
-                                )
-                                Text(
-                                    text = formattedScore,
-                                    color = scoreCard.textColor,
-                                    fontSize = 100.sp,
-                                    fontFamily = notosans,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .zIndex(2f),
-                                )
-                            }
+                            Score(scoreCard, formattedScore)
                         }
                     }
                 }
             }
         }
-        HorizontalPagerIndicator(
-            pageCount = pageNum,
-            currentPage = pagerState.currentPage,
-            targetPage = pagerState.targetPage,
-            currentPageOffsetFraction = pagerState.currentPageOffsetFraction,
+        AnimatedVisibility(visible = showHorizontalIndicator){
+            HorizontalPagerIndicator(
+                pageCount = pageNum,
+                currentPage = pagerState.currentPage,
+                targetPage = pagerState.targetPage,
+                currentPageOffsetFraction = pagerState.currentPageOffsetFraction,
+                modifier = Modifier
+                    .padding(bottom = 8.dp),
+                indicatorColor = scoreCard.textColor,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Score(scoreCard: ScoreCard, formattedScore: String) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Text(
+            text = stringResource(R.string.score_is),
+            color = scoreCard.textColor,
+            fontSize = 30.sp,
+            fontStyle = FontStyle.Italic,
+            fontFamily = notosans,
+            maxLines = 1,
             modifier = Modifier
-                .padding(bottom = 8.dp)
-                .align(Alignment.BottomCenter),
-            indicatorColor = scoreCard.textColor,
+                .zIndex(2f),
+        )
+        Text(
+            text = formattedScore,
+            color = scoreCard.textColor,
+            fontSize = 100.sp,
+            fontFamily = notosans,
+            maxLines = 1,
+            modifier = Modifier
+                .zIndex(2f),
         )
     }
 }

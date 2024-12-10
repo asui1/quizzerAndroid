@@ -10,19 +10,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -31,7 +32,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,12 +71,10 @@ import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.questionTypes
+import com.asu1.quizzer.util.constants.questionTypes
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import kotlinx.coroutines.launch
-
-val bodyHeight = 500.dp
 
 @Composable
 fun QuizBuilderScreen(navController: NavController,
@@ -89,37 +88,26 @@ fun QuizBuilderScreen(navController: NavController,
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
     var curIndex by remember{ mutableIntStateOf(0) }
-    val screenWidthHalf = LocalConfiguration.current.screenWidthDp.dp/2
-    val padding = screenWidthHalf - 150.dp
     val snapLayoutInfoProvider = rememberLazyListState()
-    val snapFlingBehavior = rememberSnapFlingBehavior(snapLayoutInfoProvider)
     val initialIndex by quizLayoutViewModel.initIndex.observeAsState(0)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(snapLayoutInfoProvider) {
-        snapshotFlow { snapLayoutInfoProvider.layoutInfo }
-            .collect { layoutInfo ->
-                val visibleItems = layoutInfo.visibleItemsInfo
-                if (visibleItems.isNotEmpty()) {
-                    val center = layoutInfo.viewportEndOffset / 2
-                    val centerItem = visibleItems.minByOrNull {
-                        kotlin.math.abs(it.offset + it.size / 2 - center)
-                    }
-                    centerItem?.let {
-                        val centerIndex = it.index
-                        curIndex = centerIndex
-                        quizLayoutViewModel.updateInitIndex(curIndex)
-                    }
-                }
-            }
+    val pagerState = rememberPagerState(
+        initialPage = initialIndex,
+    ){
+        quizzes.size + 1
     }
 
     LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
     }
 
-
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect { page ->
+                curIndex = page
+            }
+    }
 
     fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
         NavMultiClickPreventer.navigate(navController,
@@ -184,71 +172,38 @@ fun QuizBuilderScreen(navController: NavController,
 
             ) { innerPadding ->
             if (showNewQuizDialog) {
-                Dialog(
-                    onDismissRequest = { showNewQuizDialog = false },
-                    content = {
-                        Column(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .background(color = colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(16.dp))
-                                .padding(16.dp)
-                        ) {
-                            Text(stringResource(R.string.select_question_type))
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.wrapContentSize()
-                            ) {
-                                itemsIndexed(
-                                    questionTypes,
-                                    key = { index, _ -> index },
-                                ) { index, questionType ->
-                                    Image(
-                                        painter = painterResource(id = questionType),
-                                        contentDescription = "Question Type ${index + 1}",
-                                        modifier = Modifier
-                                            .width(100.dp)
-                                            .testTag("QuizBuilderScreenNewQuizDialogImage$index")
-                                            .clickable {
-                                                showNewQuizDialog = false
-                                                moveToQuizCaller(
-                                                    loadIndex = -1,
-                                                    quizType = QuizType.entries[index],
-                                                    insertIndex = curIndex
-                                                )
-                                            }
-                                    )
-                                }
-                            }
-                        }
+                AddNewQuizDialog(
+                    updateShowNewQuizDialog = {update ->
+                        showNewQuizDialog = update
                     },
-                )
+                    backgroundColor = colorScheme.surfaceContainerHigh,
+                    moveToQuizCaller = {index ->
+                        moveToQuizCaller(
+                            loadIndex = -1,
+                            quizType = QuizType.entries[index],
+                            insertIndex = curIndex
+                        )
+                    })
             }
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    flingBehavior = snapFlingBehavior,
-                    state = snapLayoutInfoProvider,
+                Spacer(modifier = Modifier.height(8.dp))
+                HorizontalPager(
+                    state = pagerState,
+                    key = {index -> if(index in quizzes.indices) quizzes[index].uuid else "Add NewQuiz" },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = padding, end = padding, top = 8.dp),
-                ) {
-                    items(quizzes.size,
-
-                        ) {
-                        Spacer(modifier = Modifier.width(4.dp))
+                        .fillMaxWidth(0.8f)
+                        .weight(1f),
+                ) {page ->
+                    if(page in quizzes.indices){
                         Box(
                             modifier = Modifier
-                                .size(width = 280.dp, height = bodyHeight)
+                                .fillMaxSize()
                                 .background(
                                     colorScheme.surface
                                 )
@@ -259,19 +214,16 @@ fun QuizBuilderScreen(navController: NavController,
                                 )
                         ) {
                             QuizViewer(
-                                quiz = quizzes[it],
+                                quiz = quizzes[page],
                                 quizTheme = quizTheme,
                                 quizStyleManager = quizLayoutViewModel.getTextStyleManager(),
                                 isPreview = true,
                             )
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        // Your item content here
-                    }
-                    item {
+                    }else{
                         NewQuizAdd(
-                            showDialog = {
-                                showNewQuizDialog = it
+                            showDialog = {showDialog ->
+                                showNewQuizDialog = showDialog
                             }
                         )
                     }
@@ -307,6 +259,53 @@ fun QuizBuilderScreen(navController: NavController,
 }
 
 @Composable
+private fun AddNewQuizDialog(
+    updateShowNewQuizDialog: (Boolean) -> Unit,
+    backgroundColor: Color,
+    moveToQuizCaller: (Int) -> Unit,
+) {
+    Dialog(
+        onDismissRequest = { updateShowNewQuizDialog(false) },
+        content = {
+            Column(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+                Text(stringResource(R.string.select_question_type))
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.wrapContentSize()
+                ) {
+                    itemsIndexed(
+                        questionTypes,
+                        key = { index, _ -> index },
+                    ) { index, questionType ->
+                        Image(
+                            painter = painterResource(id = questionType),
+                            contentDescription = "Question Type ${index + 1}",
+                            modifier = Modifier
+                                .width(100.dp)
+                                .testTag("QuizBuilderScreenNewQuizDialogImage$index")
+                                .clickable {
+                                    updateShowNewQuizDialog(false)
+                                    moveToQuizCaller(index)
+                                }
+                        )
+                    }
+                }
+            }
+        },
+    )
+}
+
+@Composable
 fun NewQuizAdd(
     showDialog: (Boolean) -> Unit = {},
     key: String = "QuizBuilderScreenNewQuizAdd",
@@ -314,8 +313,8 @@ fun NewQuizAdd(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(width = 300.dp, height = bodyHeight)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(16.dp)),
     ) {
         FloatingActionButton(
             modifier = Modifier.testTag(key),

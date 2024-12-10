@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCardList
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -75,6 +75,6 @@ fun QuizCardHorizontalVerticalShareList(quizCards: List<QuizCard>, onClick: (Str
 @Preview(showBackground = true)
 @Composable
 fun QuizCardHorizontalVerticalShareListPreview() {
-    val quizCards = getSampleQuizCardList()
+    val quizCards = sampleQuizCardList
     QuizCardHorizontalVerticalShareList(quizCards = quizCards)
 }

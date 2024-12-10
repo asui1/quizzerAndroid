@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCard
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 
 @Composable
 fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -116,8 +116,8 @@ fun QuizCardHorizontalWithSharedTransition(
 @Preview(name = "QuizCardItemVertical Preview", showBackground = true)
 @Composable
 fun QuizCardItemPreview() {
-    val quizCard = getSampleQuizCard()
+    val quizCardList = sampleQuizCardList
 
-    HorizontalQuizCardItemVertical(quizCards = listOf(quizCard, quizCard, quizCard, quizCard, quizCard))
+    HorizontalQuizCardItemVertical(quizCards = quizCardList)
 }
 

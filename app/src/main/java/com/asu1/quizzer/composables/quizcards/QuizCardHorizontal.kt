@@ -40,8 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCardList
-
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -218,6 +217,6 @@ fun QuizCardHorizontalList(quizCards: List<QuizCard>, onClick: (String) -> Unit 
 @Preview(showBackground = true)
 @Composable
 fun QuizCardHorizontalPreview() {
-    val quizCards = getSampleQuizCardList()
-    QuizCardHorizontalList(quizCards = quizCards)
+    val quizCardList = sampleQuizCardList
+    QuizCardHorizontalList(quizCards = quizCardList)
 }

@@ -50,8 +50,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
-import com.asu1.quizzer.model.getSampleQuizCardList
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 import com.asu1.quizzer.viewModels.SearchViewModel
 
 @Composable
@@ -125,7 +125,7 @@ fun  SearchScreen(navController: NavHostController, searchViewModel: SearchViewM
 @Composable
 fun PreviewSearchScreen(){
     val searchViewModel: SearchViewModel = viewModel()
-    val quizCards = getSampleQuizCardList()
+    val quizCards = sampleQuizCardList
     searchViewModel.setSearchResult(
         quizCards
     )

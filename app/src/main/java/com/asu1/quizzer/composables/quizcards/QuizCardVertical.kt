@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.model.getSampleQuizCardList
+import com.asu1.quizzer.util.constants.sampleQuizCardList
 
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
@@ -161,7 +161,7 @@ fun VerticalQuizCardLargeColumn(quizCards: List<QuizCard>, onClick: (String) -> 
 @Preview(showBackground = true)
 @Composable
 fun VerticalQuizCardLargePreview() {
-    val quizCards = getSampleQuizCardList()
+    val quizCards = sampleQuizCardList
     VerticalQuizCardLargeColumn(quizCards, {})
 }
 
