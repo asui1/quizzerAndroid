@@ -31,7 +31,6 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.sampleQuizCardsWithTagList
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
@@ -112,7 +111,9 @@ fun PrivacyPolicyRow(navController: NavController) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = {
-            NavMultiClickPreventer.navigate(navController, Route.PrivacyPolicy)
+            navController.navigate(Route.PrivacyPolicy){
+                launchSingleTop = true
+            }
         }) {
             Text(stringResource(R.string.privacy_policy))
         }

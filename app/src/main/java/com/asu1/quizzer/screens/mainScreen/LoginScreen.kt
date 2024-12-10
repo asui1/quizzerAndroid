@@ -38,7 +38,6 @@ import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -142,12 +141,14 @@ fun LoginScreen(navController: NavController,
                     }
                     val profileUri = googleIdTokenCredential.profilePictureUri
 
-                    NavMultiClickPreventer.navigate(
-                        navController, Route.Register(
+                    navController.navigate(
+                        Route.Register(
                             email,
                             profileUri.toString()
                         )
-                    )
+                    ){
+                        launchSingleTop = true
+                    }
                 } catch (e: GetCredentialException) {
                     Log.e("Quizzer", "Error getting credential", e)
                 }

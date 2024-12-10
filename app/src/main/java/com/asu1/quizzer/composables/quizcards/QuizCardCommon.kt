@@ -55,7 +55,7 @@ fun QuizImage(uuid: String, title: String, modifier: Modifier = Modifier){
     val isError = painter.state is AsyncImagePainter.State.Error
 
     Box(modifier = modifier) {
-        if (isError || uuid == "1") {
+        if (isError || uuid.length == 1) {
             Image(
                 painter = painterResource(id = R.drawable.question2),
                 contentDescription = "Image for quiz $title",

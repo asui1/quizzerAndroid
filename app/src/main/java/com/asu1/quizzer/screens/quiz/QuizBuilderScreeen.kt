@@ -74,7 +74,6 @@ import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.QuizType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.questionTypes
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -117,13 +116,15 @@ fun QuizBuilderScreen(navController: NavController,
     }
 
     fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
-        NavMultiClickPreventer.navigate(navController,
+        navController.navigate(
             Route.QuizCaller(
                 loadIndex = loadIndex,
                 quizType = quizType,
                 insertIndex = insertIndex
             )
-        )
+        ){
+            launchSingleTop = true
+        }
     }
 
     MaterialTheme(

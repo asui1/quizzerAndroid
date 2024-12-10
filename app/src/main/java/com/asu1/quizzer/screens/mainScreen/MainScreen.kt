@@ -1,9 +1,5 @@
 package com.asu1.quizzer.screens.mainScreen
 
-import ToastManager
-import android.app.Activity
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,14 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,14 +57,10 @@ import com.asu1.quizzer.ui.theme.UserBackground5
 import com.asu1.quizzer.ui.theme.UserBackground6
 import com.asu1.quizzer.ui.theme.UserBackground7
 import com.asu1.quizzer.ui.theme.UserBackground8
-import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.NavMultiClickPreventer
-import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.random.Random
@@ -200,10 +189,6 @@ fun MainScreen(
             }
         )
     }
-}
-
-fun moveToSearchActivity(navController: NavController, searchText: String = "") {
-    NavMultiClickPreventer.navigate(navController, Route.Search(searchText))
 }
 
 @Composable

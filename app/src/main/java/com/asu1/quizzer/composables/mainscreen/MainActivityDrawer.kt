@@ -45,7 +45,6 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
@@ -135,7 +134,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             scope.launch {
                                 if (isUserLoggedIn) {
                                 } else {
-                                    NavMultiClickPreventer.navigate(navController, Route.Login)
+                                    navController.navigate(Route.Login){
+                                        launchSingleTop = true
+                                    }
                                 }
                             }
                         })
@@ -151,7 +152,9 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             if (isUserLoggedIn) {
                                 showLogoutDialog = true
                             } else {
-                                NavMultiClickPreventer.navigate(navController, Route.Login)
+                                navController.navigate(Route.Login){
+                                    launchSingleTop = true
+                                }
                             }
                         }) {
                             Icon(

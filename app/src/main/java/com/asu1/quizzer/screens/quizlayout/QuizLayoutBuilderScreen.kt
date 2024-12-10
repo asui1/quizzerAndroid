@@ -58,7 +58,6 @@ import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -152,7 +151,9 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         quizLayoutViewModel.updateStep(step + 1)
                     } else {
                         quizLayoutViewModel.initTextStyleManager()
-                        NavMultiClickPreventer.navigate(navController, Route.QuizBuilder)
+                        navController.navigate(Route.QuizBuilder){
+                            launchSingleTop = true
+                        }
                     }
                 }
 

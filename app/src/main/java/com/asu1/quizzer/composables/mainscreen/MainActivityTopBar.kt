@@ -17,9 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
-import com.asu1.quizzer.screens.mainScreen.moveToSearchActivity
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
@@ -47,7 +45,9 @@ fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}
             }
         },
         actions = {
-            IconButton(onClick = { moveToSearchActivity(navController) }) {
+            IconButton(onClick = { navController.navigate(Route.Search("")){
+                launchSingleTop = true
+            } }) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
             UserProfilePic(userData, onClick = {
@@ -56,7 +56,9 @@ fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}
                         openDrawer()
                     }
                     else{
-                        NavMultiClickPreventer.navigate(navController, Route.Login)
+                        navController.navigate(Route.Login){
+                            launchSingleTop = true
+                        }
                     }
                 }
             })

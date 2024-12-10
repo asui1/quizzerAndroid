@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,24 +53,31 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.sampleQuizCardList
 import com.asu1.quizzer.viewModels.SearchViewModel
 
 @Composable
-fun  SearchScreen(navController: NavHostController, searchViewModel: SearchViewModel = viewModel(),
-                 onQuizClick: (quizId: String) -> Unit = {}, searchText: String = "") {
+fun  SearchScreen(navController: NavHostController,
+                  searchViewModel: SearchViewModel = viewModel(),
+                  onQuizClick: (quizId: String) -> Unit = {}) {
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
-    var searchTextField by remember {mutableStateOf(TextFieldValue(searchText))}
+    var searchTextField by remember { mutableStateOf(TextFieldValue(searchViewModel.searchText.value ?: "")) }
     val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
     val focusRequester = remember{ FocusRequester() }
 
+    BackHandler(
+        enabled = searchTextField.text.isNotEmpty(),
+    ) {
+        searchTextField = TextFieldValue("")
+        searchViewModel.setSearchText("")
+        focusRequester.requestFocus()
+    }
+
     LaunchedEffect(Unit) {
-        if(searchText.isNotEmpty()){
-            searchViewModel.search(searchText)
-        }
-        else{
+        if(searchTextField.text.isEmpty()){
             focusRequester.requestFocus()
         }
     }
@@ -78,7 +87,10 @@ fun  SearchScreen(navController: NavHostController, searchViewModel: SearchViewM
             SearchTopBar(
                 navController = navController,
                 searchText = searchTextField,
-                onSearchTextChanged = { searchTextField = it },
+                onSearchTextChanged = {textFieldValue ->
+                    searchTextField = textFieldValue
+                    searchViewModel.setSearchText(textFieldValue.text)
+                },
                 search = { searchViewModel.search(it) },
                 focusManager = focusManager,
                 onTextFieldFocused = { isFocused = true },
@@ -111,7 +123,6 @@ fun  SearchScreen(navController: NavHostController, searchViewModel: SearchViewM
                         QuizCardHorizontalVerticalShareList(
                             quizCards = searchResult ?: emptyList(),
                             onClick = {
-                                searchViewModel.reset()
                                 onQuizClick(it)
                             }
                         )
@@ -134,7 +145,7 @@ fun PreviewSearchScreen(){
     QuizzerAndroidTheme {
         SearchScreen(
             navController = rememberNavController(),
-            searchViewModel = searchViewModel
+            searchViewModel = searchViewModel,
         )
     }
 }

@@ -55,7 +55,6 @@ import com.asu1.quizzer.composables.scorecard.ShareDialog
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleScoreCard
-import com.asu1.quizzer.util.NavMultiClickPreventer
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
@@ -153,13 +152,14 @@ fun ScoringScreen(
                                     scoreCard,
                                     loadQuiz,
                                     onClickMoveHome = {
-                                        NavMultiClickPreventer.navigate(navController, Route.Home) {
+                                        quizLayoutViewModel.resetQuizLayout()
+                                        scoreCardViewModel.resetScoreCard()
+                                        navController.navigate(Route.Home) {
+                                            launchSingleTop = true
                                             popUpTo(Route.Home) {
                                                 inclusive = true
                                             }
                                         }
-                                        quizLayoutViewModel.resetQuizLayout()
-                                        scoreCardViewModel.resetScoreCard()
                                     },
                                     showShareBottomSheet = { showShareBottomSheet = true }
                                 )
