@@ -7,8 +7,10 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-1. 로컬에서 삭제요청 넣었는데 삭제가 안됨.
-2. 자동으로 이미지 uri 생성 실패.
+1. 자동으로 이미지 uri 생성 실패.
+
+2. 이미지를 통해 텍스트박스 꾸미기? 텍스트박스 테두리를 데코레이션 하고싶음.
+
 
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:

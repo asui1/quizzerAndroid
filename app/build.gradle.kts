@@ -78,7 +78,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation-layout:1.7.5")
     implementation("androidx.navigation:navigation-compose:2.8.4")
     implementation ("androidx.credentials:credentials:1.3.0")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation ("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
@@ -122,6 +122,8 @@ dependencies {
     implementation("com.github.LottieFiles:dotlottie-android:0.4.1")
     implementation("com.google.android.libraries.places:places:4.1.0")
     implementation("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))

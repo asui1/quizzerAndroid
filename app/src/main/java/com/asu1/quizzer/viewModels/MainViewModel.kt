@@ -7,6 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.isDebug
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -26,36 +31,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         activity?.finish()
     }
 
-    // TODO: Change to check app version on playstore.
+    // TODO: Change to check app version on playstore.(Needs Testing)
     private fun checkForUpdates() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                coroutineScope {
-                    val responseDeferred = async { RetrofitInstance.api.getVersion() }
-                    val currentVersionDeferred = async {
-                        val packageManager = getApplication<Application>().packageManager
-                        val packageName = getApplication<Application>().packageName
-                        val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                        packageInfo.versionName
-                    }
-
-                    val response = responseDeferred.await()
-                    val currentVersion = currentVersionDeferred.await()
-
-                    if (response.isSuccessful && response.body() != null && response.body()?.latestVersion != null) {
-                        val latestVersion = response.body()?.latestVersion ?: ""
-                        if (isUpdateNeeded(latestVersion, currentVersion ?: "1.0.0")) {
-                            _isUpdateAvailable.postValue(true)
-                        } else {
-                            _isUpdateAvailable.postValue(false)
-                        }
-                    } else {
-                        _isUpdateAvailable.postValue(false)
-                    }
-                }
-            } catch (e: Exception) {
+        val context = getApplication<Application>().applicationContext
+        Logger().debug("Checking for updates1")
+        val appUpdateManager = AppUpdateManagerFactory.create(context)
+        Logger().debug("Checking for updates2")
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        Logger().debug("Checking for updates3")
+        // Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            Logger().debug("Update available: ${appUpdateInfo.updateAvailability()}")
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // This example applies an immediate update. To apply a flexible update
+                // instead, pass in AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                _isUpdateAvailable.postValue(true)
+                // Request the update.
+            }else{
                 _isUpdateAvailable.postValue(false)
             }
+        }
+        if(isDebug){
+            _isUpdateAvailable.postValue(false)
         }
     }
 
