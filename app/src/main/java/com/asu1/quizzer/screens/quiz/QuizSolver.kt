@@ -54,6 +54,7 @@ fun QuizSolver(
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
     val visibleQuizzes by quizLayoutViewModel.visibleQuizzes.collectAsStateWithLifecycle()
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
+    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
     val viewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val colorScheme = quizTheme.colorScheme
     val view = LocalView.current
@@ -148,7 +149,7 @@ fun QuizSolver(
                             isPreview = false,
                             lastElement = {
                                 QuizSubmit(
-                                    title = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
+                                    title = quizData.title,
                                     modifier = Modifier.fillMaxSize(),
                                     onSubmit = navigateToScoreCard
                                 )
@@ -210,12 +211,12 @@ fun QuizViewerPager(
                         append(stringResource(R.string.pt))
                     },
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)
+                    modifier = Modifier.align(Alignment.TopEnd).padding(2.dp)
                 )
                 Text(
                     text = "${page + 1}/${quizSize}",
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(2.dp)
                 )
             }
         } else {

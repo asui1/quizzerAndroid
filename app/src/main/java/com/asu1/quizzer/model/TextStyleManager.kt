@@ -3,6 +3,7 @@ package com.asu1.quizzer.model
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
@@ -36,6 +37,8 @@ class TextStyleManager {
     private var answerStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
 
     private var currentColorScheme: ColorScheme = LightColorScheme
+    private var colorBrush: Brush = Brush.linearGradient(colors = listOf())
+    private var imageBrush: Brush = Brush.linearGradient(colors = listOf())
 
     fun initTextStyleManager(colorScheme: ColorScheme, questionStyle: List<Int>, answerStyle: List<Int>, bodyStyle: List<Int>){
         currentColorScheme = colorScheme
@@ -49,7 +52,8 @@ class TextStyleManager {
         val color = style[1]
         val borderStyle = style[2]
         val (backgroundColor, contentColor) = getColor(currentColorScheme, color)
-        val borderModifier = Modifier.getBorder(borderStyle)
+        colorBrush = Brush.linearGradient(colors = listOf(currentColorScheme.primary, currentColorScheme.secondary))
+        val borderModifier = Modifier.getBorder(borderStyle, currentColorScheme.outline, colorBrush)
 
         val fontSize = when(style[3]){
             0 -> 24.sp // question

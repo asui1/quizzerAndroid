@@ -182,6 +182,8 @@
     <string name="strict">사용자 정의 색</string>
     <string name="failed_to_fetch_quiz_trends">인기 순을 불러오지 못했습니다</string>
     <string name="failed_to_get_user_ranks">순위를 불러오지 못했습니다</string>
+    <string name="box2">Color Box</string>
+    <string name="image_border">Image Border</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

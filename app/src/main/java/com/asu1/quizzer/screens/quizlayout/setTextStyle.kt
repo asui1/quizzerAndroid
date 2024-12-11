@@ -31,11 +31,10 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.composables.base.Flipper
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-
-val fonts = listOf("Gothic A1", "Noto Sans", "Maruburi", "Spoqahans", "EF-diary", "Ongle-Yunue", "Ongle-Eyeon")
-val colors = listOf("Color1", "Color2", "Color3", "Color4", "Color5", "Color6", "Color7", "Color8", "Color9", "Color10")
-val borders = listOf(R.string.no_border, R.string.underline, R.string.box)
-val outlines = listOf(R.string.no_outline, R.string.shadow, R.string.inverse)
+import com.asu1.quizzer.util.constants.borders
+import com.asu1.quizzer.util.constants.colors
+import com.asu1.quizzer.util.constants.fonts
+import com.asu1.quizzer.util.constants.outlines
 
 @Composable
 fun QuizLayoutSetTextStyle(

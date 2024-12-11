@@ -14,11 +14,13 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -83,7 +85,8 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
     val color = style[1]
     val borderStyle = style[2]
     val (backgroundColor, contentColor) = getColor(colorScheme, color)
-    val borderModifier = Modifier.getBorder(borderStyle)
+    val colorBrush = remember(colorScheme.primary, colorScheme.secondary){ Brush.linearGradient(colors = listOf(colorScheme.primary, colorScheme.secondary))}
+    val borderModifier = Modifier.getBorder(borderStyle, MaterialTheme.colorScheme.outline, colorBrush)
 
     val fontSize = when(style[3]){
         0 -> 24.sp // question
@@ -201,19 +204,24 @@ fun Color.flipAlpha(): Color {
     return this.copy(alpha = newAlpha)
 }
 
-fun Modifier.getBorder(borderStyle: Int): Modifier {
+fun Modifier.getBorder(borderStyle: Int, borderColor1: Color, colorBrush: Brush? = null): Modifier {
     return when (borderStyle) {
         1 -> this.then(Modifier.drawBehind {
             val strokeWidth = 2.dp.toPx()
             val y = size.height - strokeWidth / 2
             drawLine(
-                color = Color.Black,
+                color = borderColor1,
                 start = Offset(0f, y),
                 end = Offset(size.width, y),
                 strokeWidth = strokeWidth
             )
         })
-        2 -> this.then(Modifier.border(width = 2.dp, brush = SolidColor(Color.Black), shape = RoundedCornerShape(4.dp)))
+        2 -> this.then(Modifier.border(width = 2.dp, color = borderColor1, shape = RoundedCornerShape(4.dp)))
+        3 -> {
+            if(colorBrush == null) this
+            else
+                this.then(Modifier.border(width = 2.dp, brush = colorBrush, shape = RoundedCornerShape(4.dp)))
+        }
         else -> this
     }
 }

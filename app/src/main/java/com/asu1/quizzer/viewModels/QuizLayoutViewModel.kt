@@ -32,10 +32,10 @@ import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.network.getErrorMessage
-import com.asu1.quizzer.screens.quizlayout.borders
-import com.asu1.quizzer.screens.quizlayout.colors
-import com.asu1.quizzer.screens.quizlayout.fonts
-import com.asu1.quizzer.screens.quizlayout.outlines
+import com.asu1.quizzer.util.constants.borders
+import com.asu1.quizzer.util.constants.colors
+import com.asu1.quizzer.util.constants.fonts
+import com.asu1.quizzer.util.constants.outlines
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger

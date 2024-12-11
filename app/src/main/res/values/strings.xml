@@ -182,6 +182,8 @@
     <string name="strict">Strict</string>
     <string name="failed_to_fetch_quiz_trends">Failed to fetch quiz trends</string>
     <string name="failed_to_get_user_ranks">Failed to get user ranks</string>
+    <string name="box2">Color Box</string>
+    <string name="image_border">Image Border</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>
