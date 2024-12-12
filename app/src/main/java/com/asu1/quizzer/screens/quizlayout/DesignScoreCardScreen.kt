@@ -104,7 +104,14 @@ fun DesignScoreCardScreen(
         label = "Design Scorecard",
     ) { targetState ->
         when(targetState){
-            ViewModelState.UPLOADING -> UploadingAnimation()
+            ViewModelState.UPLOADING -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    UploadingAnimation()
+                }
+            }
             else -> {
                 MaterialTheme(
                     colorScheme = scoreCard.colorScheme
@@ -145,9 +152,6 @@ fun DesignScoreCardScreen(
                                 screenWidth,
                                 screenHeight
                             )
-                        }
-                        if(quizLayoutViewModelState == ViewModelState.UPLOADING){
-                            UploadingAnimation()
                         }
                     }
                 }
@@ -195,7 +199,10 @@ private fun DesignScoreCardTools(
                         2 -> R.string.select_color3
                         else -> R.string.select_color1
                     }
-                )
+                ),
+                onClose = {
+                    showScoreCardColorPicker = false
+                }
             )
         }
     }
@@ -229,7 +236,10 @@ private fun DesignScoreCardTools(
                 onColorSelected = { color ->
                     scoreCardViewModel.updateTextColor(color)
                 },
-                text = stringResource(R.string.select_text_color)
+                text = stringResource(R.string.select_text_color),
+                onClose = {
+                    showTextColorPicker = false
+                }
             )
         }
     }

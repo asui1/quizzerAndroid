@@ -27,8 +27,8 @@ fun OpenCloseColumn(
     isOpen: Boolean = true,
     modifier: Modifier = Modifier,
     onToggleOpen: () -> Unit = {},
-    openWidth: Dp = 80.dp,
-    closeWidth: Dp = 25.dp,
+    openWidth: Dp = 90.dp,
+    closeWidth: Dp = 35.dp,
     content: @Composable () -> Unit,
 ) {
     Row(

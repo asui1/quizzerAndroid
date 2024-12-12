@@ -34,6 +34,7 @@ enum class BackgroundBase(val resourceId: Int){
     SKY(R.drawable.sky_background),
     SNOW(R.drawable.snowbase),
     PICNIC(R.drawable.picnic2),
+    CONCERT(R.drawable.emptystage),
     FLOWER(R.drawable.prettyflower),
     SUNSET(R.drawable.sunset),
     COAST(R.drawable.seacoast),
@@ -45,11 +46,17 @@ enum class BackgroundBase(val resourceId: Int){
 enum class Effect(val stringId: Int){
     NONE(R.string.none),
     FIREWORKS(R.string.firework),
+    FIREWORKS2(R.string.fireworks2),
     MOON(R.string.moon),
     SHOOTING_STAR(R.string.shooting_star),
     SNOWFLAKES(R.string.snow),
     CLOUDS(R.string.cloud),
-    FLOWERS(R.string.flowers);
+    FLOWERS(R.string.flowers),
+    NOTES(R.string.music_notes),
+    RAIN(R.string.rain),
+    CHRISTMAS(R.string.christmas),
+    CHRISTMASBELL(R.string.christmas_bell),
+    WREATH(R.string.wreath);
 }
 
 @Serializable

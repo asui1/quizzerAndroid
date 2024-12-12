@@ -70,6 +70,10 @@ fun QuizSolver(
         quizLayoutViewModel.loadMoreQuizzes()
     }
 
+    LaunchedEffect(quizzes.size){
+        quizLayoutViewModel.loadMoreQuizzes()
+    }
+
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
             navController.popBackStack()

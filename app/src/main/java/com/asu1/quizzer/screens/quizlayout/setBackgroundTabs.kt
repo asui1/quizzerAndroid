@@ -5,12 +5,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.base.ColorPicker
+import com.asu1.quizzer.composables.base.FastCreateDropDown
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
+import com.asu1.quizzer.model.ShaderType
 
 @Composable
 fun BackgroundTabs(
@@ -29,8 +37,10 @@ fun BackgroundTabs(
     background: ImageColor,
     onBackgroundColorUpdate: (Color) -> Unit,
     onGradientColorUpdate: (Color) -> Unit,
+    onGradientTypeUpdate: (ShaderType) -> Unit = {},
     onImageUpdate: (ByteArray) -> Unit
 ) {
+    var showGradientDropdown by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -75,23 +85,40 @@ fun BackgroundTabs(
             }
 
             1 -> {
-                Row(
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    ColorPicker(
-                        initialColor = background.color,
-                        onColorSelected = { color ->
-                            onBackgroundColorUpdate(color)
+                    FastCreateDropDown(
+                        showDropdownMenu = showGradientDropdown,
+                        labelText = "Gradient Type",
+                        onClick = { index ->
+                            onGradientTypeUpdate(ShaderType.entries[index])
+                            showGradientDropdown = false
                         },
-                        modifier = Modifier.weight(1f),
+                        onChangeDropDown = { showGradientDropdown = it },
+                        inputItems = ShaderType.values().map { it.shaderName },
+                        imageVector = Icons.Default.Gradient,
+                        currentSelection = background.shaderType.index,
                     )
-                    ColorPicker(
-                        initialColor = background.colorGradient,
-                        onColorSelected = { color ->
-                            onGradientColorUpdate(color)
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        ColorPicker(
+                            initialColor = background.color,
+                            onColorSelected = { color ->
+                                onBackgroundColorUpdate(color)
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+                        ColorPicker(
+                            initialColor = background.colorGradient,
+                            onColorSelected = { color ->
+                                onGradientColorUpdate(color)
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
 

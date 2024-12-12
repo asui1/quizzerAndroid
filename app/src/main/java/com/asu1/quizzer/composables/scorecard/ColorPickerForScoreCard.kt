@@ -23,6 +23,7 @@ fun TextColorPickerModalSheet(
     initialColor: Color,
     onColorSelected: (Color) -> Unit,
     text: String = "",
+    onClose: () -> Unit = {}
 ){
     Column(
         modifier = Modifier
@@ -42,6 +43,7 @@ fun TextColorPickerModalSheet(
             onColorSelected = { color ->
                 onColorSelected(color)
             },
+            onClose = {onClose()},
             testTag = "DesignScoreCardTextColorPicker"
         )
     }

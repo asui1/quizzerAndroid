@@ -225,6 +225,9 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                             contrastLevel = contrastLevel,
                                             isDark = isDark
                                         )
+                                    },
+                                    onGradientTypeUpdate = {
+                                        quizLayoutViewModel.updateGradientType(it)
                                     }
                                 )
                             }

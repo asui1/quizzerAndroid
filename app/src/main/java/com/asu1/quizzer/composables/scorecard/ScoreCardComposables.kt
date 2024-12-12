@@ -31,9 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
@@ -50,13 +50,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.effects.Christmas
+import com.asu1.quizzer.composables.effects.ChristmasBell
 import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Fireworks
 import com.asu1.quizzer.composables.effects.GradientBrush
+import com.asu1.quizzer.composables.effects.Notes
+import com.asu1.quizzer.composables.effects.Rain
 import com.asu1.quizzer.composables.effects.Snowflake
 import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.composables.effects.WithMoon
 import com.asu1.quizzer.composables.effects.WithShootingStar
+import com.asu1.quizzer.composables.effects.Wreath
 import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
@@ -75,12 +80,9 @@ fun ScoreCardBackground(
     modifier: Modifier = Modifier,
 ) {
     val colorMatrix1 = remember(backgroundImageColor.color) {
-        if(backgroundImageColor.color != Color.Transparent) {
-            createBlendingColorMatrix(backgroundImageColor.color)
-        } else {
-            ColorMatrix()
-        }
+        ColorFilter.tint(backgroundImageColor.color, BlendMode.Color)
     }
+
     val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
         backgroundImageColor.backgroundBase.resourceId
     }
@@ -93,7 +95,7 @@ fun ScoreCardBackground(
             ImageColorState.IMAGE -> {
                 Image(
                     painter = remember(backgroundImageColor.imageData) { backgroundImageColor.getAsImage() },
-                    colorFilter = ColorFilter.colorMatrix(colorMatrix1),
+                    colorFilter = colorMatrix1,
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -110,7 +112,7 @@ fun ScoreCardBackground(
             ImageColorState.BASEIMAGE -> {
                 Image(
                     painter = painterResource(id = baseBackgroundResourceId),
-                    colorFilter = ColorFilter.colorMatrix(colorMatrix1),
+                    colorFilter = colorMatrix1,
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxSize()
@@ -128,7 +130,7 @@ fun ScoreCardBackground(
             Effect.FIREWORKS->{
                 Fireworks(
                     color = backgroundImageColor.color2,
-                    rawResource = R.raw.firework,
+                    rawResource = R.raw.firework_2,
                 )
             }
             Effect.MOON->{
@@ -161,11 +163,47 @@ fun ScoreCardBackground(
                     rawResource = R.raw.flowers,
                 )
             }
+            Effect.CHRISTMAS -> {
+                Christmas(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.greyscalechristmas,
+                )
+            }
+            Effect.NOTES -> {
+                Notes(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.greyscalenotes,
+                )
+            }
+            Effect.RAIN -> {
+                Rain(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.greyscalerain,
+                )
+            }
+            Effect.FIREWORKS2->{
+                Fireworks(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.firework,
+                )
+            }
+            Effect.CHRISTMASBELL -> {
+                ChristmasBell(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.christmasbell,
+                )
+            }
+            Effect.WREATH -> {
+                Wreath(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.wreath,
+                )
+            }
             else ->{
             }
         }
         if(backgroundImageColor.overlayImage.isNotEmpty()){
-            val bitmap = remember(backgroundImageColor.overlayImage.take(4)) {
+            val bitmap = remember(backgroundImageColor.overlayImage.take(10)) {
                 BitmapFactory.decodeByteArray(backgroundImageColor.overlayImage, 0, backgroundImageColor.overlayImage.size).asImageBitmap().apply {
                     prepareToDraw()
                 }
@@ -182,23 +220,6 @@ fun ScoreCardBackground(
     }
 }
 
-
-fun createBlendingColorMatrix(color: Color): ColorMatrix {
-
-    val r = color.red
-    val g = color.green
-    val b = color.blue
-    val a = color.alpha
-
-    // Create a ColorMatrix that applies the given color
-    val matrix = ColorMatrix(floatArrayOf(
-        r, 0f, 0f, 0f, 0f,
-        0f, g, 0f, 0f, 0f,
-        0f, 0f, b, 0f, 0f,
-        0f, 0f, 0f, a, 0f
-    ))
-    return matrix
-}
 
 const val pageNum = 4
 

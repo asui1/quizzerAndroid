@@ -108,7 +108,7 @@ val iuquizzes3 = listOf(
 
 val iutestdata3 = allInOneForTest(
     title = "아이유 퀴즈 심화편",
-    description = "아이유의 팬 그리고 음악 활동에 대한 문제들입니다. 정말 어디까지 알고 있나요?",
+    description = "아이유의 모든 활동에 대한 문제입니다. 정말 얼마나 알고 있나요?",
     tags = setOf("아이유", "유애나", "가수", "앨범", "팬"),
     titleImage = com.asu1.quizzer.test.R.drawable.ai_iu3,
     colorInt = 3,
@@ -116,7 +116,13 @@ val iutestdata3 = allInOneForTest(
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     bodyYoutubeLinks = listOf("", "", "", "https://youtu.be/v7bnOxV4jAc?si=GeUOZSCNCPmcVpkd", "", "", "", "", "", ""),
     primaryColor = "ff8d4a5b",
-    backgroundColorFilter = "ffffd9e0",
-    effectColor = "ff3a0719",
-    textColor = "ffffb1c2",
+    questionTextStyle = listOf(0, 0, 0),
+    bodyTextStyle = listOf(3, 0, 0),
+    answerTextStyle = listOf(1, 6, 0),
+    backgroundColorFilter = "ffffffff",
+    backgroundImageIndex = 5,
+    effectIndex = 3,
+    effectColor = "80FA1A8E",
+    textColor = "fff88cae",
+    overlayImage = com.asu1.quizzer.test.R.drawable.iu_guiter,
 )

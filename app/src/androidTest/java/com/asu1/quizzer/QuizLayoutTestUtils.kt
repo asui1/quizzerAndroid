@@ -43,7 +43,9 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         when(quiz.bodyType.value){
             1 -> {
                 clickOnTag("BodyTypeDialogTextButton")
-                inputTextOnTag("QuizCreatorBodyTextField", quiz.bodyText)
+                onIdle()
+                waitFor(100)
+                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyType as BodyType.TEXT).bodyText)
             }
             3 -> {
                 clickOnTag("BodyTypeDialogYoutubeButton")

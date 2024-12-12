@@ -21,10 +21,10 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="MyComposeTest">
+      <SelectionState runConfigName="OpenCloseColumnPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="OpenCloseColumnPreview">
+      <SelectionState runConfigName="testQuizCreateUpload()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

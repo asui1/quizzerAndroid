@@ -22,6 +22,7 @@ data class allInOneForTest(
     val backgroundColorFilter: String = "",
     val effectIndex: Int = 1,
     val effectColor: String = "",
+    val overlayImage: Int = 0,
     )
 
 abstract class TestQuiz(

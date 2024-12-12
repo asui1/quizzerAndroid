@@ -42,7 +42,7 @@ fun Clouds(
                 property = LottieProperty.COLOR_FILTER,
                 value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
                     color.toArgb(),
-                    BlendModeCompat.MULTIPLY
+                    BlendModeCompat.COLOR
                 ),
                 keyPath = arrayOf(
                     "**"

@@ -55,7 +55,7 @@
     <string name="loading_with_app_logo">로딩중입니다.</string>
     <string name="delete_body">예제 삭제</string>
     <string name="add_body">예제 추가</string>
-    <string name="body_text">문자열</string>
+    <string name="body_text">텍스트</string>
     <string name="select_body_type">예제 종류를 선택하세요</string>
     <string name="quiz_image_for">"퀴즈 이미지: "</string>
     <string name="solved">"조회수: "</string>
@@ -182,8 +182,14 @@
     <string name="strict">사용자 정의 색</string>
     <string name="failed_to_fetch_quiz_trends">인기 순을 불러오지 못했습니다</string>
     <string name="failed_to_get_user_ranks">순위를 불러오지 못했습니다</string>
-    <string name="box2">Color Box</string>
+    <string name="box2">박스2</string>
     <string name="image_border">Image Border</string>
+    <string name="fireworks2">불꽃놀이2</string>
+    <string name="christmas">크리스마스</string>
+    <string name="music_notes">음표</string>
+    <string name="rain">비</string>
+    <string name="christmas_bell">크리스마스 종</string>
+    <string name="wreath">화관</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

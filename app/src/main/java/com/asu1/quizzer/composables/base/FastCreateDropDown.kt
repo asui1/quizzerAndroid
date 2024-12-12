@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables.base
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -53,11 +54,13 @@ fun FastCreateDropDown(
         ) {
             inputItems.withIndex().forEach { (index, item) ->
                 DropdownMenuItem( //DesignScoreCardShaderButton
-                    modifier = Modifier.testTag("$testTag${index}"),
+                    modifier = Modifier.testTag("$testTag${index}")
+                        .background(
+                            color = if(index == currentSelection) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                        ),
                     text = {
                         Text(
                             text = stringResource(item),
-                            color = if(index == currentSelection) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         )
                     },
                     onClick = {

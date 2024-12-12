@@ -7,8 +7,13 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.asu1.quizzer.datacreation.fakertestData
+import com.asu1.quizzer.datacreation.iutestdata1
+import com.asu1.quizzer.datacreation.iutestdata2
+import com.asu1.quizzer.datacreation.iutestdata3
+import com.asu1.quizzer.datacreation.springTest
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
@@ -64,6 +69,8 @@ val textColors: List<String> = listOf(
     "ff251a00",
 )
 
+const val isTest = false
+
 class MyComposeTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -74,12 +81,13 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = fakertestData
+        val testQuizData = springTest
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout
         testUtils.waitUntilTag("MainScreenCreateQuiz")
         testUtils.waitFor(1500)
+        val scoreCardViewModel = ViewModelProvider(activity)[ScoreCardViewModel::class.java]
 
         //LOGIN
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
@@ -120,10 +128,8 @@ class MyComposeTest {
         val primaryColor = if(testQuizData.primaryColor == "") primaryColors[colorInt] else testQuizData.primaryColor
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimaryColor", primaryColor, true)
         testUtils.waitFor(100)
-        testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimaryColor", true)
-        testUtils.waitFor(100)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
-        testUtils.waitFor(100)
+        testUtils.waitFor(500)
 
         // NEED TESTING FROM HERE
         //Set TextStyles
@@ -138,26 +144,35 @@ class MyComposeTest {
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.waitFor(300)
 
-        for(i in 0 until testQuizData.quizzes.size){
-            val quiz = testQuizData.quizzes[i]
-            when(quiz){
-                is TestQuiz1 -> {
-                    testUtils.addQuiz1(quiz, testQuizData.bodyYoutubeLinks[i])
+        if(!isTest) {
+            for (i in 0 until testQuizData.quizzes.size) {
+                val quiz = testQuizData.quizzes[i]
+                when (quiz) {
+                    is TestQuiz1 -> {
+                        testUtils.addQuiz1(quiz, testQuizData.bodyYoutubeLinks[i])
+                    }
+
+                    is TestQuiz2 -> {
+                        testUtils.addQuiz2(quiz)
+                    }
+
+                    is TestQuiz3 -> {
+                        testUtils.addQuiz3(quiz, testQuizData.bodyYoutubeLinks[i])
+                    }
+
+                    is TestQuiz4 -> {
+                        testUtils.addQuiz4(quiz, testQuizData.bodyYoutubeLinks[i])
+                    }
                 }
-                is TestQuiz2 -> {
-                    testUtils.addQuiz2(quiz)
+                if (quiz.bodyType is BodyType.IMAGE) {
+                    testUtils.setImage(
+                        context,
+                        instContext.packageName,
+                        testQuizData.bodyImages[i],
+                        onImagePicked = { image ->
+                            quizLayoutViewModel.setQuizBodyImage(image)
+                        })
                 }
-                is TestQuiz3 -> {
-                    testUtils.addQuiz3(quiz, testQuizData.bodyYoutubeLinks[i])
-                }
-                is TestQuiz4 -> {
-                    testUtils.addQuiz4(quiz, testQuizData.bodyYoutubeLinks[i])
-                }
-            }
-            if(quiz.bodyType is BodyType.IMAGE){
-                testUtils.setImage(context, instContext.packageName, testQuizData.bodyImages[i], onImagePicked = { image ->
-                    quizLayoutViewModel.setQuizBodyImage(image)
-                })
             }
         }
 
@@ -170,7 +185,6 @@ class MyComposeTest {
         val textColor = if(testQuizData.textColor == "") textColors[colorInt] else testQuizData.textColor
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", textColor, true)
         testUtils.waitFor(100)
-        Espresso.pressBack()
         onIdle()
 
         testUtils.clickOnTag("DesignScoreCardSetBackgroundImageButton")
@@ -185,7 +199,6 @@ class MyComposeTest {
         val color1 = if(testQuizData.backgroundColorFilter == "") backgroundColorFilters[colorInt] else testQuizData.backgroundColorFilter
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", color1, true)
         testUtils.waitFor(100)
-        Espresso.pressBack()
         onIdle()
 
         //SET COLOR FOR EFFECT FILTER
@@ -195,7 +208,6 @@ class MyComposeTest {
         val color2 = if(testQuizData.effectColor == "") effectColorFilters[colorInt] else testQuizData.effectColor
         testUtils.replaceTextOnTag("DesignScoreCardTextColorPicker", color2, true)
         testUtils.waitFor(100)
-        Espresso.pressBack()
         onIdle()
 
         testUtils.clickOnTag("DesignScoreCardAnimationButton")
@@ -204,14 +216,20 @@ class MyComposeTest {
         onIdle()
         testUtils.waitFor(100)
 
-
+        if(testQuizData.overlayImage != 0){
+            testUtils.setImage(context, instContext.packageName, testQuizData.overlayImage, onImagePicked = { image ->
+                scoreCardViewModel.updateOverLayImage(image)
+            })
+        }
+        onIdle()
+        testUtils.waitFor(2000)
 
         //UPLOAD
-        testUtils.clickOnTag("DesignScoreCardUploadButton")
+        if(!isTest) testUtils.clickOnTag("DesignScoreCardUploadButton")
         onIdle()
 
         onIdle()
-        testUtils.waitFor(1000)
+        testUtils.waitFor(5000)
         onIdle()
 
     }

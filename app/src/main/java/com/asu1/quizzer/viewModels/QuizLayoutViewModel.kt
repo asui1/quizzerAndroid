@@ -27,6 +27,7 @@ import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.Quiz3
 import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
+import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
@@ -513,6 +514,11 @@ class QuizLayoutViewModel : ViewModel() {
     fun updateGradientColor(gradientColor: Color){
         val imageColor = _quizTheme.value.backgroundImage
         _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(colorGradient = gradientColor))
+    }
+
+    fun updateGradientType(shaderType: ShaderType){
+        val imageColor = _quizTheme.value.backgroundImage
+        _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(shaderType = shaderType))
     }
 
     fun setColorScheme(name: String, color: Color){

@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import com.airbnb.lottie.LottieProperty
@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 
 @Composable
-fun WithFlowers(
+fun Rain(
     rawResource: Int,
     color: Color,
     modifier: Modifier = Modifier
@@ -30,8 +30,10 @@ fun WithFlowers(
             rawResource
         )
     )
+
     val progress by animateLottieCompositionAsState(
         composition,
+        speed = 2f,
         iterations = LottieConstants.IterateForever
     )
 
@@ -41,7 +43,7 @@ fun WithFlowers(
                 property = LottieProperty.COLOR_FILTER,
                 value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
                     color.toArgb(),
-                    BlendModeCompat.COLOR
+                    BlendModeCompat.MULTIPLY
                 ),
                 keyPath = arrayOf(
                     "**"
@@ -49,11 +51,14 @@ fun WithFlowers(
             )
         )
         LottieAnimation(
-            contentScale = ContentScale.FillHeight,
             composition = composition,
             progress = { progress },
             dynamicProperties = dynamicProperties,
             modifier = modifier.fillMaxSize()
+                .graphicsLayer {
+                    scaleY = 5.5f
+                }
         )
     }
+
 }

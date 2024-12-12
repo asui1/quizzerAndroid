@@ -55,6 +55,7 @@ import com.asu1.quizzer.composables.base.ColorSchemeSheet
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
+import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.ColorList
@@ -74,6 +75,7 @@ fun QuizLayoutSetColorScheme(
     backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundColorUpdate: (Color) -> Unit = { },
     onGradientColorUpdate: (Color) -> Unit = { },
+    onGradientTypeUpdate: (ShaderType) -> Unit = { },
     onImageUpdate: (ByteArray) -> Unit = { },
     onImageColorStateUpdate: (ImageColorState) -> Unit = { },
     generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
@@ -86,7 +88,7 @@ fun QuizLayoutSetColorScheme(
     )
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    var paletteLevel by remember { mutableIntStateOf(paletteSize) }
+    var paletteLevel by remember { mutableIntStateOf(7) }
     var contrastLevel by remember { mutableIntStateOf(0) }
     val colorNames = context.resources.getStringArray(R.array.Colors)
 
@@ -134,6 +136,9 @@ fun QuizLayoutSetColorScheme(
                     },
                     updateBackgroundType = { imageColorState ->
                         onImageColorStateUpdate(imageColorState)
+                    },
+                    onGradientTypeUpdate = {shaderType ->
+                        onGradientTypeUpdate(shaderType)
                     }
                 )
             }
@@ -176,6 +181,7 @@ fun BackgroundRow(
     onOpen: () -> Unit,
     onBackgroundColorUpdate: (Color) -> Unit,
     onGradientColorUpdate: (Color) -> Unit,
+    onGradientTypeUpdate: (ShaderType) -> Unit = {},
     onImageUpdate: (ByteArray) -> Unit,
     updateBackgroundType: (ImageColorState) -> Unit = { },
 ) {
@@ -215,7 +221,7 @@ fun BackgroundRow(
                     )
                     ImageColorBackground(
                         imageColor = background,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                     Icon(
                         imageVector = if (isOpen) Icons.Default.ArrowDropDown
@@ -227,12 +233,13 @@ fun BackgroundRow(
             }
             if (isOpen) {
                 BackgroundTabs(
-                    selectedTabIndex,
-                    updateBackgroundType,
-                    background,
-                    onBackgroundColorUpdate,
-                    onGradientColorUpdate,
-                    onImageUpdate
+                    selectedTabIndex = selectedTabIndex,
+                    updateBackgroundType = updateBackgroundType,
+                    background = background,
+                    onBackgroundColorUpdate = onBackgroundColorUpdate,
+                    onGradientColorUpdate = onGradientColorUpdate,
+                    onGradientTypeUpdate = {shaderType -> onGradientTypeUpdate(shaderType) },
+                    onImageUpdate = onImageUpdate,
                 )
             }
         }
@@ -381,7 +388,13 @@ fun randomDynamicColorScheme(seedColor: Color, paletteLevel: Int = 2, contrastLe
 }
 
 @Composable
-fun IconButtonWithDisable(imageVector: ImageVector, text: String, onClick: () -> Unit, enabled: Boolean, testTag: String = "") {
+fun IconButtonWithDisable(
+    imageVector: ImageVector,
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean,
+    testTag: String = ""
+) {
 
     Box(
         modifier = Modifier
