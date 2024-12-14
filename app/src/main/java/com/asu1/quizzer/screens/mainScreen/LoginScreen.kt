@@ -39,7 +39,6 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel

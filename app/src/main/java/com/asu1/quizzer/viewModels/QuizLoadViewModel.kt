@@ -14,7 +14,6 @@ import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

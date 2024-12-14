@@ -45,7 +45,6 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.RegisterViewModel
 import kotlinx.coroutines.launch

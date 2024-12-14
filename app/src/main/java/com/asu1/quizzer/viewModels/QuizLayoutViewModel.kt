@@ -33,10 +33,6 @@ import com.asu1.quizzer.model.sampleQuiz1
 import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.network.getErrorMessage
-import com.asu1.quizzer.util.constants.borders
-import com.asu1.quizzer.util.constants.colors
-import com.asu1.quizzer.util.constants.fonts
-import com.asu1.quizzer.util.constants.outlines
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
 import com.asu1.quizzer.util.Logger
@@ -44,7 +40,11 @@ import com.asu1.quizzer.util.byteArrayToImageBitmap
 import com.asu1.quizzer.util.calculateSeedColor
 import com.asu1.quizzer.util.constants.ColorList
 import com.asu1.quizzer.util.constants.GenerateWith
+import com.asu1.quizzer.util.constants.borders
+import com.asu1.quizzer.util.constants.colors
 import com.asu1.quizzer.util.constants.contrastSize
+import com.asu1.quizzer.util.constants.fonts
+import com.asu1.quizzer.util.constants.outlines
 import com.asu1.quizzer.util.constants.paletteSize
 import com.asu1.quizzer.util.toScheme
 import com.asu1.quizzer.util.withPrimaryColor
