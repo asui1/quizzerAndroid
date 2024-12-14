@@ -93,9 +93,6 @@ fun RegisterScreen(
         }
     }
     BackHandler {
-        Logger().debug(
-            "Register ${registerStep}"
-        )
         if(registerStep == 0){
             navController.popBackStack(
                 Route.Login,
@@ -261,7 +258,6 @@ fun NicknameInput(
         }
     }
     DisposableEffect(Unit) {
-        Logger().debug("NicknameInput")
         focusRequester.requestFocus()
         localNickname = localNickname.copy(selection = TextRange(localNickname.text.length))
         keyboardController?.show()

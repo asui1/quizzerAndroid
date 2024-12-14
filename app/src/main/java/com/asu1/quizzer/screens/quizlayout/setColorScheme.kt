@@ -304,7 +304,7 @@ fun GenerateColorScheme(
                 R.string.strict
             ),
             onUpdateLevel = { level ->
-                Logger().debug("Palette Level: $level")
+                Logger.debug("Palette Level: $level")
                 onPaletteLevelUpdate(level)
             },
             selectedLevel = paletteLevel,

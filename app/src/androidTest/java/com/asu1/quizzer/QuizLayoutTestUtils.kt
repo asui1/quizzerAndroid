@@ -153,7 +153,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                     maxHeight = height,
                 )
                 if(byteArray != null){
-                    Logger().debug("Image Picked ${byteArray.size}")
+                    Logger.debug("Image Picked ${byteArray.size}")
                     onImagePicked(byteArray)
                 }
             }

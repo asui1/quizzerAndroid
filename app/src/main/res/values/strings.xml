@@ -190,6 +190,7 @@
     <string name="rain">Rain</string>
     <string name="christmas_bell">Christmas Bell</string>
     <string name="wreath">Wreath</string>
+    <string name="get_quiz">GET QUIZ</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

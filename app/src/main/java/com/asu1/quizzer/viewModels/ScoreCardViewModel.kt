@@ -39,7 +39,6 @@ class ScoreCardViewModel : ViewModel() {
 
     fun updateColor(color: Color, index: Int){
         val currentBackground = _scoreCard.value.background
-        Logger().debug("Color: $color, Index: $index")
         when(index){
             1 -> _scoreCard.update {
                 it.copy(background = currentBackground.copy(color2 = color))

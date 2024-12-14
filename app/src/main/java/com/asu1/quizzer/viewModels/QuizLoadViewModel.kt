@@ -57,7 +57,6 @@ class QuizLoadViewModel: ViewModel() {
                 }
             }
             catch (e: Exception){
-                Logger().debug("Search Failed: $e")
                 ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
             }
         }
@@ -105,10 +104,8 @@ class QuizLoadViewModel: ViewModel() {
     fun loadLocalQuiz(context: Context, email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val directory = context.filesDir
-            Logger().debug(directory.toString())
             if (directory.exists() && directory.isDirectory) {
                 val files = directory.listFiles { _, name ->
-                    Logger().debug(name)
                     name.endsWith("${email}_quizSave.json") }
                 val loadedQuizzes = mutableListOf<QuizLayoutSerializer>()
                 files?.forEach { file ->

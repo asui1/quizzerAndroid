@@ -48,7 +48,6 @@ class SearchViewModel : ViewModel() {
                 }
             }
             catch (e: Exception){
-                Logger().debug("Search Response: $e")
                 ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
             }
         }

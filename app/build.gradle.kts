@@ -13,7 +13,7 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 1
+        versionCode = 4
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -39,11 +39,19 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+            buildConfigField("Boolean", "isDebug", "false")
+        }
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("Boolean", "isDebug", "true")
         }
     }
     compileOptions {
@@ -55,10 +63,13 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
 //    composeOptions {
 //        kotlinCompilerExtensionVersion = "1.5.1"
 //    }
+
     composeCompiler {
         featureFlags = setOf(
 
@@ -109,7 +120,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.skydoves:colorpicker-compose:1.1.2")
     implementation("androidx.media3:media3-effect:1.5.0")
-    implementation("com.google.ar.sceneform:rendering:1.17.1")
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")

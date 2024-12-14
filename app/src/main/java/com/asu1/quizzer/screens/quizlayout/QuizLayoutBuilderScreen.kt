@@ -134,7 +134,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 if(!policyAgreed) {
                     ModalBottomSheet(
                         onDismissRequest = {
-                            Logger().debug("QuizLayoutBuilderScreen", "Policy Agreement Dismissed")
                             navController.popBackStack(Route.Home, inclusive = false)
                         },
                         modifier = Modifier.imePadding()

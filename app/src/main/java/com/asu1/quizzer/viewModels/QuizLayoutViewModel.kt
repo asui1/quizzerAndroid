@@ -219,12 +219,11 @@ class QuizLayoutViewModel : ViewModel() {
                         _viewModelState.postValue(ViewModelState.IDLE)
                     }
                 } else {
-                    Logger().debug("Failed to load quiz result ${response.errorBody()?.string()}")
+                    Logger.debug("Failed to load quiz result ${response.errorBody()?.string()}")
                     _viewModelState.postValue(ViewModelState.ERROR)
                     ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
                 }
             } catch (e: Exception) {
-                Logger().debug("Failed to load quiz result $e")
                 _viewModelState.postValue(ViewModelState.ERROR)
                 ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
             }
@@ -245,14 +244,12 @@ class QuizLayoutViewModel : ViewModel() {
         var corrections = quizzes.value!!.map { false }
         for(quiz in quizzes.value!!){
             if(quiz.gradeQuiz()){
-                Logger().debug("Quiz ${quizzes.value!!.indexOf(quiz)} is correct")
                 currentScore += quiz.point
                 corrections = corrections.toMutableList().apply {
                     set(quizzes.value!!.indexOf(quiz), true)
                 }
             }
             else{
-                Logger().debug("Quiz ${quizzes.value!!.indexOf(quiz)} is wrong")
             }
             totalScore += quiz.point
         }
@@ -271,13 +268,11 @@ class QuizLayoutViewModel : ViewModel() {
                     onDone()
                     updateQuizResult(response.body()!!)
                 } else {
-                    Logger().debug("Failed to grade quiz ${response.errorBody()?.string()}")
                     _viewModelState.postValue(ViewModelState.IDLE)
                     ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
-                Logger().debug("Failed to grade quiz $e")
                 _viewModelState.postValue(ViewModelState.IDLE)
                 ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
             }
@@ -299,13 +294,11 @@ class QuizLayoutViewModel : ViewModel() {
                     }
                 } else {
                     val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
-                    Logger().debug("Failed to load quiz: $errorMessage")
                     ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
                     _viewModelState.postValue(ViewModelState.ERROR)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Logger().debug("Failed to load quiz: $e")
                     ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
                     _viewModelState.value = ViewModelState.ERROR
                 }
@@ -366,7 +359,6 @@ class QuizLayoutViewModel : ViewModel() {
                     } else {
                         _viewModelState.postValue(ViewModelState.IDLE)
                         val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
-                        Logger().debug("Failed to upload quiz: $errorMessage")
                         ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }

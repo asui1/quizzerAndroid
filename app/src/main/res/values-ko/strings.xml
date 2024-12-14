@@ -190,6 +190,7 @@
     <string name="rain">비</string>
     <string name="christmas_bell">크리스마스 종</string>
     <string name="wreath">화관</string>
+    <string name="get_quiz">퀴즈 풀기</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

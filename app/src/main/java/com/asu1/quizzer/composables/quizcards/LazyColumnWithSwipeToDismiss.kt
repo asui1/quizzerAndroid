@@ -62,7 +62,7 @@ fun LazyColumnWithSwipeToDismiss(
                     if (it == SwipeToDismissBoxValue.EndToStart) {
                         deleteUuid = uuid
                         showDialog = true
-                        Logger().debug("SHOW DIALOG")
+                        Logger.debug("SHOW DIALOG")
                     }
                     true
                 }
@@ -149,7 +149,7 @@ fun LazyColumnWithSwipeToDismiss(
                 }
             },
             resetDismiss = { uuid ->
-                Logger().debug("RESET DISMISS")
+                Logger.debug("RESET DISMISS")
                 scope.launch {
                     dismissStates[uuid]?.reset()
                     showDialog = false

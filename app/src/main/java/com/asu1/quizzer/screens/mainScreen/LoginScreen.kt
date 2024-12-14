@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -96,6 +98,7 @@ fun LoginScreen(navController: NavController,
 
     val credentialManager = CredentialManager.create(context)
     val coroutineScope = rememberCoroutineScope()
+    Logger.debug(SecurePreferences.GOOGLE_CLIENT_ID)
 
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
@@ -197,13 +200,13 @@ private fun LoginBody(
                     .height(30.dp)
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = stringResource(R.string.register_with_google),
             style = MaterialTheme.typography.bodySmall,
         )
-        Spacer(modifier = Modifier.height(4.dp))
         Button(
+            modifier = Modifier.wrapContentHeight(),
             onClick = {
                 onClickRegister()
             },
@@ -216,7 +219,7 @@ private fun LoginBody(
                 contentDescription = "Continue with Google",
                 modifier = Modifier
                     .width(130.dp)
-                    .height(50.dp),
+                    .height(40.dp),
                 contentScale = ContentScale.Fit
             )
         }
@@ -226,8 +229,6 @@ private fun LoginBody(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
-    QuizzerAndroidTheme {
-        LoginBody(
-        )
-    }
+    LoginBody(
+    )
 }

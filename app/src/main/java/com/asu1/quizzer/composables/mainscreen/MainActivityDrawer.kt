@@ -119,7 +119,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary),
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Column(

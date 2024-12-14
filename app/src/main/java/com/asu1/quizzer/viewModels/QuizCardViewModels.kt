@@ -105,10 +105,8 @@ class QuizCardMainViewModel : ViewModel() {
                     _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
                 } else {
                     ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
-                    Logger().debug("Search No Response ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                Logger().debug("Search Failed: $e")
                 ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
             }
         }
@@ -125,10 +123,8 @@ class QuizCardMainViewModel : ViewModel() {
                     _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
                 } else {
                     ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
-                    Logger().debug("Search No Response ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                Logger().debug("Search Failed: $e")
                 ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
             }
         }
@@ -158,10 +154,8 @@ class QuizCardMainViewModel : ViewModel() {
                     }
                 } else {
                     _quizCards.value = emptyList()
-                    Logger().debug("Search No Response ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                Logger().debug("Search Failed: $e")
                 _quizCards.value = emptyList()
             }
         }

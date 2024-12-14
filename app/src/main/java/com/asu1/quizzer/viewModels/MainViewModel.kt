@@ -6,15 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
-import com.asu1.quizzer.util.isDebug
+import com.asu1.quizzer.BuildConfig
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,14 +30,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // TODO: Change to check app version on playstore.(Needs Testing)
     private fun checkForUpdates() {
         val context = getApplication<Application>().applicationContext
-        Logger().debug("Checking for updates1")
         val appUpdateManager = AppUpdateManagerFactory.create(context)
-        Logger().debug("Checking for updates2")
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        Logger().debug("Checking for updates3")
         // Checks that the platform will allow the specified type of update.
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            Logger().debug("Update available: ${appUpdateInfo.updateAvailability()}")
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 // This example applies an immediate update. To apply a flexible update
                 // instead, pass in AppUpdateType.FLEXIBLE
@@ -53,8 +45,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _isUpdateAvailable.postValue(false)
             }
         }
-        if(isDebug){
+
+        //WILL BE FIXED LATER.
+        if(BuildConfig.isDebug){
             _isUpdateAvailable.postValue(false)
+        }else{
+            viewModelScope.launch {
+                delay(2000)
+                _isUpdateAvailable.postValue(false)
+            }
         }
     }
 

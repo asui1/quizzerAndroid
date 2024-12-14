@@ -52,7 +52,7 @@ suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
 suspend fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializer {
     val localQuizData = quizDataToJson()
     val scoreCardCopy = scoreCard.copy(quizUuid = localQuizData.uuid)
-    Logger().debug("ScoreCard: $scoreCardCopy")
+    Logger.debug("ScoreCard: $scoreCardCopy")
     val quizLayoutSerializer = QuizLayoutSerializer(
         quizData = localQuizData,
         quizTheme = quizTheme.value,
