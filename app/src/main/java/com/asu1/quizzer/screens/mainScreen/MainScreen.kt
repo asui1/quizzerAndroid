@@ -62,7 +62,9 @@ import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.random.Random
 
@@ -98,35 +100,45 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
 
-    LaunchedEffect(loadQuizId){
-        if(loadQuizId != null){
-            loadQuiz(loadQuizId!!)
+    LaunchedEffect(loadQuizId) {
+        withContext(Dispatchers.Main) {
+            if (loadQuizId != null) {
+                loadQuiz(loadQuizId!!)
+            }
         }
     }
 
-    LaunchedEffect(loadResultId){
-        if(loadResultId != null){
-            loadQuizResult(loadResultId!!)
+    LaunchedEffect(loadResultId) {
+        withContext(Dispatchers.Main) {
+            if (loadResultId != null) {
+                loadQuizResult(loadResultId!!)
+            }
         }
     }
 
-    LaunchedEffect(Unit){
-        setTopBarColor(
-            view = view,
-            color = primaryContainer
-        )
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Main) {
+            setTopBarColor(
+                view = view,
+                color = primaryContainer
+            )
+        }
     }
 
     fun updateSelectedTab(index: Int) {
         coroutineScope.launch {
-            pagerState.scrollToPage(index)
+            withContext(Dispatchers.Main) {
+                pagerState.scrollToPage(index)
+            }
+            quizCardMainViewModel.tryUpdate(index, language = lang)
         }
-        quizCardMainViewModel.tryUpdate(index, language = lang)
     }
 
     fun openDrawer() {
         scope.launch {
-            drawerState.open()
+            withContext(Dispatchers.Main) {
+                drawerState.open()
+            }
         }
     }
 

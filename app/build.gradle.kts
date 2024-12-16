@@ -5,6 +5,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11) // Change to the desired Java version
+    }
+}
+
 android {
     namespace = "com.asu1.quizzer"
     compileSdk = 35
@@ -97,7 +103,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.f4b6a3:uuid-creator:6.0.0")
-    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui:1.8.0-alpha07")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui-tooling")

@@ -156,3 +156,7 @@
 -keep class okhttp3.** { *; }
 -keep class com.squareup.moshi.** { *; }
 -keep class androidx.** { *; }
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** {
+  *;
+}

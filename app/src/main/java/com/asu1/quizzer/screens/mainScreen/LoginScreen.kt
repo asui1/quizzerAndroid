@@ -7,7 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,10 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -177,8 +182,9 @@ private fun LoginBody(
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground), // Replace with your app icon resource
             contentDescription = "App Icon",
-            modifier = Modifier.size(300.dp),
-            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxWidth(0.8f),
+            contentScale = ContentScale.FillWidth,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
         Text(
             text = stringResource(R.string.sign_in),
@@ -189,14 +195,13 @@ private fun LoginBody(
             onClick = {
                 onClickSignin()
             },
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.fillMaxWidth(0.7f).fillMaxHeight(0.15f),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_rd_si),
                 contentDescription = "Sign in with Google",
                 modifier = Modifier
-                    .width(200.dp)
-                    .height(30.dp)
+                    .fillMaxSize()
             )
         }
         Spacer(modifier = Modifier.height(32.dp))
@@ -205,21 +210,19 @@ private fun LoginBody(
             style = MaterialTheme.typography.bodySmall,
         )
         Button(
-            modifier = Modifier.wrapContentHeight(),
+            modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.15f),
             onClick = {
                 onClickRegister()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         ) {
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_sq_ctn), // Replace with your drawable resource
                 contentDescription = "Continue with Google",
                 modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp),
-                contentScale = ContentScale.Fit
+                    .fillMaxSize(),
             )
         }
     }

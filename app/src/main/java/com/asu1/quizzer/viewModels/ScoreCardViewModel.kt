@@ -32,7 +32,7 @@ class ScoreCardViewModel : ViewModel() {
         _viewModelState.value = ViewModelState.IDLE
     }
 
-    fun updateTextColor(color: androidx.compose.ui.graphics.Color){
+    fun updateTextColor(color: Color){
         _scoreCard.value = _scoreCard.value.copy(textColor = color)
     }
 
@@ -51,27 +51,27 @@ class ScoreCardViewModel : ViewModel() {
         }
     }
 
-    fun updateColor1(color: androidx.compose.ui.graphics.Color){
+    fun updateColor1(color: Color){
         val currentBackground = _scoreCard.value.background
         _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
     }
 
-    fun updateColor2(color: androidx.compose.ui.graphics.Color){
+    fun updateColor2(color: Color){
         val currentBackground = _scoreCard.value.background
         _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
     }
 
-    fun onColorSelection(color: androidx.compose.ui.graphics.Color){
+    fun onColorSelection(color: Color){
         val currentBackground = _scoreCard.value.background
 
         if (currentBackground.color == color) {
-            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = androidx.compose.ui.graphics.Color.Transparent))
+            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = Color.Transparent))
         } else if (currentBackground.color2 == color) {
-            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = androidx.compose.ui.graphics.Color.Transparent))
+            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = Color.Transparent))
         } else {
-            if (currentBackground.color == androidx.compose.ui.graphics.Color.Transparent) {
+            if (currentBackground.color == Color.Transparent) {
                 _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
-            } else if (currentBackground.color2 == androidx.compose.ui.graphics.Color.Transparent) {
+            } else if (currentBackground.color2 == Color.Transparent) {
                 _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
             }
         }

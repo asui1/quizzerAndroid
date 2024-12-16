@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
                                 InitializationScreen(
                                     navigateToHome = {
                                         getHome(
-                                            fetchData = true
+                                            fetchData = !BuildConfig.isDebug
                                         )
                                     }
                                 )
