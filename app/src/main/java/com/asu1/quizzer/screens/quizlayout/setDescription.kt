@@ -31,17 +31,20 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: (String) -> Unit = {}, proceed: () -> Unit = {}) {
+fun QuizLayoutSetDescription(
+    quizDescription: String = "",
+    onDescriptionUpdate: (String) -> Unit = {},
+    proceed: () -> Unit = {},
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+    ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = quizDescription)) }
     val sizeLimit = 200
 
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.enter_quiz_description),
@@ -52,9 +55,10 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
             onValueChange = {
                 if (it.text.length <= sizeLimit) {
                     textFieldValue = it
-                    onDescriptionChange(it.text)
+                    onDescriptionUpdate(it.text)
                 }
             },
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("QuizLayoutBuilderDescriptionTextField")
@@ -76,10 +80,12 @@ fun QuizLayoutSetDescription(quizDescription: String = "", onDescriptionChange: 
         )
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
-        keyboardController?.show()
+    LaunchedEffect(enabled) {
+        if(enabled){
+            focusRequester.requestFocus()
+            textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+            keyboardController?.show()
+        }
     }
 }
 

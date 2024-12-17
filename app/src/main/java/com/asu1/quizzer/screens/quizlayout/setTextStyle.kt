@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,7 +45,7 @@ fun QuizLayoutSetTextStyle(
     answerStyle: List<Int> = listOf(0, 0, 0, 2),
     updateStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
-    ) {
+) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -55,8 +57,10 @@ fun QuizLayoutSetTextStyle(
             updateTextStyle = updateStyle,
             targetSelector = 0,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleQuestion",
         )
+        Spacer(modifier = Modifier.height(8.dp))
         TextStyleRowOpener(
             textStyle = bodyStyle,
             updateTextStyle = updateStyle,
@@ -64,6 +68,7 @@ fun QuizLayoutSetTextStyle(
             colorScheme = colorScheme,
             key = "setTextStyleBody",
         )
+        Spacer(modifier = Modifier.height(8.dp))
         TextStyleRowOpener(
             textStyle = answerStyle,
             updateTextStyle = updateStyle,
@@ -81,8 +86,9 @@ fun TextStyleRowOpener(
     targetSelector: Int,
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
     key: String = "",
-    ) {
-    var isOpen by remember { mutableStateOf(true) }
+    initOpen: Boolean = false,
+) {
+    var isOpen by remember { mutableStateOf(initOpen) }
     val text = when(targetSelector){
         0 -> stringResource(R.string.question)
         1 -> stringResource(R.string.body)
@@ -188,10 +194,16 @@ fun TextStyleRowOpener(
 
 @Preview(showBackground = true)
 @Composable
-fun TextStyleRowOpenerPreview(){
-    QuizzerAndroidTheme {
-        TextStyleRowOpener(
-            targetSelector = 0,
-        )
-    }
+fun TextStyleRowOpenerClosedPreview(){
+    TextStyleRowOpener(
+        targetSelector = 0,
+    )
+}
+@Preview(showBackground = true)
+@Composable
+fun TextStyleRowOpenerOpenPreview(){
+    TextStyleRowOpener(
+        targetSelector = 0,
+        initOpen = true,
+    )
 }

@@ -14,45 +14,37 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 @Composable
 fun launchPhotoPicker(
-    context: Context,
-    width: Dp? = null,
-    height: Dp? = null,
-    onPhotoPicked: (ByteArray) -> Unit,
+    onPhotoPicked: (Uri) -> Unit,
 ): ActivityResultLauncher<PickVisualMediaRequest> {
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             if (uri != null) {
-                val byteArray = uriToByteArray(
-                    context = context,
-                    uri = uri,
-                    maxWidth = width,
-                    maxHeight = height,
-                )
-                if (byteArray != null) {
-                    onPhotoPicked(byteArray)
-                }
+                onPhotoPicked(uri)
             }
         }
     )
 }
 
-fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): ByteArray? {
-    return context.contentResolver.openInputStream(uri)?.use { inputStream ->
-        val originalBitmap = BitmapFactory.decodeStream(inputStream)
-        val resizedBitmap = resizeBitmap(originalBitmap, maxWidth, maxHeight)
-        val buffer = ByteArrayOutputStream()
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            resizedBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, buffer)
+suspend fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): ByteArray? {
+    return withContext(Dispatchers.IO) {
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            val originalBitmap = BitmapFactory.decodeStream(inputStream)
+            val resizedBitmap = resizeBitmap(originalBitmap, maxWidth, maxHeight)
+            val buffer = ByteArrayOutputStream()
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                resizedBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, buffer)
+            } else {
+                resizedBitmap.compress(Bitmap.CompressFormat.WEBP, 100, buffer)
+            }
+            buffer.toByteArray()
         }
-        else {
-            resizedBitmap.compress(Bitmap.CompressFormat.WEBP, 100, buffer)
-        }
-        buffer.toByteArray()
     }
 }
 

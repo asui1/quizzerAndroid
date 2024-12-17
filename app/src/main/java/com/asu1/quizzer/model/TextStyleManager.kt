@@ -38,7 +38,6 @@ class TextStyleManager {
 
     private var currentColorScheme: ColorScheme = LightColorScheme
     private var colorBrush: Brush = Brush.linearGradient(colors = listOf())
-    private var imageBrush: Brush = Brush.linearGradient(colors = listOf())
 
     fun initTextStyleManager(colorScheme: ColorScheme, questionStyle: List<Int>, answerStyle: List<Int>, bodyStyle: List<Int>){
         currentColorScheme = colorScheme

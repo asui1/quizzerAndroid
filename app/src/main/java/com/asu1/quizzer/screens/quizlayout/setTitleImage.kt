@@ -20,8 +20,7 @@ import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageChange: (ByteArray) -> Unit =  {}, proceed: () -> Unit = {}) {
-
+fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageChange: (ByteArray) -> Unit =  {}) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -53,7 +52,6 @@ fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageC
 fun QuizLayoutSetTitleImagePreview() {
     QuizzerAndroidTheme {
         QuizLayoutSetTitleImage(
-            proceed = {},
         )
     }
 }

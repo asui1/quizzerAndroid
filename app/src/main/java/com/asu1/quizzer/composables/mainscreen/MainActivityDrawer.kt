@@ -124,7 +124,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
-                        .padding(24.dp)
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
                 ){
                     Row(modifier = Modifier
                         .fillMaxWidth(),
@@ -168,7 +168,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
             }
             Box(
                 modifier = Modifier
-                    .weight(5f)
+                    .weight(4f)
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
             ) {

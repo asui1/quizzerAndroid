@@ -16,9 +16,6 @@ class RegisterViewModel : ViewModel() {
     private val _registerStep = MutableLiveData(0)
     val registerStep: LiveData<Int> get() = _registerStep
 
-    private val _registerStepPrev = MutableLiveData(0)
-    val registerStepPrev: LiveData<Int> get() = _registerStepPrev
-
     private val _nickname = MutableLiveData<String?>(null)
     val nickname: MutableLiveData<String?> get() = _nickname
 
@@ -52,14 +49,12 @@ class RegisterViewModel : ViewModel() {
 
     fun moveBack(){
         if(_registerStep.value == 0) return
-        _registerStepPrev.value = _registerStep.value
         _registerStep.value = _registerStep.value!! - 1
     }
 
     fun agreeTerms(){
         Logger.debug("Agree terms")
         _registerStep.value = 1
-        _registerStepPrev.value = 0
     }
 
     fun setNickName(nickName: String){
@@ -76,7 +71,6 @@ class RegisterViewModel : ViewModel() {
                         Logger.debug("Can use this nickname")
                         _nickname.value = nickName
                         _registerStep.postValue(2)
-                        _registerStepPrev.postValue(1)
                     }
                 }
                 else {

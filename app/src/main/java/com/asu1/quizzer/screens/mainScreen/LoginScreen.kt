@@ -188,14 +188,14 @@ private fun LoginBody(
         )
         Text(
             text = stringResource(R.string.sign_in),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Button(
             onClick = {
                 onClickSignin()
             },
-            modifier = Modifier.fillMaxWidth(0.7f).fillMaxHeight(0.15f),
+            modifier = Modifier.fillMaxWidth(0.55f).fillMaxHeight(0.15f),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.android_neutral_rd_si),
@@ -210,7 +210,7 @@ private fun LoginBody(
             style = MaterialTheme.typography.bodySmall,
         )
         Button(
-            modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.15f),
+            modifier = Modifier.fillMaxWidth(0.45f).fillMaxHeight(0.15f),
             onClick = {
                 onClickRegister()
             },

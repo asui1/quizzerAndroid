@@ -122,12 +122,17 @@ fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){
     when(imageColor.state) {
         ImageColorState.IMAGE -> {
             if (imageColor.imageData.isNotEmpty()) {
-                val bitmap = remember(imageColor.imageData.take(4), imageColor.imageData[1]){BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()}
+                val bitmap = remember(
+                    imageColor.imageData.take(16),
+                    imageColor.imageData.size
+                ) {
+                    BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()
+                }
                 Image(
                     bitmap = bitmap,
                     contentDescription = stringResource(R.string.selected_image),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    modifier = modifier,
+                    contentScale = ContentScale.FillBounds
                 )
             } else {
                 Image(

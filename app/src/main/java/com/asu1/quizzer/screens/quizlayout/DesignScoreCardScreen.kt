@@ -143,6 +143,7 @@ fun DesignScoreCardScreen(
                         OpenCloseColumn(
                             isOpen = expanded,
                             onToggleOpen = { expanded = !expanded },
+                            height = screenHeight,
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                         ){

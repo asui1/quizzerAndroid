@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -82,6 +83,9 @@ fun RegisterScreen(
         pageCount = { registerSteps-1 },
     )
     val coroutineScope = rememberCoroutineScope()
+    val progress by animateFloatAsState(targetValue = registerStep / (registerSteps-1).toFloat(),
+        label = "Register Progress"
+    )
 
     LaunchedEffect(Unit){
         registerViewModel.setEmail(email)
@@ -119,7 +123,6 @@ fun RegisterScreen(
         topBar = { RowWithAppIconAndName() },
     )
     { paddingValues ->
-        val progress by animateFloatAsState(targetValue = registerStep / (registerSteps-1).toFloat())
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             Text(
                 text = stringResource(R.string.register),
@@ -233,17 +236,17 @@ fun EnterRegisterInputData(
     val keyboardController = LocalSoftwareKeyboardController.current
     var localNickname by remember { mutableStateOf(TextFieldValue(text = nickname)) }
     val isKeyboardOpen by keyboardAsState()
-    val stacks = remember {mutableStateOf(0)}
+    val stacks = remember { mutableIntStateOf(0) }
     LaunchedEffect(isKeyboardOpen) {
-        if(!isKeyboardOpen && stacks.value > 0){
-            stacks.value--
-            if(stacks.value == 0){
+        if(!isKeyboardOpen && stacks.intValue > 0){
+            stacks.intValue--
+            if(stacks.intValue == 0){
                 keyboardController?.hide()
             }
             onBackPressed()
         }
         else{
-            stacks.value++
+            stacks.intValue++
         }
     }
 
