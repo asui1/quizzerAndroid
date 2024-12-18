@@ -88,6 +88,7 @@ fun ScoringScreen(
 
     DisposableEffect(key1 = Unit) {
         onDispose {
+            context.disableImmersiveMode()
             scoreCardViewModel.resetScoreCard()
             quizLayoutViewModel.resetQuizResult()
         }

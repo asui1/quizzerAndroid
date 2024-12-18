@@ -34,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -95,6 +96,12 @@ fun DesignScoreCardScreen(
     var immerseMode by remember { mutableStateOf(false) }
     val context = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
+
+    DisposableEffect(Unit) {
+        onDispose {
+            context.disableImmersiveMode()
+        }
+    }
 
     AnimatedContent(
         targetState = quizLayoutViewModelState,

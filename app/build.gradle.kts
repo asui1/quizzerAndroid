@@ -19,7 +19,7 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 4
+        versionCode = 7
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -131,7 +131,7 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1")
     implementation("com.kizitonwose.calendar:compose:2.6.0")
-    implementation("sh.calvin.reorderable:reorderable:2.3.3")
+    implementation("sh.calvin.reorderable:reorderable:2.4.2")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.wear.compose:compose-material-core:1.4.0")
     implementation("com.airbnb.android:lottie-compose:6.0.0")

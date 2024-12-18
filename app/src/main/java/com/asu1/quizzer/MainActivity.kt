@@ -2,12 +2,10 @@ package com.asu1.quizzer
 
 import ToastManager
 import ToastType
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
@@ -19,11 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
@@ -60,7 +55,6 @@ import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -89,7 +83,6 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
-            var backPressedTime by remember { mutableLongStateOf(0L) }
 
             // Observe ToastManager for Toast messages
             LaunchedEffect(Unit) {
@@ -100,6 +93,7 @@ class MainActivity : ComponentActivity() {
                             ToastType.ERROR -> "E"
                             ToastType.INFO -> "I"
                         }
+                        snackbarHostState.currentSnackbarData?.dismiss()
                         lifecycleScope.launch {
                             snackbarHostState.showSnackbar(buildString {
                                 append(prefix)
@@ -184,20 +178,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
-                                BackHandler(
-                                ) {
-                                    val currentTime = System.currentTimeMillis()
-                                    ToastManager.showToast(R.string.press_back_again_to_exit, ToastType.INFO)
-                                    if (currentTime - backPressedTime < 3000) {
-                                        (context as? Activity)?.finish()
-                                    } else {
-                                        backPressedTime = currentTime
-                                        scope.launch {
-                                            delay(3000)
-                                            backPressedTime = 0L
-                                        }
-                                    }
-                                }
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,

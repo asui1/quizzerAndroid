@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.composables.base.Flipper
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.borders
 import com.asu1.quizzer.util.constants.colors
 import com.asu1.quizzer.util.constants.fonts

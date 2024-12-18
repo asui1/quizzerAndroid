@@ -106,21 +106,23 @@ fun LazyColumnWithSwipeToDismiss(
                     SwipeToDismissBox(
                         state = currentDismissState,
                         backgroundContent =  {
-                            val color = when (currentDismissState.dismissDirection) {
+                            val backgroundColor = when (currentDismissState.dismissDirection) {
                                 SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
                                 else -> Color.Transparent
                             }
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(color)
+                                    .background(backgroundColor)
                                     .padding(16.dp),
                                 contentAlignment = Alignment.CenterEnd
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete),
-                                )
+                                if(backgroundColor != Color.Transparent){
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = stringResource(R.string.delete),
+                                    )
+                                }
                             }
                         },
                         enableDismissFromStartToEnd = false,

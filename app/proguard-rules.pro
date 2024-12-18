@@ -138,6 +138,7 @@
 -dontwarn java.awt.GraphicsEnvironment
 -dontwarn java.awt.HeadlessException
 -dontwarn java.awt.Window
+
 -keep class com.asu1.quizzer.model.** { *; }
 -keep interface com.asu1.quizzer.* { *; }
 -keepattributes Signature
@@ -160,3 +161,24 @@
 -keep class androidx.credentials.playservices.** {
   *;
 }
+# Keep CredentialManager and related classes
+-keep class androidx.credentials.** { *; }
+-keep class android.credentials.** { *; }
+-keep class androidx.credentials.exceptions.** { *; }
+-keep class androidx.credentials.CredentialProviderFrameworkImpl { *; }
+-keep class androidx.credentials.CredentialProviderFrameworkImpl$* { *; }
+-keep class com.google.googlesignin.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+
+# Keep Compose Foundation LazyItemScope and related methods
+-keep class androidx.compose.foundation.lazy.** { *; }
+
+# Keep Compose UI Modifier and related methods
+-keep class androidx.compose.ui.** { *; }
+
+# Keep Compose Animation Core FiniteAnimationSpec and related methods
+-keep class androidx.compose.animation.core.** { *; }
+-keep class androidx.compose.animation.** { *; }
+
+# keep imported library
+-keep class sh.calvin.reorderable.** { *; }
