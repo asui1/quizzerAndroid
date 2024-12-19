@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.gms.google-services")
 }
 
 java {
@@ -19,7 +20,7 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 7
+        versionCode = 12
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -45,7 +46,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -90,13 +91,12 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.compose.foundation:foundation-layout:1.7.6")
     implementation("androidx.navigation:navigation-compose:2.8.5")
-    implementation ("androidx.credentials:credentials:1.3.0")
+    implementation ("androidx.credentials:credentials:1.5.0-beta01")
     implementation("com.google.android.gms:play-services-auth:21.3.0")
-    implementation ("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation ("androidx.credentials:credentials-play-services-auth:1.5.0-beta01")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.activity:activity-compose:1.9.3")
@@ -140,6 +140,8 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
+
+    //firebase login
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))

@@ -52,10 +52,12 @@ fun handleSignIn(result: GetCredentialResponse, login: (email: String, profileUr
         is CustomCredential -> {
             if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 try {
+                    Logger.debug("Received google id token credential")
                     val googleIdTokenCredential =
                         GoogleIdTokenCredential.createFrom(credential.data)
 
                     val email = googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
+                    Logger.debug("Received email: $email")
                     if(email == null) {
                         Log.e("Quizzer", "Received an invalid google id token response")
                         return
@@ -98,23 +100,37 @@ fun LoginScreen(navController: NavController,
     val coroutineScope = rememberCoroutineScope()
     Logger.debug(SecurePreferences.GOOGLE_CLIENT_ID)
 
-    val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-        .setFilterByAuthorizedAccounts(false)
+    val loginGoogleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(true)
+        .setAutoSelectEnabled(true)
         .setServerClientId(SecurePreferences.GOOGLE_CLIENT_ID)
         .build()
 
-    val request: GetCredentialRequest = GetCredentialRequest.Builder()
-        .addCredentialOption(googleIdOption)
+    val loginRequest: GetCredentialRequest = GetCredentialRequest.Builder()
+        .addCredentialOption(loginGoogleIdOption)
         .build()
+
+    val registerGoogleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(false)
+        .setAutoSelectEnabled(true)
+        .setServerClientId(SecurePreferences.GOOGLE_CLIENT_ID)
+        .build()
+
+    val registerRequest: GetCredentialRequest = GetCredentialRequest.Builder()
+        .addCredentialOption(registerGoogleIdOption)
+        .build()
+
 
     LoginBody(
         onClickSignin = {
             coroutineScope.launch {
                 try {
+                    Logger.debug("Getting Login credential")
                     val result = credentialManager.getCredential(
-                        request = request,
+                        request = loginRequest,
                         context = context,
                     )
+                    Logger.debug("Received credential: $result")
                     handleSignIn(result, {email, profileUri ->  userViewModel.logIn(email, profileUri)})
 
                 } catch (e: GetCredentialException) {
@@ -126,8 +142,9 @@ fun LoginScreen(navController: NavController,
         onClickRegister = {
             coroutineScope.launch {
                 try {
+                    Logger.debug("Getting Register credential")
                     val result = credentialManager.getCredential(
-                        request = request,
+                        request = registerRequest,
                         context = context,
                     )
                     val googleIdTokenCredential =
@@ -189,6 +206,9 @@ private fun LoginBody(
             onClick = {
                 onClickSignin()
             },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             modifier = Modifier.fillMaxWidth(0.55f).fillMaxHeight(0.15f),
         ) {
             Image(
@@ -209,7 +229,7 @@ private fun LoginBody(
                 onClickRegister()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
             )
         ) {
             Image(

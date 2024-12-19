@@ -7,10 +7,9 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-1. 자동으로 이미지 uri 생성 실패.
-
-2. 이미지를 통해 텍스트박스 꾸미기? 텍스트박스 테두리를 데코레이션 하고싶음.
-
+구글 로그인 현재로서는 사용 불가능에 가까운듯...?
+firebase로 내일까지만 해보고 안되면 그냥 싹 다 게스트 로그인으로 바꾸던지 해야겠음
+어차피 현재로서는 많은 개인정보를 필요로 하는건 아니니...
 
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:
@@ -32,3 +31,18 @@ Then Keep Track of Views for Yesterday and Last Week.
 -> Will be implemented Later...
 This should suggest user with similar search results. I will use LLM models with title, tags, and description.
 
+Error getting credential
+androidx.credentials.exceptions.NoCredentialException: No credentials available
+
+at androidx.credentials.internal.ConversionUtilsKt.toJetpackGetException(Unknown Source:40)
+at androidx.credentials.CredentialProviderFrameworkImpl.convertToJetpackGetException$credentials_release(Unknown Source:18)
+at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:3)
+at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:1)
+at android.credentials.CredentialManager$GetCredentialTransport.lambda$onError$2(CredentialManager.java:694)
+at android.credentials.CredentialManager$GetCredentialTransport.$r8$lambda$nlbYav9mLBoE6Yh1vFKCvITF3ks(Unknown Source:0)
+at android.credentials.CredentialManager$GetCredentialTransport$$ExternalSyntheticLambda2.run(Unknown Source:6)
+at androidx.arch.core.executor.a.execute(Unknown Source:5)
+at android.credentials.CredentialManager$GetCredentialTransport.onError(CredentialManager.java:693)
+at android.credentials.IGetCredentialCallback$Stub.onTransact(IGetCredentialCallback.java:123)
+at android.os.Binder.execTransactInternal(Binder.java:1380)
+at android.os.Binder.execTransact(Binder.java:1311)

@@ -157,10 +157,16 @@
 -keep class okhttp3.** { *; }
 -keep class com.squareup.moshi.** { *; }
 -keep class androidx.** { *; }
+-keep class androidx.credentials.** { *; }
+-keep class androidx.credentials.CredentialManager { *; }
 -if class androidx.credentials.CredentialManager
 -keep class androidx.credentials.playservices.** {
   *;
 }
+
+-keep class * extends com.google.gson.TypeAdapter
+-keep class com.google.android.gms.** { *; }
+
 # Keep CredentialManager and related classes
 -keep class androidx.credentials.** { *; }
 -keep class android.credentials.** { *; }
@@ -168,7 +174,12 @@
 -keep class androidx.credentials.CredentialProviderFrameworkImpl { *; }
 -keep class androidx.credentials.CredentialProviderFrameworkImpl$* { *; }
 -keep class com.google.googlesignin.** { *; }
+-keepnames class com.google.googlesignin.** { *; }
 -keep class com.google.android.libraries.identity.googleid.** { *; }
+-keep class com.google.android.gms.auth.** { *; }
+-keep interface androidx.credentials.** { *; }
+-keep class *credential* { *; }
+-keep interface *credential* { *; }
 
 # Keep Compose Foundation LazyItemScope and related methods
 -keep class androidx.compose.foundation.lazy.** { *; }
