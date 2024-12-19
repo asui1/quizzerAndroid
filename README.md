@@ -31,17 +31,29 @@ Quiz generation test code :
 Below video is my testing code at QuizCreationTest.kt
 This code works as both test and generation for items.
 
-https://github.com/user-attachments/assets/dd7b3688-3575-4c15-b637-92b63fc77f80
+아래 영상은 QuizCreationTest.kt에 있는 UI 테스팅 코드 실행 영상입니다.
+아래 코드를 통해 테스트 그리고 아이템 생성을 하고 있습니다.
+
+
+https://github.com/user-attachments/assets/3e8bf436-4d68-4739-82e8-94cebf64b653
+
 
 
 
 I am using items from these projects:
 
 QuizCard backgrounds : ChatGPT
+
 Effect images : Lottie
+
 App Icon : [Freepik - Flaticon](https://www.google.com/url?q=https%3A%2F%2Fwww.flaticon.com%2Fkr%2Ffree-icons%2F&amp;sa=D&amp;sntz=1&amp;usg=AOvVaw1qnbHFrezAGPl2L1nOORQw)
+
 Color Picker : https://github.com/skydoves/colorpicker-compose
+
 Youtube Player : https://github.com/PierfrancescoSoffritti/android-youtube-player
+
 Color Scheme Generation : https://github.com/jordond/MaterialKolor
+
 Calendar : https://github.com/kizitonwose/Calendar
+
 Reorderable Items : https://github.com/Calvin-LL/Reorderable
