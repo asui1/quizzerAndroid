@@ -12,6 +12,20 @@ Ongoing Android Closed Testing: https://play.google.com/store/apps/details?id=co
 
 비공개 테스트 진행중이며 안드로이드 링크입니다 : https://play.google.com/store/apps/details?id=com.asu1.quizzer
 
+--------------------------------------------------------
+회원가입 영상 / App Registering Example.
+
+Since I'm trying to change my OAuth level from test to production currently, Release version of app only provides GUEST Accounts.
+But I did implement all basis with credential login with google at test, and below is example video.
+It goes from Register with google -> Agree Policy -> Nickname duplicate checks -> Add tags -> Register & Login Done.
+
+아직 OAuth가 테스트 레벨에서 프로덕션 레벨로 올리는 심사를 진행중이어서 릴리즈 버전의 앱이 게스트 계정만을 제공하고 있습니다.
+하지만 테스트 환경에서는 구글 아이디를 사용한 로그인/회원가입을 전부 테스트 완료하여 심사를 기다리고 있으며, 아래에 영상이 첨부되어 있습니다.
+영상의 내용은 구글로 계속하기 -> 약관 동의 -> 닉네임 중복 확인 -> 태그 설정 -> 회원가입 및 로그인 완료의 순서입니다.
+
+https://github.com/user-attachments/assets/1a5a497c-0f32-43bc-80da-16c7c331f32c
+
+
 ----------------------------
 Quiz generation test code :
 Below video is my testing code at QuizCreationTest.kt
