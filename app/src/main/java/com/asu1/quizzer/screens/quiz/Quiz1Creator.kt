@@ -222,18 +222,20 @@ fun AnswerTextField(
                     onNext()
                 },
             ),
+            trailingIcon = {
+                IconButton(
+                    onClick = deleteAnswer,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete Answer"
+                    )
+                }
+            }
         )
-        IconButton(
-            onClick = deleteAnswer,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 8.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete Answer"
-            )
-        }
     }
 }
 

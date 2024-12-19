@@ -22,6 +22,7 @@ import androidx.test.espresso.Espresso.onIdle
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
+import kotlinx.coroutines.runBlocking
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
@@ -146,15 +147,17 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
         val launcher = mockRegistry.register("key", ActivityResultContracts.PickVisualMedia()) { result: Uri? ->
             if (result != null) {
-                val byteArray = uriToByteArray(
-                    context = context,
-                    uri = result,
-                    maxWidth = width,
-                    maxHeight = height,
-                )
-                if(byteArray != null){
-                    Logger.debug("Image Picked ${byteArray.size}")
-                    onImagePicked(byteArray)
+                runBlocking {
+                    val byteArray = uriToByteArray(
+                        context = context,
+                        uri = result,
+                        maxWidth = width,
+                        maxHeight = height,
+                    )
+                    if(byteArray != null){
+                        Logger.debug("Image Picked ${byteArray.size}")
+                        onImagePicked(byteArray)
+                    }
                 }
             }
         }
@@ -206,7 +209,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         }
         composeTestRule.onNodeWithTag(tag).performTextInput(text)
         onIdle()
-        waitFor(50)
+        waitFor(200)
         if(withIme) {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performImeAction()
@@ -242,18 +245,18 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(checkFocus) {
             composeTestRule.onNodeWithTag(tag).performScrollTo()
             onIdle()
-            waitFor(50)
+            waitFor(100)
         }
         texts.forEach {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performTextInput(it)
             onIdle()
-            waitFor(50)
+            waitFor(100)
             if(withIme) {
                 onIdle()
                 composeTestRule.onNodeWithTag(tag).performImeAction()
                 onIdle()
-                waitFor(50)
+                waitFor(100)
             }
             onIdle()
         }

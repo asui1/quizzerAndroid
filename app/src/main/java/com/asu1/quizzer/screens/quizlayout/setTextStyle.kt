@@ -65,6 +65,7 @@ fun QuizLayoutSetTextStyle(
             updateTextStyle = updateStyle,
             targetSelector = 1,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleBody",
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -73,6 +74,7 @@ fun QuizLayoutSetTextStyle(
             updateTextStyle = updateStyle,
             targetSelector = 2,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleAnswer",
         )
     }

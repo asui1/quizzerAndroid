@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 
 @Composable
 fun QuizLayoutSetDescription(
@@ -78,6 +79,7 @@ fun QuizLayoutSetDescription(
 
     LaunchedEffect(enabled) {
         if(enabled){
+            Logger.debug("QuizLayoutSetDescription: LaunchedEffect")
             focusRequester.requestFocus()
             textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
             keyboardController?.show()

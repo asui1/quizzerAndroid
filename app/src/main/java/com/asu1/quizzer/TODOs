@@ -7,9 +7,10 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-구글 로그인 현재로서는 사용 불가능에 가까운듯...?
-firebase로 내일까지만 해보고 안되면 그냥 싹 다 게스트 로그인으로 바꾸던지 해야겠음
-어차피 현재로서는 많은 개인정보를 필요로 하는건 아니니...
+태그 검색에 언어 설정 추가 필요.
+ 로그인 할 때 게스트 계정 자동으로 설정하고, 로그아웃 못하게 막고.
+ 닉네임 자동 생성 하고, 이메일을 guest_uuid 형태로 만들어야겠음.
+
 
 - Doing optimization.
 Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:

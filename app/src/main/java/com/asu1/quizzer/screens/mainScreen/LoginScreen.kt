@@ -120,7 +120,6 @@ fun LoginScreen(navController: NavController,
         .addCredentialOption(registerGoogleIdOption)
         .build()
 
-
     LoginBody(
         onClickSignin = {
             coroutineScope.launch {

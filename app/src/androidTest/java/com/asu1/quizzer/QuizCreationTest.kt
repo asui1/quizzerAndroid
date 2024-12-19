@@ -5,7 +5,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
-import com.asu1.quizzer.datacreation.springTest
+import com.asu1.quizzer.datacreationEN.T1WORLDSQUIZEN
+import com.asu1.quizzer.datacreationEN.fakertestDataEn
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
@@ -76,7 +77,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = springTest
+        val testQuizData = fakertestDataEn
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout
@@ -88,7 +89,7 @@ class MyComposeTest {
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
         userViewModel.logIn("whwkd122@gmail.com", "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c")
         onIdle()
-        testUtils.waitFor(1500)
+        testUtils.waitFor(2000)
         testUtils.clickOnTag("MainScreenCreateQuiz")
 
         //AGREE POLICY
@@ -97,18 +98,18 @@ class MyComposeTest {
 
         //SET TITLE
         testUtils.waitUntilTag("QuizLayoutTitleTextField")
-        testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizData.title)
+        testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizData.title, withIme = true)
 
         //Set Quiz Description
-        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizData.description)
+        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizData.description, withIme = true)
 
         //SET TAGS
-        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.waitFor(1000)
         testUtils.enterTextsOnTag("TagSetterTextField", testQuizData.tags.toList(), true)
 
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
+        testUtils.waitFor(1000)
         val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
         testUtils.setImage(context, instContext.packageName, testQuizData.titleImage, onImagePicked = { image ->
             quizLayoutViewModel.setQuizImage(image)

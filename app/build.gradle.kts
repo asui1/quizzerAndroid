@@ -109,7 +109,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.6") // Added dependency
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.6")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
@@ -142,6 +142,8 @@ dependencies {
     implementation("com.google.android.play:app-update-ktx:2.1.0")
 
     //firebase login
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
     androidTestImplementation(project(":app"))
     androidTestImplementation(project(":app"))

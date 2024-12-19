@@ -36,8 +36,8 @@ enum class BackgroundBase(val resourceId: Int){
     CONCERT(R.drawable.emptystage),
     FLOWER(R.drawable.prettyflower),
     SUNSET(R.drawable.sunset),
-    COAST(R.drawable.seacoast),
     TROPHY(R.drawable.trophy),
+    COAST(R.drawable.seacoast),
     NIGHT2(R.drawable.nightsky2_background),
 }
 
