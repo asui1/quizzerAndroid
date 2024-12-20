@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -177,9 +174,8 @@ fun MainScreen(
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
+                DrawerContent(closeDrawer = { scope.launch { drawerState.close() } },
                     userData = userData,
-                    isLoggedIn = isLoggedIn,
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                     logOut = { userViewModel.logOut() },
                     signOut = { email -> userViewModel.signout(email) },
@@ -280,7 +276,8 @@ fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String?, nickname:
         }
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier,
+        contentAlignment = Alignment.Center) {
         if (isError) {
             BoxWithTextAndColorBackground(backgroundColor, nickname)
         } else {
@@ -304,7 +301,6 @@ private fun BoxWithTextAndColorBackground(backgroundColor: Color, nickname: Char
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier.fillMaxSize(),
             textAlign = TextAlign.Center,
             text = nickname.toString(),
             style = MaterialTheme.typography.headlineSmall,

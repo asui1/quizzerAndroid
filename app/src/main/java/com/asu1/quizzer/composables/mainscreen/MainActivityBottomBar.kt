@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -30,9 +31,10 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
     val defaultIconSize = 24.dp
 
     BottomAppBar(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         content = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 IconButton(

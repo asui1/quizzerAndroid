@@ -27,7 +27,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,26 +38,23 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
-                  userData: UserViewModel.UserDatas?,
-                  isLoggedIn: Boolean = false,
-                  onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
-                  logOut: () -> Unit = { },
-                  signOut: (String) -> Unit = { },
-                  navigateToMyQuizzes: () -> Unit = {},
+fun DrawerContent(
+    closeDrawer: () -> Unit = {}, userData: UserViewModel.UserDatas?,
+    isLoggedIn: Boolean = false,
+    onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
+    logOut: () -> Unit = { },
+    signOut: (String) -> Unit = { },
+    navigateToMyQuizzes: () -> Unit = {},
 ) {
     val nickname = userData?.nickname
     var showInquiry by remember { mutableStateOf(false) }
@@ -259,7 +255,6 @@ fun DrawerPreview(){
     val navController = rememberNavController()
     QuizzerAndroidTheme {
         DrawerContent(
-            navController = navController,
             closeDrawer = {},
             userData = userDataTest,
         )

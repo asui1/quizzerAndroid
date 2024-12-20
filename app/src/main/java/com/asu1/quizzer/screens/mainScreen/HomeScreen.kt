@@ -43,9 +43,8 @@ fun HomeScreen(
     isKo: Boolean = false,
     navController: NavController,
 ) {
-
     LazyColumn(
-        contentPadding = PaddingValues(vertical = 12.dp),
+        contentPadding = PaddingValues(top = 12.dp),
         modifier = modifier.fillMaxSize()
     ) {
         itemsIndexed(
@@ -68,7 +67,7 @@ fun HomeScreen(
             }
         }
         item {
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(24.dp))
             PrivacyPolicyRow(navController)
         }
     }
@@ -106,7 +105,7 @@ fun PrivacyPolicyRow(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
