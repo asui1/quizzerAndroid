@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.composables.base.Flipper
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.borders
 import com.asu1.quizzer.util.constants.colors
 import com.asu1.quizzer.util.constants.fonts
@@ -43,7 +44,7 @@ fun QuizLayoutSetTextStyle(
     answerStyle: List<Int> = listOf(0, 0, 0, 2),
     updateStyle: (Int, Int, Boolean) -> Unit = { _, _, _ -> },
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
-    ) {
+) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -55,20 +56,25 @@ fun QuizLayoutSetTextStyle(
             updateTextStyle = updateStyle,
             targetSelector = 0,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleQuestion",
         )
+        Spacer(modifier = Modifier.height(8.dp))
         TextStyleRowOpener(
             textStyle = bodyStyle,
             updateTextStyle = updateStyle,
             targetSelector = 1,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleBody",
         )
+        Spacer(modifier = Modifier.height(8.dp))
         TextStyleRowOpener(
             textStyle = answerStyle,
             updateTextStyle = updateStyle,
             targetSelector = 2,
             colorScheme = colorScheme,
+            initOpen = true,
             key = "setTextStyleAnswer",
         )
     }
@@ -81,8 +87,9 @@ fun TextStyleRowOpener(
     targetSelector: Int,
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
     key: String = "",
-    ) {
-    var isOpen by remember { mutableStateOf(true) }
+    initOpen: Boolean = false,
+) {
+    var isOpen by remember { mutableStateOf(initOpen) }
     val text = when(targetSelector){
         0 -> stringResource(R.string.question)
         1 -> stringResource(R.string.body)
@@ -188,10 +195,16 @@ fun TextStyleRowOpener(
 
 @Preview(showBackground = true)
 @Composable
-fun TextStyleRowOpenerPreview(){
-    QuizzerAndroidTheme {
-        TextStyleRowOpener(
-            targetSelector = 0,
-        )
-    }
+fun TextStyleRowOpenerClosedPreview(){
+    TextStyleRowOpener(
+        targetSelector = 0,
+    )
+}
+@Preview(showBackground = true)
+@Composable
+fun TextStyleRowOpenerOpenPreview(){
+    TextStyleRowOpener(
+        targetSelector = 0,
+        initOpen = true,
+    )
 }

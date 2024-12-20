@@ -1,17 +1,17 @@
 package com.asu1.quizzer.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +39,8 @@ import com.asu1.quizzer.R
 fun TagSetter(
     tags: Set<String>?,
     onClick: (String) -> Unit,
-    focusRequester: androidx.compose.ui.focus.FocusRequester
+    focusRequester: androidx.compose.ui.focus.FocusRequester = androidx.compose.ui.focus.FocusRequester(),
+    modifier: Modifier = Modifier
 ) {
     var tag by remember { mutableStateOf("") }
 
@@ -50,10 +52,7 @@ fun TagSetter(
     }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-            .imePadding()
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.select_tags_that_interest_you),
@@ -62,19 +61,27 @@ fun TagSetter(
         FlowRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(horizontal = 8.dp, vertical = 2.dp),
         ) {
             tags?.forEach { tag ->
-                Button(
-                    onClick = {
-                        onClick(tag)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
-                ) {
-                    Text(text = tag)
+                key(tag) {
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Button(
+                            onClick = {
+                                onClick(tag)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            ),
+                        ) {
+                            Text(text = tag)
+                        }
+                    }
                 }
             }
         }

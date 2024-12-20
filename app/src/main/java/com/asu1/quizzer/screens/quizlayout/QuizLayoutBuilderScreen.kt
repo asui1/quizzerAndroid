@@ -3,22 +3,24 @@ package com.asu1.quizzer.screens.quizlayout
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -28,14 +30,18 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +64,9 @@ import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
@@ -77,23 +86,40 @@ fun QuizLayoutBuilderScreen(navController: NavController,
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
     var showExitDialog by remember { mutableStateOf(false) }
-    val layoutSteps = listOf(
-        stringResource(R.string.set_quiz_title),
-        stringResource(R.string.set_quiz_description),
-        stringResource(R.string.set_quiz_tags),
-        stringResource(R.string.set_quiz_image),
-        stringResource(R.string.set_color_setting),
-        stringResource(R.string.set_text_setting),
-    )
-    val enabled = when(step){
+    val canProceed = when(step){
         LayoutSteps.POLICY -> false
         LayoutSteps.TITLE -> quizData.title.isNotEmpty()
         else -> true
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(
+        initialPage = step.value,
+    ) {
+        LayoutSteps.entries.size - 2
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val stacks = remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(step) {
+        when (step) {
+            LayoutSteps.POLICY -> pagerState.animateScrollToPage(0)
+            LayoutSteps.TITLE -> pagerState.animateScrollToPage(1)
+            LayoutSteps.TAGS -> pagerState.animateScrollToPage(1)
+            LayoutSteps.DESCRIPTION -> pagerState.scrollToPage(1)
+            LayoutSteps.IMAGE -> {
+                keyboardController?.hide()
+                pagerState.scrollToPage(2)
+            }
+
+            LayoutSteps.THEME -> pagerState.scrollToPage(3)
+            LayoutSteps.TEXTSTYLE -> pagerState.scrollToPage(4)
+        }
+
+    }
 
     BackHandler {
+        Logger.debug("Back Handler Called Pressed")
         if(step > LayoutSteps.TITLE) {
             quizLayoutViewModel.updateStep(step - 1)
         } else {
@@ -101,6 +127,32 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 Route.Home,
                 inclusive = false
             )
+        }
+    }
+    // RECOGNIZE BACK PRESSED
+
+    fun onBackPressed(){
+        if(pagerState.currentPage != 1){
+            return
+        }
+        if(showExitDialog){
+            return
+        }
+        Logger.debug("Back Pressed Called")
+        if(step > LayoutSteps.TITLE && step < LayoutSteps.IMAGE){
+            quizLayoutViewModel.updateStep(step - 1)
+        }
+        else if(step == LayoutSteps.TITLE){
+            navController.popBackStack(
+                Route.Home,
+                inclusive = false
+            )
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            keyboardController?.hide()
         }
     }
 
@@ -137,7 +189,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         },
                         modifier = Modifier.imePadding()
                     ) {
-
                         QuizPolicyAgreement(onAgree = {
                             quizLayoutViewModel.updatePolicyAgreement(true)
                         })
@@ -145,7 +196,10 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 }
 
                 fun proceed() {
-                    if(step.ordinal < 6) {
+                    if(step.value < LayoutSteps.entries.size - 1) {
+                        if(step.value <= LayoutSteps.TAGS.value) {
+                            stacks.intValue++
+                        }
                         quizLayoutViewModel.updateStep(step + 1)
                     } else {
                         quizLayoutViewModel.initTextStyleManager()
@@ -158,54 +212,60 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 Scaffold(
                     topBar = {
                         StepProgressBar(
-                            totalSteps = 6,
-                            currentStep = if(step == LayoutSteps.POLICY) 1 else step.ordinal,
-                            layoutSteps = layoutSteps,
+                            totalSteps = LayoutSteps.entries.size,
+                            currentStep = step,
                             showExitDialog = { showExitDialog = true },
                             navigateToQuizLoad = { navigateToQuizLoad() }
                         )
                     },
                     bottomBar = {
-                        QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, enabled, proceed = { proceed() })
+                        QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, canProceed, proceed = { proceed() })
                     }
                 ) {paddingValue ->
-                    Column(
-                        verticalArrangement = Arrangement.Top,
+
+                    HorizontalPager(
+                        state = pagerState,
+                        userScrollEnabled = false,
+                        verticalAlignment = Alignment.Top,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
+                            .fillMaxSize()
                             .padding(paddingValue)
                             .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        when(step.ordinal) {
+                    ){ page ->
+                        when(page){
                             0 -> {}
                             1 -> {
-                                QuizLayoutTitle(
-                                    title = quizData.title,
-                                    onTitleChange = { quizLayoutViewModel.setQuizTitle(it) },
-                                    proceed = {proceed()},
+                                val isKeyboardOpen by keyboardAsState()
+                                LaunchedEffect(isKeyboardOpen) {
+                                    Logger.debug("Keyboard is open: $isKeyboardOpen, stacks: ${stacks.intValue}")
+                                    if(!isKeyboardOpen && stacks.intValue > 0){
+                                        stacks.intValue--
+                                        if(stacks.intValue == 0){
+                                            keyboardController?.hide()
+                                        }
+                                        onBackPressed()
+                                    }
+                                    else{
+                                        stacks.intValue++
+                                    }
+                                    Logger.debug("Keyboard is open end: $isKeyboardOpen, stacks: ${stacks.intValue}")
+                                }
+                                QuizLayoutTitleDescriptionTag(
+                                    quizData = quizData,
+                                    step = step,
+                                    proceed = { proceed() },
+                                    onTagUpdate = { quizLayoutViewModel.updateTag(it) },
+                                    onDescriptionUpdate = { quizLayoutViewModel.setQuizDescription(it) },
+                                    onTitleUpdate = { quizLayoutViewModel.setQuizTitle(it) },
                                 )
                             }
-                            2 ->{
-                                QuizLayoutSetDescription(
-                                    quizDescription = quizData.description,
-                                    onDescriptionChange = { quizLayoutViewModel.setQuizDescription(it) },
-                                    proceed = {proceed()}
+                            2 -> {
+                                QuizLayoutSetTitleImage(
+                                    quizTitleImage = quizData.image,
+                                    onImageChange = { quizLayoutViewModel.setQuizImage(it) }
                                 )
                             }
                             3 -> {
-                                QuizLayoutSetTags(
-                                    quizTags = quizData.tags,
-                                    onTagChange = { quizLayoutViewModel.updateTag(it) },
-                                    proceed = {proceed()})
-                            }
-                            4 -> {
-                                QuizLayoutSetTitleImage(
-                                    quizTitleImage = quizData.image,
-                                    onImageChange = { quizLayoutViewModel.setQuizImage(it) },
-                                    proceed = {proceed()})
-                            }
-                            5 -> {
                                 // Set Color Setting
                                 QuizLayoutSetColorScheme(
                                     colorScheme = quizTheme.colorScheme,
@@ -229,7 +289,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                     }
                                 )
                             }
-                            6 -> {
+                            4 -> {
                                 QuizLayoutSetTextStyle(
                                     questionStyle = quizTheme.questionTextStyle,
                                     bodyStyle = quizTheme.bodyTextStyle,
@@ -239,7 +299,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                     },
                                     colorScheme = quizTheme.colorScheme,
                                 )
-                                // Set Text Setting
                             }
                         }
                     }
@@ -263,7 +322,6 @@ private fun QuizLayoutBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .imePadding()
-            .padding(16.dp)
     )
     {
         IconButton(
@@ -364,14 +422,15 @@ fun QuizPolicyAgreementPreview() {
 @Composable
 fun StepProgressBar(
     totalSteps: Int,
-    currentStep: Int,
+    currentStep: LayoutSteps,
     modifier: Modifier = Modifier,
-    layoutSteps: List<String>,
     completedColor: Color = MaterialTheme.colorScheme.primary,
-    pendingColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
     showExitDialog: () -> Unit = {},
     navigateToQuizLoad: () -> Unit = {},
 ) {
+    val progress by animateFloatAsState(targetValue = (currentStep.value + 1) / totalSteps.toFloat(),
+        label = "Build QuizLayout Progress Bar"
+    )
 
     Column(
         modifier = modifier
@@ -379,7 +438,8 @@ fun StepProgressBar(
     )
     {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -406,26 +466,22 @@ fun StepProgressBar(
         }
         Text(
             text = buildString {
-                append(currentStep.toString())
+                append(currentStep.value)
                 append(". ")
-                append(layoutSteps[currentStep - 1])
+                append(stringResource(id = currentStep.stringResourceId))
             },
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp),
             maxLines = 1,
         )
-        Row(modifier = modifier.fillMaxWidth()) {
-            for (step in 1..totalSteps) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(8.dp)
-                        .background(if (step <= currentStep) completedColor else pendingColor)
-                        .padding(horizontal = 2.dp)
-                )
-            }
-        }
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp),
+            color = completedColor,
+        )
     }
 }
 
@@ -434,16 +490,8 @@ fun StepProgressBar(
 fun StepProgressBarPreview() {
     QuizzerAndroidTheme {
         StepProgressBar(
-            totalSteps = 6,
-            currentStep = 3,
-            layoutSteps = listOf(
-                stringResource(R.string.set_quiz_title),
-                stringResource(R.string.set_quiz_image),
-                stringResource(R.string.set_quiz_description),
-                stringResource(R.string.set_quiz_tags),
-                stringResource(R.string.set_color_setting),
-                stringResource(R.string.set_text_setting),
-            )
+            totalSteps = LayoutSteps.entries.size,
+            currentStep = LayoutSteps.TAGS,
         )
     }
 }

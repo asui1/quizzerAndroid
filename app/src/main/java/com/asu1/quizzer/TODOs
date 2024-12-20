@@ -7,9 +7,12 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-1. 자동으로 이미지 uri 생성 실패.
+1. 태그 검색에 언어 설정 추가 필요.
 
-2. 이미지를 통해 텍스트박스 꾸미기? 텍스트박스 테두리를 데코레이션 하고싶음.
+2. 로그인 할 때 게스트 계정 자동으로 설정하고, 로그아웃 못하게 막고.
+ 닉네임 자동 생성 하고, 이메일을 guest_uuid 형태로 만들어야겠음.
+
+프로가드 다시 키고 -> 내부 테스트 시행.
 
 
 - Doing optimization.
@@ -32,3 +35,18 @@ Then Keep Track of Views for Yesterday and Last Week.
 -> Will be implemented Later...
 This should suggest user with similar search results. I will use LLM models with title, tags, and description.
 
+Error getting credential
+androidx.credentials.exceptions.NoCredentialException: No credentials available
+
+at androidx.credentials.internal.ConversionUtilsKt.toJetpackGetException(Unknown Source:40)
+at androidx.credentials.CredentialProviderFrameworkImpl.convertToJetpackGetException$credentials_release(Unknown Source:18)
+at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:3)
+at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:1)
+at android.credentials.CredentialManager$GetCredentialTransport.lambda$onError$2(CredentialManager.java:694)
+at android.credentials.CredentialManager$GetCredentialTransport.$r8$lambda$nlbYav9mLBoE6Yh1vFKCvITF3ks(Unknown Source:0)
+at android.credentials.CredentialManager$GetCredentialTransport$$ExternalSyntheticLambda2.run(Unknown Source:6)
+at androidx.arch.core.executor.a.execute(Unknown Source:5)
+at android.credentials.CredentialManager$GetCredentialTransport.onError(CredentialManager.java:693)
+at android.credentials.IGetCredentialCallback$Stub.onTransact(IGetCredentialCallback.java:123)
+at android.os.Binder.execTransactInternal(Binder.java:1380)
+at android.os.Binder.execTransact(Binder.java:1311)

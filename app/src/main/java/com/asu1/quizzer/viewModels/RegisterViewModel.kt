@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.UserRegister
 import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
@@ -34,13 +35,6 @@ class RegisterViewModel : ViewModel() {
         if(_isError.value == true) _isError.postValue(false)
     }
 
-    fun reset(){
-        _registerStep.postValue(0)
-        _tags.postValue(emptySet())
-        _nickname.value = null
-        _email.value = null
-        _photoUri.value = null
-    }
     // Proceed 0 : 약관 동의
     // Proceed 1 : 닉네임 입력
     // Proceed 2 : 태그 설정
@@ -55,27 +49,32 @@ class RegisterViewModel : ViewModel() {
 
     fun moveBack(){
         if(_registerStep.value == 0) return
-        _registerStep.postValue(_registerStep.value!! - 1)
+        _registerStep.value = _registerStep.value!! - 1
     }
 
     fun agreeTerms(){
-        _registerStep.postValue(1)
+        Logger.debug("Agree terms")
+        _registerStep.value = 1
     }
 
     fun setNickName(nickName: String){
+        Logger.debug("Set nickname")
         if(nickName.isEmpty()){
             ToastManager.showToast(R.string.please_enter_a_nickname, ToastType.ERROR)
+            _isError.value = true
         }
         else{
             viewModelScope.launch {
                 val response = RetrofitInstance.api.checkDuplicateNickname(nickName)
                 if(response.isSuccessful){
                     if(response.code() == 200){
+                        Logger.debug("Can use this nickname")
                         _nickname.value = nickName
                         _registerStep.postValue(2)
                     }
                 }
                 else {
+                    _isError.postValue(true)
                     ToastManager.showToast(R.string.can_not_use_this_nickname, ToastType.ERROR)
                 }
             }

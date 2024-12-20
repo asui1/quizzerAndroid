@@ -1,5 +1,8 @@
 package com.asu1.quizzer.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -97,11 +100,17 @@ fun CustomSnackbarHost(
             snackbar = { snackbarData ->
                 val option = snackbarData.visuals.message[0]
                 val message = snackbarData.visuals.message.substring(1)
-                when (option) {
-                    'S' -> CustomSnackbarSuccess(message = message)
-                    'E' -> CustomSnackbarError(message = message)
-                    'I' -> CustomSnackbarInfo(message = message)
-                    else -> CustomSnackbarInfo(message = message)
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    when (option) {
+                        'S' -> CustomSnackbarSuccess(message = message)
+                        'E' -> CustomSnackbarError(message = message)
+                        'I' -> CustomSnackbarInfo(message = message)
+                        else -> CustomSnackbarInfo(message = message)
+                    }
                 }
             }
         )

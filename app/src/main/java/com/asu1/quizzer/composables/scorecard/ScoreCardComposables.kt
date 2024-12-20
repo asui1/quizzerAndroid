@@ -203,7 +203,7 @@ fun ScoreCardBackground(
             }
         }
         if(backgroundImageColor.overlayImage.isNotEmpty()){
-            val bitmap = remember(backgroundImageColor.overlayImage.take(10)) {
+            val bitmap = remember(backgroundImageColor.overlayImage.take(16), backgroundImageColor.overlayImage.size) {
                 BitmapFactory.decodeByteArray(backgroundImageColor.overlayImage, 0, backgroundImageColor.overlayImage.size).asImageBitmap().apply {
                     prepareToDraw()
                 }

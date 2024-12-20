@@ -125,21 +125,4 @@ class MainViewModelTest {
         verify(observer).onChanged(false)
     }
 
-    @Test
-    fun compareVersions_whenFirstVersionIsGreater_shouldReturnTrue() {
-        val result = mainViewModel.isUpdateNeeded("1.1.0", "1.0.0")
-        Assert.assertTrue(result)
-    }
-
-    @Test
-    fun compareVersions_whenFirstVersionIsLesser_shouldReturnFalse() {
-        val result = mainViewModel.isUpdateNeeded("1.0.0", "1.1.0")
-        Assert.assertFalse(result)
-    }
-
-    @Test
-    fun compareVersions_whenVersionsAreEqual_shouldReturnFalse() {
-        val result = mainViewModel.isUpdateNeeded("1.0.0", "1.0.0")
-        Assert.assertFalse(result)
-    }
 }

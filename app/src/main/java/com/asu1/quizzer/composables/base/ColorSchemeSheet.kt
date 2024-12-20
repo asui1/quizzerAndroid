@@ -1,6 +1,7 @@
 package com.asu1.quizzer.composables.base
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -24,6 +29,7 @@ import androidx.compose.ui.unit.dp
 fun ColorSchemeSheet(
     colorScheme: ColorScheme,
 ){
+    val clipboardManager = LocalClipboardManager.current
     val primaryColor = colorScheme.primary
     val secondaryColor = colorScheme.secondary
     val tertiaryColor = colorScheme.tertiary
@@ -65,28 +71,28 @@ fun ColorSchemeSheet(
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 2.dp),
     ) {
         item{
-            ColorCircle(primaryColor)
+            ColorCircle(primaryColor, clipboardManager)
         }
         item(key = colorsKey){
-            ColorCircle(colors[0])
+            ColorCircle(colors[0], clipboardManager)
         }
         item{
-            ColorCircle(secondaryColor)
+            ColorCircle(secondaryColor, clipboardManager)
         }
         item(key = colorsKey+1){
-            ColorCircle(colors[1])
+            ColorCircle(colors[1], clipboardManager)
         }
         item{
-            ColorCircle(tertiaryColor)
+            ColorCircle(tertiaryColor, clipboardManager)
         }
         itemsIndexed(colors.subList(2, colors.size), key = { index, _ -> colorsKey + index + 2 }) { index, color ->
-            ColorCircle(color)
+            ColorCircle(color, clipboardManager)
         }
     }
 }
 
 @Composable
-private fun ColorCircle(color: Color) {
+private fun ColorCircle(color: Color, clipboardManager: ClipboardManager) {
     Box(
         modifier = Modifier
             .size(40.dp)
@@ -101,6 +107,10 @@ private fun ColorCircle(color: Color) {
                     color = Color.Transparent,
                     shape = CircleShape
                 )
+                .clickable {
+                    val argbValue =color.toArgb().toUInt().toString(16).padStart(8, '0').uppercase()
+                    clipboardManager.setText(AnnotatedString(argbValue))
+                }
         ) {}
     }
 }

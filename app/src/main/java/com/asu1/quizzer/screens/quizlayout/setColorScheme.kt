@@ -240,6 +240,9 @@ fun BackgroundRow(
                     onGradientColorUpdate = onGradientColorUpdate,
                     onGradientTypeUpdate = {shaderType -> onGradientTypeUpdate(shaderType) },
                     onImageUpdate = onImageUpdate,
+                    onClose = {
+                        isOpen = false
+                    }
                 )
             }
         }

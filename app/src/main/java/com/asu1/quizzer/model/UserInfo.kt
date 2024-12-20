@@ -2,6 +2,7 @@ package com.asu1.quizzer.model
 
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 @JsonAdapter(UserInfoDeserializer::class)
 data class UserInfo(
@@ -13,6 +14,11 @@ data class UserInfo(
     val agreed: Boolean
 )
 
+@Serializable
+data class GuestAccount(
+    val email: String,
+    val nickname: String,
+)
 
 data class UserRegister(
     val email: String,

@@ -1,13 +1,19 @@
 package com.asu1.quizzer.screens.mainScreen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -15,15 +21,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,9 +53,11 @@ import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
+import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.RegisterViewModel
 import kotlinx.coroutines.launch
 
+const val registerSteps = 3
 
 @Composable
 fun RegisterScreen(
@@ -58,15 +67,18 @@ fun RegisterScreen(
     profileUri: String = "",
     login: () -> Unit = {},
 ){
-    val registerStep by registerViewModel.registerStep.observeAsState()
+    val registerStep by registerViewModel.registerStep.observeAsState(0)
     val nickname by registerViewModel.nickname.observeAsState()
     val isError by registerViewModel.isError.observeAsState()
     val tags by registerViewModel.tags.observeAsState(emptySet())
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { 3 },
+        pageCount = { registerSteps-1 },
     )
     val coroutineScope = rememberCoroutineScope()
+    val progress by animateFloatAsState(targetValue = registerStep / (registerSteps-1).toFloat(),
+        label = "Register Progress"
+    )
 
     LaunchedEffect(Unit){
         registerViewModel.setEmail(email)
@@ -77,7 +89,6 @@ fun RegisterScreen(
         when(registerStep){
             0 -> pagerState.animateScrollToPage(0)
             1 -> pagerState.animateScrollToPage(1)
-            2 -> pagerState.animateScrollToPage(2)
             3 -> {
                 coroutineScope.launch {
                     launch { login() }
@@ -105,36 +116,50 @@ fun RegisterScreen(
         topBar = { RowWithAppIconAndName() },
     )
     { paddingValues ->
-        HorizontalPager(
-            state = pagerState,
-            userScrollEnabled = false,
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
-        ){page ->
-            when(page){
-                0 -> UsageAgreement(
-                    onProceed = {
-                        registerViewModel.agreeTerms()
-                    }
-                )
-                1 -> NicknameInput(
-                    nickname = nickname ?: "",
-                    onProceed = {
-                        registerViewModel.setNickName(it)
-                    },
-                    isError = isError ?: false,
-                    undoError = {
-                        registerViewModel.undoError()
-                    }
-                )
-                2 -> TagSetting(
-                    tags = tags,
-                    toggleTag = {
-                        registerViewModel.toggleTag(it)
-                    },
-                    register = {
-                        registerViewModel.register()
-                    }
-                )
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            Text(
+                text = stringResource(R.string.register),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            LinearProgressIndicator(
+                progress = {progress},
+                modifier = Modifier.fillMaxWidth()
+            )
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = false,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                when (page) {
+                    0 -> UsageAgreement(
+                        onProceed = {
+                            registerViewModel.agreeTerms()
+                        }
+                    )
+
+                    1 -> EnterRegisterInputData(
+                        nickname = nickname ?: "",
+                        onProceed = {
+                            registerViewModel.setNickName(it)
+                        },
+                        isError = isError ?: false,
+                        undoError = {
+                            registerViewModel.undoError()
+                        },
+                        tags = tags,
+                        toggleTag = {
+                            registerViewModel.toggleTag(it)
+                        },
+                        register = {
+                            registerViewModel.register()
+                        },
+                        registerStep = registerStep,
+                        onBackPressed = {
+                            registerViewModel.moveBack()
+                        }
+                    )
+                }
             }
         }
     }
@@ -188,79 +213,111 @@ fun UsageAgreementPreview() {
 }
 
 @Composable
-fun NicknameInput(
+fun EnterRegisterInputData(
     nickname : String = "",
     onProceed: (String) -> Unit = {_ -> },
     isError : Boolean = false,
     undoError: () -> Unit = {},
+    registerStep: Int = 1,
+    tags: Set<String> = emptySet(),
+    toggleTag: (String) -> Unit = {},
+    onBackPressed: () -> Unit = {},
+    register: () -> Unit = {},
 ) {
     // Nickname Input UI
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember("Nickname") { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var localNickname by remember { mutableStateOf(TextFieldValue(text = nickname)) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = stringResource(R.string.enter_your_nickname),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            TextField(
-                value = localNickname,
-                onValueChange = {textfieldvalue ->
-                    if(textfieldvalue.text.length <= 12) {
-                        localNickname = textfieldvalue
-                        undoError()
-                    }
-                },
-                isError = isError,
-                label = {
-                    if(isError) Text(text = stringResource(R.string.duplicate_nickname), color = MaterialTheme.colorScheme.error)
-                    else
-                        Text(text = stringResource(R.string.nickname))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        if(localNickname.text.length <= 12) onProceed(localNickname.text)
-                    }
-                ),
-                supportingText = { Text(text = buildString {
-                    append(stringResource(R.string.length))
-                    append("${localNickname.text.length}/12")
-                }) }
-            )
+    val isKeyboardOpen by keyboardAsState()
+    val stacks = remember { mutableIntStateOf(0) }
+    LaunchedEffect(isKeyboardOpen) {
+        if(!isKeyboardOpen && stacks.intValue > 0){
+            stacks.intValue--
+            if(stacks.intValue == 0){
+                keyboardController?.hide()
+            }
+            onBackPressed()
         }
-        Button(
-            onClick = {
-                if(localNickname.text.length <= 12) onProceed(localNickname.text)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .imePadding()
-        ) {
-            Text(text = stringResource(R.string.proceed))
+        else{
+            stacks.intValue++
         }
     }
-    DisposableEffect(Unit) {
-        focusRequester.requestFocus()
-        localNickname = localNickname.copy(selection = TextRange(localNickname.text.length))
-        keyboardController?.show()
-        onDispose { }
+
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+    ) {
+        LazyColumn(
+            reverseLayout = true,
+            modifier = Modifier
+                .padding(16.dp)
+                .weight(1f)
+        ) {
+            item("tags") {
+                AnimatedVisibility(
+                    visible = registerStep > 1,
+                ) {
+                    TagSetting(
+                        tags = tags,
+                        toggleTag = toggleTag,
+                        register = register,
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    )
+                }
+            }
+
+            item("nickname") {
+                TextField(
+                    value = localNickname,
+                    enabled = registerStep == 1,
+                    onValueChange = { textfieldvalue ->
+                        if (textfieldvalue.text.length <= 12) {
+                            localNickname = textfieldvalue
+                            undoError()
+                        }
+                    },
+                    isError = isError,
+                    label = {
+                        if (isError) Text(
+                            text = stringResource(R.string.duplicate_nickname),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        else
+                            Text(text = stringResource(R.string.nickname))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            if (localNickname.text.length <= 12) onProceed(localNickname.text)
+                        }
+                    ),
+                    supportingText = {
+                        Text(text = buildString {
+                            append(stringResource(R.string.length))
+                            append("${localNickname.text.length}/12")
+                        })
+                    }
+                )
+                Text(
+                    text = stringResource(R.string.enter_your_nickname),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+    }
+    LaunchedEffect(registerStep){
+        if(registerStep == 1){
+            focusRequester.requestFocus()
+            localNickname = localNickname.copy(selection = TextRange(localNickname.text.length))
+            keyboardController?.show()
+        }
     }
 }
 
@@ -268,7 +325,7 @@ fun NicknameInput(
 @Composable
 fun NicknameInputPreview() {
     QuizzerAndroidTheme {
-        NicknameInput(
+        EnterRegisterInputData(
             nickname = "nickname"
         )
     }
@@ -279,22 +336,20 @@ fun TagSetting(
     tags: Set<String> = emptySet(),
     toggleTag: (String) -> Unit = {},
     register: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
-    // Tag Setting UI
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    val tagFocusRequester = remember { FocusRequester() }
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = modifier
     ) {
+        Spacer(modifier = Modifier.height(16.dp))
         TagSetter(
             tags = tags,
             onClick = {
                 toggleTag(it)
             },
-            focusRequester = focusRequester,
+            focusRequester = tagFocusRequester,
         )
         Button(
             onClick = {
@@ -302,16 +357,12 @@ fun TagSetting(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .imePadding()
         ) {
             Text(text = stringResource(R.string.register))
         }
     }
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
+        tagFocusRequester.requestFocus()
     }
 }
 

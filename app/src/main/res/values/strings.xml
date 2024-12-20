@@ -191,6 +191,10 @@
     <string name="christmas_bell">Christmas Bell</string>
     <string name="wreath">Wreath</string>
     <string name="get_quiz">GET QUIZ</string>
+    <string name="agree_policy">Agree Policy</string>
+    <string name="quiz_title_cannot_be_empty">Quiz Title cannot be empty</string>
+    <string name="can_not_access_server">Can not access server</string>
+    <string name="google_login_is_in_development">Google Login is in Development</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

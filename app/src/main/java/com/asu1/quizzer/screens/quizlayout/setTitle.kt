@@ -2,11 +2,8 @@ package com.asu1.quizzer.screens.quizlayout
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -19,28 +16,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
 
 @Composable
-fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, proceed: () -> Unit = {},
+fun QuizLayoutTitle(
+    title: String = "",
+    onTitleUpdate: (String) -> Unit = {},
+    proceed: () -> Unit = {},
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
     val focusRequester = remember{ FocusRequester() }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = title)) }
-    val sizeLimit = 50
+    val titleSizeLimit = 50
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var localError by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.enter_quiz_title),
@@ -49,9 +50,17 @@ fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, pr
         TextField(
             value = textFieldValue,
             onValueChange = {
-                if (it.text.length <= sizeLimit) {
+                localError = false
+                if (it.text.length <= titleSizeLimit) {
                     textFieldValue = it
-                    onTitleChange(it.text)
+                    onTitleUpdate(it.text)
+                }
+            },
+            enabled = enabled,
+            isError = localError,
+            label = {
+                if(localError){
+                    Text(text = stringResource(R.string.quiz_title_cannot_be_empty))
                 }
             },
             modifier = Modifier
@@ -63,21 +72,26 @@ fun QuizLayoutTitle(title: String = "", onTitleChange: (String) -> Unit = {}, pr
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
-                    if(textFieldValue.text.isNotBlank()) {
+                    if(textFieldValue.text.isBlank()){
+                        localError = true
+                    } else if(textFieldValue.text.isNotBlank()) {
                         proceed()
                     }
                 }
             ),
             supportingText = { Text(text = buildString {
                 append(stringResource(R.string.length))
-                append("${textFieldValue.text.length}/$sizeLimit")
+                append("${textFieldValue.text.length}/$titleSizeLimit")
             }) }
         )
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+    LaunchedEffect(enabled) {
+        if(enabled){
+            focusRequester.requestFocus()
+            textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+            keyboardController?.show()
+        }
     }
 }
 

@@ -2,7 +2,6 @@ package com.asu1.quizzer.model
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,8 +36,8 @@ enum class BackgroundBase(val resourceId: Int){
     CONCERT(R.drawable.emptystage),
     FLOWER(R.drawable.prettyflower),
     SUNSET(R.drawable.sunset),
-    COAST(R.drawable.seacoast),
     TROPHY(R.drawable.trophy),
+    COAST(R.drawable.seacoast),
     NIGHT2(R.drawable.nightsky2_background),
 }
 
@@ -122,12 +121,17 @@ fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){
     when(imageColor.state) {
         ImageColorState.IMAGE -> {
             if (imageColor.imageData.isNotEmpty()) {
-                val bitmap = remember(imageColor.imageData.take(4), imageColor.imageData[1]){BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()}
+                val bitmap = remember(
+                    imageColor.imageData.take(16),
+                    imageColor.imageData.size
+                ) {
+                    BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()
+                }
                 Image(
                     bitmap = bitmap,
                     contentDescription = stringResource(R.string.selected_image),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    modifier = modifier,
+                    contentScale = ContentScale.FillBounds
                 )
             } else {
                 Image(

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-10T05:22:15.954000300Z">
+        <DropdownSelection timestamp="2024-12-20T11:32:43.320301600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=172.30.1.100:45751;connection=359f3463" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCX91C95PD" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -25,6 +25,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="testQuizCreateUpload()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="MyComposeTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
