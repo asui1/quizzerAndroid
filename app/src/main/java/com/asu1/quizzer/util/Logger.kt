@@ -9,7 +9,9 @@ object Logger {
     private val tag = "quizzer"
 
     fun debug(input: Any) {
+        if (BuildConfig.isDebug) {
             Logger.getLogger(tag).warning(input.toString())
+        }
     }
 
     fun debug(tag1: String, input: Any){

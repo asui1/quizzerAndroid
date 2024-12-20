@@ -5,13 +5,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.BuildConfig
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -49,11 +46,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if(BuildConfig.isDebug){
             _isUpdateAvailable.postValue(false)
         }
-        else{
-            viewModelScope.launch {
-                delay(5000)
-                _isUpdateAvailable.postValue(false)
-            }
-        }
+//        else{
+//            viewModelScope.launch {
+//                delay(5000)
+//                _isUpdateAvailable.postValue(false)
+//            }
+//        }
     }
 }
