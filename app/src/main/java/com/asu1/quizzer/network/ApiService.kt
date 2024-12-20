@@ -4,6 +4,7 @@ import com.asu1.quizzer.data.GetQuizResult
 import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.SendQuizResult
+import com.asu1.quizzer.model.GuestAccount
 import com.asu1.quizzer.model.QuizCardList
 import com.asu1.quizzer.model.RecommendationList
 import com.asu1.quizzer.model.UserInfo
@@ -25,6 +26,10 @@ interface ApiService {
     @UseKotlinxSerialization
     @GET("recommendations")
     suspend fun getRecommendations(@Query("language") language: String, @Query("email") email: String): Response<RecommendationList>
+
+    @UseKotlinxSerialization
+    @POST("guestAccount")
+    suspend fun guestAccount(@Query("isKo") isKo: Boolean): Response<GuestAccount>
 
     @GET("login")
     suspend fun login(@Query("email") email: String): Response<UserInfo>

@@ -135,6 +135,9 @@ fun QuizLayoutBuilderScreen(navController: NavController,
         if(pagerState.currentPage != 1){
             return
         }
+        if(showExitDialog){
+            return
+        }
         Logger.debug("Back Pressed Called")
         if(step > LayoutSteps.TITLE && step < LayoutSteps.IMAGE){
             quizLayoutViewModel.updateStep(step - 1)

@@ -168,18 +168,8 @@
 -keep class com.google.android.gms.** { *; }
 
 # Keep CredentialManager and related classes
--keep class androidx.credentials.** { *; }
--keep class android.credentials.** { *; }
--keep class androidx.credentials.exceptions.** { *; }
--keep class androidx.credentials.CredentialProviderFrameworkImpl { *; }
--keep class androidx.credentials.CredentialProviderFrameworkImpl$* { *; }
 -keep class com.google.googlesignin.** { *; }
 -keepnames class com.google.googlesignin.** { *; }
--keep class com.google.android.libraries.identity.googleid.** { *; }
--keep class com.google.android.gms.auth.** { *; }
--keep interface androidx.credentials.** { *; }
--keep class *credential* { *; }
--keep interface *credential* { *; }
 
 # Keep Compose Foundation LazyItemScope and related methods
 -keep class androidx.compose.foundation.lazy.** { *; }

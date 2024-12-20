@@ -7,9 +7,12 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 
 https://quizzer.co.kr/?quizId=
 
-태그 검색에 언어 설정 추가 필요.
- 로그인 할 때 게스트 계정 자동으로 설정하고, 로그아웃 못하게 막고.
+1. 태그 검색에 언어 설정 추가 필요.
+
+2. 로그인 할 때 게스트 계정 자동으로 설정하고, 로그아웃 못하게 막고.
  닉네임 자동 생성 하고, 이메일을 guest_uuid 형태로 만들어야겠음.
+
+프로가드 다시 키고 -> 내부 테스트 시행.
 
 
 - Doing optimization.

@@ -94,7 +94,7 @@ fun MainScreen(
     val quizTrends by quizCardMainViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.visibleUserRanks.collectAsStateWithLifecycle()
     val userData by userViewModel.userData.observeAsState()
-    val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
+    val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
     val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -108,6 +108,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     var backPressedTime by remember { mutableLongStateOf(0L) }
     val context = LocalContext.current
+
 
     BackHandler(
     ) {
@@ -178,6 +179,7 @@ fun MainScreen(
             drawerContent = {
                 DrawerContent(navController, closeDrawer = { scope.launch { drawerState.close() } },
                     userData = userData,
+                    isLoggedIn = isLoggedIn,
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                     logOut = { userViewModel.logOut() },
                     signOut = { email -> userViewModel.signout(email) },
@@ -189,7 +191,7 @@ fun MainScreen(
                     Scaffold(
                         topBar = {
                             MainActivityTopbar(navController,
-                                { openDrawer() }, isUserLoggedIn, userData,
+                                { openDrawer() }, userData,
                                 resetHome = moveHome)
                         },
                         bottomBar = {
@@ -243,42 +245,22 @@ fun MainScreen(
 
 @Composable
 fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
-    val isUserLoggedIn = userData != null
     val urlToImage = userData?.urlToImage
     val iconSize = 30.dp
 
-    if (isUserLoggedIn) {
-        if(urlToImage != null) {
-            IconButton(onClick = onClick) {
-                UriImageButton(modifier = Modifier
-                    .size(iconSize)
-                    .clip(shape = RoundedCornerShape(8.dp)), urlToImage,
-                    nickname = userData.nickname?.get(0) ?: 'Q'
-                )
-            }
-        } else {
-            IconButton(onClick = onClick) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = "User Image",
-                    modifier = Modifier.size(iconSize)
-                )
-            }
-        }
-    } else {
-        IconButton(onClick = onClick) {
-            Icon(
-                Icons.Default.Person,
-                contentDescription = "Login",
-                modifier = Modifier.size(iconSize)
+    IconButton(onClick = onClick) {
+        if (userData != null) {
+            UriImageButton(modifier = Modifier
+                .size(iconSize)
+                .clip(shape = RoundedCornerShape(8.dp)), urlToImage,
+                nickname = userData.nickname?.get(0) ?: 'O'
             )
         }
-
     }
 }
 
 @Composable
-fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String, nickname: Char = 'Q') {
+fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String?, nickname: Char = 'Q') {
     val painter = rememberAsyncImagePainter(
         model = urlToImage,
     )
@@ -325,7 +307,7 @@ private fun BoxWithTextAndColorBackground(backgroundColor: Color, nickname: Char
             modifier = Modifier.fillMaxSize(),
             textAlign = TextAlign.Center,
             text = nickname.toString(),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             color = Color.White
         )
     }
@@ -336,11 +318,13 @@ private fun BoxWithTextAndColorBackground(backgroundColor: Color, nickname: Char
 fun UserProfilePicPreview(){
     QuizzerAndroidTheme {
 
-        Box(modifier = Modifier
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
             .size(30.dp)
             .clip(shape = RoundedCornerShape(8.dp))) {
             BoxWithTextAndColorBackground(
-                UserBackground1, 'A',
+                UserBackground1, '글',
             )
         }
     }

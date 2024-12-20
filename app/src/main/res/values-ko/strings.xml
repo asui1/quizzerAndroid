@@ -193,6 +193,8 @@
     <string name="get_quiz">퀴즈 풀기</string>
     <string name="agree_policy">약관 동의</string>
     <string name="quiz_title_cannot_be_empty">제목은 비어있을 수 없습니다</string>
+    <string name="can_not_access_server">Can not access server</string>
+    <string name="google_login_is_in_development">Google Login is in Development</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

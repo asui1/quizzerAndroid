@@ -54,17 +54,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                   userData: UserViewModel.UserDatas?,
+                  isLoggedIn: Boolean = false,
                   onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
                   logOut: () -> Unit = { },
                   signOut: (String) -> Unit = { },
                   navigateToMyQuizzes: () -> Unit = {},
 ) {
-    val scope = rememberCoroutineScope()
     val nickname = userData?.nickname
     var showInquiry by remember { mutableStateOf(false) }
     var showSignOut by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
-    val isUserLoggedIn = userData != null
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         if(showInquiry) {
@@ -83,7 +82,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                 )
             }
         }
-        else if(showSignOut && isUserLoggedIn) {
+        else if(showSignOut && isLoggedIn) {
             ModalBottomSheet(onDismissRequest = {showSignOut = false },
                 modifier = Modifier.imePadding()) {
                 SignoutBottomSheetContent(
@@ -128,17 +127,11 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                 ){
                     Row(modifier = Modifier
                         .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         UserProfilePic(userData, onClick = {
-                            scope.launch {
-                                if (isUserLoggedIn) {
-                                } else {
-                                    navController.navigate(Route.Login){
-                                        launchSingleTop = true
-                                    }
-                                }
-                            }
+
                         })
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(nickname ?: "Guest", modifier = Modifier.padding(16.dp))
@@ -148,18 +141,14 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         .fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        IconButton(onClick = {
-                            if (isUserLoggedIn) {
-                                showLogoutDialog = true
-                            } else {
-                                navController.navigate(Route.Login){
-                                    launchSingleTop = true
-                                }
-                            }
-                        }) {
+                        IconButton(
+                            enabled = isLoggedIn,
+                            onClick = {
+
+                            }) {
                             Icon(
-                                imageVector = if (isUserLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
-                                contentDescription = if (isUserLoggedIn) "Logout" else "Login"
+                                imageVector = if (isLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
+                                contentDescription = if (isLoggedIn) "Logout" else "Login"
                             )
                         }
 
@@ -178,54 +167,52 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                         .padding(16.dp)
                         .fillMaxWidth()
                 ) {
-                    if(isUserLoggedIn) {
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                navigateToMyQuizzes()
-                                closeDrawer()
-                            },
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            navigateToMyQuizzes()
+                            closeDrawer()
+                        },
+                    )
+                    {
+                        Text(
+                            stringResource(R.string.my_quizzes),
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            style = MaterialTheme.typography.labelMedium
                         )
-                        {
-                            Text(
-                                stringResource(R.string.my_quizzes),
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = MaterialTheme.typography.labelMedium
+                    }
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {},
+                    ) {
+                        Text(
+                            stringResource(R.string.profile),
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            style = TextStyle(
+                                textDecoration = TextDecoration.LineThrough,
                             )
-                        }
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                        ) {
-                            Text(
-                                stringResource(R.string.profile),
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = TextStyle(
-                                    textDecoration = TextDecoration.LineThrough,
-                                )
+                        )
+                    }
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {},
+                    ) {
+                        Text(
+                            stringResource(R.string.settings),
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            style = TextStyle(
+                                textDecoration = TextDecoration.LineThrough,
                             )
-                        }
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {},
-                        ) {
-                            Text(
-                                stringResource(R.string.settings),
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                style = TextStyle(
-                                    textDecoration = TextDecoration.LineThrough,
-                                )
-                            )
-                        }
+                        )
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(
@@ -243,7 +230,7 @@ fun DrawerContent(navController: NavController, closeDrawer: () -> Unit = {},
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
-                    if (isUserLoggedIn) {
+                    if (isLoggedIn) {
                         TextButton(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
