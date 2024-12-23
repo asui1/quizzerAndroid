@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {},
+fun MainActivityTopbar(navController: NavController, onTopbarProfileClick: () -> Unit = {},
                        userData: UserViewModel.UserDatas?,
                        resetHome: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
@@ -53,7 +53,7 @@ fun MainActivityTopbar(navController: NavController, openDrawer: () -> Unit = {}
             }
             UserProfilePic(userData, onClick = {
                 scope.launch {
-                    openDrawer()
+                    onTopbarProfileClick()
                 }
             })
         },

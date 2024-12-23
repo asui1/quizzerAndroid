@@ -18,9 +18,9 @@ android {
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 35
-        versionCode = 14
+        versionCode = 16
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -133,7 +133,7 @@ dependencies {
     implementation("com.kizitonwose.calendar:compose:2.6.0")
     implementation("sh.calvin.reorderable:reorderable:2.4.2")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.wear.compose:compose-material-core:1.4.0")
+//    implementation("androidx.wear.compose:compose-material-core:1.4.0")
     implementation("com.airbnb.android:lottie-compose:6.0.0")
     implementation("com.github.LottieFiles:dotlottie-android:0.4.1")
     implementation("com.google.android.libraries.places:places:4.1.0")

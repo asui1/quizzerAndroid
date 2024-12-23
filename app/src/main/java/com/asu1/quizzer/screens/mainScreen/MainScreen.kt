@@ -62,6 +62,7 @@ import com.asu1.quizzer.ui.theme.UserBackground5
 import com.asu1.quizzer.ui.theme.UserBackground6
 import com.asu1.quizzer.ui.theme.UserBackground7
 import com.asu1.quizzer.ui.theme.UserBackground8
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
@@ -175,6 +176,7 @@ fun MainScreen(
             drawerState = drawerState,
             drawerContent = {
                 DrawerContent(closeDrawer = { scope.launch { drawerState.close() } },
+                    isLoggedIn = isLoggedIn,
                     userData = userData,
                     onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                     logOut = { userViewModel.logOut() },
@@ -186,9 +188,20 @@ fun MainScreen(
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Scaffold(
                         topBar = {
-                            MainActivityTopbar(navController,
-                                { openDrawer() }, userData,
-                                resetHome = moveHome)
+                            MainActivityTopbar(
+                                navController,
+                                onTopbarProfileClick = {
+                                    if(isLoggedIn){
+                                        openDrawer()
+                                    }else{
+                                        navController.navigate(Route.Login){
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                },
+                                userData,
+                                resetHome = moveHome
+                            )
                         },
                         bottomBar = {
                             MainActivityBottomBar({openDrawer()}, bottomBarSelection = pagerState.currentPage,
@@ -317,8 +330,8 @@ fun UserProfilePicPreview(){
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-            .size(30.dp)
-            .clip(shape = RoundedCornerShape(8.dp))) {
+                .size(30.dp)
+                .clip(shape = RoundedCornerShape(8.dp))) {
             BoxWithTextAndColorBackground(
                 UserBackground1, '글',
             )

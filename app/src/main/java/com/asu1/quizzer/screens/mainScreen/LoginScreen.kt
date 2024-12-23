@@ -34,14 +34,17 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import kotlinx.coroutines.launch
 
 fun handleSignIn(result: GetCredentialResponse, login: (email: String, profileUri: String) -> Unit) {
     // Handle the successfully returned credential.
@@ -118,63 +121,54 @@ fun LoginScreen(navController: NavController,
 
     LoginBody(
         onClickSignin = {
-            ToastManager.showToast(
-                R.string.google_login_is_in_development,
-                ToastType.INFO
-            )
-//            coroutineScope.launch {
-//                try {
-//                    Logger.debug("Getting Login credential")
-//                    val result = credentialManager.getCredential(
-//                        request = loginRequest,
-//                        context = context,
-//                    )
-//                    Logger.debug("Received credential: $result")
-//                    handleSignIn(result, {email, profileUri ->  userViewModel.logIn(email, profileUri)})
-//
-//                } catch (e: GetCredentialException) {
-//                    ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
-//                    Log.e("Quizzer", "Error getting credential", e)
-//                }
-//            }
+            coroutineScope.launch {
+                try {
+                    Logger.debug("Getting Login credential")
+                    val result = credentialManager.getCredential(
+                        request = loginRequest,
+                        context = context,
+                    )
+                    Logger.debug("Received credential: $result")
+                    handleSignIn(result, {email, profileUri ->  userViewModel.logIn(email, profileUri)})
+
+                } catch (e: GetCredentialException) {
+                    ToastManager.showToast(R.string.google_login_is_in_development, ToastType.ERROR)
+                    Log.e("Quizzer", "Error getting credential", e)
+                }
+            }
         },
         onClickRegister = {
-            ToastManager.showToast(
-                R.string.google_login_is_in_development,
-                ToastType.INFO
-            )
-//            coroutineScope.launch {
-//                try {
-//                    Logger.debug("Getting Register credential")
-//                    val result = credentialManager.getCredential(
-//                        request = registerRequest,
-//                        context = context,
-//                    )
-//                    val googleIdTokenCredential =
-//                        GoogleIdTokenCredential.createFrom(result.credential.data)
-//
-//                    val email =
-//                        googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-//                    if (email == null) {
-//                        ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
-//                        Log.e("Quizzer", "Received an invalid google id token response")
-//
-//                        return@launch
-//                    }
-//                    val profileUri = googleIdTokenCredential.profilePictureUri
-//
-//                    navController.navigate(
-//                        Route.Register(
-//                            email,
-//                            profileUri.toString()
-//                        )
-//                    ){
-//                        launchSingleTop = true
-//                    }
-//                } catch (e: GetCredentialException) {
-//                    Log.e("Quizzer", "Error getting credential", e)
-//                }
-//            }
+            coroutineScope.launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        request = registerRequest,
+                        context = context,
+                    )
+                    val googleIdTokenCredential =
+                        GoogleIdTokenCredential.createFrom(result.credential.data)
+
+                    val email =
+                        googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
+                    if (email == null) {
+                        ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
+
+                        return@launch
+                    }
+                    val profileUri = googleIdTokenCredential.profilePictureUri
+
+                    navController.navigate(
+                        Route.Register(
+                            email,
+                            profileUri.toString()
+                        )
+                    ){
+                        launchSingleTop = true
+                    }
+                } catch (e: GetCredentialException) {
+                    ToastManager.showToast(R.string.google_login_is_in_development, ToastType.ERROR)
+                    Log.e("Quizzer", "Error getting credential", e)
+                }
+            }
         }
     )
 }
