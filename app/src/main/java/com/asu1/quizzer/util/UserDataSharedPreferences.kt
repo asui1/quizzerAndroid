@@ -15,7 +15,7 @@ class UserDataSharedPreferences(context: Context) {
             putString("nickname", nickname)
             putString("urlToImage", urlToImage)
             putStringSet("tags", tags)
-            putBoolean("agreement", true)
+            putBoolean("agreement", false)
             apply()
         }
     }
@@ -38,21 +38,21 @@ class UserDataSharedPreferences(context: Context) {
 
     fun saveGuestLoginInfo(email: String, nickname: String, urlToImage: String?, tags: Set<String>) {
         guestAccountPreferences.edit().apply {
-            putString("email", email)
-            putString("nickname", nickname)
-            putString("urlToImage", urlToImage)
-            putStringSet("tags", tags)
-            putBoolean("agreement", true)
+            putString("guestEmail", email)
+            putString("guestNickname", nickname)
+            putString("guestUri", urlToImage)
+            putStringSet("guestTags", tags)
+            putBoolean("guestAgreement", false)
             apply()
         }
     }
 
     suspend fun getGuestLoginInfo(): UserLoginInfo = coroutineScope {
-        val emailDeferred = async { guestAccountPreferences.getString("email", null) }
-        val nicknameDeferred = async { guestAccountPreferences.getString("nickname", null) }
-        val urlToImageDeferred = async { guestAccountPreferences.getString("urlToImage", null) }
-        val tagsDeferred = async { guestAccountPreferences.getStringSet("tags", emptySet()) }
-        val agreementDeferred = async { guestAccountPreferences.getBoolean("agreement", false) }
+        val emailDeferred = async { guestAccountPreferences.getString("guestEmail", null) }
+        val nicknameDeferred = async { guestAccountPreferences.getString("guestNickname", null) }
+        val urlToImageDeferred = async { guestAccountPreferences.getString("guestUri", null) }
+        val tagsDeferred = async { guestAccountPreferences.getStringSet("guestTags", emptySet()) }
+        val agreementDeferred = async { guestAccountPreferences.getBoolean("guestAgreement", false) }
 
         UserLoginInfo(
             emailDeferred.await(),

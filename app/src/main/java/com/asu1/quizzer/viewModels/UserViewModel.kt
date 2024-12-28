@@ -85,7 +85,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
         }
-
     }
 
     fun logIn(email: String, urlToImage: String?) {
