@@ -6,16 +6,17 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
+import com.asu1.quizzer.domain.login.LoginUseCase
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.UserDataSharedPreferences
+import com.asu1.quizzer.util.SharedPreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class UserViewModel(application: Application) : AndroidViewModel(application) {
-    private val sharedPreferencesHelper = UserDataSharedPreferences(application)
+class UserViewModel: ViewModel() {
 
     private val _isUserLoggedIn = MutableLiveData(false)
     val isUserLoggedIn: LiveData<Boolean> get() = _isUserLoggedIn
@@ -25,11 +26,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            val userInfo = sharedPreferencesHelper.getUserLoginInfo()
+            val userInfo = SharedPreferencesManager.getUserLoginInfo()
             if (userInfo.email != null) {
                 logIn(userInfo.email, userInfo.urlToImage)
             } else{
-                val guestInfo = sharedPreferencesHelper.getGuestLoginInfo()
+                val guestInfo = SharedPreferencesManager.getGuestLoginInfo()
                 if(guestInfo.email != null){
                     guestLogin()
                 } else{
@@ -51,7 +52,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         return@launch
                     }
                     _userData.postValue(UserDatas(email, nickname, null, emptySet()))
-                    sharedPreferencesHelper.saveGuestLoginInfo(email, nickname, null, emptySet())
+                    SharedPreferencesManager.saveGuestLoginInfo(email, nickname, null, emptySet())
                     _isUserLoggedIn.postValue(false)
                 } else {
                     ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
@@ -67,7 +68,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     ){
         try{
             viewModelScope.launch(Dispatchers.IO) {
-                val email = sharedPreferencesHelper.getGuestLoginInfo().email ?: ""
+                val email = SharedPreferencesManager.getGuestLoginInfo().email ?: ""
                 if(email.isEmpty()) {
                     getGuestAccount()
                     return@launch
@@ -76,7 +77,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 val nickname = response.body()?.nickname ?: ""
                 if (response.isSuccessful) {
                     _userData.postValue(UserDatas(email, nickname, null, emptySet()))
-                    sharedPreferencesHelper.saveUserLoginInfo(email, nickname, null, emptySet())
+                    SharedPreferencesManager.saveUserLoginInfo(email, nickname, null, emptySet())
                     _isUserLoggedIn.postValue(false)
                 } else {
                     ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
@@ -90,12 +91,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     fun logIn(email: String, urlToImage: String?) {
         try{
             viewModelScope.launch(Dispatchers.IO) {
-                val response = RetrofitInstance.api.login(email)
-                val nickname = response.body()?.nickname ?: ""
-                if (response.isSuccessful) {
-                    val userTags = response.body()?.tags ?: emptySet()
+                val loginResponse = RetrofitInstance.api.login(email)
+
+                val nickname = loginResponse.body()?.nickname ?: ""
+                if (loginResponse.isSuccessful) {
+                    val userTags = loginResponse.body()?.tags ?: emptySet()
                     _userData.postValue(UserDatas(email, nickname, urlToImage, userTags))
-                    sharedPreferencesHelper.saveUserLoginInfo(email, nickname, urlToImage, userTags)
+                    SharedPreferencesManager.saveUserLoginInfo(email, nickname, urlToImage, userTags)
                     ToastManager.showToast(R.string.logged_in, ToastType.SUCCESS)
                     _isUserLoggedIn.postValue(true)
                 } else {
@@ -128,7 +130,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logOut() {
         _userData.value = null
-        sharedPreferencesHelper.clearUserLoginInfo()
+        SharedPreferencesManager.clearUserLoginInfo()
         ToastManager.showToast(R.string.logged_out, ToastType.SUCCESS)
         _isUserLoggedIn.postValue(false)
         guestLogin()
