@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
+import com.skydoves.landscapist.glide.GlideImage
 import java.io.ByteArrayOutputStream
 
 fun loadImageAsByteArray(context: Context, resId: Int): ByteArray {
@@ -55,7 +56,7 @@ fun QuizImage(uuid: String, title: String, modifier: Modifier = Modifier){
     val isError = painter.state is AsyncImagePainter.State.Error
 
     Box(modifier = modifier) {
-        if (isError || uuid.length == 1) {
+        if (uuid.length == 1) {
             Image(
                 painter = painterResource(id = R.drawable.question2),
                 contentDescription = "Image for quiz $title",
@@ -63,11 +64,17 @@ fun QuizImage(uuid: String, title: String, modifier: Modifier = Modifier){
                 contentScale = ContentScale.Crop
             )
         } else {
-            Image(
-                painter = painter,
-                contentDescription = "Image for quiz $title",
+            GlideImage(
+                imageModel = {imageUrl},
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                failure = {
+                    Image(
+                        painter = painterResource(id = R.drawable.question2),
+                        contentDescription = "Image for quiz $title",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                },
             )
         }
     }
