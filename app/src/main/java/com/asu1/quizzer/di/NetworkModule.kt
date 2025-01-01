@@ -1,6 +1,7 @@
 // NetworkModule.kt
 package com.asu1.quizzer.di
 
+import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
@@ -47,11 +48,12 @@ object NetworkModule {
             .build()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit {
         val contentType = "application/json".toMediaType()
-        val kotlinxSerializationConverterFactory = Json.asConverterFactory(contentType)
+        val kotlinxSerializationConverterFactory = json.asConverterFactory(contentType)
         val gsonConverterFactory = GsonConverterFactory.create(gson)
 
         return Retrofit.Builder()

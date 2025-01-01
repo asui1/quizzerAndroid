@@ -12,11 +12,16 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.domain.login.LoginUseCase
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.SharedPreferencesManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
+import javax.inject.Inject
 
-class UserViewModel: ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
+): ViewModel() {
 
     private val _isUserLoggedIn = MutableLiveData(false)
     val isUserLoggedIn: LiveData<Boolean> get() = _isUserLoggedIn
@@ -73,7 +78,7 @@ class UserViewModel: ViewModel() {
                     getGuestAccount()
                     return@launch
                 }
-                val response = RetrofitInstance.api.login(email)
+                val response = loginUseCase.invoke(email)
                 val nickname = response.body()?.nickname ?: ""
                 if (response.isSuccessful) {
                     _userData.postValue(UserDatas(email, nickname, null, emptySet()))

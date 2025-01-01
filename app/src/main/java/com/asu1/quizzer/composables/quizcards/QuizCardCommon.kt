@@ -17,8 +17,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
 import com.skydoves.landscapist.glide.GlideImage
 import java.io.ByteArrayOutputStream
@@ -52,8 +50,6 @@ fun TagsView(tags: List<String>, modifier: Modifier = Modifier, maxLines: Int = 
 @Composable
 fun QuizImage(uuid: String, title: String, modifier: Modifier = Modifier){
     val imageUrl = "https://quizzer.co.kr/api/images/${uuid}.png"
-    val painter = rememberAsyncImagePainter(model = imageUrl)
-    val isError = painter.state is AsyncImagePainter.State.Error
 
     Box(modifier = modifier) {
         if (uuid.length == 1) {
