@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-gradle.properties
+my-release-key.keystore
 app/src/main/java/com/asu1/quizzer/network/SecurePreferences.kt

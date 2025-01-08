@@ -34,16 +34,16 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            keyAlias = project.findProperty("KEY_ALIAS") as String
-            keyPassword = project.findProperty("KEY_PASSWORD") as String
-            storeFile = file(project.findProperty("STORE_FILE") as String)
-            storePassword = project.findProperty("STORE_PASSWORD") as String
+            keyAlias = System.getenv("KEY_ALIAS") ?: throw IllegalArgumentException("KEY_ALIAS environment variable not set")
+            keyPassword = System.getenv("KEY_PASSWORD") ?: throw IllegalArgumentException("KEY_PASSWORD environment variable not set")
+            storeFile = file(System.getenv("KEY_STORE") ?: throw IllegalArgumentException("KEY_STORE environment variable not set"))
+            storePassword = System.getenv("STORE_PASSWORD") ?: throw IllegalArgumentException("STORE_PASSWORD environment variable not set")
         }
         create("release") {
-            keyAlias = project.findProperty("KEY_ALIAS") as String
-            keyPassword = project.findProperty("KEY_PASSWORD") as String
-            storeFile = file(project.findProperty("STORE_FILE") as String)
-            storePassword = project.findProperty("STORE_PASSWORD") as String
+            keyAlias = System.getenv("KEY_ALIAS") ?: throw IllegalArgumentException("KEY_ALIAS environment variable not set")
+            keyPassword = System.getenv("KEY_PASSWORD") ?: throw IllegalArgumentException("KEY_PASSWORD environment variable not set")
+            storeFile = file(System.getenv("KEY_STORE") ?: throw IllegalArgumentException("KEY_STORE environment variable not set"))
+            storePassword = System.getenv("STORE_PASSWORD") ?: throw IllegalArgumentException("STORE_PASSWORD environment variable not set")
         }
     }
 
