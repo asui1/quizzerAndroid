@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - stable_release
-    pull_request:
-      branches:
-        - stable_release
+  pull_request:
+    branches:
+      - stable_release
 
 jobs:
   build:
@@ -22,6 +22,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set up SDK
+        uses:  android-actions/setup-android@v2
+
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
@@ -32,11 +35,29 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      - name: Set Time Zone
+        run: sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Generate google-services.json
+        run: echo '${{ secrets.GOOGLE_SERVICES }}' > app/google-services.json;
+
+      - name: Decode keystore
+        run: |
+          echo "$KEY_STORE" > KEYSTORE_NAME.b64
+          base64 -d -i KEYSTORE_NAME.b64 > KEYSTORE_NAME.jks
+        env:
+            KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
+
       - name: Build with Gradle
         run: ./gradlew build
+        env:
+            KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+            KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+            KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+            STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
 
       - name: Run unit tests
         run: ./gradlew test
