@@ -5,7 +5,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
-import com.asu1.quizzer.datacreationEN.T1WORLDSQUIZEN
 import com.asu1.quizzer.datacreationEN.fakertestDataEn
 import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -65,7 +64,9 @@ val textColors: List<String> = listOf(
     "ff251a00",
 )
 
-const val isTest = false
+// Default goes with addbody:true, upload: false
+const val addBody = true
+const val upLoad = false
 
 class MyComposeTest {
     @get:Rule
@@ -140,7 +141,7 @@ class MyComposeTest {
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.waitFor(300)
 
-        if(!isTest) {
+        if(addBody) {
             for (i in 0 until testQuizData.quizzes.size) {
                 val quiz = testQuizData.quizzes[i]
                 when (quiz) {
@@ -221,7 +222,7 @@ class MyComposeTest {
         testUtils.waitFor(2000)
 
         //UPLOAD
-        if(!isTest) testUtils.clickOnTag("DesignScoreCardUploadButton")
+        if(upLoad) testUtils.clickOnTag("DesignScoreCardUploadButton")
         onIdle()
 
         onIdle()
