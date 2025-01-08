@@ -51,6 +51,16 @@ jobs:
         env:
             KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
+      - name: Set up Lottie jsons
+        run: |
+          mkdir -p ./app/src/main/res/raw/
+          unzip -P ${{ secrets.ZIP_KEY }} raw.zip -d ./app/src/main/res/raw/
+
+      - name: Set up Lottie assets
+        run: |
+          mkdir -p ./app/src/main/assets/
+          unzip -P ${{ secrets.ZIP_KEY }} assets.zip -d ./app/src/main/assets/
+
       - name: Build with Gradle
         run: ./gradlew build
         env:
@@ -58,6 +68,8 @@ jobs:
             KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
             KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
             STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+            PASSWORD: ${{ secrets.PASSWORD }}
+            GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
       - name: Run unit tests
         run: ./gradlew test
