@@ -58,11 +58,6 @@ fun QuizLayoutTitle(
             },
             enabled = enabled,
             isError = localError,
-            label = {
-                if(localError){
-                    Text(text = stringResource(R.string.quiz_title_cannot_be_empty))
-                }
-            },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
@@ -79,10 +74,16 @@ fun QuizLayoutTitle(
                     }
                 }
             ),
-            supportingText = { Text(text = buildString {
-                append(stringResource(R.string.length))
-                append("${textFieldValue.text.length}/$titleSizeLimit")
-            }) }
+            supportingText = {
+                if(localError){
+                    Text(text = stringResource(R.string.quiz_title_cannot_be_empty))
+                }else{
+                    Text(text = buildString {
+                        append(stringResource(R.string.length))
+                        append("${textFieldValue.text.length}/$titleSizeLimit")
+                    })
+                }
+            }
         )
     }
 

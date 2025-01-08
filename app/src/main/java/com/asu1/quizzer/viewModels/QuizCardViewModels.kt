@@ -9,6 +9,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -124,6 +125,7 @@ class QuizCardMainViewModel : ViewModel() {
                     ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
                 }
             } catch (e: Exception) {
+                Logger.debug("Failed to fetch quiz trends", e)
                 ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
             }
         }

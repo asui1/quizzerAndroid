@@ -4,11 +4,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11) // Change to the desired Java version
+        languageVersion = JavaLanguageVersion.of(17) // Change to the desired Java version
     }
 }
 
@@ -18,9 +21,9 @@ android {
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 35
-        versionCode = 14
+        versionCode = 16
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,11 +65,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -125,7 +128,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.5")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.skydoves:colorpicker-compose:1.1.2")
-    implementation("androidx.media3:media3-effect:1.5.0")
+    implementation("androidx.media3:media3-effect:1.5.1")
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
@@ -133,13 +136,16 @@ dependencies {
     implementation("com.kizitonwose.calendar:compose:2.6.0")
     implementation("sh.calvin.reorderable:reorderable:2.4.2")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.wear.compose:compose-material-core:1.4.0")
+//    implementation("androidx.wear.compose:compose-material-core:1.4.0")
     implementation("com.airbnb.android:lottie-compose:6.0.0")
     implementation("com.github.LottieFiles:dotlottie-android:0.4.1")
     implementation("com.google.android.libraries.places:places:4.1.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation("com.github.skydoves:landscapist-glide:2.4.5")
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
 
     //firebase login
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
@@ -166,4 +172,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }

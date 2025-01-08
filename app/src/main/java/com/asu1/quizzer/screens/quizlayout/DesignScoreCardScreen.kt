@@ -103,269 +103,65 @@ fun DesignScoreCardScreen(
         }
     }
 
-    AnimatedContent(
-        targetState = quizLayoutViewModelState,
-        transitionSpec = {
-            fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
-        },
-        label = "Design Scorecard",
-    ) { targetState ->
-        when(targetState){
-            ViewModelState.UPLOADING -> {
+    MaterialTheme(
+        colorScheme = scoreCard.colorScheme
+    ) {
+        if(ViewModelState.UPLOADING == quizLayoutViewModelState){
+            Dialog(
+                onDismissRequest = { },
+                properties = DialogProperties(dismissOnBackPress = false)
+            ) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.size(200.dp)
                 ){
                     UploadingAnimation()
                 }
             }
-            else -> {
-                MaterialTheme(
-                    colorScheme = scoreCard.colorScheme
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                if (immerseMode) {
-                                    context.disableImmersiveMode()
-                                } else {
-                                    context.enableImmersiveMode()
-                                }
-                                immerseMode = !immerseMode
-                            }
-                    ) {
-                        DesignScoreCardBody(
-                            scoreCard,
-                            immerseMode,
-                            onUpload = {
-                                scope.launch {
-                                    quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
-                                }
-                            },
-                        )
-                        OpenCloseColumn(
-                            isOpen = expanded,
-                            onToggleOpen = { expanded = !expanded },
-                            height = screenHeight,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                        ){
-                            DesignScoreCardTools(
-                                scoreCardViewModel,
-                                scoreCard,
-                                screenWidth,
-                                screenHeight
-                            )
-                        }
+                    if (immerseMode) {
+                        context.disableImmersiveMode()
+                    } else {
+                        context.enableImmersiveMode()
                     }
+                    immerseMode = !immerseMode
                 }
-            }
-        }
-    }
-
-}
-
-@Composable
-private fun DesignScoreCardTools(
-    scoreCardViewModel: ScoreCardViewModel,
-    scoreCard: ScoreCard,
-    screenWidth: Dp,
-    screenHeight: Dp,
-) {
-
-    var showEffectDropdown by remember { mutableStateOf(false) }
-    var showGradientDropdown by remember { mutableStateOf(false) }
-    var showScoreCardColorPicker by remember { mutableStateOf(false) }
-    var showTextColorPicker by remember { mutableStateOf(false) }
-    var showBackgroundImagePicker by remember { mutableStateOf(false) }
-    var showOverlayImagePicker by remember { mutableStateOf(false) }
-    var colorChange by remember{ mutableIntStateOf(0) }
-
-    if(showScoreCardColorPicker){
-        Dialog(
-            onDismissRequest = {
-                showScoreCardColorPicker = false
-            },
-            properties = DialogProperties(dismissOnBackPress = true)
         ) {
-            TextColorPickerModalSheet(
-                initialColor = when(colorChange) {
-                    1 -> scoreCard.background.color2
-                    2 -> scoreCard.background.colorGradient
-                    else -> scoreCard.background.color
-                },
-                onColorSelected = { color ->
-                    scoreCardViewModel.updateColor(color, colorChange)
-                },
-                text = stringResource(
-                    when(colorChange) {
-                        1 -> R.string.select_color2
-                        2 -> R.string.select_color3
-                        else -> R.string.select_color1
+            DesignScoreCardBody(
+                scoreCard,
+                immerseMode,
+                onUpload = {
+                    scope.launch {
+                        quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
                     }
-                ),
-                onClose = {
-                    showScoreCardColorPicker = false
-                }
-            )
-        }
-    }
-    if(showOverlayImagePicker){
-        Dialog(
-            onDismissRequest = {
-                showOverlayImagePicker = false
-            }
-        ){
-            ImageGetter(
-                image = scoreCard.background.overlayImage,
-                onImageUpdate = {scoreCardViewModel.updateOverLayImage(it)},
-                onImageDelete = {scoreCardViewModel.updateOverLayImage(byteArrayOf())},
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .border(2.dp, MaterialTheme.colorScheme.onSurface, shape = RoundedCornerShape(8.dp))
-            )
-        }
-    }
-    if(showTextColorPicker){
-        Dialog(
-            onDismissRequest = {
-                showTextColorPicker = false
-            }
-        ) {
-            TextColorPickerModalSheet(
-                initialColor = scoreCard.textColor,
-                onColorSelected = { color ->
-                    scoreCardViewModel.updateTextColor(color)
                 },
-                text = stringResource(R.string.select_text_color),
-                onClose = {
-                    showTextColorPicker = false
-                }
             )
-        }
-    }
-    if(showBackgroundImagePicker){
-        Dialog(
-            onDismissRequest = {
-                showBackgroundImagePicker = false
-            }
-        ) {
-            ImagePickerWithBaseImages(
-                modifier = Modifier,
-                onBaseImageSelected = { baseImage ->
-                    scoreCardViewModel.updateBackgroundBase(baseImage)
-                    showBackgroundImagePicker = false
-                },
-                onImageSelected = {byteArray ->
-                    scoreCardViewModel.updateBackgroundImage(byteArray)
-                    showBackgroundImagePicker = false
-                },
-                imageColorState = scoreCard.background.state,
-                currentSelection = scoreCard.background.backgroundBase,
-                currentImage = scoreCard.background.imageData,
-                width = screenWidth,
+            OpenCloseColumn(
+                isOpen = expanded,
+                onToggleOpen = { expanded = !expanded },
                 height = screenHeight,
-            )
-        }
-    }
-    Column(
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-        modifier = Modifier
-            .wrapContentSize()
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(4.dp)
-            )
-            .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
-    ) {
-        val iconSize = 32.dp
-        IconButtonWithText(
-            imageVector = Icons.Default.FormatColorText,
-            text = stringResource(R.string.text_color),
-            onClick = {
-                showTextColorPicker = true
-            },
-            description = "Set Text Color For ScoreCard",
-            modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
-            iconSize = iconSize,
-        )
-        IconButtonWithText(
-            imageVector = Icons.Default.ImageSearch,
-            text = stringResource(R.string.image_on_top),
-            onClick = {
-                showOverlayImagePicker = true
-            },
-            description = "Set Image to go on top",
-            modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
-            iconSize = iconSize,
-        )
-        IconButtonWithText(
-            imageVector = Icons.Default.ImageSearch,
-            text = stringResource(R.string.background_newline),
-            onClick = {
-                showBackgroundImagePicker = true
-            },
-            description = "Set Background Image For ScoreCard",
-            modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
-            iconSize = iconSize,
-        )
-        colorNames.forEachIndexed { index, colorName ->
-            if (colorName == R.string.effect) {
-                FastCreateDropDown(
-                    showDropdownMenu = showEffectDropdown,
-                    labelText = stringResource(R.string.effects),
-                    onClick = { dropdownIndex ->
-
-                        showEffectDropdown = false
-                        scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
-                    },
-                    onChangeDropDown = { showEffectDropdown = it },
-                    inputItems = remember { Effect.entries.map { it.stringId } },
-                    imageVector = Icons.Filled.Animation,
-                    modifier = Modifier.width(iconSize * 1.7f),
-                    testTag = "DesignScoreCardAnimationButton",
-                    iconSize = iconSize,
-                    currentSelection = scoreCard.background.effect.ordinal
-                )
-            } else if (colorName == R.string.gradient) {
-                FastCreateDropDown(
-                    showDropdownMenu = showGradientDropdown,
-                    labelText = stringResource(R.string.gradient),
-                    onClick = { dropdownIndex ->
-                        showGradientDropdown = false
-                        scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
-                    },
-                    onChangeDropDown = { showGradientDropdown = it },
-                    inputItems = remember { ShaderType.entries.map { it.shaderName } },
-                    imageVector = Icons.Filled.Gradient,
-                    modifier = Modifier.width(iconSize * 1.7f),
-                    testTag = "DesignScoreCardShaderButton",
-                    iconSize = iconSize,
-                    currentSelection = scoreCard.background.shaderType.index
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+            ){
+                DesignScoreCardTools(
+                    scoreCardViewModel,
+                    scoreCard,
+                    screenWidth,
+                    screenHeight
                 )
             }
-            IconButtonWithText(
-                imageVector = Icons.Default.ColorLens,
-                text = stringResource(colorName),
-                onClick = {
-                    colorChange = index
-                    showScoreCardColorPicker = true
-                },
-                description = "Set Color For ScoreCard",
-                modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
-                iconSize = iconSize,
-            )
         }
     }
 }
+
+
 
 @Composable
 private fun DesignScoreCardBody(
@@ -414,6 +210,7 @@ private fun DesignScoreCardBody(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun DesignScoreCardPreview() {
@@ -424,17 +221,4 @@ fun DesignScoreCardPreview() {
         onUpload = {},
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun DesignScoreCardToolsPreview() {
-    val scoreCard = sampleScoreCard
-    DesignScoreCardTools(
-        scoreCardViewModel = createSampleScoreCardViewModel(),
-        scoreCard = scoreCard,
-        screenWidth = 400.dp,
-        screenHeight = 800.dp,
-    )
-}
-
 

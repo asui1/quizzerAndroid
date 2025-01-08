@@ -20,6 +20,8 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
+
+    //NOT used anymore. Migrated to google tools.
     @GET("version")
     suspend fun getVersion(): Response<VersionResponse>
 

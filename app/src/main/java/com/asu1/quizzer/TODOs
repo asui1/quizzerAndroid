@@ -2,38 +2,14 @@ TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
 // APP TEST LINK :
-
 https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac4443539567078e268752c832
-
 https://quizzer.co.kr/?quizId=
 
-1. 태그 검색에 언어 설정 추가 필요.
+개선점 발견. 객체 지향적으로 프로그래밍이 되어있지않음...
+모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.
+Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.
+DI를 사용해서 Usecase 구현하는걸 시도해보자.
 
-2. 로그인 할 때 게스트 계정 자동으로 설정하고, 로그아웃 못하게 막고.
- 닉네임 자동 생성 하고, 이메일을 guest_uuid 형태로 만들어야겠음.
-
-프로가드 다시 키고 -> 내부 테스트 시행.
-
-
-- Doing optimization.
-Dispatchers : Main : UI, IO : network, disk, Default: CPU intensive, Unconfined:
-
-horizontally seamless / tileable -> Keyword for generating scorecard.
-
----------------MINIMUM FOR APP RELEASE----------------
-
-- maybe put some gradients to color backgrounds at mainScreen to make it more beautiful.
-
-"NEED TO ADD : designed by Freepik"
-
-----------------
-TODO For servers.
-- Implement Views for each quiz every day.
-Then Keep Track of Views for Yesterday and Last Week.
-
-- Implement suggestion algorithm for search.
--> Will be implemented Later...
-This should suggest user with similar search results. I will use LLM models with title, tags, and description.
 
 Error getting credential
 androidx.credentials.exceptions.NoCredentialException: No credentials available

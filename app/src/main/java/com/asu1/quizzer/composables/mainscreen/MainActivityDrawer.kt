@@ -140,7 +140,7 @@ fun DrawerContent(
                         IconButton(
                             enabled = isLoggedIn,
                             onClick = {
-
+                                showLogoutDialog = true
                             }) {
                             Icon(
                                 imageVector = if (isLoggedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,

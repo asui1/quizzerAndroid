@@ -55,9 +55,12 @@ import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     // NEED INITIALIZATION WITH HIGH PRIORITY
