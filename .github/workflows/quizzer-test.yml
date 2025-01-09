@@ -1,12 +1,10 @@
 name: Quizzer CI
 
 on:
-  push:
-    branches:
-      - stable_release
   pull_request:
     branches:
       - stable_release
+      - '!master'
 
 jobs:
   build:
@@ -100,7 +98,7 @@ jobs:
             GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
       - name: Run UI test
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.33.0
         with:
           api-level: 34
           target: default
@@ -121,10 +119,11 @@ jobs:
 
       - name: Upload AAB
         id: uploadArtifact
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v4.5.0
         with:
           name: app_$VERSION_CODE
           path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
 
       - name: Create service_account.json
         id: createServiceAccount
@@ -140,6 +139,7 @@ jobs:
 #          status: completed
 #          releaseFiles: app/build/outputs/bundle/release/app-release.aab
 #          track: internal
+#          releaseName: release-notes.txt
 
       - name: Send Email with CI Results
         if: always()
