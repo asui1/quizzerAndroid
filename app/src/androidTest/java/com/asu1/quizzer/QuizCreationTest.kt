@@ -5,13 +5,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
-import com.asu1.quizzer.datacreationEN.fakertestDataEn
 import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
+import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorldsKR24
 
 val primaryColors: List<String> = listOf(
     "FFBBDEFB", // Light Blue
@@ -78,7 +83,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = fakertestDataEn
+        val testQuizData = lolWorldsKR24
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout

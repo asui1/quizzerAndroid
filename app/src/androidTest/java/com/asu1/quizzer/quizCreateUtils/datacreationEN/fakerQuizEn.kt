@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreationEN
+package com.asu1.quizzer.quizCreateUtils.datacreationEN
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -90,7 +91,7 @@ val fakertestDataEn = allInOneForTest(
     title = "The God of LoL: Faker",
     description = "This quiz is about Faker, the living god of League of Legends. How well do you remember the milestones in his career?",
     tags = setOf("Faker", "LoL", "LOL", "League of Legends", "T1"),
-    titleImage = com.asu1.quizzer.test.R.drawable.faker,
+    titleImage = R.drawable.faker,
     colorInt = 3,
     quizzes = fakerquizzesEn,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

@@ -1,11 +1,12 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
 import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -110,7 +111,7 @@ val iutestdata3 = allInOneForTest(
     title = "아이유 퀴즈 심화편",
     description = "아이유의 모든 활동에 대한 문제입니다. 정말 얼마나 알고 있나요?",
     tags = setOf("아이유", "유애나", "가수", "앨범", "팬"),
-    titleImage = com.asu1.quizzer.test.R.drawable.ai_iu3,
+    titleImage = R.drawable.ai_iu3,
     colorInt = 3,
     quizzes = iuquizzes3,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -124,5 +125,5 @@ val iutestdata3 = allInOneForTest(
     effectIndex = 3,
     effectColor = "80FA1A8E",
     textColor = "fff88cae",
-    overlayImage = com.asu1.quizzer.test.R.drawable.iu_guiter,
+    overlayImage = R.drawable.iu_guiter,
 )

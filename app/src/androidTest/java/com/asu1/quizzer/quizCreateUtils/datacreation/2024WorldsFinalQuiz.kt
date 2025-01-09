@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -130,7 +131,7 @@ val T1WOLRDSQUIZ = allInOneForTest(
     title = "2024 LOL 월챔 결승전 퀴즈",
     description = "T1이 5번째 우승을 차지하며 역사를 썼던 2024년 월드 챔피언쉽 결승전에 대한 퀴즈입니다.",
     tags = setOf("롤", "2024 월즈", "T1", "월드 챔피언쉽", "리그 오브 레전드"),
-    titleImage = com.asu1.quizzer.test.R.drawable.t1_final,
+    titleImage = R.drawable.t1_final,
     colorInt = 3,
     quizzes = worlds24T1Ko,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

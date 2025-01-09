@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
 import com.asu1.quizzer.model.BodyType
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 
 val iuquizzes2 = listOf(
     TestQuiz1(
@@ -98,7 +99,7 @@ val iutestdata2 = allInOneForTest(
     title = "아이유에 대해 얼마나 알고 있나요?",
     description = "아이유의 팬 그리고 음악 활동에 대한 문제들입니다. 얼마나 알고 있나요?",
     tags = setOf("아이유", "유애나", "가수", "앨범", "팬"),
-    titleImage = com.asu1.quizzer.test.R.drawable.iu_au2,
+    titleImage = R.drawable.iu_au2,
     colorInt = 3,
     quizzes = iuquizzes2,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

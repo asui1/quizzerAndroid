@@ -1,8 +1,9 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -71,7 +72,7 @@ val iutestdata1 = allInOneForTest(
     title = "아이유 팬이라면 간단한 퀴즈",
     description = "아이유에 대한 간단한 퀴즈입니다. 아이유 팬이라면 이 정도는 간단히?",
     tags = setOf("아이유", "유애나", "가수", "자작곡", "연예인"),
-    titleImage = com.asu1.quizzer.test.R.drawable.iu_ai1,
+    titleImage = R.drawable.iu_ai1,
     colorInt = 3,
     quizzes = iuquizzes1,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -85,5 +86,5 @@ val iutestdata1 = allInOneForTest(
     effectIndex = 5,
     effectColor = "ffffffff",
     textColor = "ff6c3454",
-    overlayImage = com.asu1.quizzer.test.R.drawable.iu_portrait_bg2,
+    overlayImage = R.drawable.iu_portrait_bg2,
 )

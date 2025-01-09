@@ -10,12 +10,23 @@ https://quizzer.co.kr/?quizId=
 Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.
 DI를 사용해서 Usecase 구현하는걸 시도해보자.
 
-CI CD 구축하려면 지금 public repository 구조에서는 어려운 점이 많음.
-private repo vs public repo 고민좀 해봤는데
-public repo는 유지하고 그냥 Lottie resource url형태로 다 바꾸고 데이터를 서버에서 받아오는 형식으로 가는게 나을듯.
-싹 다 링크로 바꾸고 쿼리문 받아서 로컬 DB에 Room 추가하는 식으로 가던지 해야겠다.
+일단 CI/CD에서 더 해야할 것.
+1. 지금 오류  해결 -> java heap 메모리 부족. UI 테스팅
+2. UI 테스팅 yml 작성
+3. unit test 추가.
+4. 버전 코드 자동 업데이트
+5. 업데이트 노트 추가
 
-Line 더 준비한다 생각하면 Exoplayer 사용해보긴해야함.
+
+Line 메인으로 준비한다 생각하면 Exoplayer 사용해보기.
+
+단위테스트 추가 및 성능 측정 할 수 있는 것들(python decorator생각해서 특정 함수 입력받았을 때 걸리는 시간 + profiler 사용한 메모리 사용량 체크 정도?
+
+안드로이드 다른 component인 service나 broadcast receiver, content provider
+테스트 해보기.
+
+Usecase 추가하기.
+
 
 Error getting credential
 androidx.credentials.exceptions.NoCredentialException: No credentials available

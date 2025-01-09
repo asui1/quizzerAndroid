@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -90,7 +91,7 @@ val fakertestData = allInOneForTest(
     title = "롤의 신 페이커에 대해",
     description = "살아있는 롤의 신, 페이커에 대한 퀴즈입니다. 페이커의 데뷔 이후 있었던 일들을 얼마나 잘 기억하고 있나요?",
     tags = setOf("페이커", "롤", "LOL", "League of Legends", "T1"),
-    titleImage = com.asu1.quizzer.test.R.drawable.faker,
+    titleImage = R.drawable.faker,
     colorInt = 3,
     quizzes = fakerquizzes,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
