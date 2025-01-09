@@ -1,4 +1,4 @@
-package com.asu1.quizzer
+package com.asu1.quizzer.quizCreateUtils
 
 import android.content.Context
 import android.net.Uri

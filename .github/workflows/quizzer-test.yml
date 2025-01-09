@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ github.run_number }}
 
     steps:
       - name: Checkout code
@@ -97,8 +99,61 @@ jobs:
             PASSWORD: ${{ secrets.PASSWORD }}
             GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
-      - name: Run unit tests
-        run: ./gradlew test
+      - name: Run UI test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+          disable-animations: true
 
-      - name: Run instrumented tests
-        run: ./gradlew connectedAndroidTest
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+
+      - name: Upload AAB
+        id: uploadArtifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: app_$VERSION_CODE
+          path: app/build/outputs/bundle/release/app-release.aab
+
+      - name: Create service_account.json
+        id: createServiceAccount
+        run: echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}' > service_account.json
+
+#      NOT YET TO BE DEPLOYED
+#      - name: Deploy to Google Play Store
+#        id: deploy
+#        uses: r0adkll/upload-google-play@v1
+#        with:
+#          serviceAccountJson: service_account.json
+#          packageName: com.asu1.quizzer
+#          status: completed
+#          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+#          track: internal
+
+      - name: Send Email with CI Results
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.example.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: CI Results for ${{ github.repository }}
+          body: |
+            CI build for ${{ github.repository }} has completed.
+            - Job status: ${{ job.status }}
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref }}
+          to: recipient@example.com
+          from: sender@example.com

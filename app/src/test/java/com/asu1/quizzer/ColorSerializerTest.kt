@@ -21,9 +21,6 @@ class ColorSerializerTest {
 
         val hexText = originalColor.toArgb().toHexString()
 
-        java.util.logging.Logger.getLogger("Serialized").info("GEN UNIQUE ID $serializedColor")
-        java.util.logging.Logger.getLogger("Serialized").info("GEN UNIQUE ID $hexText")
-
         // Deserialize the color
         val deserializedColor = hexText.toColor()
 

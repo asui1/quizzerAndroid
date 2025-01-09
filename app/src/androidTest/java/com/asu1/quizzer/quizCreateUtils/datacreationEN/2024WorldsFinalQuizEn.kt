@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreationEN
+package com.asu1.quizzer.quizCreateUtils.datacreationEN
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -132,7 +133,7 @@ val T1WORLDSQUIZEN = allInOneForTest(
     title = "2024 League of Legends Worlds Finals Quiz",
     description = "A quiz about T1's historic 5th championship win at the 2024 World Championship Finals.",
     tags = setOf("LoL", "2024 Worlds", "T1", "World Championship", "League of Legends"),
-    titleImage = com.asu1.quizzer.test.R.drawable.t1_final,
+    titleImage = R.drawable.t1_final,
     colorInt = 3,
     quizzes = worlds24T1En,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

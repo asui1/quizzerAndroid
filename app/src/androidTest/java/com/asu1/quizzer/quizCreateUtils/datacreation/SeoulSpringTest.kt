@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -97,7 +98,7 @@ val springTest = allInOneForTest(
     title = "영화 '서울의 봄'에 대한 퀴즈",
     description = "역사적 사건에 기반한 영화 '서울의 봄'에 대한 퀴즈입니다. 영화를 떠올리면서 풀어보세요.",
     tags = setOf("서울의 봄", "영화", "전두광", "군사반란"),
-    titleImage = com.asu1.quizzer.test.R.drawable.seoul,
+    titleImage = R.drawable.seoul,
     colorInt = 3,
     quizzes = seoulSpringQuiz,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -111,5 +112,5 @@ val springTest = allInOneForTest(
     effectColor = "80512400",
     effectIndex = 9,
     textColor = "ffffdbc7",
-    overlayImage = com.asu1.quizzer.test.R.drawable.soldier_back,
+    overlayImage = R.drawable.soldier_back,
 )

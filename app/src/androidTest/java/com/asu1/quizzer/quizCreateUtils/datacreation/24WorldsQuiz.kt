@@ -1,10 +1,11 @@
-package com.asu1.quizzer.datacreation
+package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.TestQuiz1
-import com.asu1.quizzer.TestQuiz2
-import com.asu1.quizzer.TestQuiz3
-import com.asu1.quizzer.TestQuiz4
-import com.asu1.quizzer.allInOneForTest
+import com.asu1.quizzer.quizCreateUtils.TestQuiz1
+import com.asu1.quizzer.quizCreateUtils.TestQuiz2
+import com.asu1.quizzer.quizCreateUtils.TestQuiz3
+import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.allInOneForTest
+import com.asu1.quizzer.test.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -77,7 +78,7 @@ val lolWorldsKR24 = allInOneForTest(
     title = "2024 LOL 월챔에 대한 퀴즈",
     description = "2024년 월드 챔피언쉽의 기록을 확인해보는 퀴즈입니다. 당신은 얼마나 잘 기억하고 있나요?",
     tags = setOf("롤", "2024 월즈", "리그 오브 레전드", "월드 챔피언쉽"),
-    titleImage = com.asu1.quizzer.test.R.drawable.make_them_believe,
+    titleImage = R.drawable.make_them_believe,
     colorInt = 3,
     quizzes = lolworldsKr24,
     bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),

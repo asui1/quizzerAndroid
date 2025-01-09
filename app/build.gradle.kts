@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -9,6 +11,7 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17) // Change to the desired Java version
@@ -19,12 +22,24 @@ android {
     namespace = "com.asu1.quizzer"
     compileSdk = 35
 
+    val versionFile = file("version.properties")
+    val versionProps = Properties()
+
+    if (versionFile.exists()) {
+        versionProps.load(versionFile.inputStream())
+    }
+
+    val localVersionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
+    val versionMain = versionProps.getProperty("VERSION_MAIN")?.toIntOrNull() ?: 1
+    val versionSub = versionProps.getProperty("VERSION_SUB")?.toIntOrNull() ?: 0
+    val versionChild = versionProps.getProperty("VERSION_CHILD")?.toIntOrNull() ?: 0
+
     defaultConfig {
         applicationId = "com.asu1.quizzer"
         minSdk = 26
         targetSdk = 35
-        versionCode = 16
-        versionName = "1.0.0"
+        versionCode = project.findProperty("versionCode")?.toString()?.toInt() ?: localVersionCode
+        versionName = "$versionMain.$versionSub.$versionChild"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -96,6 +111,7 @@ android {
         }
     }
 }
+
 
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
