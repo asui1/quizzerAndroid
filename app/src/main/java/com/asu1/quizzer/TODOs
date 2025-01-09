@@ -11,16 +11,14 @@ Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 �
 DI를 사용해서 Usecase 구현하는걸 시도해보자.
 
 일단 CI/CD에서 더 해야할 것.
-1. 지금 오류  해결 -> java heap 메모리 부족. UI 테스팅
-2. UI 테스팅 yml 작성
-3. unit test 추가.
-4. 버전 코드 자동 업데이트
-5. 업데이트 노트 추가
+고민인 부분이 UI test를 어떻게 할지... 이거 빌드 시간이 너무 오래 걸리는데
+그냥 UI test는 로컬에서 돌린다 생각하고 CI/CD에서는 Unit test만 돌리는걸로 하는쪽으로 계획중.
 
+EXOPlayer 설정하고, service에 연결하고, 퀴즈에 ncs 가지고 background 음악 설정할 수 있게 하는걸로.
 
-Line 메인으로 준비한다 생각하면 Exoplayer 사용해보기.
 
 단위테스트 추가 및 성능 측정 할 수 있는 것들(python decorator생각해서 특정 함수 입력받았을 때 걸리는 시간 + profiler 사용한 메모리 사용량 체크 정도?
+
 
 안드로이드 다른 component인 service나 broadcast receiver, content provider
 테스트 해보기.

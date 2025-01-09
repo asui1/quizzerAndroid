@@ -119,29 +119,28 @@ jobs:
         id: createServiceAccount
         run: echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}' > service_account.json
 
-      - name: Run UI test
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: default
-          arch: x86_64
-          profile: Nexus 6
-          script: ./gradlew connectedCheck
-          disable-animations: true
-          emulator-boot-timeout: 600
-          dns-server: 8.8.8.8
-
-#      NOT YET TO BE DEPLOYED
-#      - name: Deploy to Google Play Store
-#        id: deploy
-#        uses: r0adkll/upload-google-play@v1
+#      - name: Run UI test
+#        uses: reactivecircus/android-emulator-runner@v2
 #        with:
-#          serviceAccountJson: service_account.json
-#          packageName: com.asu1.quizzer
-#          status: completed
-#          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-#          track: internal
-#          releaseName: release-notes.txt
+#          api-level: 34
+#          target: default
+#          arch: x86_64
+#          profile: Nexus 6
+#          script: ./gradlew connectedCheck
+#          disable-animations: true
+#          emulator-boot-timeout: 600
+#          dns-server: 8.8.8.8
+
+      - name: Deploy to Google Play Store
+        id: deploy
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service_account.json
+          packageName: com.asu1.quizzer
+          status: completed
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: internal
+          releaseName: release-notes.txt
 
       - name: Send Email with CI Results
         if: always()
@@ -157,5 +156,6 @@ jobs:
             - Job status: ${{ job.status }}
             - Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             - Branch: ${{ github.ref }}
+            - [GitHub Repository](https://github.com/asui1/quizzerAndroid)
           to: whwkd122@gmail.com
           from: quizzerCI@example.com
