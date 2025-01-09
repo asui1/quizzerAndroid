@@ -51,21 +51,41 @@ jobs:
         env:
             KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
-      - name: Verify raw.zip integrity
-        run: unzip -P ${{ secrets.ZIP_KEY }} -t raw.zip
-
-      - name: Set up Lottie jsons
+      - name: Setup Lottie Files
         run: |
-          mkdir -p ./app/src/main/res/raw/
-          unzip -P ${{ secrets.ZIP_KEY }} raw.zip -d ./app/src/main/res/raw/
+            mkdir -p ./app/src/main/assets/lottie
+            lotties=(
+              "load_dark.lottie"
+              "load_light.lottie"
+              "scoring_dark.lottie"
+              "scoring_light.lottie"
+              "upload.lottie"
+              "userrank.lottie"
+            )
+            for file in "${lotties[@]}"; do
+              curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
+            done
 
-      - name: Verify assets.zip integrity
-        run: unzip -P ${{ secrets.ZIP_KEY }} -t assets.zip
-
-      - name: Set up Lottie assets
+      - name: Setup Lottie Jsons
         run: |
-          mkdir -p ./app/src/main/assets/
-          unzip -P ${{ secrets.ZIP_KEY }} assets.zip -d ./app/src/main/assets/
+            mkdir -p ./app/src/main/res/raw
+            lottie_jsons=(
+              "christmasbell.json"
+              "clouds.json"
+              "firework.json"
+              "firework_2.json"
+              "flowers.json"
+              "greyscalechristmas.json"
+              "greyscalenotes.json"
+              "greyscalerain.json"
+              "moon.json"
+              "shootingstar.json"
+              "snowfalling.json"
+              "wreath.json"          
+            )
+            for file in "${lottie_jsons[@]}"; do
+              curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+            done
 
       - name: Build with Gradle
         run: ./gradlew build
