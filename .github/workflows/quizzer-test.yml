@@ -10,6 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       VERSION_CODE: ${{ github.run_number }}
 
     steps:
@@ -89,13 +95,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-        env:
-            KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-            KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-            KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
-            STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-            PASSWORD: ${{ secrets.PASSWORD }}
-            GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
       - name: Run UI test
         uses: reactivecircus/android-emulator-runner@v2.33.0
@@ -106,6 +105,7 @@ jobs:
           profile: Nexus 6
           script: ./gradlew connectedCheck
           disable-animations: true
+          emulator-boot-timeout: 600
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
@@ -155,5 +155,5 @@ jobs:
             - Job status: ${{ job.status }}
             - Commit: ${{ github.sha }}
             - Branch: ${{ github.ref }}
-          to: recipient@example.com
-          from: sender@example.com
+          to: whwkd122@gmail.com
+          from: quizzerCI@example.com
