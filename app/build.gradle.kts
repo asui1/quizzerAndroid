@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 35
         versionCode = project.findProperty("versionCode")?.toString()?.toInt() ?: localVersionCode
         versionName = "$versionMain.$versionSub.$versionChild"
