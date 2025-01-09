@@ -96,16 +96,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Run UI test
-        uses: reactivecircus/android-emulator-runner@v2.33.0
-        with:
-          api-level: 34
-          target: default
-          arch: x86_64
-          profile: Nexus 6
-          script: ./gradlew connectedCheck
-          disable-animations: true
-          emulator-boot-timeout: 600
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
@@ -128,6 +118,18 @@ jobs:
       - name: Create service_account.json
         id: createServiceAccount
         run: echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}' > service_account.json
+
+      - name: Run UI test
+        uses: reactivecircus/android-emulator-runner@v2.33.0
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+          disable-animations: true
+          emulator-boot-timeout: 600
+          dns-server: 8.8.8.8
 
 #      NOT YET TO BE DEPLOYED
 #      - name: Deploy to Google Play Store
