@@ -384,7 +384,7 @@ private fun Score(scoreCard: ScoreCard, formattedScore: String) {
         Text(
             text = formattedScore,
             color = scoreCard.textColor,
-            fontSize = 100.sp,
+            fontSize = 75.sp,
             fontFamily = notosans,
             maxLines = 1,
             modifier = Modifier

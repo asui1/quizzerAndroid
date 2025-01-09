@@ -10,6 +10,12 @@ https://quizzer.co.kr/?quizId=
 Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.
 DI를 사용해서 Usecase 구현하는걸 시도해보자.
 
+CI CD 구축하려면 지금 public repository 구조에서는 어려운 점이 많음.
+private repo vs public repo 고민좀 해봤는데
+public repo는 유지하고 그냥 Lottie resource url형태로 다 바꾸고 데이터를 서버에서 받아오는 형식으로 가는게 나을듯.
+싹 다 링크로 바꾸고 쿼리문 받아서 로컬 DB에 Room 추가하는 식으로 가던지 해야겠다.
+
+Line 더 준비한다 생각하면 Exoplayer 사용해보긴해야함.
 
 Error getting credential
 androidx.credentials.exceptions.NoCredentialException: No credentials available
