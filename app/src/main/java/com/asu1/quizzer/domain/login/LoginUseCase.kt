@@ -1,9 +1,9 @@
 package com.asu1.quizzer.domain.login
 
-import com.asu1.quizzer.repository.UserRepository
-import javax.inject.Inject
-import retrofit2.Response
 import com.asu1.quizzer.model.UserInfo
+import com.asu1.quizzer.repository.UserRepository
+import retrofit2.Response
+import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(
     private val userRepository: UserRepository

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
+import com.asu1.quizzer.composables.MusicPlayer
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
 import com.asu1.quizzer.util.Route
@@ -67,6 +68,7 @@ fun HomeScreen(
             }
         }
         item {
+            MusicPlayer()
             Spacer(modifier = Modifier.size(24.dp))
             PrivacyPolicyRow(navController)
         }
@@ -76,7 +78,7 @@ fun HomeScreen(
 fun changeTagToText(tag: String): String{
     val newTag = when {
         tag.startsWith("Most Viewed") -> "인기순"
-        tag.startsWith("Most Recent") -> "최신 퀴즈"
+        tag.startsWith("Most Recent") -> "신규 퀴즈"
         tag.startsWith("With Tag : ") -> buildString {
             append("이런 주제는 어떠세요? \"")
             append(tag.removePrefix("With Tag : "))

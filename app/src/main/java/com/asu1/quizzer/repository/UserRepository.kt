@@ -1,14 +1,16 @@
 // UserRepository.kt
 package com.asu1.quizzer.repository
 
-import com.asu1.quizzer.model.*
+import com.asu1.quizzer.model.GuestAccount
+import com.asu1.quizzer.model.UserInfo
+import com.asu1.quizzer.model.UserRegister
+import com.asu1.quizzer.model.UserRequest
 import com.asu1.quizzer.network.ApiService
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Response
-import dagger.Provides
 import javax.inject.Singleton
 
 interface UserRepository {

@@ -1,14 +1,7 @@
 package com.asu1.quizzer.screens.quizlayout
 
 import android.app.Activity
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Animation
-import androidx.compose.material.icons.filled.ColorLens
-import androidx.compose.material.icons.filled.FormatColorText
-import androidx.compose.material.icons.filled.Gradient
-import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -57,24 +39,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.animations.OpenCloseColumn
 import com.asu1.quizzer.composables.animations.UploadingAnimation
-import com.asu1.quizzer.composables.base.FastCreateDropDown
-import com.asu1.quizzer.composables.base.IconButtonWithText
-import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
-import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.model.Effect
 import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.model.sampleScoreCard
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
-import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import kotlinx.coroutines.launch
 
 val colorNames: List<Int> = listOf(R.string.background_newline,

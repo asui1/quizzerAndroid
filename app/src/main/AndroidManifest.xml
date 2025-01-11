@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
+    <permission
+            android:name="com.asu1.quizzer.permission.MUSIC_PLAYER_SERVICE"
+            android:protectionLevel="signature" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_DOMAIN_VERIFICATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
             android:name=".MyApplication"
             android:allowBackup="true"
@@ -17,6 +24,17 @@
             android:enableOnBackInvokedCallback="true"
             tools:targetApi="33">
         <profileable android:shell="true" />
+
+        <service
+                android:name="com.asu1.quizzer.service.QuizzerMusicPlayerService"
+                android:foregroundServiceType="mediaPlayback"
+                android:exported="true"
+                android:permission="com.asu1.quizzer.permission.MUSIC_PLAYER_SERVICE">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService"/>
+            </intent-filter>
+        </service>
+        
         <activity
                 android:name=".MainActivity"
                 android:exported="true"

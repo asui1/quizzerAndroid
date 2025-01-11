@@ -49,6 +49,7 @@ import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
+import com.asu1.quizzer.viewModels.MusicListViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -56,7 +57,6 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
     // NEED INITIALIZATION WITH HIGH PRIORITY
     private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
+    private val musicListViewModel: MusicListViewModel by viewModels()
 
     // CAN BE INITIALIZED LATER
     private val searchViewModel: SearchViewModel by viewModels()
@@ -106,6 +107,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+                musicListViewModel.preparePlayer(context)
             }
 
             navController = rememberNavController()
