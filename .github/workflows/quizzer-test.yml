@@ -196,5 +196,5 @@ jobs:
             - Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             - Branch: ${{ github.ref }}
             - [GitHub Repository](https://github.com/asui1/quizzerAndroid)
-           to: whwkd122@gmail.com
-           from: quizzerCI@example.com
+          to: whwkd122@gmail.com
+          from: quizzerCI@example.com
