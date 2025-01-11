@@ -61,6 +61,7 @@ google-services = "4.4.2"
 runtime-livedata = "1.7.6"
 security-crypto = "1.1.0-alpha06"
 uuid-creator = "6.0.0"
+constrait-layout = "1.0.1"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -140,6 +141,7 @@ ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 uuid-creator = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuid-creator" }
+androidx-constraint-layout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constrait-layout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

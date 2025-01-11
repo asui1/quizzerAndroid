@@ -7,8 +7,7 @@ on:
       - '!master'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  env-setup: &env-setup
     env:
       KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -55,57 +54,100 @@ jobs:
           echo "$KEY_STORE" > KEYSTORE_NAME.b64
           base64 -d -i KEYSTORE_NAME.b64 > KEYSTORE_NAME.jks
         env:
-            KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
+          KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
       - name: Setup Lottie Files
         run: |
-            mkdir -p ./app/src/main/assets/lottie
-            lotties=(
-              "load_dark.lottie"
-              "load_light.lottie"
-              "scoring_dark.lottie"
-              "scoring_light.lottie"
-              "upload.lottie"
-              "userrank.lottie"
-            )
-            for file in "${lotties[@]}"; do
-              curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
-            done
+          mkdir -p ./app/src/main/assets/lottie
+          lotties=(
+            "load_dark.lottie"
+            "load_light.lottie"
+            "scoring_dark.lottie"
+            "scoring_light.lottie"
+            "upload.lottie"
+            "userrank.lottie"
+          )
+          for file in "${lotties[@]}"; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
+          done
 
       - name: Setup Lottie Jsons
         run: |
-            mkdir -p ./app/src/main/res/raw
-            lottie_jsons=(
-              "christmasbell.json"
-              "clouds.json"
-              "firework.json"
-              "firework_2.json"
-              "flowers.json"
-              "greyscalechristmas.json"
-              "greyscalenotes.json"
-              "greyscalerain.json"
-              "moon.json"
-              "shootingstar.json"
-              "snowfalling.json"
-              "wreath.json"          
-            )
-            for file in "${lottie_jsons[@]}"; do
-              curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
-            done
+          mkdir -p ./app/src/main/res/raw
+          lottie_jsons=(
+            "christmasbell.json"
+            "clouds.json"
+            "firework.json"
+            "firework_2.json"
+            "flowers.json"
+            "greyscalechristmas.json"
+            "greyscalenotes.json"
+            "greyscalerain.json"
+            "moon.json"
+            "shootingstar.json"
+            "snowfalling.json"
+            "wreath.json"          
+          )
+          for file in "${lottie_jsons[@]}"; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+          done
 
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    env:
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - <<: *env-setup
       - name: Build with Gradle
         run: ./gradlew build
 
+  end-to-end-tests:
+    runs-on: ubuntu-latest
+    env:
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - <<: *env-setup
+      - name: Run UI test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+          disable-animations: true
+          emulator-boot-timeout: 600
+          dns-server: 8.8.8.8
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, end-to-end-tests]
+    env:
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - <<: *env-setup
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
       - name: Upload AAB
         id: uploadArtifact
@@ -119,17 +161,9 @@ jobs:
         id: createServiceAccount
         run: echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}' > service_account.json
 
-#      - name: Run UI test
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          api-level: 34
-#          target: default
-#          arch: x86_64
-#          profile: Nexus 6
-#          script: ./gradlew connectedCheck
-#          disable-animations: true
-#          emulator-boot-timeout: 600
-#          dns-server: 8.8.8.8
+      - name: Read Release Notes
+        id: readReleaseNotes
+        run: echo "RELEASE_NOTES=$(cat release-notes.txt)" >> $GITHUB_ENV
 
       - name: Deploy to Google Play Store
         id: deploy
@@ -140,8 +174,13 @@ jobs:
           status: completed
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal
-          releaseName: release-notes.txt
+          releaseNotes: ${{ env.RELEASE_NOTES }}
 
+  send-result:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, end-to-end-tests, deploy]
+    if: always()
+    steps:
       - name: Send Email with CI Results
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -157,5 +196,5 @@ jobs:
             - Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             - Branch: ${{ github.ref }}
             - [GitHub Repository](https://github.com/asui1/quizzerAndroid)
-          to: whwkd122@gmail.com
-          from: quizzerCI@example.com
+           to: whwkd122@gmail.com
+           from: quizzerCI@example.com

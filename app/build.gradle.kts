@@ -171,6 +171,7 @@ dependencies {
     testImplementation(libs.androidx.core.testing)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.constraint.layout)
 
     //EXOPLAYER
     implementation(libs.exoplayer)
