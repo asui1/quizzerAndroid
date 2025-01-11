@@ -2,8 +2,6 @@ package com.asu1.quizzer.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 object SharedPreferencesManager {
     private const val USER_PREFS = "user_prefs"

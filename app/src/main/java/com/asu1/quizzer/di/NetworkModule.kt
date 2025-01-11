@@ -6,8 +6,8 @@ import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
 import com.asu1.quizzer.network.ApiService
-import com.asu1.quizzer.network.ContentTypeInterceptor
 import com.asu1.quizzer.network.BasicAuthInterceptor
+import com.asu1.quizzer.network.ContentTypeInterceptor
 import com.asu1.quizzer.network.CustomConverterFactory
 import com.asu1.quizzer.util.constants.BASE_URL
 import com.google.gson.Gson
@@ -19,7 +19,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

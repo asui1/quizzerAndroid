@@ -1,6 +1,5 @@
 package com.asu1.quizzer.domain.music
 
-import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.musics.MusicRepository
 import javax.inject.Inject

@@ -46,7 +46,7 @@ data class MusicAllInOne(
     val moods: Set<String>
 ){
     fun getUri(): String{
-        //TODO FIX TO MY URI.
-        return "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        if(music.title == "sample1") return "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
+        return "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd"
     }
 }

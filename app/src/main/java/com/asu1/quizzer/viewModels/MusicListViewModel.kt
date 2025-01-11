@@ -1,14 +1,11 @@
 package com.asu1.quizzer.viewModels
 
-import android.app.Application
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.OptIn
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -18,11 +15,10 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
-import com.asu1.quizzer.domain.music.GetAllMusicUseCase
 import com.asu1.quizzer.musics.MediaNotificationManager
 import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
@@ -32,8 +28,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -51,15 +47,25 @@ class MusicListViewModel @Inject constructor(
     private val _totalDurationInMS = MutableStateFlow(0L)
     val totalDurationInMS = _totalDurationInMS.asStateFlow()
 
+    private val _currentDurationInMs = MutableStateFlow(0L)
+    val currentDurationInMs = _currentDurationInMs.asStateFlow()
+
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
 
-    private val playlist: List<MusicAllInOne> = listOf(
-        MusicAllInOne(
-            music = Music("title", "artist"),
-            moods = setOf("mood")
+    private val _playlist: MutableStateFlow<List<MusicAllInOne>> = MutableStateFlow(
+        listOf(
+            MusicAllInOne(
+                music = Music("sample1", "test1"),
+                moods = setOf("Happy")
+            ),
+            MusicAllInOne(
+                music = Music("sample2", "test2"),
+                moods = setOf("Scary")
+            ),
         )
     )
+    val playlist = _playlist.asStateFlow()
 
     private val _playerUiState: MutableStateFlow<PlayerUIState> =
         MutableStateFlow(PlayerUIState.Loading)
@@ -94,7 +100,7 @@ class MusicListViewModel @Inject constructor(
     private fun setupPlaylist(context: Context) {
 
         val videoItems: ArrayList<MediaSource> = arrayListOf()
-        playlist.forEach { music ->
+        _playlist.value.forEach { music ->
             val mediaMetaData = MediaMetadata.Builder()
                 .setTitle(music.music.title)
                 .setAlbumArtist(music.music.artist)
@@ -108,7 +114,7 @@ class MusicListViewModel @Inject constructor(
             val dataSourceFactory = DefaultDataSource.Factory(context)
 
             val mediaSource =
-                ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+                DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
 
             videoItems.add(
                 mediaSource
@@ -122,7 +128,7 @@ class MusicListViewModel @Inject constructor(
         player.prepare()
     }
 
-    fun updatePlaylist(action: ControlButtons) {
+    fun updatePlayer(action: ControlButtons) {
         when (action) {
             ControlButtons.PlayPause -> if (player.isPlaying) player.pause() else player.play()
             ControlButtons.Next -> player.seekToNextMediaItem()
@@ -177,7 +183,7 @@ class MusicListViewModel @Inject constructor(
     /**
      * Close audio notification
      */
-    fun onClose() {
+    private fun onClose() {
         if (!isStarted) return
 
         isStarted = false
@@ -238,11 +244,29 @@ class MusicListViewModel @Inject constructor(
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             _isPlaying.value = isPlaying
+            if (isPlaying) {
+                startUpdatingPosition()
+            } else {
+                stopUpdatingPosition()
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
         }
+    }
+
+    private fun startUpdatingPosition(){
+        serviceScope.launch {
+            while (player.isPlaying){
+                _currentDurationInMs.value = player.currentPosition
+                kotlinx.coroutines.delay(1000)
+            }
+        }
+    }
+
+    private fun stopUpdatingPosition(){
+        serviceScope.coroutineContext.cancelChildren()
     }
 
     private fun syncPlayerFlows() {

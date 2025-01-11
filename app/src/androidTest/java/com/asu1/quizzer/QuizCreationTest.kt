@@ -11,12 +11,12 @@ import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
+import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorldsKR24
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
-import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorldsKR24
 
 val primaryColors: List<String> = listOf(
     "FFBBDEFB", // Light Blue

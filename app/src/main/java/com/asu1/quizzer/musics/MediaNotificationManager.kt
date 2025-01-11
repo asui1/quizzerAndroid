@@ -132,7 +132,7 @@ class MediaNotificationManager
 /**
  * The size of the large icon for the notification in pixels.
  */
-const val NOTIFICATION_LARGE_ICON_SIZE = 144 // px
+const val NOTIFICATION_LARGE_ICON_SIZE = 72 // px
 
 /**
  * The channel ID for the notification.
