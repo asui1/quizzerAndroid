@@ -9,21 +9,31 @@ https://quizzer.co.kr/?quizId=
 모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.
 Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.
 DI를 사용해서 Usecase 구현하는걸 시도해보자.
+-> 단계별로 구현중인데 일단... 미루고 exoplayer부터.
 
-일단 CI/CD에서 더 해야할 것.
-고민인 부분이 UI test를 어떻게 할지... 이거 빌드 시간이 너무 오래 걸리는데
-그냥 UI test는 로컬에서 돌린다 생각하고 CI/CD에서는 Unit test만 돌리는걸로 하는쪽으로 계획중.
+UI test는 로컬에서 돌린다 생각하고 CI/CD에서는 Unit test만 돌리는걸로 하는쪽으로 계획중.
+토탈 테스트 돌리면 50분 넘음;;
 
 EXOPlayer 설정하고, service에 연결하고, 퀴즈에 ncs 가지고 background 음악 설정할 수 있게 하는걸로.
+일단 기본은 깔았는데 UI 커스텀을 더 해야함.
+
+앱 부팅 Flow를 만들어야겠음.
+1. 업데이트 확인
+2. 회원 로그인/알림 권한 요청.
+3. 서버에 Home 화면 데이터 요청. (이거도 나눠야함 한번에 받지 말고 3개로 나눠서 ㄱㄱ)/
+    (회원 로그인 실패시) 게스트 로그인 시도.
+4. (게스트 로그인 실패시) 서버에 게스트 계정 요청.
+5. 계정 설정 완료 후 홈 화면으로 이동.
 
 
 단위테스트 추가 및 성능 측정 할 수 있는 것들(python decorator생각해서 특정 함수 입력받았을 때 걸리는 시간 + profiler 사용한 메모리 사용량 체크 정도?
+trace 사용해서 특정 구간 성능 분석 + 앱 부팅 ~ 홈 화면 로딩시까지 걸리는 시간 측정.
 
-
-안드로이드 다른 component인 service나 broadcast receiver, content provider
-테스트 해보기.
+Firebase cloud messaging 사용해서 앱에 알림 보내기
 
 Usecase 추가하기.
+
+Tensorflow light 사용해서 이미지 생성 ai 추가하기.
 
 
 Error getting credential
@@ -41,3 +51,55 @@ at android.credentials.CredentialManager$GetCredentialTransport.onError(Credenti
 at android.credentials.IGetCredentialCallback$Stub.onTransact(IGetCredentialCallback.java:123)
 at android.os.Binder.execTransactInternal(Binder.java:1380)
 at android.os.Binder.execTransact(Binder.java:1311)
+
+
+NCS 음악 저작권 체크용 -> 아마 저작권 관련 탭을 앱+웹에 추가하고 관련 내용들 작성하면 될 듯.
+Song: BAYZY, Sayfro - On and On [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/BS\_OnandOn
+Watch: http://ncs.lnk.to/BS\_OnandOnAT/youtube
+
+Song: Janji - Heroes Tonight (feat. Johnning) [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/ht
+Watch: http://youtu.be/3nQNiWdeH2Q
+
+Song: Warriyo - Mortals (feat. Laura Brehm) [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/mortals
+Watch: http://youtu.be/yJg-Y5byMMw
+
+Song: DEAF KEV - Invincible [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/invincible
+Watch: http://youtu.be/J2X5mJ3HDYE
+
+Song: Different Heaven & EH!DE - My Heart [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/myheart
+Watch: http://youtu.be/jK2aIUmmdP4
+
+Song: Elektronomia - Sky High [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/skyhigh
+Watch: http://youtu.be/TW9d8vYrVFQ
+
+Song: Disfigure - Blank [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/blank
+Watch: http://youtu.be/p7ZsBPK656s
+
+Song: Cartoon, Jéja - Why We Lose (feat. Coleman Trapp) [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/whywelose
+Watch: http://youtu.be/zyXmsVwZqX4
+
+Song: Electro-Light - Symbolism [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/symbolism
+Watch: http://youtu.be/__CRWE-L45k
+
+Song: TULE - Fearless pt.II (feat. Chris Linton) [NCS Release]
+Music provided by NoCopyrightSounds
+Free Download/Stream: http://ncs.io/Fearless2
+Watch: http://youtu.be/S19UcWdOA-I

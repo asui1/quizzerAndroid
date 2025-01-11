@@ -4,6 +4,7 @@ import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
+import com.asu1.quizzer.util.constants.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -53,7 +54,7 @@ object RetrofitInstance {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://quizzer.co.kr/api/quizzerServer/")
+            .baseUrl("${BASE_URL}quizzerServer/")
             .addConverterFactory(CustomConverterFactory(gsonConverterFactory, kotlinxSerializationConverterFactory))
             .client(client)
             .build()

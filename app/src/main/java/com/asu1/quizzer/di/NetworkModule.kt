@@ -9,6 +9,7 @@ import com.asu1.quizzer.network.ApiService
 import com.asu1.quizzer.network.ContentTypeInterceptor
 import com.asu1.quizzer.network.BasicAuthInterceptor
 import com.asu1.quizzer.network.CustomConverterFactory
+import com.asu1.quizzer.util.constants.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -57,7 +58,7 @@ object NetworkModule {
         val gsonConverterFactory = GsonConverterFactory.create(gson)
 
         return Retrofit.Builder()
-            .baseUrl("https://quizzer.co.kr/api/quizzerServer/")
+            .baseUrl("${BASE_URL}quizzerServer/")
             .addConverterFactory(CustomConverterFactory(gsonConverterFactory, kotlinxSerializationConverterFactory))
             .client(client)
             .build()

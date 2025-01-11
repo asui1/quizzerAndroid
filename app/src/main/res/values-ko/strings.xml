@@ -195,6 +195,8 @@
     <string name="quiz_title_cannot_be_empty">제목은 비어있을 수 없습니다</string>
     <string name="can_not_access_server">Can not access server</string>
     <string name="google_login_is_in_development">Google Login is in Development</string>
+    <string name="quizzer_music_player">Quizzer Music Player</string>
+    <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

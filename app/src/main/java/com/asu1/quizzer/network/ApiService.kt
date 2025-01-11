@@ -83,4 +83,5 @@ interface ApiService {
     @GET("ranks")
     suspend fun getUserRanks(): Response<UserRankList>
 
+
 }
