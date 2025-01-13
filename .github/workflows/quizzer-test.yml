@@ -80,15 +80,35 @@ jobs:
       - name: Setup Lottie Files
         run: |
           mkdir -p ./app/src/main/assets/lottie
-          IFS=$'\n' read -r -d '' -a lottie_files <<< "${{ env.LOTTIE_FILES }}"
-          for file in "${lottie_files[@]}"; do
+          lotties=(
+            "load_dark.lottie"
+            "load_light.lottie"
+            "scoring_dark.lottie"
+            "scoring_light.lottie"
+            "upload.lottie"
+            "userrank.lottie"
+          )
+          for file in "${lotties[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
           done
 
       - name: Setup Lottie Jsons
         run: |
           mkdir -p ./app/src/main/res/raw
-          IFS=$'\n' read -r -d '' -a lottie_jsons <<< "${{ env.LOTTIE_JSONS }}"
+          lottie_jsons=(
+            "christmasbell.json"
+            "clouds.json"
+            "firework.json"
+            "firework_2.json"
+            "flowers.json"
+            "greyscalechristmas.json"
+            "greyscalenotes.json"
+            "greyscalerain.json"
+            "moon.json"
+            "shootingstar.json"
+            "snowfalling.json"
+            "wreath.json"          
+          )
           for file in "${lottie_jsons[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
           done
@@ -144,15 +164,35 @@ jobs:
       - name: Setup Lottie Files
         run: |
           mkdir -p ./app/src/main/assets/lottie
-          IFS=$'\n' read -r -d '' -a lottie_files <<< "${{ env.LOTTIE_FILES }}"
-          for file in "${lottie_files[@]}"; do
+          lotties=(
+            "load_dark.lottie"
+            "load_light.lottie"
+            "scoring_dark.lottie"
+            "scoring_light.lottie"
+            "upload.lottie"
+            "userrank.lottie"
+          )
+          for file in "${lotties[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
           done
 
       - name: Setup Lottie Jsons
         run: |
           mkdir -p ./app/src/main/res/raw
-          IFS=$'\n' read -r -d '' -a lottie_jsons <<< "${{ env.LOTTIE_JSONS }}"
+          lottie_jsons=(
+            "christmasbell.json"
+            "clouds.json"
+            "firework.json"
+            "firework_2.json"
+            "flowers.json"
+            "greyscalechristmas.json"
+            "greyscalenotes.json"
+            "greyscalerain.json"
+            "moon.json"
+            "shootingstar.json"
+            "snowfalling.json"
+            "wreath.json"          
+          )
           for file in "${lottie_jsons[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
           done
@@ -218,15 +258,35 @@ jobs:
       - name: Setup Lottie Files
         run: |
           mkdir -p ./app/src/main/assets/lottie
-          IFS=$'\n' read -r -d '' -a lottie_files <<< "${{ env.LOTTIE_FILES }}"
-          for file in "${lottie_files[@]}"; do
+          lotties=(
+            "load_dark.lottie"
+            "load_light.lottie"
+            "scoring_dark.lottie"
+            "scoring_light.lottie"
+            "upload.lottie"
+            "userrank.lottie"
+          )
+          for file in "${lotties[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
           done
 
       - name: Setup Lottie Jsons
         run: |
           mkdir -p ./app/src/main/res/raw
-          IFS=$'\n' read -r -d '' -a lottie_jsons <<< "${{ env.LOTTIE_JSONS }}"
+          lottie_jsons=(
+            "christmasbell.json"
+            "clouds.json"
+            "firework.json"
+            "firework_2.json"
+            "flowers.json"
+            "greyscalechristmas.json"
+            "greyscalenotes.json"
+            "greyscalerain.json"
+            "moon.json"
+            "shootingstar.json"
+            "snowfalling.json"
+            "wreath.json"          
+          )
           for file in "${lottie_jsons[@]}"; do
             curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
           done
