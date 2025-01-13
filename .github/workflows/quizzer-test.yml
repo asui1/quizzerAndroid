@@ -74,13 +74,14 @@ jobs:
       - name: Set execute permission on gradlew
         run: chmod +x ./gradlew
 
-      - name: List files in /workspace/docker_resources
+      - name: List files in root
         run: |
           docker run --rm --privileged \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             asui1/android_ci:android \
-            ls -l /workspace/docker_resources
+            ls -l /
+
       - name: List files in /workspace
         run: |
           docker run --rm --privileged \
@@ -88,6 +89,15 @@ jobs:
             -w /workspace \
             asui1/android_ci:android \
             ls -l /workspace
+
+      - name: List files in /workspace/docker_resources
+        run: |
+          docker run --rm --privileged \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            ls -l /workspace/docker_resources
+
       - name: Run End-to-End Tests
         run: |
           docker run --rm --privileged \
