@@ -110,7 +110,7 @@ jobs:
             "wreath.json"          
           )
           for file in "${lottie_jsons[@]}"; do
-            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie_jsons/$file
           done
 
       - name: Build with Gradle
@@ -194,7 +194,7 @@ jobs:
             "wreath.json"          
           )
           for file in "${lottie_jsons[@]}"; do
-            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie_jsons/$file
           done
 
       - name: Run UI test
@@ -288,7 +288,7 @@ jobs:
             "wreath.json"          
           )
           for file in "${lottie_jsons[@]}"; do
-            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie_jsons/$file
           done
 
       - name: Build Release AAB
