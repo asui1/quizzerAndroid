@@ -20,14 +20,22 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment
-        uses: ./.github/actions/setup-android-env
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: call env setup
-        uses: ./.github/workflows/quizzer-env-setup-workflow.yml
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Set up Docker container
+        run: docker pull asui1/android_ci:android
+
+      - name: Run Unit Tests
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            ./gradlew build
 
       - name: Save Unit Test Results
         run: echo "UNIT_TESTS=${{ job.status }}" >> $GITHUB_ENV
@@ -36,20 +44,22 @@ jobs:
     name: End-to-End Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment
-        uses: ./.github/actions/setup-android-env
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Run UI test
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: default
-          arch: x86_64
-          profile: Nexus 6
-          script: ./gradlew connectedCheck
-          disable-animations: true
-          emulator-boot-timeout: 600
-          dns-server: 8.8.8.8
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Set up Docker container
+        run: docker pull asui1/android_ci:android
+
+      - name: Run End-to-End Tests
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            ./gradlew connectedCheck
 
       - name: Save End-to-End Test Results
         run: echo "END_TO_END_TESTS=${{ job.status }}" >> $GITHUB_ENV
@@ -57,20 +67,23 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    env:
-      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
-      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-      PASSWORD: ${{ secrets.PASSWORD }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      VERSION_CODE: ${{ github.run_number }}
     steps:
-      - name: Setup Environment
-        uses: ./.github/actions/setup-android-env
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Set up Docker container
+        run: docker pull asui1/android_ci:android
 
       - name: Build Release AAB
-        run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            ./gradlew bundleRelease -PversionCode=$VERSION_CODE
 
       - name: Upload AAB
         id: uploadArtifact
