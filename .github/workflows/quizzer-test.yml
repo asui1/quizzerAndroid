@@ -20,17 +20,25 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: call env setup
         uses: ./.github/workflows/quizzer-env-setup-workflow.yml
 
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Save Unit Test Results
+        run: echo "UNIT_TESTS=${{ job.status }}" >> $GITHUB_ENV
 
   end-to-end-tests:
     name: End-to-End Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: call env setup
         uses: ./.github/workflows/quizzer-env-setup-workflow.yml
 
@@ -46,6 +54,9 @@ jobs:
           emulator-boot-timeout: 600
           dns-server: 8.8.8.8
 
+      - name: Save End-to-End Test Results
+        run: echo "END_TO_END_TESTS=${{ job.status }}" >> $GITHUB_ENV
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -58,6 +69,9 @@ jobs:
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       VERSION_CODE: ${{ github.run_number }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: call env setup
         uses: ./.github/workflows/quizzer-env-setup-workflow.yml
 
@@ -91,6 +105,9 @@ jobs:
           track: internal
           releaseNotes: ${{ env.RELEASE_NOTES }}
 
+      - name: Save Deploy Results
+        run: echo "DEPLOY=${{ job.status }}" >> $GITHUB_ENV
+
   send-result:
     runs-on: ubuntu-latest
     needs: [unit-tests, end-to-end-tests, deploy]
@@ -104,10 +121,13 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: ${{ job.status == 'success' && 'CI Success for' || 'CI Failure for' }} ${{ github.repository }}
+          subject: ${{ env.DEPLOY == 'success' && 'CI Success for' || 'CI Failure for' }} ${{ github.repository }}
           body: |
             CI build for ${{ github.repository }} has completed.
             - Job status: ${{ job.status }}
+            - Unit Tests: ${{ env.UNIT_TESTS }}
+            - End-to-End Tests: ${{ env.END_TO_END_TESTS }}
+            - Deploy: ${{ env.DEPLOY }}
             - Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             - Branch: ${{ github.ref }}
             - [GitHub Repository](https://github.com/asui1/quizzerAndroid)
