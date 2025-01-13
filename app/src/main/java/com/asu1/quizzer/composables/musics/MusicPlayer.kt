@@ -25,7 +25,6 @@ import com.asu1.quizzer.viewModels.MusicListViewModel
 fun MusicPlayer(
     modifier: Modifier = Modifier
 ) {
-    //Collect as state가 안됨.
     val musicListViewModel: MusicListViewModel = hiltViewModel()
 
     val duration = musicListViewModel.duration
@@ -69,6 +68,7 @@ fun MusicPlayerBody(
         MusicProgress(
             progress = progress,
             duration = duration,
+            updatePlayer = updatePlayer,
             modifier = Modifier.constrainAs(musicProgress) {
                 top.linkTo(musicInfo.bottom, margin = 8.dp)
                 start.linkTo(parent.start)

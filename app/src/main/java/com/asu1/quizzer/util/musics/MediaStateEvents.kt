@@ -2,6 +2,8 @@ package com.asu1.quizzer.util.musics
 
 sealed class MediaStateEvents {
     object PlayPause : MediaStateEvents()
+    object Play : MediaStateEvents()
+    object Pause : MediaStateEvents()
     object SeekToNext : MediaStateEvents()
     object SeekToPrevious : MediaStateEvents()
     object SeekTo : MediaStateEvents()

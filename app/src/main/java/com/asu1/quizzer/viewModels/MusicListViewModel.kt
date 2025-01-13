@@ -1,7 +1,6 @@
 package com.asu1.quizzer.viewModels
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,10 +13,10 @@ import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.service.MusicServiceHandler
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.musics.HomeUIState
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.util.musics.MediaStateEvents
@@ -45,6 +44,7 @@ class MusicListViewModel @Inject constructor(
     var duration by savedStateHandle.saveable { mutableLongStateOf(0L) }
 
 
+    // PROGRESS IN VALUE FROM 0f to 1f, showing progress * duration.
     private val _progress = MutableLiveData(0f)
     val progress: LiveData<Float> get() = _progress
 
@@ -94,10 +94,12 @@ class MusicListViewModel @Inject constructor(
                     is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
                     is MusicStates.MediaProgress -> progressCalculation(musicStates.progress)
                     is MusicStates.CurrentMediaPlaying -> {
+                        Logger.debug("MUSIC STATE Current Media Playing ${musicStates.mediaItemIndex}")
                         currentSelectedMusic = musicList[musicStates.mediaItemIndex]
                     }
 
                     is MusicStates.MediaReady -> {
+                        Logger.debug("MUSIC STATE MediaReady ${musicStates.duration}")
                         duration = musicStates.duration
                         _homeUiState.value = HomeUIState.HomeReady
                     }
@@ -112,12 +114,13 @@ class MusicListViewModel @Inject constructor(
             HomeUiEvents.Forward -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Forward)
             HomeUiEvents.SeekToNext -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToNext)
             HomeUiEvents.SeekToPrevious -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToPrevious)
+            HomeUiEvents.Pause -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Pause)
+            HomeUiEvents.Play -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Play)
             is HomeUiEvents.PlayPause -> {
                 musicServiceHandler.onMediaStateEvents(
                     MediaStateEvents.PlayPause
                 )
             }
-
             is HomeUiEvents.SeekTo -> {
                 musicServiceHandler.onMediaStateEvents(
                     MediaStateEvents.SeekTo,
@@ -138,6 +141,9 @@ class MusicListViewModel @Inject constructor(
                         homeUiEvents.progress
                     )
                 )
+                _progress.postValue(homeUiEvents.progress)
+            }
+            is HomeUiEvents.UpdateLocalProgress -> {
                 _progress.postValue(homeUiEvents.progress)
             }
 
@@ -162,7 +168,7 @@ class MusicListViewModel @Inject constructor(
 
     private fun progressCalculation(currentProgress: Long) {
         _progress.postValue(
-            if (currentProgress > 0) ((currentProgress.toFloat() / duration.toFloat()) * 100f)
+            if (currentProgress > 0) (currentProgress.toFloat() / duration.toFloat())
             else 0f
         )
 

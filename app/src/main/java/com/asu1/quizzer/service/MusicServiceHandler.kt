@@ -3,6 +3,7 @@ package com.asu1.quizzer.service
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -48,8 +49,20 @@ class MusicServiceHandler(
             MediaStateEvents.Forward -> exoPlayer.seekForward()
             MediaStateEvents.PlayPause -> playPauseMusic()
             MediaStateEvents.SeekTo -> exoPlayer.seekTo(seekPosition)
-            MediaStateEvents.SeekToNext -> exoPlayer.seekToNext()
-            MediaStateEvents.SeekToPrevious -> exoPlayer.seekToPrevious()
+            MediaStateEvents.Play -> playMusic()
+            MediaStateEvents.Pause -> pauseMusic()
+            MediaStateEvents.SeekToNext -> {
+                if (exoPlayer.currentMediaItemIndex == exoPlayer.mediaItemCount - 1) {
+                    exoPlayer.seekToDefaultPosition(0) // Jump to the first item
+                } else {
+                    exoPlayer.seekToNext()
+                }
+            }
+            MediaStateEvents.SeekToPrevious -> {
+                if(exoPlayer.currentMediaItemIndex == 0) {
+                    exoPlayer.seekToDefaultPosition(exoPlayer.mediaItemCount - 1) // Jump to the last item
+                } else exoPlayer.seekToPrevious()
+            }
             MediaStateEvents.Stop -> stopProgressUpdate()
             MediaStateEvents.SelectedMusicChange -> {
                 when (selectedMusicIndex) {
@@ -69,6 +82,8 @@ class MusicServiceHandler(
             }
 
             is MediaStateEvents.MediaProgress -> {
+                Logger.debug("Seeking to ${exoPlayer.duration} ${mediaStateEvents.progress}")
+                Logger.debug("Seeking to ${exoPlayer.duration * mediaStateEvents.progress}")
                 exoPlayer.seekTo(
                     (exoPlayer.duration * mediaStateEvents.progress).toLong()
                 )
@@ -81,7 +96,10 @@ class MusicServiceHandler(
             ExoPlayer.STATE_BUFFERING -> _musicStates.value =
                 MusicStates.MediaBuffering(exoPlayer.currentPosition)
 
-            ExoPlayer.STATE_READY -> _musicStates.value = MusicStates.MediaReady(exoPlayer.duration)
+            ExoPlayer.STATE_READY -> {
+                _musicStates.value = MusicStates.MediaReady(exoPlayer.duration)
+                _musicStates.value = MusicStates.CurrentMediaPlaying(exoPlayer.currentMediaItemIndex)
+            }
 
             Player.STATE_ENDED -> {
                 // no-op
@@ -108,20 +126,28 @@ class MusicServiceHandler(
 
     private suspend fun playPauseMusic() {
         if (exoPlayer.isPlaying) {
-            exoPlayer.pause()
-            stopProgressUpdate()
+            pauseMusic()
         } else {
-            exoPlayer.play()
-            _musicStates.value = MusicStates.MediaPlaying(
-                isPlaying = true
-            )
-            startProgressUpdate()
+            playMusic()
         }
+    }
+
+    private suspend fun playMusic(){
+        exoPlayer.play()
+        _musicStates.value = MusicStates.MediaPlaying(
+            isPlaying = true
+        )
+        startProgressUpdate()
+    }
+
+    private suspend fun pauseMusic(){
+        exoPlayer.pause()
+        stopProgressUpdate()
     }
 
     private suspend fun startProgressUpdate() = job.run {
         while (true) {
-            delay(500)
+            delay(1000)
             _musicStates.value = MusicStates.MediaProgress(exoPlayer.currentPosition)
         }
     }
