@@ -71,28 +71,23 @@ jobs:
       - name: Set up Docker container
         run: docker pull asui1/android_ci:android
 
-      - name: Set execute permission on gradlew
-        run: chmod +x ./gradlew
-
-      - name: Check files with workspace from docker to workspace
-        run: |
-          docker run --rm --privileged \
-            -v ${{ github.workspace }}:/new_workspace \
-            -w /new_workspace \
-            asui1/android_ci:android \
-            ls -l /workspace/docker_resources
-
-      - name: Copy google-services.json from Docker to host
+      - name: Copy files from Docker to host
         run: |
           docker run --name temp_container asui1/android_ci:android
           docker cp temp_container:/workspace/docker_resources/google-services.json ${{ github.workspace }}/app/google-services.json
+          docker cp temp_container:/workspace/docker_resources/my-release-key.keystore ${{ github.workspace }}/app/my-release-key.keystore
+          docker cp temp_container:/workspace/lottie ${{ github.workspace }}/app/src/main/assets
+          docker cp temp_container:/workspace/lottie_jsons ${{ github.workspace }}/app/src/main/res/raw
           docker rm temp_container
+
+      - name: Set execute permission on gradlew
+        run: chmod +x ./gradlew
 
       - name: Run End-to-End Tests
         run: |
           docker run --rm --privileged \
             -v ${{ github.workspace }}:/workspace \
-            -w /new_workspace \
+            -w /workspace \
             -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
             -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
             -e KEY_STORE=/workspace/docker_resources/my-release-key.keystore \
