@@ -8,7 +8,6 @@ on:
 env:
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-  KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
   STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
   PASSWORD: ${{ secrets.PASSWORD }}
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -32,6 +31,14 @@ jobs:
       - name: Set execute permission on gradlew
         run: chmod +x ./gradlew
 
+      - name: Copy google-services.json
+        run: |
+          docker run --rm --privileged \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            cp /workspace/docker_resources/google-services.json /workspace/app/google-services.json
+
       - name: Run Unit Tests
         run: |
           docker run --rm --privileged \
@@ -39,7 +46,8 @@ jobs:
             -w /workspace \
             -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
             -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=${{ github.workspace }}/KEYSTORE_NAME.jks \
+            -e KEY_STORE=/workspace/docker_resources/my-release-key.keystore \
+            -e GOOGLE_SERVICES_JSON=/workspace/docker_resources/google-services.json \
             -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
             -e PASSWORD=${{ secrets.PASSWORD }} \
             -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
@@ -66,6 +74,14 @@ jobs:
       - name: Set execute permission on gradlew
         run: chmod +x ./gradlew
 
+      - name: Copy google-services.json
+        run: |
+          docker run --rm --privileged \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            cp /workspace/docker_resources/google-services.json /workspace/app/google-services.json
+
       - name: Run End-to-End Tests
         run: |
           docker run --rm --privileged \
@@ -73,7 +89,8 @@ jobs:
             -w /workspace \
             -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
             -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=${{ github.workspace }}/KEYSTORE_NAME.jks \
+            -e KEY_STORE=/workspace/docker_resources/my-release-key.keystore \
+            -e GOOGLE_SERVICES_JSON=/workspace/docker_resources/google-services.json \
             -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
             -e PASSWORD=${{ secrets.PASSWORD }} \
             -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
@@ -101,6 +118,14 @@ jobs:
       - name: Set execute permission on gradlew
         run: chmod +x ./gradlew
 
+      - name: Copy google-services.json
+        run: |
+          docker run --rm --privileged \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            asui1/android_ci:android \
+            cp /workspace/docker_resources/google-services.json /workspace/app/google-services.json
+
       - name: Build Release AAB
         run: |
           docker run --rm --privileged \
@@ -108,7 +133,8 @@ jobs:
             -w /workspace \
             -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
             -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=${{ github.workspace }}/KEYSTORE_NAME.jks \
+            -e KEY_STORE=/workspace/docker_resources/my-release-key.keystore \
+            -e GOOGLE_SERVICES_JSON=/workspace/docker_resources/google-services.json \
             -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
             -e PASSWORD=${{ secrets.PASSWORD }} \
             -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
