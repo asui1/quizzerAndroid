@@ -29,9 +29,12 @@ jobs:
       - name: Set up Docker container
         run: docker pull asui1/android_ci:android
 
+      - name: Set execute permission on gradlew
+        run: chmod +x ./gradlew
+
       - name: Run Unit Tests
         run: |
-          docker run --rm \
+          docker run --rm --privileged \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             asui1/android_ci:android \
@@ -53,9 +56,12 @@ jobs:
       - name: Set up Docker container
         run: docker pull asui1/android_ci:android
 
+      - name: Set execute permission on gradlew
+        run: chmod +x ./gradlew
+
       - name: Run End-to-End Tests
         run: |
-          docker run --rm \
+          docker run --rm --privileged \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             asui1/android_ci:android \
@@ -77,9 +83,12 @@ jobs:
       - name: Set up Docker container
         run: docker pull asui1/android_ci:android
 
+      - name: Set execute permission on gradlew
+        run: chmod +x ./gradlew
+
       - name: Build Release AAB
         run: |
-          docker run --rm \
+          docker run --rm --privileged \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             asui1/android_ci:android \
