@@ -8,6 +8,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaSession
+import com.asu1.quizzer.musics.MediaNotificationManager
+import com.asu1.quizzer.service.MusicServiceHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,6 +51,26 @@ object MusicModules {
         exoPlayer: ExoPlayer
     ): MediaSession {
         return MediaSession.Builder(context, exoPlayer).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMediaNotificationManager(
+        @ApplicationContext context: Context,
+        exoPlayer: ExoPlayer
+    ): MediaNotificationManager {
+        return MediaNotificationManager(
+            context = context,
+            exoPlayer = exoPlayer
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideMusicServiceHandler(
+        exoPlayer: ExoPlayer
+    ): MusicServiceHandler {
+        return MusicServiceHandler(exoPlayer)
     }
 
 }

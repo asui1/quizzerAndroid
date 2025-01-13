@@ -51,7 +51,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         else{
             viewModelScope.launch {
-                delay(10000)
+                delay(5000)
                 _isUpdateAvailable.postValue(false)
             }
         }

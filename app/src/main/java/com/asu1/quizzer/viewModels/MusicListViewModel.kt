@@ -1,277 +1,184 @@
 package com.asu1.quizzer.viewModels
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.content.Context
-import android.net.Uri
-import androidx.annotation.OptIn
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.dash.DashMediaSource
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.session.MediaSession
-import androidx.media3.ui.PlayerNotificationManager
-import com.asu1.quizzer.musics.MediaNotificationManager
+import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.util.musics.ControlButtons
-import com.asu1.quizzer.util.musics.PlayerUIState
+import com.asu1.quizzer.service.MusicServiceHandler
+import com.asu1.quizzer.util.musics.HomeUIState
+import com.asu1.quizzer.util.musics.HomeUiEvents
+import com.asu1.quizzer.util.musics.MediaStateEvents
+import com.asu1.quizzer.util.musics.MusicStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.MINUTES
+import java.util.concurrent.TimeUnit.SECONDS
 
-@OptIn(UnstableApi::class)
+
+@OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
 class MusicListViewModel @Inject constructor(
-    val player: ExoPlayer
+    val musicServiceHandler: MusicServiceHandler,
+    val savedStateHandle: SavedStateHandle,
 ): ViewModel(){
 
-    private val _currentPlayingIndex = MutableStateFlow(0)
-    val currentPlayingIndex = _currentPlayingIndex.asStateFlow()
+    var duration by savedStateHandle.saveable { mutableLongStateOf(0L) }
 
-    private val _totalDurationInMS = MutableStateFlow(0L)
-    val totalDurationInMS = _totalDurationInMS.asStateFlow()
 
-    private val _currentDurationInMs = MutableStateFlow(0L)
-    val currentDurationInMs = _currentDurationInMs.asStateFlow()
+    private val _progress = MutableLiveData(0f)
+    val progress: LiveData<Float> get() = _progress
 
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying = _isPlaying.asStateFlow()
+    var isMusicPlaying by savedStateHandle.saveable { mutableStateOf(false) }
 
-    private val _playlist: MutableStateFlow<List<MusicAllInOne>> = MutableStateFlow(
-        listOf(
-            MusicAllInOne(
-                music = Music("sample1", "test1"),
-                moods = setOf("Happy")
+    var currentSelectedMusic by mutableStateOf(
+        MusicAllInOne(
+            music = Music(
+                title = "sample1",
+                artist = "Test1",
             ),
-            MusicAllInOne(
-                music = Music("sample2", "test2"),
-                moods = setOf("Scary")
-            ),
+            moods = setOf("Happy")
         )
     )
-    val playlist = _playlist.asStateFlow()
 
-    private val _playerUiState: MutableStateFlow<PlayerUIState> =
-        MutableStateFlow(PlayerUIState.Loading)
-    val playerUiState: StateFlow<PlayerUIState> = _playerUiState.asStateFlow()
+    var musicList by mutableStateOf(listOf<MusicAllInOne>(
+        MusicAllInOne(
+            music = Music(
+                title = "sample1",
+                artist = "Test1",
+            ),
+            moods = setOf("Happy")
+        ),
+        MusicAllInOne(
+            music = Music(
+                title = "sample2",
+                artist = "Test2",
+            ),
+            moods = setOf("Happy")
+        ),
+    ))
 
-    private lateinit var notificationManager: MediaNotificationManager
+    private val _homeUiState: MutableStateFlow<HomeUIState> =
+        MutableStateFlow(HomeUIState.InitialHome)
+    val homeUIState: StateFlow<HomeUIState> = _homeUiState.asStateFlow()
 
-    protected lateinit var mediaSession: MediaSession
-    private val serviceJob = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
-
-    companion object {
-        private const val SESSION_INTENT_REQUEST_CODE = 1001
+    init{
+        setMusicItems()
     }
 
-    private var isStarted = false
+    init {
+        viewModelScope.launch {
+            musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
+                when (musicStates) {
+                    MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
+                    is MusicStates.MediaBuffering -> progressCalculation(musicStates.progress)
+                    is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
+                    is MusicStates.MediaProgress -> progressCalculation(musicStates.progress)
+                    is MusicStates.CurrentMediaPlaying -> {
+                        currentSelectedMusic = musicList[musicStates.mediaItemIndex]
+                    }
 
-    fun preparePlayer(context: Context) {
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .build()
-
-        player.setAudioAttributes(audioAttributes, true)
-        player.repeatMode = Player.REPEAT_MODE_ALL
-
-        player.addListener(playerListener)
-
-        setupPlaylist(context)
-    }
-
-    private fun setupPlaylist(context: Context) {
-
-        val videoItems: ArrayList<MediaSource> = arrayListOf()
-        _playlist.value.forEach { music ->
-            val mediaMetaData = MediaMetadata.Builder()
-                .setTitle(music.music.title)
-                .setAlbumArtist(music.music.artist)
-                .build()
-
-            val trackUri = Uri.parse(music.getUri())
-            val mediaItem = MediaItem.Builder()
-                .setUri(trackUri)
-                .setMediaMetadata(mediaMetaData)
-                .build()
-            val dataSourceFactory = DefaultDataSource.Factory(context)
-
-            val mediaSource =
-                DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-
-            videoItems.add(
-                mediaSource
-            )
-        }
-
-        onStart(context)
-
-        player.playWhenReady = false
-        player.setMediaSources(videoItems)
-        player.prepare()
-    }
-
-    fun updatePlayer(action: ControlButtons) {
-        when (action) {
-            ControlButtons.PlayPause -> if (player.isPlaying) player.pause() else player.play()
-            ControlButtons.Next -> player.seekToNextMediaItem()
-            ControlButtons.Rewind -> player.seekToPreviousMediaItem()
+                    is MusicStates.MediaReady -> {
+                        duration = musicStates.duration
+                        _homeUiState.value = HomeUIState.HomeReady
+                    }
+                }
+            }
         }
     }
 
-    fun updatePlayerPosition(position: Long) {
-        player.seekTo(position)
-    }
+    fun onHomeUiEvents(homeUiEvents: HomeUiEvents) = viewModelScope.launch {
+        when (homeUiEvents) {
+            HomeUiEvents.Backward -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Backward)
+            HomeUiEvents.Forward -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Forward)
+            HomeUiEvents.SeekToNext -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToNext)
+            HomeUiEvents.SeekToPrevious -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToPrevious)
+            is HomeUiEvents.PlayPause -> {
+                musicServiceHandler.onMediaStateEvents(
+                    MediaStateEvents.PlayPause
+                )
+            }
 
-    fun onStart(context: Context) {
-        if (isStarted) return
+            is HomeUiEvents.SeekTo -> {
+                musicServiceHandler.onMediaStateEvents(
+                    MediaStateEvents.SeekTo,
+                    seekPosition = ((duration * homeUiEvents.position) / 100f).toLong()
+                )
+            }
 
-        isStarted = true
+            is HomeUiEvents.CurrentAudioChanged -> {
+                musicServiceHandler.onMediaStateEvents(
+                    MediaStateEvents.SelectedMusicChange,
+                    selectedMusicIndex = homeUiEvents.index
+                )
+            }
 
-        // Build a PendingIntent that can be used to launch the UI.
-        val sessionActivityPendingIntent =
-            context.packageManager?.getLaunchIntentForPackage(context.packageName)
-                ?.let { sessionIntent ->
-                    PendingIntent.getActivity(
-                        context,
-                        SESSION_INTENT_REQUEST_CODE,
-                        sessionIntent,
-                        PendingIntent.FLAG_IMMUTABLE
+            is HomeUiEvents.UpdateProgress -> {
+                musicServiceHandler.onMediaStateEvents(
+                    MediaStateEvents.MediaProgress(
+                        homeUiEvents.progress
                     )
-                }
-
-        // Create a new MediaSession.
-        mediaSession = MediaSession.Builder(context, player)
-            .setSessionActivity(sessionActivityPendingIntent!!).build()
-
-        notificationManager =
-            MediaNotificationManager(
-                context,
-                mediaSession.token,
-                player,
-                PlayerNotificationListener()
-            )
-
-        notificationManager.showNotificationForPlayer(player)
-    }
-
-    /**
-     * Destroy audio notification
-     */
-    fun onDestroy() {
-        onClose()
-        player.release()
-    }
-
-    /**
-     * Close audio notification
-     */
-    private fun onClose() {
-        if (!isStarted) return
-
-        isStarted = false
-        mediaSession.run {
-            release()
-        }
-
-        // Hide notification
-        notificationManager.hideNotification()
-
-        // Free ExoPlayer resources.
-        player.removeListener(playerListener)
-    }
-
-    /**
-     * Listen for notification events.
-     */
-    private inner class PlayerNotificationListener :
-        PlayerNotificationManager.NotificationListener {
-        override fun onNotificationPosted(
-            notificationId: Int,
-            notification: Notification,
-            ongoing: Boolean
-        ) {
-
-        }
-
-        override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-
-        }
-    }
-
-    /**
-     * Listen to events from ExoPlayer.
-     */
-    private val playerListener = object : Player.Listener {
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            super.onPlaybackStateChanged(playbackState)
-            syncPlayerFlows()
-            when (playbackState) {
-                Player.STATE_BUFFERING,
-                Player.STATE_READY -> {
-                    notificationManager.showNotificationForPlayer(player)
-                }
-
-                else -> {
-                    notificationManager.hideNotification()
-                }
+                )
+                _progress.postValue(homeUiEvents.progress)
             }
-        }
 
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            super.onMediaItemTransition(mediaItem, reason)
-            syncPlayerFlows()
-        }
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            super.onIsPlayingChanged(isPlaying)
-            _isPlaying.value = isPlaying
-            if (isPlaying) {
-                startUpdatingPosition()
-            } else {
-                stopUpdatingPosition()
-            }
-        }
-
-        override fun onPlayerError(error: PlaybackException) {
-            super.onPlayerError(error)
         }
     }
 
-    private fun startUpdatingPosition(){
-        serviceScope.launch {
-            while (player.isPlaying){
-                _currentDurationInMs.value = player.currentPosition
-                kotlinx.coroutines.delay(1000)
-            }
+    private fun setMusicItems() {
+        musicList.map { audioItem ->
+            MediaItem.Builder()
+                .setUri(audioItem.getUri())
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setAlbumArtist(audioItem.music.artist)
+                        .setDisplayTitle(audioItem.music.title)
+                        .build()
+                )
+                .build()
+        }.also {mediaItem ->
+            musicServiceHandler.setMediaItemList(mediaItem)
         }
     }
 
-    private fun stopUpdatingPosition(){
-        serviceScope.coroutineContext.cancelChildren()
+    private fun progressCalculation(currentProgress: Long) {
+        _progress.postValue(
+            if (currentProgress > 0) ((currentProgress.toFloat() / duration.toFloat()) * 100f)
+            else 0f
+        )
+
     }
 
-    private fun syncPlayerFlows() {
-        _currentPlayingIndex.value = player.currentMediaItemIndex
-        _totalDurationInMS.value = player.duration.coerceAtLeast(0L)
+    private fun formatDurationValue(duration: Long): String {
+        val minutes = MINUTES.convert(duration, MILLISECONDS)
+        val seconds = (minutes) - minutes * SECONDS.convert(1, MINUTES)
+
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds)
     }
 
+    override fun onCleared() {
+        viewModelScope.launch {
+            musicServiceHandler.onMediaStateEvents(MediaStateEvents.Stop)
+        }
+        super.onCleared()
+    }
 }

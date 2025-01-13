@@ -107,7 +107,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-                musicListViewModel.preparePlayer(context)
             }
 
             navController = rememberNavController()

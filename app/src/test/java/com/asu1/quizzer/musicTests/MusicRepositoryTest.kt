@@ -1,4 +1,4 @@
-package com.asu1.quizzer
+package com.asu1.quizzer.musicTests
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.asu1.quizzer.musics.Mood
