@@ -8,11 +8,31 @@ on:
 env:
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
   STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
   PASSWORD: ${{ secrets.PASSWORD }}
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   VERSION_CODE: ${{ github.run_number }}
-
+  LOTTIE_FILES: |
+    load_dark.lottie
+    load_light.lottie
+    scoring_dark.lottie
+    scoring_light.lottie
+    upload.lottie
+    userrank.lottie
+  LOTTIE_JSONS: |
+    christmasbell.json
+    clouds.json
+    firework.json
+    firework_2.json
+    flowers.json
+    greyscalechristmas.json
+    greyscalenotes.json
+    greyscalerain.json
+    moon.json
+    shootingstar.json
+    snowfalling.json
+    wreath.json
 
 jobs:
   unit-tests:
@@ -22,38 +42,57 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Set up Docker container
-        run: docker pull asui1/android_ci:android
+      - name: Set up SDK
+        uses:  android-actions/setup-android@v2
 
-      - name: Copy files from Docker to host
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Set Time Zone
+        run: sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Generate google-services.json
+        run: echo '${{ secrets.GOOGLE_SECRETS }}' > ./app/google-services.json;
+
+      - name: Decode keystore
         run: |
-          docker run --name temp_container asui1/android_ci:android
-          docker cp temp_container:/workspace/docker_resources/google-services.json ${{ github.workspace }}/app/google-services.json
-          docker cp temp_container:/workspace/docker_resources/my-release-key.keystore ${{ github.workspace }}/app/my-release-key.keystore
-          docker cp temp_container:/workspace/lottie ${{ github.workspace }}/app/src/main/assets
-          docker cp temp_container:/workspace/lottie_jsons ${{ github.workspace }}/app/src/main/res/raw
-          docker rm temp_container
+          echo "$KEY_STORE" > KEYSTORE_NAME.b64
+          base64 -d -i KEYSTORE_NAME.b64 > KEYSTORE_NAME.jks
+        env:
+          KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
-      - name: Set execute permission on gradlew
-        run: chmod +x ./gradlew
-
-      - name: Run End-to-End Tests
+      - name: Setup Lottie Files
         run: |
-          docker run --rm --privileged \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
-            -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=/workspace/app/my-release-key.keystore \
-            -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
-            -e PASSWORD=${{ secrets.PASSWORD }} \
-            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            -e VERSION_CODE=${{ github.run_number }} \
-            asui1/android_ci:android \
-            ./gradlew build
+          mkdir -p ./app/src/main/assets/lottie
+          for file in ${{ env.LOTTIE_FILES }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Setup Lottie Jsons
+        run: |
+          mkdir -p ./app/src/main/res/raw
+          for file in ${{ env.LOTTIE_JSONS }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Build with Gradle
+        run: ./gradlew build
 
       - name: Save Unit Test Results
         run: echo "UNIT_TESTS=${{ job.status }}" >> $GITHUB_ENV
@@ -65,38 +104,66 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Set up Docker container
-        run: docker pull asui1/android_ci:android
+      - name: Set up SDK
+        uses:  android-actions/setup-android@v2
 
-      - name: Copy files from Docker to host
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Set Time Zone
+        run: sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Generate google-services.json
+        run: echo '${{ secrets.GOOGLE_SECRETS }}' > ./app/google-services.json;
+
+      - name: Decode keystore
         run: |
-          docker run --name temp_container asui1/android_ci:android
-          docker cp temp_container:/workspace/docker_resources/google-services.json ${{ github.workspace }}/app/google-services.json
-          docker cp temp_container:/workspace/docker_resources/my-release-key.keystore ${{ github.workspace }}/app/my-release-key.keystore
-          docker cp temp_container:/workspace/lottie ${{ github.workspace }}/app/src/main/assets
-          docker cp temp_container:/workspace/lottie_jsons ${{ github.workspace }}/app/src/main/res/raw
-          docker rm temp_container
+          echo "$KEY_STORE" > KEYSTORE_NAME.b64
+          base64 -d -i KEYSTORE_NAME.b64 > KEYSTORE_NAME.jks
+        env:
+          KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
-      - name: Set execute permission on gradlew
-        run: chmod +x ./gradlew
-
-      - name: Run End-to-End Tests
+      - name: Setup Lottie Files
         run: |
-          docker run --rm --privileged \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
-            -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=/workspace/app/my-release-key.keystore \
-            -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
-            -e PASSWORD=${{ secrets.PASSWORD }} \
-            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            -e VERSION_CODE=${{ github.run_number }} \
-            asui1/android_ci:android \
-            ./gradlew connectedCheck
+          mkdir -p ./app/src/main/assets/lottie
+          for file in ${{ env.LOTTIE_FILES }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Setup Lottie Jsons
+        run: |
+          mkdir -p ./app/src/main/res/raw
+          for file in ${{ env.LOTTIE_JSONS }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Run UI test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
+          disable-animations: true
+          emulator-boot-timeout: 600
+          dns-server: 8.8.8.8
 
       - name: Save End-to-End Test Results
         run: echo "END_TO_END_TESTS=${{ job.status }}" >> $GITHUB_ENV
@@ -106,38 +173,67 @@ jobs:
     runs-on: ubuntu-latest
     needs: [unit-tests, end-to-end-tests]
     steps:
-      - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker container
-        run: docker pull asui1/android_ci:android
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Copy files from Docker to host
+      - name: Set up SDK
+        uses:  android-actions/setup-android@v2
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Set Time Zone
+        run: sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Generate google-services.json
+        run: echo '${{ secrets.GOOGLE_SECRETS }}' > ./app/google-services.json;
+
+      - name: Decode keystore
         run: |
-          docker run --name temp_container asui1/android_ci:android
-          docker cp temp_container:/workspace/docker_resources/google-services.json ${{ github.workspace }}/app/google-services.json
-          docker cp temp_container:/workspace/docker_resources/my-release-key.keystore ${{ github.workspace }}/app/my-release-key.keystore
-          docker cp temp_container:/workspace/lottie ${{ github.workspace }}/app/src/main/assets
-          docker cp temp_container:/workspace/lottie_jsons ${{ github.workspace }}/app/src/main/res/raw
-          docker rm temp_container
+          echo "$KEY_STORE" > KEYSTORE_NAME.b64
+          base64 -d -i KEYSTORE_NAME.b64 > KEYSTORE_NAME.jks
+        env:
+          KEY_STORE: ${{ secrets.ENCODED_KEYSTORE }}
 
-      - name: Set execute permission on gradlew
-        run: chmod +x ./gradlew
-
-      - name: Run End-to-End Tests
+      - name: Setup Lottie Files
         run: |
-          docker run --rm --privileged \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            -e KEY_ALIAS=${{ secrets.KEY_ALIAS }} \
-            -e KEY_PASSWORD=${{ secrets.KEY_PASSWORD }} \
-            -e KEY_STORE=/workspace/app/my-release-key.keystore \
-            -e STORE_PASSWORD=${{ secrets.STORE_PASSWORD }} \
-            -e PASSWORD=${{ secrets.PASSWORD }} \
-            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            -e VERSION_CODE=${{ github.run_number }} \
-            asui1/android_ci:android \
-            ./gradlew bundleRelease -PversionCode=$VERSION_CODE
+          mkdir -p ./app/src/main/assets/lottie
+          for file in ${{ env.LOTTIE_FILES }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/assets/lottie/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Setup Lottie Jsons
+        run: |
+          mkdir -p ./app/src/main/res/raw
+          for file in ${{ env.LOTTIE_JSONS }}; do
+            curl -u asu1:${{ secrets.PASSWORD }} -o ./app/src/main/res/raw/$file https://quizzer.co.kr/api/lottie/$file
+          done
+
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_STORE: ${{ github.workspace }}/KEYSTORE_NAME.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
 
       - name: Upload AAB
         id: uploadArtifact
