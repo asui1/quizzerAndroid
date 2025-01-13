@@ -13,26 +13,6 @@ env:
   PASSWORD: ${{ secrets.PASSWORD }}
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   VERSION_CODE: ${{ github.run_number }}
-  LOTTIE_FILES: |
-    load_dark.lottie
-    load_light.lottie
-    scoring_dark.lottie
-    scoring_light.lottie
-    upload.lottie
-    userrank.lottie
-  LOTTIE_JSONS: |
-    christmasbell.json
-    clouds.json
-    firework.json
-    firework_2.json
-    flowers.json
-    greyscalechristmas.json
-    greyscalenotes.json
-    greyscalerain.json
-    moon.json
-    shootingstar.json
-    snowfalling.json
-    wreath.json
 
 jobs:
   unit-tests:
@@ -313,10 +293,6 @@ jobs:
         id: createServiceAccount
         run: echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}' > service_account.json
 
-      - name: Read Release Notes
-        id: readReleaseNotes
-        run: echo "RELEASE_NOTES=$(cat release-notes.txt)" >> $GITHUB_ENV
-
       - name: Deploy to Google Play Store
         id: deploy
         uses: r0adkll/upload-google-play@v1
@@ -326,7 +302,7 @@ jobs:
           status: completed
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal
-          releaseNotes: ${{ env.RELEASE_NOTES }}
+          whatsNewDirectory: ${{ github.workspace }}/whatsnew
 
       - name: Save Deploy Results
         run: echo "DEPLOY=${{ job.status }}" >> $GITHUB_ENV
