@@ -20,8 +20,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Setup Environment
+        uses: ./.github/actions/setup-android-env
 
       - name: call env setup
         uses: ./.github/workflows/quizzer-env-setup-workflow.yml
@@ -36,11 +36,8 @@ jobs:
     name: End-to-End Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: call env setup
-        uses: ./.github/workflows/quizzer-env-setup-workflow.yml
+      - name: Setup Environment
+        uses: ./.github/actions/setup-android-env
 
       - name: Run UI test
         uses: reactivecircus/android-emulator-runner@v2
@@ -69,11 +66,8 @@ jobs:
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       VERSION_CODE: ${{ github.run_number }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: call env setup
-        uses: ./.github/workflows/quizzer-env-setup-workflow.yml
+      - name: Setup Environment
+        uses: ./.github/actions/setup-android-env
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease -PversionCode=$VERSION_CODE
