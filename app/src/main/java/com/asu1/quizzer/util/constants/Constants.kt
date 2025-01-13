@@ -17,3 +17,6 @@ val colors = listOf("Color1", "Color2", "Color3", "Color4", "Color5", "Color6", 
 val borders = listOf(R.string.no_border, R.string.underline, R.string.box, R.string.box2)
 val outlines = listOf(R.string.no_outline, R.string.shadow, R.string.inverse)
 
+const val NOTIFICATION_ID = 1343
+const val NOTIFICATION_CHANNEL_NAME = "quizzer music notification channel 1343"
+const val NOTIFICATION_CHANNEL_ID = "quizzer music notification channel id 1343"

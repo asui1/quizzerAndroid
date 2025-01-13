@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.MusicPlayer
+import com.asu1.quizzer.composables.musics.MusicPlayer
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
 import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
 import com.asu1.quizzer.util.Route

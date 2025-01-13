@@ -4,20 +4,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.asu1.quizzer.data.ColorSchemeSerializer.toColor
 import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
-import com.asu1.quizzer.data.ColorSerializer
-import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ColorSerializerTest {
 
     @Test
-    fun testGenerateUniqueId() {
+    fun toHexStringtoColor_withValidColor_matchesOriginalColor() {
         val originalColor = Color(0xFFc1ecd5)
-        val json = Json { encodeDefaults = true }
-
-        // Serialize the color
-        val serializedColor = json.encodeToString(ColorSerializer, originalColor)
 
         val hexText = originalColor.toArgb().toHexString()
 
@@ -26,6 +20,20 @@ class ColorSerializerTest {
 
         // Assert that the original and deserialized colors are the same
         assertEquals(originalColor, deserializedColor)
+    }
+
+    @Test
+    fun toHexString_withValidColor_returnsCorrectHexString() {
+        val color = Color(0xFFc1ecd5)
+        val hexString = color.toArgb().toHexString()
+        assertEquals("#ffc1ecd5", hexString)
+    }
+
+    @Test
+    fun toColor_withValidHexString_returnsCorrectColor() {
+        val hexString = "#ffc1ecd5"
+        val color = hexString.toColor()
+        assertEquals(Color(0xFFc1ecd5), color)
     }
 
 }
