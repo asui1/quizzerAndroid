@@ -24,12 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.musics.HomeUiEvents
-import com.asu1.quizzer.util.musics.floatToTime
 import com.asu1.quizzer.util.musics.msToTime
 
 @Composable
 fun MusicProgress(
-    progress: Float,
+    progress: () -> Float,
     duration: Long,
     updatePlayer: (HomeUiEvents) -> Unit,
     modifier: Modifier = Modifier
@@ -37,16 +36,18 @@ fun MusicProgress(
 
     val totalTimeText = remember(duration) { msToTime(duration) }
 
-    LaunchedEffect(progress, duration){
-        Logger.debug("progress: $progress, duration: $duration")
-    }
     ConstraintLayout(
         modifier = modifier
     ) {
         val (currentTime, progressBar, totalTime) = createRefs()
         LinearProgressIndicatorWithDraggable(
-            currentProgress = progress,
-            totalDurationInMS = duration,
+            progress = {
+                if (duration > 0) {
+                    progress().coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
+            },
             updatePlayer = updatePlayer,
             modifier = Modifier.fillMaxWidth()
                 .constrainAs(progressBar) {
@@ -57,7 +58,7 @@ fun MusicProgress(
         )
 
         Text(
-            text = msToTime((progress * duration.toFloat()).toLong()),
+            text = msToTime((progress() * duration.toFloat()).toLong()),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.constrainAs(currentTime) {
                 top.linkTo(progressBar.bottom, margin = 4.dp)
@@ -78,8 +79,7 @@ fun MusicProgress(
 
 @Composable
 fun LinearProgressIndicatorWithDraggable(
-    currentProgress: Float,
-    totalDurationInMS: Long,
+    progress: () -> Float,
     updatePlayer: (HomeUiEvents) -> Unit,
     strokeCap: StrokeCap = StrokeCap.Round,
     progressedColor: Color = MaterialTheme.colorScheme.primary,
@@ -87,40 +87,28 @@ fun LinearProgressIndicatorWithDraggable(
     modifier: Modifier = Modifier
 ){
 
-    val progress = if (totalDurationInMS > 0) {
-        currentProgress.coerceIn(0f, 1f)
-    } else {
-        0f
-    }
-
     Canvas(
         modifier = modifier.progressSemantics()
             .fillMaxWidth()
             .height(4.dp)
             .semantics(mergeDescendants = true) {
-                progressBarRangeInfo = ProgressBarRangeInfo(progress, 0f..1f)
+                progressBarRangeInfo = ProgressBarRangeInfo(progress(), 0f..1f)
             }
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    Logger.debug("offset: $offset ${offset.x / size.width}")
                     updatePlayer(HomeUiEvents.UpdateProgress(offset.x / size.width))
                 }
             }
             .pointerInput(Unit){
                 detectDragGestures(
                     onDragStart = { offset ->
-                        val dragProgress = offset.x / size.width
-                        Logger.debug("DragStart:$progress, $dragProgress")
-                        updatePlayer(HomeUiEvents.UpdateProgress(dragProgress))
-
+                        updatePlayer(HomeUiEvents.UpdateLocalProgress(offset.x / size.width))
                     },
-                    onDrag = { change, dragAmount ->
-                        val dragProgress = dragAmount.x / size.width
-                        val targetProgress = progress + dragProgress
-                        Logger.debug("Drag:$progress, $targetProgress, $dragProgress")
-                        updatePlayer(HomeUiEvents.UpdateProgress(targetProgress))
+                    onDrag = { _, dragAmount ->
+                        updatePlayer(HomeUiEvents.AddLocalProgress(dragAmount.x / size.width))
                     },
                     onDragEnd = {
+                        updatePlayer(HomeUiEvents.PushLocalProgress)
                     }
                 )
             }
@@ -140,7 +128,7 @@ fun LinearProgressIndicatorWithDraggable(
 
         drawCircle(
             color = progressedColor,
-            center = Offset(progress * width, yOffset),
+            center = Offset(progress() * width, yOffset),
             radius = height * 1.4f
         )
 
@@ -148,7 +136,7 @@ fun LinearProgressIndicatorWithDraggable(
         drawLine(
             color = progressedColor,
             start = Offset(0f, yOffset),
-            end = Offset(progress * width, yOffset),
+            end = Offset(progress() * width, yOffset),
             strokeWidth = height * 1.2f,
             cap = strokeCap
         )
@@ -160,7 +148,7 @@ fun LinearProgressIndicatorWithDraggable(
 @Composable
 fun MusicProgressPreview() {
     MusicProgress(
-        progress = 0.5f,
+        progress = {0.5f},
         duration = 150000,
         updatePlayer = {},
     )

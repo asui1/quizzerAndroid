@@ -23,6 +23,9 @@ class MusicServiceHandler(
     private var _musicStates: MutableStateFlow<MusicStates> = MutableStateFlow(MusicStates.Initial)
     val musicStates: StateFlow<MusicStates> = _musicStates.asStateFlow()
 
+    private var _currentProgress: MutableStateFlow<Long> = MutableStateFlow(0L)
+    val currentProgress: StateFlow<Long> = _currentProgress.asStateFlow()
+
     private var job: Job? = null
 
     init{
@@ -82,8 +85,6 @@ class MusicServiceHandler(
             }
 
             is MediaStateEvents.MediaProgress -> {
-                Logger.debug("Seeking to ${exoPlayer.duration} ${mediaStateEvents.progress}")
-                Logger.debug("Seeking to ${exoPlayer.duration * mediaStateEvents.progress}")
                 exoPlayer.seekTo(
                     (exoPlayer.duration * mediaStateEvents.progress).toLong()
                 )
@@ -113,14 +114,16 @@ class MusicServiceHandler(
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onIsPlayingChanged(isPlaying: Boolean) {
-        _musicStates.value = MusicStates.MediaPlaying(isPlaying = isPlaying)
-        _musicStates.value = MusicStates.CurrentMediaPlaying(exoPlayer.currentMediaItemIndex)
-        if (isPlaying) {
-            GlobalScope.launch(Dispatchers.Main) {
-                startProgressUpdate()
+        if (exoPlayer.playbackState != ExoPlayer.STATE_BUFFERING) {
+            _musicStates.value = MusicStates.MediaPlaying(isPlaying = isPlaying)
+            _musicStates.value = MusicStates.CurrentMediaPlaying(exoPlayer.currentMediaItemIndex)
+            if (isPlaying) {
+                GlobalScope.launch(Dispatchers.Main) {
+                    startProgressUpdate()
+                }
+            } else {
+                stopProgressUpdate()
             }
-        } else {
-            stopProgressUpdate()
         }
     }
 

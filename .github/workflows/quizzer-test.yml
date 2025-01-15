@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - stable_release
+    types: [synchronize]
 
 env:
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}

@@ -174,7 +174,6 @@ fun MainScreen(
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
             drawerState = drawerState,
-            gesturesEnabled = false,
             drawerContent = {
                 DrawerContent(closeDrawer = { scope.launch { drawerState.close() } },
                     isLoggedIn = isLoggedIn,

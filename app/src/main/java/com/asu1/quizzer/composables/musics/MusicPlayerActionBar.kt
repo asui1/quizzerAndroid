@@ -36,26 +36,6 @@ fun MusicPlayerActionBar(
     intervalMillis: Long = 200L,
     updatePlayer: (HomeUiEvents) -> Unit,
 ){
-    val backwardInteractionSource = remember { MutableInteractionSource() }
-    val isBackwardPressed = backwardInteractionSource.collectIsPressedAsState().value
-
-    LaunchedEffect(isBackwardPressed) {
-        while (isBackwardPressed) {
-            updatePlayer(HomeUiEvents.Backward)
-            delay(intervalMillis)
-        }
-    }
-
-    val forwardInteractionSource = remember { MutableInteractionSource() }
-    val isForwardPressed = forwardInteractionSource.collectIsPressedAsState().value
-
-    LaunchedEffect(isForwardPressed) {
-        while (isForwardPressed) {
-            updatePlayer(HomeUiEvents.Forward)
-            delay(intervalMillis)
-        }
-    }
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -71,16 +51,6 @@ fun MusicPlayerActionBar(
             )
         }
         IconButton(
-            onClick = {},
-            interactionSource = backwardInteractionSource,
-        ) {
-            Icon(
-                modifier = Modifier.size(iconSize),
-                imageVector = Icons.Default.FastRewind,
-                contentDescription = "Rewind"
-            )
-        }
-        IconButton(
             onClick = { updatePlayer(HomeUiEvents.PlayPause) }
         ) {
             Crossfade(targetState = isPlaying) { playing ->
@@ -90,16 +60,6 @@ fun MusicPlayerActionBar(
                     contentDescription = "Play/Pause"
                 )
             }
-        }
-        IconButton(
-            onClick = { },
-            interactionSource = forwardInteractionSource,
-        ) {
-            Icon(
-                modifier = Modifier.size(iconSize),
-                imageVector = Icons.Default.FastForward,
-                contentDescription = "Next"
-            )
         }
         IconButton(
             onClick = { updatePlayer(HomeUiEvents.SeekToNext) }

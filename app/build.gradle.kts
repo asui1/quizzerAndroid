@@ -116,6 +116,7 @@ android {
 dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.androidx.animation.graphics.android)
     ksp(libs.room.compiler)
 
     implementation(libs.core.ktx)

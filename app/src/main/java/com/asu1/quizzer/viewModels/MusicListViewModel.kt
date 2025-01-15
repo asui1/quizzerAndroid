@@ -17,22 +17,21 @@ import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.service.MusicServiceHandler
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUIState
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
-import java.util.concurrent.TimeUnit.MILLISECONDS
-import java.util.concurrent.TimeUnit.MINUTES
-import java.util.concurrent.TimeUnit.SECONDS
-
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
@@ -43,12 +42,17 @@ class MusicListViewModel @Inject constructor(
 
     var duration by savedStateHandle.saveable { mutableLongStateOf(0L) }
 
-
     // PROGRESS IN VALUE FROM 0f to 1f, showing progress * duration.
     private val _progress = MutableLiveData(0f)
     val progress: LiveData<Float> get() = _progress
 
+    private val progressMutex = Mutex()
+    private val updateProgressMutex = Mutex()
+
     var isMusicPlaying by savedStateHandle.saveable { mutableStateOf(false) }
+
+    private val _currentMusicIndex = MutableLiveData(0)
+    val currentMusicIndex: LiveData<Int> get() = _currentMusicIndex
 
     var currentSelectedMusic by mutableStateOf(
         MusicAllInOne(
@@ -60,26 +64,12 @@ class MusicListViewModel @Inject constructor(
         )
     )
 
-    var musicList by mutableStateOf(listOf<MusicAllInOne>(
-        MusicAllInOne(
-            music = Music(
-                title = "sample1",
-                artist = "Test1",
-            ),
-            moods = setOf("Happy")
-        ),
-        MusicAllInOne(
-            music = Music(
-                title = "sample2",
-                artist = "Test2",
-            ),
-            moods = setOf("Happy")
-        ),
-    ))
+
+    private var _musicList = MutableStateFlow(sampleMusicList)
+    val musicList: StateFlow<List<MusicAllInOne>> get() = _musicList
 
     private val _homeUiState: MutableStateFlow<HomeUIState> =
         MutableStateFlow(HomeUIState.InitialHome)
-    val homeUIState: StateFlow<HomeUIState> = _homeUiState.asStateFlow()
 
     init{
         setMusicItems()
@@ -90,16 +80,18 @@ class MusicListViewModel @Inject constructor(
             musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
                 when (musicStates) {
                     MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
-                    is MusicStates.MediaBuffering -> progressCalculation(musicStates.progress)
+                    is MusicStates.MediaBuffering -> {
+                        progressCalculation(musicStates.progress)
+                    }
                     is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
-                    is MusicStates.MediaProgress -> progressCalculation(musicStates.progress)
+                    is MusicStates.MediaProgress -> {
+                        progressCalculation(musicStates.progress)
+                    }
                     is MusicStates.CurrentMediaPlaying -> {
-                        Logger.debug("MUSIC STATE Current Media Playing ${musicStates.mediaItemIndex}")
-                        currentSelectedMusic = musicList[musicStates.mediaItemIndex]
+                        _currentMusicIndex.postValue(musicStates.mediaItemIndex)
                     }
 
                     is MusicStates.MediaReady -> {
-                        Logger.debug("MUSIC STATE MediaReady ${musicStates.duration}")
                         duration = musicStates.duration
                         _homeUiState.value = HomeUIState.HomeReady
                     }
@@ -112,8 +104,29 @@ class MusicListViewModel @Inject constructor(
         when (homeUiEvents) {
             HomeUiEvents.Backward -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Backward)
             HomeUiEvents.Forward -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Forward)
-            HomeUiEvents.SeekToNext -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToNext)
-            HomeUiEvents.SeekToPrevious -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToPrevious)
+            HomeUiEvents.SeekToNext -> {
+                if(_currentMusicIndex.value != null)
+                    _currentMusicIndex.postValue((_currentMusicIndex.value!! + 1) % _musicList.value.size)
+                musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToNext)
+            }
+            HomeUiEvents.SeekToPrevious -> {
+                Logger.debug("Seeking to previous ${_progress.value}")
+                if(_progress.value!! * duration > 4000){
+                    musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekTo, seekPosition = 0)
+                    return@launch
+                }
+                else {
+                    if (_currentMusicIndex.value != null) {
+                        val newIndex = if (_currentMusicIndex.value!! == 0) {
+                            _musicList.value.size - 1
+                        } else {
+                            (_currentMusicIndex.value!! - 1) % _musicList.value.size
+                        }
+                        _currentMusicIndex.postValue(newIndex)
+                    }
+                    musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToPrevious)
+                }
+            }
             HomeUiEvents.Pause -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Pause)
             HomeUiEvents.Play -> musicServiceHandler.onMediaStateEvents(MediaStateEvents.Play)
             is HomeUiEvents.PlayPause -> {
@@ -136,22 +149,53 @@ class MusicListViewModel @Inject constructor(
             }
 
             is HomeUiEvents.UpdateProgress -> {
+                tryProgressUpdate(homeUiEvents.progress)
                 musicServiceHandler.onMediaStateEvents(
                     MediaStateEvents.MediaProgress(
                         homeUiEvents.progress
                     )
                 )
-                _progress.postValue(homeUiEvents.progress)
+            }
+            is HomeUiEvents.AddLocalProgress -> {
+                addProgressWithMutex(homeUiEvents.progress)
             }
             is HomeUiEvents.UpdateLocalProgress -> {
-                _progress.postValue(homeUiEvents.progress)
+                updateProgressMutex.lock()
+                updateProgressWithMutex(homeUiEvents.progress)
             }
+            HomeUiEvents.PushLocalProgress -> {
+                updateProgressMutex.unlock()
+                musicServiceHandler.onMediaStateEvents(
+                    MediaStateEvents.MediaProgress(_progress.value ?: 0f)
+                )
+            }
+        }
+    }
 
+    private fun tryProgressUpdate(progress: Float) {
+        if(!updateProgressMutex.isLocked){
+            _progress.postValue(progress)
+        }
+    }
+
+    private suspend fun updateProgressWithMutex(progress: Float) {
+        progressMutex.withLock {
+            withContext(Dispatchers.Main) {
+                _progress.value = progress
+                Logger.debug("Progress updated with mutex $progress")
+            }
+        }
+    }
+
+    private suspend fun addProgressWithMutex(dragProgress: Float) {
+        progressMutex.withLock {
+            val newProgress = _progress.value?.plus(dragProgress)?.coerceIn(0f, 1f)
+            if(newProgress != null) _progress.postValue(newProgress)
         }
     }
 
     private fun setMusicItems() {
-        musicList.map { audioItem ->
+        _musicList.value.map { audioItem ->
             MediaItem.Builder()
                 .setUri(audioItem.getUri())
                 .setMediaMetadata(
@@ -161,24 +205,15 @@ class MusicListViewModel @Inject constructor(
                         .build()
                 )
                 .build()
-        }.also {mediaItem ->
+        }.also { mediaItem ->
             musicServiceHandler.setMediaItemList(mediaItem)
         }
     }
 
     private fun progressCalculation(currentProgress: Long) {
-        _progress.postValue(
-            if (currentProgress > 0) (currentProgress.toFloat() / duration.toFloat())
-            else 0f
-        )
-
-    }
-
-    private fun formatDurationValue(duration: Long): String {
-        val minutes = MINUTES.convert(duration, MILLISECONDS)
-        val seconds = (minutes) - minutes * SECONDS.convert(1, MINUTES)
-
-        return String.format(Locale.US, "%02d:%02d", minutes, seconds)
+        val duration = if (currentProgress > 0) (currentProgress.toFloat() / duration.toFloat())
+        else 0f
+        tryProgressUpdate(duration)
     }
 
     override fun onCleared() {

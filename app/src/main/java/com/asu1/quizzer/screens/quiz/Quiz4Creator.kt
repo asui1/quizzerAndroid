@@ -245,7 +245,6 @@ fun DraggableDot(
     moveOffset: Float = 0f,
     key: String = "",
 ) {
-
     Box(
         modifier = Modifier
             .size(dotSize)
