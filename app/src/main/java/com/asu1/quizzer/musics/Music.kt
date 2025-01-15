@@ -43,10 +43,15 @@ data class MusicWithMoods(
 
 data class MusicAllInOne(
     val music: Music,
-    val moods: Set<String>
+    val moods: Set<String>,
+    val duration: Long = 0,
 ){
     fun getUri(): String{
-        if(music.title == "sample1") return "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
-        return "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd"
+        return when(music.title){
+            "sample1" -> "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
+            "sample2" -> "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd"
+            "sample3" -> "https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd"
+            else -> "https://storage.googleapis.com/shaka-demo-assets/sintel/dash.mpd"
+        }
     }
 }

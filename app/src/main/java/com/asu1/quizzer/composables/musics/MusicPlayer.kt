@@ -3,8 +3,6 @@ package com.asu1.quizzer.composables.musics
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -16,7 +14,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.viewModels.MusicListViewModel
 
@@ -27,21 +24,31 @@ fun MusicPlayer(
 ) {
     val musicListViewModel: MusicListViewModel = hiltViewModel()
 
-    val duration = musicListViewModel.duration
     val progress by musicListViewModel.progress.observeAsState(0f)
     val isPlaying = musicListViewModel.isMusicPlaying
-    val currentMusic = musicListViewModel.currentSelectedMusic
+    val currentMusicIndex by musicListViewModel.currentMusicIndex.observeAsState(0)
+    val musicList by musicListViewModel.musicList.collectAsStateWithLifecycle(listOf())
 
-    MusicPlayerBody(
-        currentMusic = currentMusic,
-        isPlaying = isPlaying,
-        duration = duration,
-        progress = progress,
-        updatePlayer = { homeUiEvents ->
-            musicListViewModel.onHomeUiEvents(homeUiEvents)
-        },
-        modifier = modifier.padding(horizontal = 16.dp),
-    )
+
+    if(musicList.isNotEmpty()) {
+        MusicPlayerBody(
+            currentMusic = musicList[currentMusicIndex],
+            isPlaying = isPlaying,
+            duration = musicList[currentMusicIndex].duration,
+            progress = {progress},
+            updatePlayer = { homeUiEvents ->
+                musicListViewModel.onHomeUiEvents(homeUiEvents)
+            },
+            modifier = modifier.padding(horizontal = 16.dp),
+        )
+        PlayListView(
+            isPlaying = isPlaying,
+            currentMusicIndex = currentMusicIndex,
+            musicList = musicList,
+            modifier = modifier
+        )
+    }
+
 }
 
 @Composable
@@ -49,7 +56,7 @@ fun MusicPlayerBody(
     currentMusic: MusicAllInOne,
     isPlaying: Boolean,
     duration: Long,
-    progress: Float,
+    progress: () -> Float,
     modifier: Modifier = Modifier,
     updatePlayer: (HomeUiEvents) -> Unit,
 ){
@@ -102,10 +109,11 @@ fun MusicPlayerPreview() {
                 artist = "Artist",
             ),
             moods = setOf("Mood1", "Mood2"),
+            duration = 10000,
         ),
         isPlaying = true,
         duration = 10000,
-        progress = 1000f,
+        progress = {0.5f},
         updatePlayer = {},
     )
 }

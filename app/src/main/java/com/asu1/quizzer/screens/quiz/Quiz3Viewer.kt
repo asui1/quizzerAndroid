@@ -50,10 +50,10 @@ fun Quiz3Viewer(
 ) {
     val view = LocalView.current
     val quiz3List = remember { mutableStateListOf(*quiz.shuffledAnswers.toTypedArray()) }
-    val lazyListState = rememberLazyListState()
     fun shuffleQuiz3List(from: Int, to: Int){
         quiz3List.add(to, quiz3List.removeAt(from))
     }
+    val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         // Update the list
         shuffleQuiz3List(from.index, to.index)

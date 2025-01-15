@@ -1,0 +1,10 @@
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+            android:duration="2000"
+            android:propertyName="pathData"
+            android:repeatCount="infinite"
+            android:repeatMode="reverse"
+            android:valueFrom="M 50,50 L 50,10 L 60,10 L 60,50 Z"
+            android:valueTo="M 50,50 L 50,50 L 60,50 L 60,50 Z"
+            android:valueType="pathType"/>
+</set>
