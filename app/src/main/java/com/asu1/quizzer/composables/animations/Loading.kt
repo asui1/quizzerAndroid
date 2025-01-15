@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,10 +21,20 @@ import androidx.compose.ui.zIndex
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoadingAnimation(modifier: Modifier = Modifier, size: Dp = 200.dp) {
-    val assetPath = if(isSystemInDarkTheme()) "load_dark.lottie" else "load_light.lottie"
+    val assetPath = if (isSystemInDarkTheme()) "load_dark.lottie" else "load_light.lottie"
+    var lottieSource by remember { mutableStateOf<DotLottieSource?>(null) }
+
+    LaunchedEffect(assetPath) {
+        lottieSource = withContext(Dispatchers.IO) {
+            DotLottieSource.Asset(assetPath)
+        }
+    }
+
     Box(
         modifier = modifier
             .pointerInput(Unit) { }
@@ -27,16 +42,18 @@ fun LoadingAnimation(modifier: Modifier = Modifier, size: Dp = 200.dp) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        DotLottieAnimation(
-            source = DotLottieSource.Asset(assetPath),
-            autoplay = true,
-            loop = true,
-            speed = 1f,
-            useFrameInterpolation = false,
-            playMode = Mode.FORWARD,
-            modifier = Modifier
-                .background(Color.Transparent)
-                .size(size)
-        )
+        lottieSource?.let {
+            DotLottieAnimation(
+                source = it,
+                autoplay = true,
+                loop = true,
+                speed = 1f,
+                useFrameInterpolation = false,
+                playMode = Mode.FORWARD,
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .size(size)
+            )
+        }
     }
 }

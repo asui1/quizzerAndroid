@@ -69,7 +69,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "isDebug", "false")
             buildConfigField("String", "PASSWORD", "\"${System.getenv("PASSWORD") ?: throw IllegalArgumentException("PASSWORD environment variable not set")}\"")
             buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
@@ -81,6 +81,15 @@ android {
             buildConfigField("Boolean", "isDebug", "true")
             buildConfigField("String", "PASSWORD", "\"${System.getenv("PASSWORD") ?: throw IllegalArgumentException("PASSWORD environment variable not set")}\"")
             buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
+        }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "benchmark-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -181,6 +190,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraint.layout)
+    implementation("androidx.tracing:tracing:1.2.0")
 
     //EXOPLAYER
     implementation(libs.exoplayer)
@@ -211,8 +221,8 @@ dependencies {
     testImplementation(libs.androidx.media3.session)
     testImplementation(libs.exoplayer.test)
     testImplementation(libs.androidx.legacy.support.v4)
-    testImplementation("org.robolectric:robolectric:4.10.3")
-    testImplementation("androidx.test:core:1.5.0")
+    testImplementation(libs.robolectric.v4103)
+    testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.core.testing)
 
     androidTestImplementation(libs.androidx.fragment.ktx)
@@ -230,8 +240,10 @@ dependencies {
     androidTestImplementation(libs.androidx.media3.ui)
     androidTestImplementation(libs.androidx.media3.session)
     androidTestImplementation(libs.exoplayer.test)
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
+    androidTestImplementation(libs.hilt.android.test)
     kspAndroidTest(libs.hilt.compiler)
+
+    androidTestImplementation(project(":microbenchmark"))
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

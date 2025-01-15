@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.tracing.Trace
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.quizzer.R
@@ -224,6 +225,7 @@ fun MainScreen(
                                         )
                                     }
                                     1 -> {
+                                        Trace.endSection()
                                         VerticalQuizCardLargeColumn(
                                             quizCards = quizTrends,
                                             onClick = loadQuiz,
@@ -261,7 +263,8 @@ fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {})
         if (userData != null) {
             UriImageButton(modifier = Modifier
                 .size(iconSize)
-                .clip(shape = RoundedCornerShape(8.dp)), urlToImage,
+                .clip(shape = RoundedCornerShape(8.dp)),
+                urlToImage = urlToImage,
                 nickname = userData.nickname?.get(0) ?: 'O'
             )
         }

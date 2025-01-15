@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "quizzerAndroid"
 include(":app")
- 
+include(":macrobenchmark")
+include(":microbenchmark")

@@ -8,5 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.ksp)  apply false
     alias(libs.plugins.google.services)  apply false
     alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.benchmark) apply false
 }
 

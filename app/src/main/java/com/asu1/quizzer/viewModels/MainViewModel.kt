@@ -10,6 +10,7 @@ import com.asu1.quizzer.BuildConfig
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -28,21 +29,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun checkForUpdates() {
-        val context = getApplication<Application>().applicationContext
-        val appUpdateManager = AppUpdateManagerFactory.create(context)
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        // Checks that the platform will allow the specified type of update.
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                // This example applies an immediate update. To apply a flexible update
-                // instead, pass in AppUpdateType.FLEXIBLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-            ) {
-                _isUpdateAvailable.postValue(true)
-                // Request the update.
-            }else{
-                _isUpdateAvailable.postValue(false)
+        viewModelScope.launch(Dispatchers.IO) {
+            val context = getApplication<Application>().applicationContext
+            val appUpdateManager = AppUpdateManagerFactory.create(context)
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            // Checks that the platform will allow the specified type of update.
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    // This example applies an immediate update. To apply a flexible update
+                    // instead, pass in AppUpdateType.FLEXIBLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                ) {
+                    _isUpdateAvailable.postValue(true)
+                    // Request the update.
+                }else{
+                    _isUpdateAvailable.postValue(false)
+                }
             }
+
         }
 
         //NEEDED FOR LOCAL TESTING. MUST REMOVE ON RELEASE

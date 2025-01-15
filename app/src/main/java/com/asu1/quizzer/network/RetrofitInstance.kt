@@ -1,10 +1,12 @@
 package com.asu1.quizzer.network
 
+import android.net.TrafficStats
 import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer
 import com.asu1.quizzer.util.constants.BASE_URL
+import com.asu1.quizzer.util.constants.NetworkTags
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -34,10 +36,12 @@ object RetrofitInstance {
 
     private val authInterceptor = BasicAuthInterceptor()
     private val contentTypeInterceptor = ContentTypeInterceptor()
+    private val trafficStatsInterceptor = TrafficStatsInterceptor()
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
         .addInterceptor(contentTypeInterceptor)
+        .addInterceptor(trafficStatsInterceptor)
         .build()
 //        .addInterceptor(loggingInterceptor)
 
@@ -62,5 +66,16 @@ object RetrofitInstance {
 
     val api: ApiService by lazy {
         retrofit.create(ApiService::class.java)
+    }
+}
+
+class TrafficStatsInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        TrafficStats.setThreadStatsTag(NetworkTags.QUIZZER_API)
+        try {
+            return chain.proceed(chain.request())
+        } finally {
+            TrafficStats.clearThreadStatsTag()
+        }
     }
 }

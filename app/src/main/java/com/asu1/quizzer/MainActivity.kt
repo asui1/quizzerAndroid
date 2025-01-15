@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.tracing.Trace
 import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Trace.beginSection("MainActivity_onCreate")
         handleIntent(intent)
 
         lifecycleScope.launch {
@@ -166,6 +168,8 @@ class MainActivity : ComponentActivity() {
                                 launchSingleTop = true
                             }
                         }
+                        Trace.endSection()
+                        Trace.beginSection("MainActivity_NavHost")
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init,
@@ -463,7 +467,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        if (intent.action == Intent.ACTION_VIEW) {
+        if (intent.action == Intent.ACTION_VIEW || intent.action == "com.asu1.quizzer.ACTION_GET") {
             val data: Uri? = intent.data
             data?.let {
                 val resultId = it.getQueryParameter("resultId") ?: ""

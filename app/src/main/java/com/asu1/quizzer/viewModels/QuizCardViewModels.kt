@@ -2,6 +2,7 @@ package com.asu1.quizzer.viewModels
 
 import ToastManager
 import ToastType
+import android.net.TrafficStats
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,8 @@ import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.Logger
+import com.asu1.quizzer.util.constants.NetworkTags
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -145,9 +148,9 @@ class QuizCardMainViewModel : ViewModel() {
 
     fun fetchQuizCards(language: String, email: String = "GUEST") {
         _quizCards.value = emptyList()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-
+                TrafficStats.setThreadStatsTag(NetworkTags.FETCH_QUIZ_CARDS_TAG)
                 val response = RetrofitInstance.api.getRecommendations(language, email)
                 if (response.isSuccessful && response.body() != null) {
                     _quizCards.value = response.body()!!.searchResult.map {
@@ -158,6 +161,8 @@ class QuizCardMainViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _quizCards.value = emptyList()
+            } finally {
+                TrafficStats.clearThreadStatsTag()
             }
         }
     }
