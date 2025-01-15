@@ -36,8 +36,8 @@ import kotlinx.coroutines.withContext
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
 class MusicListViewModel @Inject constructor(
-    val musicServiceHandler: MusicServiceHandler,
-    val savedStateHandle: SavedStateHandle,
+    private val musicServiceHandler: MusicServiceHandler,
+    private val savedStateHandle: SavedStateHandle,
 ): ViewModel(){
 
     var duration by savedStateHandle.saveable { mutableLongStateOf(0L) }
@@ -65,8 +65,8 @@ class MusicListViewModel @Inject constructor(
     )
 
 
-    private var _musicList = MutableStateFlow(sampleMusicList)
-    val musicList: StateFlow<List<MusicAllInOne>> get() = _musicList
+    private var _musicList = MutableStateFlow<MutableList<MusicAllInOne>>(sampleMusicList.toMutableList())
+    val musicList: StateFlow<MutableList<MusicAllInOne>> get() = _musicList
 
     private val _homeUiState: MutableStateFlow<HomeUIState> =
         MutableStateFlow(HomeUIState.InitialHome)
@@ -140,7 +140,26 @@ class MusicListViewModel @Inject constructor(
                     seekPosition = ((duration * homeUiEvents.position) / 100f).toLong()
                 )
             }
-
+            is HomeUiEvents.ChangeItemOrder -> {
+                Logger.debug("Changing item order from ${homeUiEvents.from} to ${homeUiEvents.to}")
+                val musicListSize = _musicList.value.size
+                if (homeUiEvents.from in 0 until musicListSize && homeUiEvents.to in 0 until musicListSize) {
+                    val curMusic = _musicList.value[_currentMusicIndex.value!!]
+                    _musicList.value.apply {
+                        val item = removeAt(homeUiEvents.from)
+                        add(homeUiEvents.to, item)
+                    }
+                    _currentMusicIndex.value = _musicList.value.indexOf(curMusic)
+                    musicServiceHandler.onMediaStateEvents(
+                        MediaStateEvents.ChangeItemOrder(
+                            homeUiEvents.from,
+                            homeUiEvents.to
+                        )
+                    )
+                } else {
+                    Logger.debug("Invalid indices: from=${homeUiEvents.from}, to=${homeUiEvents.to}")
+                }
+            }
             is HomeUiEvents.CurrentAudioChanged -> {
                 musicServiceHandler.onMediaStateEvents(
                     MediaStateEvents.SelectedMusicChange,

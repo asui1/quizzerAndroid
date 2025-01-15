@@ -45,6 +45,9 @@ fun MusicPlayer(
             isPlaying = isPlaying,
             currentMusicIndex = currentMusicIndex,
             musicList = musicList,
+            updatePlayer = { homeUiEvents ->
+                musicListViewModel.onHomeUiEvents(homeUiEvents)
+            },
             modifier = modifier
         )
     }

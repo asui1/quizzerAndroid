@@ -110,6 +110,13 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
 }
 
 
@@ -117,6 +124,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.animation.graphics.android)
+    implementation(libs.androidx.junit.ktx)
+    testImplementation(libs.testng)
     ksp(libs.room.compiler)
 
     implementation(libs.core.ktx)
@@ -169,7 +178,6 @@ dependencies {
     implementation(libs.app.update.ktx)
     implementation(libs.landscapist.glide)
     implementation(libs.hilt.android)
-    testImplementation(libs.androidx.core.testing)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraint.layout)
@@ -197,6 +205,15 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.mockito.inline)
+    testImplementation(libs.exoplayer)
+    testImplementation(libs.androidx.media3.exoplayer.dash)
+    testImplementation(libs.androidx.media3.ui)
+    testImplementation(libs.androidx.media3.session)
+    testImplementation(libs.exoplayer.test)
+    testImplementation(libs.androidx.legacy.support.v4)
+    testImplementation("org.robolectric:robolectric:4.10.3")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation(libs.androidx.core.testing)
 
     androidTestImplementation(libs.androidx.fragment.ktx)
     androidTestImplementation(libs.androidx.core.testing)
@@ -208,6 +225,14 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.exoplayer)
+    androidTestImplementation(libs.androidx.media3.exoplayer.dash)
+    androidTestImplementation(libs.androidx.media3.ui)
+    androidTestImplementation(libs.androidx.media3.session)
+    androidTestImplementation(libs.exoplayer.test)
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
+    kspAndroidTest(libs.hilt.compiler)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

@@ -67,6 +67,7 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import com.asu1.quizzer.util.musics.HomeUiEvents
 
 //TODO: 클릭하면 재생하는 기능 + 드래그 끝났을떄 musicList 업데이트 하도록 전달.
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -76,8 +77,10 @@ fun PlayListView(
     currentMusicIndex: Int,
     musicList: List<MusicAllInOne>,
     initOpen: Boolean = true,
+    updatePlayer: (HomeUiEvents) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val currentMusic = remember(currentMusicIndex) { musicList[currentMusicIndex].music.title }
     val localMusicList = remember { mutableStateListOf(*musicList.toTypedArray()) }
     val view = LocalView.current
     val isOpen = remember{ mutableStateOf(initOpen) }
@@ -91,6 +94,7 @@ fun PlayListView(
         animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.music_player),
         atEnd = true
     )
+    val dragStart  = remember { mutableStateOf(-1) }
 
     LazyColumn(
         state = lazyListState,
@@ -119,7 +123,7 @@ fun PlayListView(
                 )
             }
         }
-        items(localMusicList, key = { it.music.title }) {
+        items(localMusicList, key = { it.music.title }) { musicItem ->
             AnimatedVisibility(
                 visible = isOpen.value,
                 enter = slideInVertically(
@@ -131,7 +135,7 @@ fun PlayListView(
                     animationSpec = tween(durationMillis = 300)
                 )
             ) {
-                ReorderableItem(reorderableLazyListState, key = it.music.title) { isDragging ->
+                ReorderableItem(reorderableLazyListState, key = musicItem.music.title) { isDragging ->
                     val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "")
 
                     Surface(
@@ -139,15 +143,18 @@ fun PlayListView(
                         shadowElevation = elevation
                     ) {
                         MusicListItem(
-                            musicAllInOne = it,
+                            musicAllInOne = musicItem,
                             modifier = Modifier.fillMaxWidth()
                                 .background(
-                                    if (currentMusicIndex == musicList.indexOf(it)) MaterialTheme.colorScheme.primaryContainer
+                                    if (currentMusic == musicItem.music.title) MaterialTheme.colorScheme.primaryContainer
                                     else Color.Transparent
                                 )
+                                .clickable {
+                                    updatePlayer(HomeUiEvents.CurrentAudioChanged(localMusicList.indexOf(musicItem)))
+                                }
                                 .then(paddingValues),
                             playingIcon = { modifier ->
-                                if (isPlaying && currentMusicIndex == musicList.indexOf(it)) {
+                                if (isPlaying && currentMusic == musicItem.music.title) {
                                     Image(
                                         painter = painter,
                                         contentDescription = null,
@@ -160,10 +167,14 @@ fun PlayListView(
                                 IconButton(
                                     modifier = modifier.draggableHandle(
                                         onDragStarted = {
+                                            dragStart.value = localMusicList.indexOf(musicItem)
                                             if (Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
                                                 view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
                                         },
                                         onDragStopped = {
+                                            Logger.debug("Dragged from ${dragStart.value} to ${localMusicList.indexOf(musicItem)}")
+                                            updatePlayer(HomeUiEvents.ChangeItemOrder(dragStart.value, localMusicList.indexOf(musicItem)))
+                                            dragStart.value = -1
                                             if (Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
                                                 view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
                                         },
@@ -188,6 +199,7 @@ fun PlayListViewPreview() {
     PlayListView(
         isPlaying = false,
         currentMusicIndex = 0,
-        musicList = sampleMusicList
+        musicList = sampleMusicList,
+        updatePlayer = {},
     )
 }

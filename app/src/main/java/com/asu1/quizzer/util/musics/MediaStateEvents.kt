@@ -12,5 +12,5 @@ sealed class MediaStateEvents {
     object Stop : MediaStateEvents()
     object SelectedMusicChange : MediaStateEvents()
     data class MediaProgress(val progress: Float) : MediaStateEvents()
-
+    data class ChangeItemOrder(val from: Int, val to: Int) : MediaStateEvents()
 }

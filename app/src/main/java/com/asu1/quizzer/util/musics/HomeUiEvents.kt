@@ -11,6 +11,7 @@ sealed class HomeUiEvents {
     object SeekToPrevious : HomeUiEvents()
     object Backward : HomeUiEvents()
     object Forward : HomeUiEvents()
+    data class ChangeItemOrder(val from: Int, val to: Int) : HomeUiEvents()
     data class AddLocalProgress(val progress: Float) : HomeUiEvents()
     data class UpdateLocalProgress(val progress: Float) : HomeUiEvents()
     object PushLocalProgress : HomeUiEvents()

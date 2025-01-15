@@ -37,7 +37,12 @@ class MusicServiceHandler(
         exoPlayer.prepare()
     }
 
+    fun getMediaItem(index: Int): MediaItem? {
+        return exoPlayer.getMediaItemAt(index)
+    }
+
     fun setMediaItemList(mediaItems: List<MediaItem>) {
+        if(mediaItems.isEmpty()) return
         exoPlayer.setMediaItems(mediaItems)
         exoPlayer.prepare()
     }
@@ -83,7 +88,21 @@ class MusicServiceHandler(
                     }
                 }
             }
-
+            // 1 2 3 4 -> 2 3 1 4 (from 0 to 2) -> index 1 ~ 2를 0으로
+            // 1 2 3 4 -> 3 1 2 4 (from 2 to 0) -> index 0 ~ 1을 1로
+            is MediaStateEvents.ChangeItemOrder -> {
+                if (exoPlayer.isCommandAvailable(Player.COMMAND_CHANGE_MEDIA_ITEMS)) {
+                    val from = mediaStateEvents.from
+                    val to = mediaStateEvents.to
+                    if(from < to){
+                        exoPlayer.moveMediaItems(from+1, to+1, from)
+                    }else if(from > to){
+                        exoPlayer.moveMediaItems(to, from, to+1)
+                    }
+                } else {
+                    Logger.debug("COMMAND_CHANGE_MEDIA_ITEMS is not available")
+                }
+            }
             is MediaStateEvents.MediaProgress -> {
                 exoPlayer.seekTo(
                     (exoPlayer.duration * mediaStateEvents.progress).toLong()
