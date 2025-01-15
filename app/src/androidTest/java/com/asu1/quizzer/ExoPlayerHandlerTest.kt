@@ -6,7 +6,6 @@ import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.test.utils.TestExoPlayerBuilder
 import androidx.test.core.app.ApplicationProvider
 import com.asu1.quizzer.service.MusicServiceHandler
 import com.asu1.quizzer.util.Logger
@@ -26,15 +25,16 @@ class ExoPlayerHandlerTest {
 
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var musicServiceHandler: MusicServiceHandler
-    private val sampleMusics = sampleMusicList
     private lateinit var mainHandler: Handler
     companion object {
         private lateinit var mediaItems: List<MediaItem>
+        private lateinit var itemTitles: List<String>
 
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
             val sampleMusics = sampleMusicList
+            itemTitles = sampleMusics.map { it.music.title }
             mediaItems = sampleMusics.map { audioItem ->
                 MediaItem.Builder()
                     .setUri(audioItem.getUri())
@@ -91,22 +91,7 @@ class ExoPlayerHandlerTest {
             }
         }
         latch.await(5, TimeUnit.SECONDS)
-        var item0 = ""
-        var item1 = ""
-        var item2 = ""
-        var item3 = ""
-
-        mainHandler.post {
-            item0= musicServiceHandler.getMediaItem(0)?.mediaMetadata?.displayTitle.toString()
-            item1= musicServiceHandler.getMediaItem(1)?.mediaMetadata?.displayTitle.toString()
-            item2= musicServiceHandler.getMediaItem(2)?.mediaMetadata?.displayTitle.toString()
-            item3= musicServiceHandler.getMediaItem(3)?.mediaMetadata?.displayTitle.toString()
-        }
-        latch.await(3, TimeUnit.SECONDS)
-        assertEquals(item0, mediaItems[0].mediaMetadata.displayTitle.toString())
-        assertEquals(item1, mediaItems[2].mediaMetadata.displayTitle.toString())
-        assertEquals(item2, mediaItems[3].mediaMetadata.displayTitle.toString())
-        assertEquals(item3, mediaItems[1].mediaMetadata.displayTitle.toString())
+        checkMediaItemOrder(listOf(0, 2, 3, 1))
     }
 
     @Test
@@ -121,27 +106,13 @@ class ExoPlayerHandlerTest {
                 musicServiceHandler.onMediaStateEvents(MediaStateEvents.ChangeItemOrder(3, 1))
             }
         }
-        latch.await(5, TimeUnit.SECONDS)
-        var item0 = ""
-        var item1 = ""
-        var item2 = ""
-        var item3 = ""
-
-        mainHandler.post {
-            item0= musicServiceHandler.getMediaItem(0)?.mediaMetadata?.displayTitle.toString()
-            item1= musicServiceHandler.getMediaItem(1)?.mediaMetadata?.displayTitle.toString()
-            item2= musicServiceHandler.getMediaItem(2)?.mediaMetadata?.displayTitle.toString()
-            item3= musicServiceHandler.getMediaItem(3)?.mediaMetadata?.displayTitle.toString()
-        }
-        latch.await(3, TimeUnit.SECONDS)
-        assertEquals(item0, mediaItems[0].mediaMetadata.displayTitle.toString())
-        assertEquals(item1, mediaItems[3].mediaMetadata.displayTitle.toString())
-        assertEquals(item2, mediaItems[1].mediaMetadata.displayTitle.toString())
-        assertEquals(item3, mediaItems[2].mediaMetadata.displayTitle.toString())
+        latch.await(7, TimeUnit.SECONDS)
+        checkMediaItemOrder(listOf(0, 3, 1, 2))
     }
+
     @Test
     fun onMediaStateEventsChangeItemOrder_from1to1_ignoreKeepOrder1234(){
-        val latch = CountDownLatch(3)
+        val latch = CountDownLatch(2)
         mainHandler.post {
             musicServiceHandler.setMediaItemList(mediaItems)
         }
@@ -152,26 +123,12 @@ class ExoPlayerHandlerTest {
             }
         }
         latch.await(5, TimeUnit.SECONDS)
-        var item0 = ""
-        var item1 = ""
-        var item2 = ""
-        var item3 = ""
-
-        mainHandler.post {
-            item0= musicServiceHandler.getMediaItem(0)?.mediaMetadata?.displayTitle.toString()
-            item1= musicServiceHandler.getMediaItem(1)?.mediaMetadata?.displayTitle.toString()
-            item2= musicServiceHandler.getMediaItem(2)?.mediaMetadata?.displayTitle.toString()
-            item3= musicServiceHandler.getMediaItem(3)?.mediaMetadata?.displayTitle.toString()
-        }
-        latch.await(3, TimeUnit.SECONDS)
-        assertEquals(item0, mediaItems[0].mediaMetadata.displayTitle.toString())
-        assertEquals(item1, mediaItems[1].mediaMetadata.displayTitle.toString())
-        assertEquals(item2, mediaItems[2].mediaMetadata.displayTitle.toString())
-        assertEquals(item3, mediaItems[3].mediaMetadata.displayTitle.toString())
+        checkMediaItemOrder(listOf(0, 1, 2, 3))
     }
+
     @Test
     fun onMediaStateEventsChangeItemOrder_from5to1OutOfRange_ignoreKeepOrder1234(){
-        val latch = CountDownLatch(3)
+        val latch = CountDownLatch(2)
         mainHandler.post {
             musicServiceHandler.setMediaItemList(mediaItems)
         }
@@ -182,22 +139,27 @@ class ExoPlayerHandlerTest {
             }
         }
         latch.await(5, TimeUnit.SECONDS)
-        var item0 = ""
-        var item1 = ""
-        var item2 = ""
-        var item3 = ""
+        checkMediaItemOrder(listOf(0, 1, 2, 3))
+    }
 
+    private fun checkMediaItemOrder(expectedOrder: List<Int>){
+        if(itemTitles.size != expectedOrder.size) throw IllegalArgumentException("Items and order size should be same")
+        val latch = CountDownLatch(1)
+        val items = Array(itemTitles.size){""}
         mainHandler.post {
-            item0= musicServiceHandler.getMediaItem(0)?.mediaMetadata?.displayTitle.toString()
-            item1= musicServiceHandler.getMediaItem(1)?.mediaMetadata?.displayTitle.toString()
-            item2= musicServiceHandler.getMediaItem(2)?.mediaMetadata?.displayTitle.toString()
-            item3= musicServiceHandler.getMediaItem(3)?.mediaMetadata?.displayTitle.toString()
+            for(i in expectedOrder.indices){
+                items[i] = musicServiceHandler.getMediaItem(i)?.mediaMetadata?.displayTitle.toString()
+            }
         }
         latch.await(3, TimeUnit.SECONDS)
-        assertEquals(item0, mediaItems[0].mediaMetadata.displayTitle.toString())
-        assertEquals(item1, mediaItems[1].mediaMetadata.displayTitle.toString())
-        assertEquals(item2, mediaItems[2].mediaMetadata.displayTitle.toString())
-        assertEquals(item3, mediaItems[3].mediaMetadata.displayTitle.toString())
+        for(i in itemTitles.indices){
+            Logger.debug("Expected: ${itemTitles[i]}, Actual: ${items[i]}")
+            Logger.debug("Expected: ${itemTitles[i]}, expected: ${expectedOrder.indexOf(i)} Actual: ${items[expectedOrder.indexOf(i)]}")
+        }
+
+        for(i in itemTitles.indices){
+            assertEquals(itemTitles[i], items[expectedOrder.indexOf(i)])
+        }
     }
 }
 

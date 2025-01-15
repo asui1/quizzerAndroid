@@ -16,6 +16,9 @@ import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.viewModels.MusicListViewModel
+import androidx.compose.ui.platform.LocalContext
+import android.content.Context
+import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -23,12 +26,23 @@ fun MusicPlayer(
     modifier: Modifier = Modifier
 ) {
     val musicListViewModel: MusicListViewModel = hiltViewModel()
+    val context: Context = LocalContext.current
 
     val progress by musicListViewModel.progress.observeAsState(0f)
     val isPlaying = musicListViewModel.isMusicPlaying
     val currentMusicIndex by musicListViewModel.currentMusicIndex.observeAsState(0)
     val musicList by musicListViewModel.musicList.collectAsStateWithLifecycle(listOf())
+    fun startMusicService(){
+        musicListViewModel.startMusicService(context)
+    }
 
+    //TODO: NEED TO REQUEST FOR NOTIFICATION PERMISSION
+    //WITH USING
+    LaunchedEffect(isPlaying){
+        if(isPlaying){
+            startMusicService()
+        }
+    }
 
     if(musicList.isNotEmpty()) {
         MusicPlayerBody(

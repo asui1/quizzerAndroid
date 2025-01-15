@@ -1,9 +1,9 @@
 package com.asu1.quizzer.viewModels
 
-import androidx.compose.runtime.getValue
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -13,9 +13,10 @@ import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.asu1.quizzer.musics.Music
+import androidx.media3.common.util.Util.startForegroundService
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.service.MusicServiceHandler
+import com.asu1.quizzer.service.QuizzerMusicPlayerService
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUIState
@@ -40,6 +41,8 @@ class MusicListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ): ViewModel(){
 
+    private var isMusicServiceRunning by savedStateHandle.saveable { mutableStateOf(false) }
+
     var duration by savedStateHandle.saveable { mutableLongStateOf(0L) }
 
     // PROGRESS IN VALUE FROM 0f to 1f, showing progress * duration.
@@ -54,16 +57,6 @@ class MusicListViewModel @Inject constructor(
     private val _currentMusicIndex = MutableLiveData(0)
     val currentMusicIndex: LiveData<Int> get() = _currentMusicIndex
 
-    var currentSelectedMusic by mutableStateOf(
-        MusicAllInOne(
-            music = Music(
-                title = "sample1",
-                artist = "Test1",
-            ),
-            moods = setOf("Happy")
-        )
-    )
-
 
     private var _musicList = MutableStateFlow<MutableList<MusicAllInOne>>(sampleMusicList.toMutableList())
     val musicList: StateFlow<MutableList<MusicAllInOne>> get() = _musicList
@@ -71,11 +64,14 @@ class MusicListViewModel @Inject constructor(
     private val _homeUiState: MutableStateFlow<HomeUIState> =
         MutableStateFlow(HomeUIState.InitialHome)
 
+    //TODO: VIEWMODEL이 새로 시작될 때 리셋되버림.
     init{
+        Logger.debug("MusicListViewModel created1")
         setMusicItems()
     }
 
     init {
+        Logger.debug("MusicListViewModel created2")
         viewModelScope.launch {
             musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
                 when (musicStates) {
@@ -97,6 +93,15 @@ class MusicListViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    fun startMusicService(context: Context){
+        if(!isMusicServiceRunning){
+            val intent = Intent(context, QuizzerMusicPlayerService::class.java)
+            startForegroundService(context, intent)
+            isMusicServiceRunning = true
         }
     }
 
@@ -161,10 +166,13 @@ class MusicListViewModel @Inject constructor(
                 }
             }
             is HomeUiEvents.CurrentAudioChanged -> {
-                musicServiceHandler.onMediaStateEvents(
-                    MediaStateEvents.SelectedMusicChange,
-                    selectedMusicIndex = homeUiEvents.index
-                )
+                 if(homeUiEvents.index in 0 until _musicList.value.size){
+                     _currentMusicIndex.value = homeUiEvents.index
+                     musicServiceHandler.onMediaStateEvents(
+                         MediaStateEvents.SelectedMusicChange,
+                         selectedMusicIndex = homeUiEvents.index
+                     )
+                 }
             }
 
             is HomeUiEvents.UpdateProgress -> {

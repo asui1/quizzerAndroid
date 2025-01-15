@@ -6,6 +6,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,9 +23,6 @@ class MusicServiceHandler(
 
     private var _musicStates: MutableStateFlow<MusicStates> = MutableStateFlow(MusicStates.Initial)
     val musicStates: StateFlow<MusicStates> = _musicStates.asStateFlow()
-
-    private var _currentProgress: MutableStateFlow<Long> = MutableStateFlow(0L)
-    val currentProgress: StateFlow<Long> = _currentProgress.asStateFlow()
 
     private var job: Job? = null
 
@@ -43,8 +41,10 @@ class MusicServiceHandler(
 
     fun setMediaItemList(mediaItems: List<MediaItem>) {
         if(mediaItems.isEmpty()) return
-        exoPlayer.setMediaItems(mediaItems)
-        exoPlayer.prepare()
+        CoroutineScope(Dispatchers.Main).launch {
+            exoPlayer.setMediaItems(mediaItems)
+            exoPlayer.prepare()
+        }
     }
 
     suspend fun onMediaStateEvents(
@@ -96,6 +96,9 @@ class MusicServiceHandler(
                     val to = mediaStateEvents.to
                     if(from < to){
                         exoPlayer.moveMediaItems(from+1, to+1, from)
+                        // 3, 1  -> 1234 -> 1 4 2 3
+                        // Now: 1 3 4 2
+                        // moveMediaItems(1, 3, 2) ->
                     }else if(from > to){
                         exoPlayer.moveMediaItems(to, from, to+1)
                     }

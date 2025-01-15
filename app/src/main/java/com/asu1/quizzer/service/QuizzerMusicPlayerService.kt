@@ -8,6 +8,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.asu1.quizzer.musics.MediaNotificationManager
+import com.asu1.quizzer.util.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -22,6 +23,7 @@ class QuizzerMusicPlayerService : MediaSessionService(){
 
     @UnstableApi
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Logger.debug("Start SERVICE")
         musicNotificationManager.startMusicNotificationService(
             mediaSession = mediaSession,
             mediaSessionService = this

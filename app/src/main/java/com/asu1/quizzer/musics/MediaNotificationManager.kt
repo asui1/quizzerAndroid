@@ -25,6 +25,7 @@ class MediaNotificationManager
 ) {
     private val musicNotificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(context)
+    private var playerNotificationManager: PlayerNotificationManager? = null
 
     init {
         createMusicNotificationChannel()
@@ -42,7 +43,7 @@ class MediaNotificationManager
 
     @UnstableApi
     private fun buildMusicNotification(mediaSession: MediaSession) {
-        PlayerNotificationManager.Builder(
+        playerNotificationManager = PlayerNotificationManager.Builder(
             context,
             NOTIFICATION_ID,
             NOTIFICATION_CHANNEL_ID
