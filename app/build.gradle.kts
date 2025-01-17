@@ -130,6 +130,12 @@ android {
 
 
 dependencies {
+    //Module management
+    implementation(project(":core:quizModels"))
+    testImplementation(project(":core:quizModels"))
+    androidTestImplementation(project(":core:quizModels"))
+
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.animation.graphics.android)
@@ -178,7 +184,6 @@ dependencies {
     implementation(libs.core)
     implementation(libs.compose)
     implementation(libs.reorderable)
-//    implementation("androidx.wear.compose:compose-material-core:1.4.0")
     implementation(libs.lottie.compose)
     implementation(libs.dotlottie.android)
     implementation(libs.places)
@@ -190,7 +195,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraint.layout)
-    implementation("androidx.tracing:tracing:1.2.0")
+    implementation(libs.androidx.tracing)
 
     //EXOPLAYER
     implementation(libs.exoplayer)

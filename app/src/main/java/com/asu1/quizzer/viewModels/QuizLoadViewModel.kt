@@ -6,11 +6,11 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.models.serializers.json
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.data.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.network.RetrofitInstance

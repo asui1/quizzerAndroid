@@ -1,19 +1,18 @@
-package com.asu1.quizzer.data
+package com.asu1.models.serializers
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import com.asu1.quizzer.data.ColorSchemeSerializer.toColor
-import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 
 object ColorSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun serialize(encoder: Encoder, value: Color) {
         encoder.encodeString(value.toArgb().toHexString())
     }
@@ -23,4 +22,9 @@ object ColorSerializer : KSerializer<Color> {
         val color = hexString.toColor()
         return color
     }
+    private fun String.toColor(): Color {
+        val value = this.substring(1, 9).toLong(16)
+        return Color(value.toInt())
+    }
+
 }

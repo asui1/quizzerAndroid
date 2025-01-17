@@ -12,6 +12,37 @@ https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 2. coroutine 사용하던 곳 Rxjava로 몇 개 바꾸기.
 3. 그리고 면접 관련 대답 제대로 못한 부분 메꾸기... aar이 뭔지, java reflect가 뭔지, coroutine 주의할 점..., 다른 clean architecture,
 
+1. FEATURE
+
+
+2. DOMAIN
+
+
+3. REPOSITORY
+
+
+4. DATA
+    - 퀴즈
+    - 노래 목록
+
+
+Android Library -> 안드로이드 프레임워크가 필요한 것.
+ - 노래 재생 관련 1
+ - Database 관련 1
+ - 서버 통신 관련 1
+ - UI 공통 콤포넌트
+    - 이미지
+    - 색
+    - 텍스트
+ - 퀴즈 관련 UI 콤포넌트 1
+    - 퀴즈 생성
+    - 퀴즈 풀기
+
+Kotlin Library -> 안드로이드 프레임워크가 필요 없는 것.
+ - 퀴즈 관련 작업.
+ - 기타 Util 관련 작업.
+
+
 개선점 발견. 객체 지향적으로 프로그래밍이 되어있지않음...
 모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.
 Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.

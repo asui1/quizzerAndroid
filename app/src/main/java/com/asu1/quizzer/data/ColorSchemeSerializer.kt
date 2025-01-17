@@ -69,10 +69,12 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         )
         encoder.encodeSerializableValue(JsonObject.serializer(), json)
     }
+
     fun String.toColor(): Color {
         val value = this.substring(1, 9).toLong(16)
         return Color(value.toInt())
     }
+
     fun stringToColor(colorString: String): Color {
         val value = colorString.substring(1, 9).toLong(16)
         val color = Color(value.toInt())

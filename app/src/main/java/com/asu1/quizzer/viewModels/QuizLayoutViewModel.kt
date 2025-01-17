@@ -10,6 +10,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz1
+import com.asu1.models.quiz.Quiz2
+import com.asu1.models.quiz.Quiz3
+import com.asu1.models.quiz.Quiz4
+import com.asu1.models.sampleQuiz1
+import com.asu1.models.sampleQuiz2
+import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.QuizError
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSchemeSerializer
 import com.asu1.quizzer.data.QuizDataSerializer
@@ -18,19 +27,11 @@ import com.asu1.quizzer.data.SendQuizResult
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.data.toJson
-import com.asu1.quizzer.model.BodyType
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.model.sampleQuiz1
-import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
@@ -241,15 +242,13 @@ class QuizLayoutViewModel : ViewModel() {
     fun gradeQuiz(email: String, onDone: () -> Unit) {
         var totalScore = 0f
         var currentScore = 0f
-        var corrections = quizzes.value!!.map { false }
-        for(quiz in quizzes.value!!){
+        var corrections = quizzes.value.map { false }
+        for(quiz in quizzes.value){
             if(quiz.gradeQuiz()){
                 currentScore += quiz.point
                 corrections = corrections.toMutableList().apply {
-                    set(quizzes.value!!.indexOf(quiz), true)
+                    set(quizzes.value.indexOf(quiz), true)
                 }
-            }
-            else{
             }
             totalScore += quiz.point
         }
@@ -284,6 +283,7 @@ class QuizLayoutViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO){
             try {
                 val response = RetrofitInstance.api.getQuizData(quizId)
+                Logger.debug("RESPONSE SUCCESS")
                 if (response.isSuccessful) {
                     coroutineScope{
                         val loadScoreCardDeferred = async { scoreCardViewModel.loadScoreCard(response.body()!!.scoreCard) }
@@ -293,11 +293,11 @@ class QuizLayoutViewModel : ViewModel() {
                         _viewModelState.postValue(ViewModelState.IDLE)
                     }
                 } else {
-                    val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
                     ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
                     _viewModelState.postValue(ViewModelState.ERROR)
                 }
             } catch (e: Exception) {
+                Logger.debug("Failed to load quiz ${e.message}")
                 withContext(Dispatchers.Main) {
                     ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
                     _viewModelState.value = ViewModelState.ERROR
@@ -384,16 +384,29 @@ class QuizLayoutViewModel : ViewModel() {
             ToastManager.showToast(R.string.title_cannot_be_empty, ToastType.ERROR)
             return false
         }
-        if(_quizzes.value!!.isEmpty()) {
+        if(_quizzes.value.isEmpty()) {
             ToastManager.showToast(R.string.quiz_cannot_be_empty, ToastType.ERROR)
             return false
         }
-        for(quiz in _quizzes.value!!){
+        for(quiz in _quizzes.value){
             val check = quiz.validateQuiz()
-            if(!check.second){
-                ToastManager.showToast(check.first, ToastType.ERROR)
-                updateInitIndex(_quizzes.value.indexOf(quiz))
-                return false
+            when(check){
+                QuizError.EMPTY_QUESTION -> {
+                    ToastManager.showToast(R.string.question_cannot_be_empty, ToastType.ERROR)
+                    updateInitIndex(_quizzes.value.indexOf(quiz))
+                    return false
+                }
+                QuizError.EMPTY_ANSWER -> {
+                    ToastManager.showToast(R.string.answers_cannot_be_empty, ToastType.ERROR)
+                    updateInitIndex(_quizzes.value.indexOf(quiz))
+                    return false
+                }
+                QuizError.EMPTY_OPTION -> {
+                    ToastManager.showToast(R.string.correct_answer_not_selected, ToastType.ERROR)
+                    updateInitIndex(_quizzes.value.indexOf(quiz))
+                    return false
+                }
+                QuizError.NO_ERROR -> {}
             }
         }
         return true
@@ -657,7 +670,7 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun updateQuiz1(quizIndex: Int, answerIndex: Int){
         val quiz = quizzes.value[quizIndex] as Quiz1
-        quiz.toggleUserAnswer(answerIndex)
+        quiz.toggleUserAnswerAt(answerIndex)
         _quizzes.update {
             it.toMutableList().apply {
                 set(quizIndex, quiz)

@@ -1,6 +1,6 @@
 package com.asu1.quizzer.quizCreateUtils
 
-import com.asu1.quizzer.model.BodyType
+import com.asu1.models.serializers.BodyType
 import java.time.LocalDate
 import java.time.YearMonth
 

@@ -1,6 +1,6 @@
 package com.asu1.quizzer.util
 
-import com.asu1.quizzer.model.QuizType
+import com.asu1.models.serializers.QuizType
 import kotlinx.serialization.Serializable
 
 sealed interface Route {

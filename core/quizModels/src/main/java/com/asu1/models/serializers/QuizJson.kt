@@ -1,11 +1,11 @@
-package com.asu1.quizzer.data
+package com.asu1.models.serializers
 
 import androidx.compose.ui.geometry.Offset
-import com.asu1.quizzer.model.Quiz
-import com.asu1.quizzer.model.Quiz1
-import com.asu1.quizzer.model.Quiz2
-import com.asu1.quizzer.model.Quiz3
-import com.asu1.quizzer.model.Quiz4
+import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz1
+import com.asu1.models.quiz.Quiz2
+import com.asu1.models.quiz.Quiz3
+import com.asu1.models.quiz.Quiz4
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,6 +17,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.logging.Logger
 
 val quizSerializersModule = SerializersModule {
     polymorphic(QuizJson::class) {
@@ -30,16 +31,21 @@ val quizSerializersModule = SerializersModule {
 val colorSerializersModule = SerializersModule{
     contextual(ColorSerializer)
 }
+val bodyTypeSerializersModule = SerializersModule {
+    contextual(BodyTypeSerializer)
+}
 
 val combinedSerializersModule = SerializersModule {
     include(quizSerializersModule)
     include(colorSerializersModule)
+    include(bodyTypeSerializersModule)
 }
 val json = Json {
     classDiscriminator = "layoutType"
     serializersModule = combinedSerializersModule
     ignoreUnknownKeys = true
 }
+
 
 @OptIn(ExperimentalSerializationApi::class)
 @JsonClassDiscriminator("layoutType")
@@ -53,13 +59,14 @@ sealed class QuizJson {
     data class Quiz1Json(
         val body: Quiz1Body
     ) : QuizJson(){
-        override fun load(): Quiz1{
+        override fun load(): Quiz1 {
             val quiz = Quiz1()
             quiz.load(this.toString())
             return quiz
         }
 
         override fun toQuiz(): Quiz1 {
+            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz1(
                 question = body.question,
                 answers = body.answers.toMutableList(),
@@ -89,7 +96,7 @@ sealed class QuizJson {
     data class Quiz2Json(
         val body: Quiz2Body
     ) : QuizJson(){
-        override fun load(): Quiz2{
+        override fun load(): Quiz2 {
             val quiz = Quiz2()
             quiz.load(this.toString())
             return quiz
@@ -134,6 +141,7 @@ sealed class QuizJson {
         }
 
         override fun toQuiz(): Quiz3 {
+            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz3(
                 question = body.question,
                 answers = body.answers.toMutableList(),
@@ -168,13 +176,14 @@ sealed class QuizJson {
         }
 
         override fun toQuiz(): Quiz {
+            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz4(
                 question = body.question,
                 answers = body.answers.toMutableList(),
                 connectionAnswers = body.connectionAnswers.toMutableList(),
                 connectionAnswerIndex = body.connectionAnswerIndex.toMutableList(),
                 dotPairOffsets = mutableListOf<Pair<Offset?, Offset?>>().apply {
-                    body.connectionAnswers.forEach { add(null to null) }
+                    body.connectionAnswers.forEach { _ -> add(null to null) }
                 },
                 bodyType = Json.decodeFromString(body.bodyValue),
                 point = body.points

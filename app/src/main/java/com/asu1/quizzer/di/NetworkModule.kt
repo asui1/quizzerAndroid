@@ -1,7 +1,7 @@
 // NetworkModule.kt
 package com.asu1.quizzer.di
 
-import com.asu1.quizzer.data.json
+import com.asu1.models.serializers.json
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
 import com.asu1.quizzer.model.UserInfoDeserializer

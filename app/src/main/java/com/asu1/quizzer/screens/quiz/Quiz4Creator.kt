@@ -43,10 +43,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.models.quiz.Quiz
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
-import com.asu1.quizzer.model.Quiz
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable

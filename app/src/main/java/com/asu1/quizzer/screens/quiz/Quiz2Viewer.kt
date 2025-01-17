@@ -14,11 +14,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.models.quiz.Quiz2
+import com.asu1.models.sampleQuiz2
 import com.asu1.quizzer.R
-import com.asu1.quizzer.model.Quiz2
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.model.TextStyles
-import com.asu1.quizzer.model.sampleQuiz2
 import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import java.time.LocalDate

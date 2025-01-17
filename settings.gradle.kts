@@ -23,3 +23,4 @@ rootProject.name = "quizzerAndroid"
 include(":app")
 include(":macrobenchmark")
 include(":microbenchmark")
+include(":core:quizModels")

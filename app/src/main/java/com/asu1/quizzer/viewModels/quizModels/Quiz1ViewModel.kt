@@ -1,7 +1,7 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import com.asu1.quizzer.model.BodyType
-import com.asu1.quizzer.model.Quiz1
+import com.asu1.models.quiz.Quiz1
+import com.asu1.models.serializers.BodyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

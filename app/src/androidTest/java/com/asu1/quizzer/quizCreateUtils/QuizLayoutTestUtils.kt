@@ -19,7 +19,7 @@ import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.test.espresso.Espresso.onIdle
-import com.asu1.quizzer.model.BodyType
+import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.uriToByteArray
 import kotlinx.coroutines.runBlocking

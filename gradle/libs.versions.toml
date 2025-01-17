@@ -63,6 +63,7 @@ exoplayer = "1.5.1"
 google-services = "4.4.2"
 runtime-livedata = "1.7.6"
 security-crypto = "1.1.0-alpha06"
+tracing = "1.2.0"
 uuid-creator = "6.0.0"
 constrait-layout = "1.1.0"
 animation-graphics-android = "1.7.6"
@@ -74,6 +75,9 @@ benchmark = "1.3.3"
 runner = "1.6.2"
 benchmark-junit4 = "1.3.3"
 ui-graphics-android = "1.7.6"
+jetbrains-kotlin-jvm = "2.1.0"
+appcompat = "1.6.1"
+accessibility-test-framework = "4.1.1"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -93,6 +97,7 @@ androidx-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-da
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3-effect" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtime-livedata" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
+androidx-tracing = { module = "androidx.tracing:tracing", version.ref = "tracing" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
@@ -167,6 +172,8 @@ androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchm
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-benchmark-junit4 = { group = "androidx.benchmark", name = "benchmark-junit4", version.ref = "benchmark-junit4" }
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "ui-graphics-android" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+accessibility-test-framework = { group = "com.google.android.apps.common.testing.accessibility.framework", name = "accessibility-test-framework", version.ref = "accessibility-test-framework" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }
@@ -179,5 +186,6 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 android-test = { id = "com.android.test", version.ref = "android" }
 android-library = { id = "com.android.library", version.ref = "android" }
 benchmark = { id = "androidx.benchmark", version.ref = "benchmark" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin-jvm" }
 
 [bundles]

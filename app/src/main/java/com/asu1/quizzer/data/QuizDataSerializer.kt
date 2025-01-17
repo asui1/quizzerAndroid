@@ -1,5 +1,6 @@
 package com.asu1.quizzer.data
 
+import com.asu1.models.serializers.QuizJson
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -7,7 +8,6 @@ import com.asu1.quizzer.viewModels.QuizTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import java.util.Base64
 
 @Serializable
@@ -60,19 +60,3 @@ suspend fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializ
     )
     return quizLayoutSerializer
 }
-
-
-fun QuizLayoutViewModel.loadQuizData(json: String) {
-    val quizDataSerializer = Json.decodeFromString<QuizDataSerializer>(json)
-    this.updateShuffleQuestions(quizDataSerializer.shuffleQuestions)
-    this.quizData.value.title = quizDataSerializer.title
-    this.quizData.value.creator = quizDataSerializer.creator
-    this.quizData.value.image = Base64.getDecoder().decode(quizDataSerializer.titleImage)
-    this.quizData.value.uuid = quizDataSerializer.uuid
-    this.quizData.value.tags = quizDataSerializer.tags
-    this.quizData.value.description = quizDataSerializer.description
-    quizDataSerializer.quizzes.map{
-        this.addQuiz(it.load())
-    }
-}
-

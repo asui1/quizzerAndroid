@@ -14,9 +14,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.asu1.models.serializers.ColorSerializer
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.effects.GradientBrush
-import com.asu1.quizzer.data.ColorSerializer
 import com.asu1.quizzer.data.ShaderTypeSerializer
 import kotlinx.serialization.Serializable
 

@@ -1,6 +1,6 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
-import com.asu1.quizzer.model.BodyType
+import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3

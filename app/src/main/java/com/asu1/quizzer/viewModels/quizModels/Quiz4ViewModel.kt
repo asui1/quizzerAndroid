@@ -2,8 +2,8 @@ package com.asu1.quizzer.viewModels.quizModels
 
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.model.BodyType
-import com.asu1.quizzer.model.Quiz4
+import com.asu1.models.quiz.Quiz4
+import com.asu1.models.serializers.BodyType
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

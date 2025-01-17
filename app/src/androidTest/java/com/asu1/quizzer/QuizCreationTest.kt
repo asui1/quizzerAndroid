@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
-import com.asu1.quizzer.model.BodyType
+import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils
 import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
