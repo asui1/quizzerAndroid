@@ -2,15 +2,13 @@ package com.asu1.models.serializers
 
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Serializable(with = BodyTypeSerializer::class)
 sealed class BodyType(val value: Int) {
-    @Serializable
+
     object NONE : BodyType(value = 0)
 
-    @Serializable
     data class TEXT(val bodyText: String) : BodyType(value = 1)
 
-    @Serializable
     data class IMAGE(val bodyImage: ByteArray) : BodyType(value = 2) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -29,7 +27,6 @@ sealed class BodyType(val value: Int) {
         }
     }
 
-    @Serializable
     data class YOUTUBE(val youtubeId: String, val youtubeStartTime: Int) : BodyType(value = 3)
 
     fun validate() : BodyType {

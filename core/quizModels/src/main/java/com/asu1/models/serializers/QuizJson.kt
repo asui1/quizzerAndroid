@@ -11,6 +11,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
@@ -46,6 +49,36 @@ val json = Json {
     ignoreUnknownKeys = true
 }
 
+fun extractYouTubeDetails(jsonString: String): Pair<String, Int> {
+    val regex = """"youtubeId":"(.*?)","youtubeStartTime":(\d+)""".toRegex()
+    val matchResult = regex.find(jsonString)
+    val youtubeId = matchResult?.groups?.get(1)?.value ?: ""
+    val youtubeStartTime = matchResult?.groups?.get(2)?.value?.toInt() ?: 0
+    return Pair(youtubeId, youtubeStartTime)
+}
+fun extractBodyText(jsonString: String): String {
+    val regex = """"bodyText":"(.*?)"""".toRegex()
+    val matchResult = regex.find(jsonString)
+    val bodyText = matchResult?.groups?.get(1)?.value ?: ""
+    return bodyText.replace("\\n", "\n")
+}
+fun manualDeserializer(input: String): BodyType{
+    Logger.getLogger("QuizJson").info("input: $input")
+    if(input.contains("quizzer.model.BodyType.NONE")){
+        return BodyType.NONE
+    }else if(input.contains("quizzer.model.BodyType.TEXT")) {
+//Old Input: {"type":"com.asu1.quizzer.model.BodyType.TEXT","value":1,"bodyText":"I'm stanning, just stanning you\n(_________________)\n\n오늘도 스치듯 그 말이"}
+        val bodyText = extractBodyText(input)
+        return BodyType.TEXT(bodyText)
+    }else if(input.contains("quizzer.model.BodyType.IMAGE")) {
+        return BodyType.IMAGE(ByteArray(0))
+    }else if(input.contains("quizzer.model.BodyType.YOUTUBE")) {
+//Old Input: {"type":"com.asu1.quizzer.model.BodyType.YOUTUBE","value":3,"youtubeId":"v7bnOxV4jAc","youtubeStartTime":0}
+        val (youtubeId, youtubeStartTime) = extractYouTubeDetails(input)
+        return BodyType.YOUTUBE(youtubeId, youtubeStartTime)
+    }
+    return json.decodeFromString(input)
+}
 
 @OptIn(ExperimentalSerializationApi::class)
 @JsonClassDiscriminator("layoutType")
@@ -72,7 +105,7 @@ sealed class QuizJson {
                 answers = body.answers.toMutableList(),
                 ans = body.ans.toMutableList(),
                 shuffleAnswers = body.shuffleAnswers,
-                bodyType = Json.decodeFromString(body.bodyValue),
+                bodyType = manualDeserializer(body.bodyValue),
                 point = body.points
             )
             quiz.initViewState()
@@ -145,7 +178,7 @@ sealed class QuizJson {
             val quiz = Quiz3(
                 question = body.question,
                 answers = body.answers.toMutableList(),
-                bodyType = Json.decodeFromString(body.bodyValue),
+                bodyType = manualDeserializer(body.bodyValue),
                 point = body.points,
             )
             quiz.initViewState()
@@ -185,7 +218,7 @@ sealed class QuizJson {
                 dotPairOffsets = mutableListOf<Pair<Offset?, Offset?>>().apply {
                     body.connectionAnswers.forEach { _ -> add(null to null) }
                 },
-                bodyType = Json.decodeFromString(body.bodyValue),
+                bodyType = manualDeserializer(body.bodyValue),
                 point = body.points
             )
             quiz.initViewState()
