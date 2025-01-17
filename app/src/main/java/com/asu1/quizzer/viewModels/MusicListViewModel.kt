@@ -29,11 +29,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+//TODO: MUSIC STATE SHOULD BE BASED ON SERVICE Escpecially on Init.(Current Init overrides service even if it is running.)
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
 class MusicListViewModel @Inject constructor(

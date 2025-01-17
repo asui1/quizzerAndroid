@@ -1,7 +1,6 @@
 package com.asu1.quizzer
 
 import android.app.Application
-import android.os.StrictMode
 import androidx.room.Room
 import com.asu1.quizzer.database.AppDatabase
 import com.asu1.quizzer.musics.MusicDao

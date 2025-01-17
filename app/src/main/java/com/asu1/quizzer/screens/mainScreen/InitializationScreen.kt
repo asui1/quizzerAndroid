@@ -19,7 +19,7 @@ fun InitializationScreen(initViewModel: MainViewModel = viewModel(),
 
     when (isUpdateAvailable) {
         null -> {
-//            LoadingAnimation()
+            LoadingAnimation()
         }
         true -> UpdateDialog(
             onUpdate = { redirectToPlayStore(it) },

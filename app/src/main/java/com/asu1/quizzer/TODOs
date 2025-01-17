@@ -1,12 +1,16 @@
 TODOs to app implementation
 First aim to make app launchable without some features that are not essential.
 
-// APP TEST LINK :
+// APP TEST LINKs :
 https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac4443539567078e268752c832
 -> "메인으로" 텍스트 기다리기.
-
 https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
+
+일단 면접 이후 개선해야 될 것들:
+1. 모듈 나눠서 멀티모듈 프로젝트로 만들어야함 + 주요 기능에 따라서 프로세스 분리해주기.
+2. coroutine 사용하던 곳 Rxjava로 몇 개 바꾸기.
+3. 그리고 면접 관련 대답 제대로 못한 부분 메꾸기... aar이 뭔지, java reflect가 뭔지, coroutine 주의할 점..., 다른 clean architecture,
 
 개선점 발견. 객체 지향적으로 프로그래밍이 되어있지않음...
 모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.
@@ -18,11 +22,6 @@ unit test랑 end-to-end test랑 병렬화해야함.
 github action 공통 body 만들고 그거 바탕으로 unit test랑 end-to-end test 실행되도록.
 -> 일단 구현했는데 firebase testing으로 UI 테스트 하도록 이전해야함.
 
-EXOPlayer 설정하고, service에 연결하고, 퀴즈에 ncs 가지고 background 음악 설정할 수 있게 하는걸로.
-일단 기본은 깔았는데 UI 커스텀을 더 해야함.
--> 일단 이건 어느 정도 완료함. 근데 UI 관리 주체가 viewmodel인것 + init{}에서 재생 목록+서비스 설정을 해버려서
-서비스/handler에서 더 강하게 viewmodel을 관리하도록 해야함.
-
 앱 부팅 Flow를 만들어야겠음.
 1. 업데이트 확인
 2. 회원 로그인/알림 권한 요청.
@@ -31,9 +30,6 @@ EXOPlayer 설정하고, service에 연결하고, 퀴즈에 ncs 가지고 backgro
 4. (게스트 로그인 실패시) 서버에 게스트 계정 요청.
 5. 계정 설정 완료 후 홈 화면으로 이동.
 
-
-단위테스트 추가 및 성능 측정 할 수 있는 것들(python decorator생각해서 특정 함수 입력받았을 때 걸리는 시간 + profiler 사용한 메모리 사용량 체크 정도?
-trace 사용해서 특정 구간 성능 분석 + 앱 부팅 ~ 홈 화면 로딩시까지 걸리는 시간 측정.
 
 Firebase cloud messaging 사용해서 앱에 알림 보내기
 

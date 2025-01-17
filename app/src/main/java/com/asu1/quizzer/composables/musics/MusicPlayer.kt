@@ -1,11 +1,14 @@
 package com.asu1.quizzer.composables.musics
 
+import android.content.Context
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -16,9 +19,6 @@ import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.viewModels.MusicListViewModel
-import androidx.compose.ui.platform.LocalContext
-import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -37,7 +37,6 @@ fun MusicPlayer(
     }
 
     //TODO: NEED TO REQUEST FOR NOTIFICATION PERMISSION
-    //WITH USING
     LaunchedEffect(isPlaying){
         if(isPlaying){
             startMusicService()
