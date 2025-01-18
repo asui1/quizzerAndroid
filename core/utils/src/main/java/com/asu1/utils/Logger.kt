@@ -1,27 +1,31 @@
-package com.asu1.quizzer.util
+package com.asu1.utils
 
 import android.util.Log
 import androidx.navigation.NavController
-import com.asu1.quizzer.BuildConfig
 import java.util.logging.Logger
 
 object Logger {
     private val tag = "quizzer"
+    private var isDebug = false
+
+    fun init(debugMode: Boolean) {
+        isDebug = debugMode
+    }
 
     fun debug(input: Any) {
-        if (BuildConfig.isDebug) {
+        if (isDebug) {
             Logger.getLogger(tag).warning(input.toString())
         }
     }
 
     fun debug(tag1: String, input: Any){
-        if (BuildConfig.isDebug) {
+        if (isDebug) {
             Logger.getLogger(tag + tag1).warning(input.toString())
         }
     }
 
     fun printBackStack(navController: NavController) {
-        if (BuildConfig.isDebug) {
+        if (isDebug) {
             try {
                 val backQueueField = NavController::class.java.getDeclaredField("backQueue")
                 backQueueField.isAccessible = true
@@ -42,7 +46,7 @@ object Logger {
     }
 
     fun debugFull(input: String) {
-        if (BuildConfig.isDebug) {
+        if (isDebug) {
             val maxLogSize = 1000
             for (i in 0..input.length / maxLogSize) {
                 val start = i * maxLogSize

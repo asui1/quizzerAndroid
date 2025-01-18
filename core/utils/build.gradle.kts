@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.android)
 }
 
 android {
-    namespace = "com.asu1.models"
+    namespace = "com.asu1.utils"
     compileSdk = 35
 
     defaultConfig {
@@ -34,18 +33,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:utils"))
-    testImplementation(project(":core:utils"))
-    androidTestImplementation(project(":core:utils"))
 
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.compose.ui)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
+    implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
-
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

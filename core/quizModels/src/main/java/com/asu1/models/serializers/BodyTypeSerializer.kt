@@ -15,7 +15,6 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.util.logging.Logger
 
 object BodyTypeSerializer : KSerializer<BodyType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BodyType", PrimitiveKind.STRING)
@@ -31,12 +30,9 @@ object BodyTypeSerializer : KSerializer<BodyType> {
     }
 
     override fun deserialize(decoder: Decoder): BodyType {
-        Logger.getLogger("BodyTypeSerializer").info("TRYING TO DESERIALIZE")
         try{
             val json = Json.parseToJsonElement(decoder.decodeString()).jsonObject
-            Logger.getLogger("BodyTypeSerializer").info(json.toString())
             val type = json["type"]?.jsonPrimitive?.content
-            Logger.getLogger("BodyTypeSerializer").info(type)
             return when (type) {
                 "NONE" -> BodyType.NONE
                 "TEXT" -> BodyType.TEXT(json["bodyText"]?.jsonPrimitive?.content ?: "")
@@ -50,7 +46,6 @@ object BodyTypeSerializer : KSerializer<BodyType> {
                 else -> throw IllegalArgumentException("Unknown BodyType: $type")
             }
         } catch (e: Exception){
-            Logger.getLogger("BodyTypeSerializer").info(e.toString())
             return BodyType.NONE
         }
     }

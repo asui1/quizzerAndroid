@@ -64,12 +64,12 @@ import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

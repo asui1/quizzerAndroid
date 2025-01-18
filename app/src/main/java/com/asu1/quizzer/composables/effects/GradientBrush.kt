@@ -21,13 +21,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.util.shaders.diagonalHalf
-import com.asu1.quizzer.util.shaders.horizontalHalf
-import com.asu1.quizzer.util.shaders.leftBottomDist
-import com.asu1.quizzer.util.shaders.leftDist
-import com.asu1.quizzer.util.shaders.topDist
-import com.asu1.quizzer.util.shaders.verticalRepeat
-import com.asu1.quizzer.util.shaders.verticalhalf
+import com.asu1.utils.shaders.diagonalHalf
+import com.asu1.utils.shaders.horizontalHalf
+import com.asu1.utils.shaders.leftBottomDist
+import com.asu1.utils.shaders.leftDist
+import com.asu1.utils.shaders.topDist
+import com.asu1.utils.shaders.verticalRepeat
+import com.asu1.utils.shaders.verticalhalf
 
 @Composable
 fun GradientBrush(

@@ -47,7 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import sh.calvin.reorderable.ReorderableItem
@@ -155,7 +154,6 @@ fun PlayListView(
                                                 view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
                                         },
                                         onDragStopped = {
-                                            Logger.debug("Dragged from ${dragStart.value} to ${localMusicList.indexOf(musicItem)}")
                                             updatePlayer(HomeUiEvents.ChangeItemOrder(dragStart.value, localMusicList.indexOf(musicItem)))
                                             dragStart.value = -1
                                             if (Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)

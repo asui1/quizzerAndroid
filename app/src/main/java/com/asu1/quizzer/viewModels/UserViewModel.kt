@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
 import com.asu1.quizzer.domain.login.LoginUseCase
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.SharedPreferencesManager
 import com.asu1.quizzer.util.constants.NetworkTags
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,13 +31,10 @@ class UserViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            Logger.debug("UserViewModel init")
             val userInfo = SharedPreferencesManager.getUserLoginInfo()
             if (userInfo.email != null) {
-                Logger.debug("User login")
                 logIn(userInfo.email, userInfo.urlToImage)
             } else{
-                Logger.debug("Guest login")
                 val guestInfo = SharedPreferencesManager.getGuestLoginInfo()
                 if(guestInfo.email != null){
                     guestLogin()
@@ -78,7 +74,6 @@ class UserViewModel @Inject constructor(
 
     private fun guestLogin(
     ){
-        Logger.debug("guest login")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val email = SharedPreferencesManager.getGuestLoginInfo().email ?: ""
@@ -108,24 +103,18 @@ class UserViewModel @Inject constructor(
     fun logIn(email: String, urlToImage: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Logger.debug("login1")
                 TrafficStats.setThreadStatsTag(NetworkTags.LOGIN)
-                Logger.debug("login3")
                 val loginResponse = RetrofitInstance.api.login(email)
-                Logger.debug("login2")
                 val nickname = loginResponse.body()?.nickname ?: ""
                 if (loginResponse.isSuccessful) {
-                    Logger.debug("login2")
                     val userTags = loginResponse.body()?.tags ?: emptySet()
                     _userData.postValue(UserDatas(email, nickname, urlToImage, userTags))
-                    Logger.debug("login3")
                     SharedPreferencesManager.saveUserLoginInfo(
                         email,
                         nickname,
                         urlToImage,
                         userTags
                     )
-                    Logger.debug("login success")
                     ToastManager.showToast(R.string.logged_in, ToastType.SUCCESS)
                     _isUserLoggedIn.postValue(true)
                 } else {
@@ -134,7 +123,6 @@ class UserViewModel @Inject constructor(
             } catch (e: Exception) {
                 ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
             } finally {
-                Logger.debug("login4")
                 TrafficStats.clearThreadStatsTag()
             }
         }

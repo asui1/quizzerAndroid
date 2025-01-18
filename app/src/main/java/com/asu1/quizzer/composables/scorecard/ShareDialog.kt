@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.IconButtonWithText
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.generateUniqueId
+import com.asu1.utils.generateUniqueId
 
 val resultUrlBase = "https://quizzer.co.kr/?resultId="
 val quizUrlBase = "https://quizzer.co.kr/?quizId="
@@ -50,7 +50,7 @@ fun ShareDialog(
     onDismiss: () -> Unit = { },
 ){
     val quizUrl = remember(quizId){quizUrlBase + quizId}
-    val resultUrl = remember(quizId){resultUrlBase + generateUniqueId(quizId, userName)}
+    val resultUrl = remember(quizId){resultUrlBase + generateUniqueId(quizId, userName) }
     val shareLink = if(userName == "Guest") quizUrl else resultUrl
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 

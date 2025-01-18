@@ -20,7 +20,6 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import java.time.LocalDate
 import java.time.YearMonth
-import java.util.logging.Logger
 
 val quizSerializersModule = SerializersModule {
     polymorphic(QuizJson::class) {
@@ -63,7 +62,6 @@ fun extractBodyText(jsonString: String): String {
     return bodyText.replace("\\n", "\n")
 }
 fun manualDeserializer(input: String): BodyType{
-    Logger.getLogger("QuizJson").info("input: $input")
     if(input.contains("quizzer.model.BodyType.NONE")){
         return BodyType.NONE
     }else if(input.contains("quizzer.model.BodyType.TEXT")) {
@@ -99,7 +97,6 @@ sealed class QuizJson {
         }
 
         override fun toQuiz(): Quiz1 {
-            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz1(
                 question = body.question,
                 answers = body.answers.toMutableList(),
@@ -174,7 +171,6 @@ sealed class QuizJson {
         }
 
         override fun toQuiz(): Quiz3 {
-            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz3(
                 question = body.question,
                 answers = body.answers.toMutableList(),
@@ -209,7 +205,6 @@ sealed class QuizJson {
         }
 
         override fun toQuiz(): Quiz {
-            Logger.getLogger("QuizJson").info("bodyValue: ${body.bodyValue}")
             val quiz = Quiz4(
                 question = body.question,
                 answers = body.answers.toMutableList(),

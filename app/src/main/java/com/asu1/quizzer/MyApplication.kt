@@ -7,6 +7,7 @@ import com.asu1.quizzer.musics.MusicDao
 import com.asu1.quizzer.musics.MusicRepository
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.SharedPreferencesManager
+import com.asu1.utils.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +27,9 @@ class MyApplication : Application() {
             SharedPreferencesManager.init(this@MyApplication)
         }
         RetrofitInstance.api
+
+        Logger.init(BuildConfig.DEBUG)
+
 //        if(BuildConfig.DEBUG){
 // 문제가 왜뜨는지 까지는 되겠는데 분명 고친거같은데...
 //            StrictMode.setThreadPolicy(

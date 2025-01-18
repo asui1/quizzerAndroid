@@ -17,12 +17,12 @@ import androidx.media3.common.util.Util.startForegroundService
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.service.MusicServiceHandler
 import com.asu1.quizzer.service.QuizzerMusicPlayerService
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUIState
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
+import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,7 +72,6 @@ class MusicListViewModel @Inject constructor(
     }
 
     init {
-        Logger.debug("MusicListViewModel created2")
         viewModelScope.launch {
             musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
                 when (musicStates) {

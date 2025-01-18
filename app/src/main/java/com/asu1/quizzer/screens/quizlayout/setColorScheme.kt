@@ -57,7 +57,6 @@ import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ShaderType
 import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.ColorList
 import com.asu1.quizzer.util.constants.GenerateWith
 import com.asu1.quizzer.util.constants.paletteSize
@@ -307,7 +306,6 @@ fun GenerateColorScheme(
                 R.string.strict
             ),
             onUpdateLevel = { level ->
-                Logger.debug("Palette Level: $level")
                 onPaletteLevelUpdate(level)
             },
             selectedLevel = paletteLevel,

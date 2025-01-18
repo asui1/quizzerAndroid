@@ -10,8 +10,8 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.model.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.constants.NetworkTags
+import com.asu1.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

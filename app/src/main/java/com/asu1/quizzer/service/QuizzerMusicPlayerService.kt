@@ -6,7 +6,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.asu1.quizzer.musics.MediaNotificationManager
-import com.asu1.quizzer.util.Logger
+import com.asu1.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

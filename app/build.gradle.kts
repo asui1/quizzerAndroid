@@ -135,6 +135,9 @@ dependencies {
     testImplementation(project(":core:quizModels"))
     androidTestImplementation(project(":core:quizModels"))
 
+    implementation(project(":core:utils"))
+    testImplementation(project(":core:utils"))
+    androidTestImplementation(project(":core:utils"))
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

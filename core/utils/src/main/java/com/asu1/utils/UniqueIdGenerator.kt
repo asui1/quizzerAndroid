@@ -1,4 +1,4 @@
-package com.asu1.quizzer.util
+package com.asu1.utils
 
 import java.security.MessageDigest
 

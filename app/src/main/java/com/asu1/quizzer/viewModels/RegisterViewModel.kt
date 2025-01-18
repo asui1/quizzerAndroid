@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
 import com.asu1.quizzer.model.UserRegister
 import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.Logger
+import com.asu1.utils.Logger
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {

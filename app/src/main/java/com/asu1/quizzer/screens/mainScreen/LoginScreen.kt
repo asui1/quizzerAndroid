@@ -38,9 +38,9 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.network.SecurePreferences
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.utils.Logger
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException

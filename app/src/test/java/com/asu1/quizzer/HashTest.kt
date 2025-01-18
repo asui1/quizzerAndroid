@@ -1,6 +1,6 @@
 package com.asu1.quizzer
 
-import com.asu1.quizzer.util.generateUniqueId
+import com.asu1.utils.generateUniqueId
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

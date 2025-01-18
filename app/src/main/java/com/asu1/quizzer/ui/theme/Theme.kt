@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.asu1.quizzer.ui.theme
 
 import android.app.Activity

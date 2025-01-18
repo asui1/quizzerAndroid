@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.model.QuizCard
-import com.asu1.quizzer.util.Logger
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,7 +61,6 @@ fun LazyColumnWithSwipeToDismiss(
                     if (it == SwipeToDismissBoxValue.EndToStart) {
                         deleteUuid = uuid
                         showDialog = true
-                        Logger.debug("SHOW DIALOG")
                     }
                     true
                 }
@@ -151,7 +149,6 @@ fun LazyColumnWithSwipeToDismiss(
                 }
             },
             resetDismiss = { uuid ->
-                Logger.debug("RESET DISMISS")
                 scope.launch {
                     dismissStates[uuid]?.reset()
                     showDialog = false

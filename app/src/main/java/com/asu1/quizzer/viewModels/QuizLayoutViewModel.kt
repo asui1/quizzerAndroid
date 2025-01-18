@@ -36,7 +36,6 @@ import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.quizzer.ui.theme.LightColorScheme
-import com.asu1.quizzer.util.Logger
 import com.asu1.quizzer.util.byteArrayToImageBitmap
 import com.asu1.quizzer.util.calculateSeedColor
 import com.asu1.quizzer.util.constants.ColorList
@@ -51,6 +50,7 @@ import com.asu1.quizzer.util.toScheme
 import com.asu1.quizzer.util.withPrimaryColor
 import com.asu1.quizzer.util.withSecondaryColor
 import com.asu1.quizzer.util.withTertiaryColor
+import com.asu1.utils.Logger
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
