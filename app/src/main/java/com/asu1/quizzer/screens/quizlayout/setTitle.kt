@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun QuizLayoutTitle(
@@ -99,7 +99,7 @@ fun QuizLayoutTitle(
 @Preview(showBackground = true)
 @Composable
 fun QuizLayoutTitlePreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         QuizLayoutTitle(
         )
     }

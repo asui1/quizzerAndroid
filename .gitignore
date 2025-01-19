@@ -16,3 +16,4 @@ local.properties
 my-release-key.keystore
 app/src/main/res/raw/*
 app/src/main/assets/*
+core/resources/src/main/res/raw/*

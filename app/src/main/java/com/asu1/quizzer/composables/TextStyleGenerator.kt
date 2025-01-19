@@ -31,8 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.ui.theme.getFontFamily
+import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.getFontFamily
 
 @Composable
 fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu1.quizzer.model.TextStyle) {
@@ -80,7 +80,7 @@ fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu
 @Composable
 fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modifier: Modifier = Modifier) {
     // -> FONT FAMILY, Color, BoderStyle, FontWeight
-    val fontFamily = getFontFamily(style[0])
+    val fontFamily = com.asu1.resources.getFontFamily(style[0])
     val color = style[1]
     val borderStyle = style[2]
     val (backgroundColor, contentColor) = getColor(colorScheme, color)
@@ -145,11 +145,11 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
 @Preview(showBackground = true)
 @Composable
 fun PreviewGetTextStyle(){
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
             textStyle = com.asu1.quizzer.model.TextStyle(
-                fontFamily = getFontFamily(0),
+                fontFamily = com.asu1.resources.getFontFamily(0),
                 contentColor = Color.Black,
                 backgroundColor = Color.Transparent,
                 addColor = Color.Black,
@@ -163,11 +163,11 @@ fun PreviewGetTextStyle(){
 @Preview(showBackground = true)
 @Composable
 fun PreviewGetTextStyleWithBorder(){
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World, 가나다라마바사",
             textStyle = com.asu1.quizzer.model.TextStyle(
-                fontFamily = getFontFamily(0),
+                fontFamily = com.asu1.resources.getFontFamily(0),
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 backgroundColor = Color.Transparent,
                 addColor = MaterialTheme.colorScheme.primaryContainer,
@@ -175,16 +175,17 @@ fun PreviewGetTextStyleWithBorder(){
                 fontSize = 24.sp,
                 contourStyle = 1
             )
-        )    }
+        )
+    }
 }
 @Preview(showBackground = true)
 @Composable
 fun PreviewGetTextStyleWithContour(){
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
             textStyle = com.asu1.quizzer.model.TextStyle(
-                fontFamily = getFontFamily(0),
+                fontFamily = com.asu1.resources.getFontFamily(0),
                 contentColor = Color.Black,
                 backgroundColor = Color.Transparent,
                 addColor = Color.White,
@@ -192,7 +193,8 @@ fun PreviewGetTextStyleWithContour(){
                 fontSize = 24.sp,
                 contourStyle = 2
             )
-        )    }
+        )
+    }
 }
 
 fun Color.flipAlpha(): Color {

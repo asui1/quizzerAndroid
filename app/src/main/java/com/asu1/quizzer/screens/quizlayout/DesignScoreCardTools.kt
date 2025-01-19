@@ -33,7 +33,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.base.FastCreateDropDown
-import com.asu1.quizzer.composables.base.IconButtonWithText
+import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
 import com.asu1.quizzer.model.Effect
@@ -160,7 +160,7 @@ fun DesignScoreCardTools(
             .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
     ) {
         val iconSize = 32.dp
-        IconButtonWithText(
+        com.asu1.custombuttons.IconButtonWithText(
             imageVector = Icons.Default.FormatColorText,
             text = stringResource(R.string.text_color),
             onClick = {
@@ -170,7 +170,7 @@ fun DesignScoreCardTools(
             modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
             iconSize = iconSize,
         )
-        IconButtonWithText(
+        com.asu1.custombuttons.IconButtonWithText(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.image_on_top),
             onClick = {
@@ -180,7 +180,7 @@ fun DesignScoreCardTools(
             modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
             iconSize = iconSize,
         )
-        IconButtonWithText(
+        com.asu1.custombuttons.IconButtonWithText(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.background_newline),
             onClick = {
@@ -225,7 +225,7 @@ fun DesignScoreCardTools(
                     currentSelection = scoreCard.background.shaderType.index
                 )
             }
-            IconButtonWithText(
+            com.asu1.custombuttons.IconButtonWithText(
                 imageVector = Icons.Default.ColorLens,
                 text = stringResource(colorName),
                 onClick = {

@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun QuizBodyBuilder(
@@ -129,8 +129,8 @@ fun QuizBodyBuilder(
 @Preview(showBackground = true)
 @Composable
 fun BodyPreviews() {
-    QuizzerAndroidTheme {
-        Column(){
+    com.asu1.resources.QuizzerAndroidTheme {
+        Column() {
             QuizBodyBuilder(
                 bodyState = BodyType.TEXT(""),
                 updateBody = {},
@@ -138,9 +138,11 @@ fun BodyPreviews() {
                 onImageSelected = {},
                 onYoutubeUpdate = { _, _ -> }
             )
-            Spacer(modifier = Modifier
-                .height(8.dp)
-                .background(color = Color.Black))
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp)
+                    .background(color = Color.Black)
+            )
             QuizBodyBuilder(
                 bodyState = BodyType.IMAGE(ByteArray(0)),
                 updateBody = {},
@@ -148,9 +150,11 @@ fun BodyPreviews() {
                 onImageSelected = {},
                 onYoutubeUpdate = { _, _ -> }
             )
-            Spacer(modifier = Modifier
-                .height(8.dp)
-                .background(color = Color.Black))
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp)
+                    .background(color = Color.Black)
+            )
             QuizBodyBuilder(
                 bodyState = BodyType.YOUTUBE("", 0),
                 updateBody = {},
@@ -223,7 +227,7 @@ fun BodyTypeDialog(
 @Preview(showBackground = true)
 @Composable
 fun BodyDialogPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         BodyTypeDialog(
             onDismissRequest = {},
             onTextSelected = {},

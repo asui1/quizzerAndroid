@@ -42,7 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 
@@ -253,7 +253,7 @@ fun DrawerContent(
 @Composable
 fun DrawerPreview(){
     val navController = rememberNavController()
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         DrawerContent(
             closeDrawer = {},
             userData = userDataTest,

@@ -13,7 +13,16 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/quizModels" />
+            <option value="$PROJECT_DIR$/core/quizcardmodel" />
+            <option value="$PROJECT_DIR$/core/resources" />
             <option value="$PROJECT_DIR$/core/utils" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/customButtons" />
+            <option value="$PROJECT_DIR$/feature/customdialogs" />
+            <option value="$PROJECT_DIR$/feature/musicui" />
+            <option value="$PROJECT_DIR$/feature/pageIndicator" />
+            <option value="$PROJECT_DIR$/feature/quizcard" />
+            <option value="$PROJECT_DIR$/feature/toastManager" />
             <option value="$PROJECT_DIR$/macrobenchmark" />
             <option value="$PROJECT_DIR$/microbenchmark" />
           </set>

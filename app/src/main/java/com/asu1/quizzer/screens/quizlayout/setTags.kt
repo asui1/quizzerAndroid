@@ -9,7 +9,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.composables.TagSetter
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun QuizLayoutSetTags(
@@ -41,7 +41,7 @@ fun QuizLayoutSetTags(
 @Preview(showBackground = true)
 @Composable
 fun QuizLayoutTagPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         QuizLayoutSetTags(
             quizTags = setOf("Test", "ADMIN", "tag3"),
             onTagUpdate = {}

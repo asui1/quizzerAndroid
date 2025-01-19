@@ -45,7 +45,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
+import com.asu1.resources.R
 import com.asu1.quizzer.musics.MusicAllInOne
 import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUiEvents

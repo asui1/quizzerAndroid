@@ -51,7 +51,7 @@ import androidx.navigation.NavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
-import com.asu1.quizzer.composables.scorecard.ShareDialog
+import com.asu1.customdialogs.ShareDialog
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleScoreCard
@@ -116,7 +116,7 @@ fun ScoringScreen(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 modifier = Modifier.imePadding()
                             ) {
-                                ShareDialog(
+                                com.asu1.customdialogs.ShareDialog(
                                     quizId = scoreCard.quizUuid ?: "",
                                     userName = email,
                                     onDismiss = {

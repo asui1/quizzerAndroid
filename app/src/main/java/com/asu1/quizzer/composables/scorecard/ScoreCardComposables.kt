@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.effects.Christmas
 import com.asu1.quizzer.composables.effects.ChristmasBell
 import com.asu1.quizzer.composables.effects.Clouds
@@ -62,7 +61,6 @@ import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.composables.effects.WithMoon
 import com.asu1.quizzer.composables.effects.WithShootingStar
 import com.asu1.quizzer.composables.effects.Wreath
-import com.asu1.quizzer.composables.mainscreen.HorizontalPagerIndicator
 import com.asu1.quizzer.data.QuizResult
 import com.asu1.quizzer.data.sampleResult
 import com.asu1.quizzer.model.Effect
@@ -70,9 +68,11 @@ import com.asu1.quizzer.model.ImageColor
 import com.asu1.quizzer.model.ImageColorState
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.model.sampleScoreCard
-import com.asu1.quizzer.ui.theme.notosans
 import java.util.Locale
 import kotlin.math.round
+import com.asu1.resources.R
+import com.asu1.resources.NotoSans
+import com.asu1.pageindicator.HorizontalPageIndicator
 
 @Composable
 fun ScoreCardBackground(
@@ -349,7 +349,7 @@ fun ScoreCardComposable(
             }
         }
         AnimatedVisibility(visible = showHorizontalIndicator){
-            HorizontalPagerIndicator(
+            com.asu1.pageindicator.HorizontalPageIndicator(
                 pageCount = pageNum,
                 currentPage = pagerState.currentPage,
                 targetPage = pagerState.targetPage,
@@ -376,7 +376,7 @@ private fun Score(scoreCard: ScoreCard, formattedScore: String) {
             color = scoreCard.textColor,
             fontSize = 30.sp,
             fontStyle = FontStyle.Italic,
-            fontFamily = notosans,
+            fontFamily = NotoSans,
             maxLines = 1,
             modifier = Modifier
                 .zIndex(2f),
@@ -385,7 +385,7 @@ private fun Score(scoreCard: ScoreCard, formattedScore: String) {
             text = formattedScore,
             color = scoreCard.textColor,
             fontSize = 75.sp,
-            fontFamily = notosans,
+            fontFamily = NotoSans,
             maxLines = 1,
             modifier = Modifier
                 .zIndex(2f),

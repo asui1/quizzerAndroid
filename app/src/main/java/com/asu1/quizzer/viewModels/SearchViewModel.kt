@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
-import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizzer.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    private val _searchResult = MutableStateFlow<List<QuizCard>?>(null)
-    val searchResult: StateFlow<List<QuizCard>?> get() = _searchResult.asStateFlow()
+    private val _searchResult = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>?>(null)
+    val searchResult: StateFlow<List<com.asu1.quizcardmodel.QuizCard>?> get() = _searchResult.asStateFlow()
 
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> get() = _searchText
@@ -52,7 +52,7 @@ class SearchViewModel : ViewModel() {
         }
     }
 
-    fun setSearchResult(quizCards: List<QuizCard>){
+    fun setSearchResult(quizCards: List<com.asu1.quizcardmodel.QuizCard>){
         _searchResult.value = quizCards
     }
 }

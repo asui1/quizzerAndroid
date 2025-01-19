@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ fun PrivacyPolicy(navController: NavController) {
 @Composable
 fun PreviewPrivacyPolicy() {
     val navController = rememberNavController()
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         PrivacyPolicy(
             navController = navController
         )

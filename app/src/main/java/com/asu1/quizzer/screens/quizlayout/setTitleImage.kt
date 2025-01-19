@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.ImageGetter
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageChange: (ByteArray) -> Unit =  {}) {
@@ -50,7 +50,7 @@ fun QuizLayoutSetTitleImage(quizTitleImage: ByteArray? = byteArrayOf(), onImageC
 @Preview(showBackground = true)
 @Composable
 fun QuizLayoutSetTitleImagePreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         QuizLayoutSetTitleImage(
         )
     }

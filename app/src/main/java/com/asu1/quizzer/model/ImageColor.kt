@@ -15,10 +15,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.asu1.models.serializers.ColorSerializer
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.effects.GradientBrush
 import com.asu1.quizzer.data.ShaderTypeSerializer
 import kotlinx.serialization.Serializable
+import com.asu1.resources.R
 
 //State 0 -> Color, State 1 -> Color1 + Color2, State 2 -> Image
 @Serializable

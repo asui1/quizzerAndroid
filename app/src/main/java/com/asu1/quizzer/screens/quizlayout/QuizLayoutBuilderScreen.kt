@@ -59,11 +59,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.DialogComposable
+import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.LayoutSteps
@@ -170,15 +170,15 @@ fun QuizLayoutBuilderScreen(navController: NavController,
             else -> {
                 if (showExitDialog) {
                     DialogComposable(
-                        titleResource = R.string.warning,
-                        messageResource = R.string.warn_progress_not_saved,
+                        title = R.string.warning,
+                        message = R.string.warn_progress_not_saved,
                         onContinue = {
                             showExitDialog = false
                             navController.popBackStack()
                         },
-                        onContinueResource = R.string.proceed,
+                        onContinueText = R.string.proceed,
                         onCancel = { showExitDialog = false },
-                        onCancelResource = R.string.cancel
+                        onCancelText = R.string.cancel
                     )
                 }
 
@@ -369,7 +369,7 @@ private fun QuizLayoutBottomBar(
 @Preview(showBackground = true)
 @Composable
 fun QuizLayoutBuilderScreenPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         QuizLayoutBottomBar(
             step = LayoutSteps.TITLE,
             quizLayoutViewModel = QuizLayoutViewModel(),
@@ -412,7 +412,7 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun QuizPolicyAgreementPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         QuizPolicyAgreement(
             onAgree = {}
         )
@@ -488,7 +488,7 @@ fun StepProgressBar(
 @Preview(showBackground = true)
 @Composable
 fun StepProgressBarPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         StepProgressBar(
             totalSteps = LayoutSteps.entries.size,
             currentStep = LayoutSteps.TAGS,

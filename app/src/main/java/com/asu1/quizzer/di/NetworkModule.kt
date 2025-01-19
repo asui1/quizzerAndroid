@@ -2,14 +2,14 @@
 package com.asu1.quizzer.di
 
 import com.asu1.models.serializers.json
-import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizzer.model.QuizCardListDeserializer
-import com.asu1.quizzer.model.UserInfoDeserializer
 import com.asu1.quizzer.network.ApiService
 import com.asu1.quizzer.network.BasicAuthInterceptor
 import com.asu1.quizzer.network.ContentTypeInterceptor
 import com.asu1.quizzer.network.CustomConverterFactory
-import com.asu1.quizzer.util.constants.BASE_URL
+import com.asu1.quizzer.network.UserInfoDeserializer
+import com.asu1.utils.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -35,7 +35,7 @@ object NetworkModule {
         return GsonBuilder()
             .registerTypeAdapter(List::class.java, QuizCardListDeserializer())
             .registerTypeAdapter(List::class.java, UserInfoDeserializer())
-            .registerTypeAdapter(object : TypeToken<List<QuizCard>>() {}.type, QuizCardListDeserializer())
+            .registerTypeAdapter(object : TypeToken<List<com.asu1.quizcardmodel.QuizCard>>() {}.type, QuizCardListDeserializer())
             .create()
     }
 

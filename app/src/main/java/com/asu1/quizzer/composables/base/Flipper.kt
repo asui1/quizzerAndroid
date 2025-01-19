@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit,
@@ -58,7 +58,7 @@ fun Flipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevio
 @Preview(showBackground = true)
 @Composable
 fun PreviewFlipper() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         Flipper(
             items = listOf("Item 1", "Item 2", "Item 3"),
             currentIndex = 0,

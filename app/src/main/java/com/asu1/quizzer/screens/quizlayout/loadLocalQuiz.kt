@@ -23,10 +23,10 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
+import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -41,7 +41,7 @@ fun LoadItems(
 ) {
     val quizSerializerList by quizLoadViewModel.quizList.collectAsStateWithLifecycle()
     val quizList = remember(quizSerializerList?.size ?: 0){quizSerializerList?.map{
-        QuizCard(
+        com.asu1.quizcardmodel.QuizCard(
             id = it.quizData.uuid,
             title = it.quizData.title,
             creator = it.quizData.creator,

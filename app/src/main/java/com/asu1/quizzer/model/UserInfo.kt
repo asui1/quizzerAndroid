@@ -1,5 +1,6 @@
 package com.asu1.quizzer.model
 
+import com.asu1.quizzer.network.UserInfoDeserializer
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

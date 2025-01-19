@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="128dp"
+        android:height="128dp"
+        android:viewportWidth="70"
+        android:viewportHeight="50">
+    <group android:name="first">
+        <!-- 첫번째 바 -->
+        <path
+                android:name="first"
+                android:pathData="M 10,50 L 10,40 L 20,40 L 20,50 Z"
+                android:fillColor="@color/material_dynamic_primary50" />
+    </group>
+    <group android:name="second">
+        <!-- 첫번째 바 -->
+        <path
+                android:name="second"
+                android:pathData="M 30,50 L 30,30 L 40,30 L 40,50 Z"
+                android:fillColor="@color/material_dynamic_primary50" />
+    </group>
+    <group android:name="third">
+        <!-- 첫번째 바 -->
+        <path
+                android:name="third"
+                android:pathData="M 50,50 L 50,10 L 60,10 L 60,50 Z"
+                android:fillColor="@color/material_dynamic_primary50" />
+    </group>
+</vector>

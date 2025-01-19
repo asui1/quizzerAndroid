@@ -51,7 +51,7 @@ import androidx.navigation.NavHostController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.RegisterViewModel
@@ -206,7 +206,7 @@ fun UsageAgreement(
 @Preview(showBackground = true)
 @Composable
 fun UsageAgreementPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         UsageAgreement(
         )
     }
@@ -324,7 +324,7 @@ fun EnterRegisterInputData(
 @Preview(showBackground = true)
 @Composable
 fun NicknameInputPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         EnterRegisterInputData(
             nickname = "nickname"
         )
@@ -369,7 +369,7 @@ fun TagSetting(
 @Preview(showBackground = true)
 @Composable
 fun TagSettingPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         TagSetting(
             tags = setOf("tag1", "tag2", "tag3")
         )

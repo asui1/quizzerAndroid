@@ -4,7 +4,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import com.asu1.quizzer.R
 import com.asu1.quizzer.data.ColorSchemeSerializer
-import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.resources.LightColorScheme
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -36,7 +36,7 @@ data class ScoreCard (
     ),
     var imageStateval : Int = 0,
     @Contextual var textColor: Color = Color.Black,
-    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = com.asu1.resources.LightColorScheme,
 ){
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -71,5 +71,5 @@ val sampleScoreCard = ScoreCard(
     ),
     imageStateval = 0,
     textColor = Color.Black,
-    colorScheme = LightColorScheme
+    colorScheme = com.asu1.resources.LightColorScheme
 )

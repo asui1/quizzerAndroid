@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 
@@ -78,7 +78,7 @@ fun SignoutBottomSheetContent(
 @Preview(showBackground = true)
 @Composable
 fun SignoutBottomSheetContentPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         SignoutBottomSheetContent(
             onDismissRequest = { },
             userData = userDataTest,

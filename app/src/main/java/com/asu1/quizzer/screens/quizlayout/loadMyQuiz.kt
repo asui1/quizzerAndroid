@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizzer.composables.quizcards.LazyColumnWithSwipeToDismiss
+import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel

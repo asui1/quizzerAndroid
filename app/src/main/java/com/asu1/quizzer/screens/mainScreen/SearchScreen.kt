@@ -50,10 +50,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.quizcards.QuizCardHorizontalVerticalShareList
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.quizcard.QuizCardHorizontalVerticalShareList
+import com.asu1.quizcardmodel.sampleQuizCardList
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.constants.sampleQuizCardList
 import com.asu1.quizzer.viewModels.SearchViewModel
 
 @Composable
@@ -140,7 +140,7 @@ fun PreviewSearchScreen(){
         quizCards
     )
 
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         SearchScreen(
             navController = rememberNavController(),
             searchViewModel = searchViewModel,

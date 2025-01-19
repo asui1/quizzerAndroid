@@ -3,8 +3,8 @@ package com.asu1.quizzer.data
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.asu1.quizzer.ui.theme.DarkColorScheme
-import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.resources.DarkColorScheme
+import com.asu1.resources.LightColorScheme
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -84,9 +84,9 @@ object ColorSchemeSerializer : KSerializer<ColorScheme> {
         val json = decoder.decodeSerializableValue(JsonObject.serializer())
         val brightness = json["brightness"]?.jsonPrimitive?.content
         val baseColorScheme = if(brightness == "Brightness.dark"){
-            DarkColorScheme
+            com.asu1.resources.DarkColorScheme
         }else{
-            LightColorScheme
+            com.asu1.resources.LightColorScheme
         }
         return baseColorScheme.copy(
             primary = json["primary"]?.jsonPrimitive?.content?.toColor() ?: baseColorScheme.primary,

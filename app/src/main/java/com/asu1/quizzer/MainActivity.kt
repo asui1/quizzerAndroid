@@ -44,7 +44,7 @@ import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
@@ -78,7 +78,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Trace.beginSection("MainActivity_onCreate")
         handleIntent(intent)
 
         lifecycleScope.launch {
@@ -112,7 +111,7 @@ class MainActivity : ComponentActivity() {
             }
 
             navController = rememberNavController()
-            QuizzerAndroidTheme {
+            com.asu1.resources.QuizzerAndroidTheme {
                 Scaffold(
                     snackbarHost = {
                         CustomSnackbarHost(
@@ -120,7 +119,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                         )
                     }
-                ) {it ->
+                ) { it ->
                     Surface(
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.padding(it).fillMaxSize()
@@ -139,16 +138,17 @@ class MainActivity : ComponentActivity() {
                             quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
                             navController.navigate(
                                 Route.ScoringScreen
-                            ){
+                            ) {
                                 popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
                                 quizCardMainViewModel.setLoadResultId(null)
                             }
                         }
+
                         fun loadQuiz(quizId: String, doPop: Boolean = false) {
                             quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel)
-                            navController.navigate(Route.QuizSolver()){
-                                if(doPop) popUpTo(Route.Home) { inclusive = false }
+                            navController.navigate(Route.QuizSolver()) {
+                                if (doPop) popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
                             }
                             quizCardMainViewModel.setLoadQuizId(null)
@@ -160,7 +160,7 @@ class MainActivity : ComponentActivity() {
                             val email = userViewModel.userData.value?.email ?: "GUEST"
                             quizCardMainViewModel.resetQuizTrends()
                             quizCardMainViewModel.resetUserRanks()
-                            if(fetchData) quizCardMainViewModel.fetchQuizCards(lang, email)
+                            if (fetchData) quizCardMainViewModel.fetchQuizCards(lang, email)
                             navController.navigate(
                                 Route.Home
                             ) {
@@ -168,8 +168,6 @@ class MainActivity : ComponentActivity() {
                                 launchSingleTop = true
                             }
                         }
-                        Trace.endSection()
-                        Trace.beginSection("MainActivity_NavHost")
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init,
@@ -198,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                             navController.navigate(
                                                 Route.Login
-                                            ){
+                                            ) {
                                                 launchSingleTop = true
                                             }
                                         } else {
@@ -213,7 +211,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                             navController.navigate(
                                                 Route.CreateQuizLayout
-                                            ){
+                                            ) {
                                                 launchSingleTop = true
                                             }
                                         }
@@ -224,7 +222,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         navController.navigate(
                                             Route.LoadUserQuiz
-                                        ){
+                                        ) {
                                             launchSingleTop = true
                                         }
                                     },
@@ -300,7 +298,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         navController.navigate(
                                             Route.LoadLocalQuiz
-                                        ){
+                                        ) {
                                             launchSingleTop = true
                                         }
                                     },
@@ -321,7 +319,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         navController.navigate(
                                             Route.DesignScoreCard
-                                        ){
+                                        ) {
                                             launchSingleTop = true
                                         }
                                     },
@@ -334,7 +332,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         navController.navigate(
                                             Route.LoadLocalQuiz
-                                        ){
+                                        ) {
                                             launchSingleTop = true
                                         }
                                     }

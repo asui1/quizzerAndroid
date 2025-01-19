@@ -38,7 +38,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 
 
@@ -147,7 +147,7 @@ fun PointSetter(){
 @Preview(showBackground = true)
 @Composable
 fun PointSetterPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         PointSetter()
     }
 }
@@ -283,7 +283,7 @@ fun Quiz1AnswerSelection(
 @Preview(showBackground = true)
 @Composable
 fun Quiz1Preview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         Quiz1Creator(
             onSave = {}
         )

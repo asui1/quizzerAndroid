@@ -44,30 +44,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.tracing.Trace
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import com.asu1.customdialogs.DialogComposable
+import com.asu1.quizcard.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.DialogComposable
 import com.asu1.quizzer.composables.UserRankComposableList
 import com.asu1.quizzer.composables.mainscreen.DrawerContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
-import com.asu1.quizzer.composables.quizcards.VerticalQuizCardLargeColumn
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
-import com.asu1.quizzer.ui.theme.UserBackground1
-import com.asu1.quizzer.ui.theme.UserBackground2
-import com.asu1.quizzer.ui.theme.UserBackground3
-import com.asu1.quizzer.ui.theme.UserBackground4
-import com.asu1.quizzer.ui.theme.UserBackground5
-import com.asu1.quizzer.ui.theme.UserBackground6
-import com.asu1.quizzer.ui.theme.UserBackground7
-import com.asu1.quizzer.ui.theme.UserBackground8
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.UserBackground1
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -225,7 +217,6 @@ fun MainScreen(
                                         )
                                     }
                                     1 -> {
-                                        Trace.endSection()
                                         VerticalQuizCardLargeColumn(
                                             quizCards = quizTrends,
                                             onClick = loadQuiz,
@@ -281,13 +272,13 @@ fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String?, nickname:
     val backgroundColor = remember{
         when(randomInt){
             0 -> UserBackground1
-            1 -> UserBackground2
-            2 -> UserBackground3
-            3 -> UserBackground4
-            4 -> UserBackground5
-            5 -> UserBackground6
-            6 -> UserBackground7
-            7 -> UserBackground8
+            1 -> com.asu1.resources.UserBackground2
+            2 -> com.asu1.resources.UserBackground3
+            3 -> com.asu1.resources.UserBackground4
+            4 -> com.asu1.resources.UserBackground5
+            5 -> com.asu1.resources.UserBackground6
+            6 -> com.asu1.resources.UserBackground7
+            7 -> com.asu1.resources.UserBackground8
             else -> UserBackground1
         }
     }
@@ -334,7 +325,8 @@ fun UserProfilePicPreview(){
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(30.dp)
-                .clip(shape = RoundedCornerShape(8.dp))) {
+                .clip(shape = RoundedCornerShape(8.dp))
+        ) {
             BoxWithTextAndColorBackground(
                 UserBackground1, '글',
             )
@@ -348,12 +340,12 @@ fun LogoutConfirmationDialog(
     onDismiss: () -> Unit
 ) {
     DialogComposable(
-        titleResource = R.string.logout_confirmation,
-        messageResource = R.string.logout_confirmation_body,
-        onContinue = {onConfirm()},
-        onContinueResource = R.string.logout_confirm,
+        title = R.string.logout_confirmation,
+        message = R.string.logout_confirmation_body,
+        onContinue = { onConfirm() },
+        onContinueText = R.string.logout_confirm,
         onCancel = onDismiss,
-        onCancelResource = R.string.logout_cancel
+        onCancelText = R.string.logout_cancel
     )
 }
 

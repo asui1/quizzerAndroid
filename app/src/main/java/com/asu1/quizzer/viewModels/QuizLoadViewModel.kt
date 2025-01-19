@@ -11,7 +11,7 @@ import com.asu1.quizzer.R
 import com.asu1.quizzer.data.QuizDataSerializer
 import com.asu1.quizzer.data.QuizLayoutSerializer
 import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +28,8 @@ class QuizLoadViewModel: ViewModel() {
     private val _loadComplete = MutableLiveData(ViewModelState.IDLE)
     val loadComplete: MutableLiveData<ViewModelState> get() = _loadComplete
 
-    private val _myQuizList = MutableStateFlow<MutableList<QuizCard>?>(null)
-    val myQuizList: StateFlow<MutableList<QuizCard>?> = _myQuizList.asStateFlow()
+    private val _myQuizList = MutableStateFlow<MutableList<com.asu1.quizcardmodel.QuizCard>?>(null)
+    val myQuizList: StateFlow<MutableList<com.asu1.quizcardmodel.QuizCard>?> = _myQuizList.asStateFlow()
 
     fun reset(){
         _quizList.value = null
@@ -45,7 +45,7 @@ class QuizLoadViewModel: ViewModel() {
                 if(response.isSuccessful){
                     val quizCards = response.body()?.searchResult
                     if(quizCards != null){
-                        _myQuizList.value = quizCards as MutableList<QuizCard>?
+                        _myQuizList.value = quizCards as MutableList<com.asu1.quizcardmodel.QuizCard>?
                     }
                     else{
                         _myQuizList.value = mutableListOf()
@@ -131,7 +131,7 @@ class QuizLoadViewModel: ViewModel() {
             scoreCard = ScoreCard()
         )
         _quizList.value = mutableListOf(quiz, quiz, quiz)
-        val quizCard = QuizCard(
+        val quizCard = com.asu1.quizcardmodel.QuizCard(
             id = "1",
             title = "Quiz 1",
             tags = listOf("tag1", "tag2", "tag2"),

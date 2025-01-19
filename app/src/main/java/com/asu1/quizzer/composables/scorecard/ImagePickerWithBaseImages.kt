@@ -28,8 +28,8 @@ import androidx.compose.ui.window.Dialog
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.model.BackgroundBase
 import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.ui.theme.LightPrimary
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.LightPrimary
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun ImagePickerWithBaseImages(
@@ -69,7 +69,9 @@ fun ImagePickerWithBaseImages(
                         .aspectRatio(0.6f)
                         .clickable { onBaseImageSelected(item) }
                         .testTag("DesignScoreCardBaseImage$index")
-                        .then(if (isSelected) Modifier.border(BorderStroke(4.dp, LightPrimary)) else Modifier)
+                        .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
+                            com.asu1.resources.LightPrimary
+                        )) else Modifier)
                 )
             }
         }
@@ -88,7 +90,9 @@ fun ImagePickerWithBaseImages(
                 width = width,
                 height = height,
                 modifier = Modifier.fillMaxSize()
-                    .then(if (isSelected) Modifier.border(BorderStroke(4.dp, LightPrimary)) else Modifier)
+                    .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
+                        com.asu1.resources.LightPrimary
+                    )) else Modifier)
             )
             // Your ImagePicker implementation here
         }
@@ -98,7 +102,7 @@ fun ImagePickerWithBaseImages(
 @Preview(showBackground = true)
 @Composable
 fun ImagePickerWithBaseImagesPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         Dialog(
             onDismissRequest = { },
         ) {

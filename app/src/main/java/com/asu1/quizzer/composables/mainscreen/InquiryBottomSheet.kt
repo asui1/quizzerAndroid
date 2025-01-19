@@ -36,7 +36,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 
@@ -139,7 +139,7 @@ fun InquiryBottomSheetContent(
 @Preview(showBackground = true)
 @Composable
 fun InquiryBottomSheetContentPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         InquiryBottomSheetContent(
             onDismissRequest = { },
             userData = userDataTest,

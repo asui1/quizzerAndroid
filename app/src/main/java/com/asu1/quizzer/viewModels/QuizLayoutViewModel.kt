@@ -35,7 +35,7 @@ import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
-import com.asu1.quizzer.ui.theme.LightColorScheme
+import com.asu1.resources.LightColorScheme
 import com.asu1.quizzer.util.byteArrayToImageBitmap
 import com.asu1.quizzer.util.calculateSeedColor
 import com.asu1.quizzer.util.constants.ColorList
@@ -80,7 +80,7 @@ data class QuizTheme(
     var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 2),
     var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1, 0),
     var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
-    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = com.asu1.resources.LightColorScheme,
 )
 
 data class QuizData(

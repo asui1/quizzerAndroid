@@ -1,6 +1,7 @@
 package com.asu1.quizzer.model
 
 import kotlinx.serialization.Serializable
+import com.asu1.quizcardmodel.QuizCard
 
 @Serializable
 data class RecommendationList(

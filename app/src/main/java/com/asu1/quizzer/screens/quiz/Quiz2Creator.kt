@@ -53,7 +53,7 @@ import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.getBorder
 import com.asu1.quizzer.composables.getColor
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -360,7 +360,7 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
 @Preview(showBackground = true)
 @Composable
 fun Quiz2CreatorPreview() {
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         Quiz2Creator(
             quiz = Quiz2ViewModel(),
             onSave = {}

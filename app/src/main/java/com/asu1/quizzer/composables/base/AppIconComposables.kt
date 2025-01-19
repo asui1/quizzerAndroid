@@ -21,8 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
-import com.asu1.quizzer.ui.theme.QuizzerAndroidTheme
+import com.asu1.resources.R
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> Unit = {},
@@ -58,7 +58,7 @@ fun RowWithAppIconAndName(showBackButton: Boolean = false, onBackPressed: () -> 
 @Preview
 @Composable
 fun PreviewRowWithAppIconAndName(){
-    QuizzerAndroidTheme {
+    com.asu1.resources.QuizzerAndroidTheme {
         RowWithAppIconAndName(
             showBackButton = true,
             onBackPressed = {}

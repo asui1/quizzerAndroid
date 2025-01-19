@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 fun setTopBarColor(view: View, color: Color){
-
     // CHECK: statusBarColor DEPRECATED (no more use in api 35)
     if (!view.isInEditMode) {
         val window = (view.context as Activity).window

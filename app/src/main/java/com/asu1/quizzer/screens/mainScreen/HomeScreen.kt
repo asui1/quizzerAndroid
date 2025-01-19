@@ -30,8 +30,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.musics.MusicPlayer
-import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemLarge
-import com.asu1.quizzer.composables.quizcards.HorizontalQuizCardItemVertical
+import com.asu1.quizcard.HorizontalQuizCardItemLarge
+import com.asu1.quizcard.HorizontalQuizCardItemVertical
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.sampleQuizCardsWithTagList
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag

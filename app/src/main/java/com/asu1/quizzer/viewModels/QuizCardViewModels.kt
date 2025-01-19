@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.quizzer.R
-import com.asu1.quizzer.model.QuizCard
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizzer.model.UserRank
 import com.asu1.quizzer.network.RetrofitInstance
 import com.asu1.quizzer.util.constants.NetworkTags
@@ -23,7 +23,7 @@ class QuizCardMainViewModel : ViewModel() {
 
     data class QuizCardsWithTag(
         val tag: String,
-        val quizCards: List<QuizCard>
+        val quizCards: List<com.asu1.quizcardmodel.QuizCard>
     )
 
     private val _loadResultId = MutableLiveData<String?>(null)
@@ -35,11 +35,11 @@ class QuizCardMainViewModel : ViewModel() {
     private val _quizCards = MutableStateFlow<List<QuizCardsWithTag>>(emptyList())
     val quizCards: StateFlow<List<QuizCardsWithTag>> get() = _quizCards.asStateFlow()
 
-    private val _quizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
+    private val _quizTrends = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>>(emptyList())
 
     private val trendPageCount = 5
-    private val _visibleQuizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
-    val visibleQuizTrends: StateFlow<List<QuizCard>> get() = _visibleQuizTrends.asStateFlow()
+    private val _visibleQuizTrends = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>>(emptyList())
+    val visibleQuizTrends: StateFlow<List<com.asu1.quizcardmodel.QuizCard>> get() = _visibleQuizTrends.asStateFlow()
 
     private val _userRanks = MutableStateFlow<List<UserRank>>(emptyList())
 

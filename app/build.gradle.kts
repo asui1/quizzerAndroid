@@ -131,6 +131,20 @@ android {
 
 dependencies {
     //Module management
+    implementation(project(":feature:quizcard"))
+    implementation(project(":core:quizcardmodel"))
+    implementation(project(":feature:customButtons"))
+    implementation(project(":core:resources"))
+    implementation(project(":feature:toastManager"))
+    implementation(project(":feature:customdialogs"))
+    implementation(project(":feature:pageIndicator"))
+    testImplementation(project(":feature:quizcard"))
+    androidTestImplementation(project(":feature:quizcard"))
+
+    implementation(project(":feature:musicui"))
+    testImplementation(project(":feature:musicui"))
+    androidTestImplementation(project(":feature:musicui"))
+
     implementation(project(":core:quizModels"))
     testImplementation(project(":core:quizModels"))
     androidTestImplementation(project(":core:quizModels"))

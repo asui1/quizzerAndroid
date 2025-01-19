@@ -12,8 +12,8 @@ import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.composables.flipAlpha
 import com.asu1.quizzer.composables.getBorder
 import com.asu1.quizzer.composables.getColor
-import com.asu1.quizzer.ui.theme.LightColorScheme
-import com.asu1.quizzer.ui.theme.getFontFamily
+import com.asu1.resources.LightColorScheme
+import com.asu1.resources.getFontFamily
 
 enum class TextStyles{
     QUESTION,
@@ -36,7 +36,7 @@ class TextStyleManager {
     private var bodyStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
     private var answerStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
 
-    private var currentColorScheme: ColorScheme = LightColorScheme
+    private var currentColorScheme: ColorScheme = com.asu1.resources.LightColorScheme
     private var colorBrush: Brush = Brush.linearGradient(colors = listOf())
 
     fun initTextStyleManager(colorScheme: ColorScheme, questionStyle: List<Int>, answerStyle: List<Int>, bodyStyle: List<Int>){
@@ -47,7 +47,7 @@ class TextStyleManager {
     }
 
     fun updateStyle(style: List<Int>, textStyles: TextStyles, isDark: Boolean = false){
-        val fontFamily = getFontFamily(style[0])
+        val fontFamily = com.asu1.resources.getFontFamily(style[0])
         val color = style[1]
         val borderStyle = style[2]
         val (backgroundColor, contentColor) = getColor(currentColorScheme, color)
