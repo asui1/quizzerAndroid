@@ -28,7 +28,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import androidx.tracing.Trace
 import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
@@ -44,7 +43,6 @@ import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
 import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
@@ -57,6 +55,7 @@ import com.asu1.quizzer.viewModels.QuizLoadViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -176,6 +175,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable<Route.Init> {
                                 InitializationScreen(
+                                    userViewModel = userViewModel,
                                     navigateToHome = {
                                         getHome(
                                             fetchData = !BuildConfig.isDebug
@@ -278,7 +278,7 @@ class MainActivity : ComponentActivity() {
                                     email = email,
                                     profileUri = profileUri,
                                     login = {
-                                        userViewModel.logIn(email, profileUri)
+                                        userViewModel.login(email)
                                     }
                                 )
                             }

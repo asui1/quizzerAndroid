@@ -29,13 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.GetTextStyle
-import com.asu1.quizzer.composables.base.Flipper
-import com.asu1.quizzer.util.constants.borders
-import com.asu1.quizzer.util.constants.colors
-import com.asu1.quizzer.util.constants.fonts
-import com.asu1.quizzer.util.constants.outlines
+import com.asu1.resources.R
+import com.asu1.resources.borders
+import com.asu1.resources.colors
+import com.asu1.resources.fonts
+import com.asu1.resources.outlines
 
 @Composable
 fun QuizLayoutSetTextStyle(
@@ -143,7 +142,7 @@ fun TextStyleRowOpener(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    Flipper(
+                    com.asu1.flipper.HorizontalFlipper(
                         items = fonts,
                         currentIndex = textStyle[0],
                         onNext = {
@@ -152,9 +151,9 @@ fun TextStyleRowOpener(
                         onPrevious = {
                             updateTextStyle(targetSelector, 0, false)
                         },
-                        key = key+"Font"
+                        key = key + "Font"
                     )
-                    Flipper(
+                    com.asu1.flipper.HorizontalFlipper(
                         items = colors,
                         currentIndex = textStyle[1],
                         onNext = {
@@ -163,9 +162,9 @@ fun TextStyleRowOpener(
                         onPrevious = {
                             updateTextStyle(targetSelector, 1, false)
                         },
-                        key = key+"Color"
+                        key = key + "Color"
                     )
-                    Flipper(
+                    com.asu1.flipper.HorizontalFlipper(
                         items = borders,
                         currentIndex = textStyle[2],
                         onNext = {
@@ -174,9 +173,9 @@ fun TextStyleRowOpener(
                         onPrevious = {
                             updateTextStyle(targetSelector, 2, false)
                         },
-                        key = key+"Border"
+                        key = key + "Border"
                     )
-                    Flipper(
+                    com.asu1.flipper.HorizontalFlipper(
                         items = outlines,
                         currentIndex = textStyle[4],
                         onNext = {
@@ -185,7 +184,7 @@ fun TextStyleRowOpener(
                         onPrevious = {
                             updateTextStyle(targetSelector, 4, false)
                         },
-                        key = key+"Outline"
+                        key = key + "Outline"
                     )
                 }
             }

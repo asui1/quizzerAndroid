@@ -2,8 +2,8 @@ package com.asu1.quizzer
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.asu1.quizzer.data.ColorSchemeSerializer.toColor
-import com.asu1.quizzer.data.ColorSchemeSerializer.toHexString
+import com.asu1.imagecolor.ColorSchemeSerializer.toColor
+import com.asu1.imagecolor.ColorSchemeSerializer.toHexString
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

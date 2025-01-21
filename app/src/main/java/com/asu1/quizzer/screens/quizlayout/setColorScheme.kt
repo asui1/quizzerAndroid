@@ -49,17 +49,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.base.ColorPicker
-import com.asu1.quizzer.composables.base.ColorSchemeSheet
-import com.asu1.quizzer.model.ImageColor
+import com.asu1.colorpicker.ColorSchemeSheet
+import com.asu1.imagecolor.ImageColor
+import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.ShaderType
-import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.quizzer.util.constants.ColorList
-import com.asu1.quizzer.util.constants.GenerateWith
-import com.asu1.quizzer.util.constants.paletteSize
+import com.asu1.resources.ColorList
+import com.asu1.resources.GenerateWith
+import com.asu1.resources.R
+import com.asu1.resources.ShaderType
+import com.asu1.resources.paletteSize
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
@@ -478,7 +476,7 @@ fun ColorPickerRowOpener(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    ColorPicker(
+                    com.asu1.colorpicker.ColorPicker(
                         initialColor = selectedColor,
                         onColorSelected = { color ->
                             selectedColor = color

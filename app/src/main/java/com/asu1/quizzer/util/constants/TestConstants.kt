@@ -1,20 +1,12 @@
 package com.asu1.quizzer.util.constants
 
-import com.asu1.quizcardmodel.QuizCard
-import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.musics.Music
 import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
 import com.asu1.quizzer.viewModels.UserViewModel
 
 val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, setOf("tag1", "tag2"))
 val emptyUserDataTest = UserViewModel.UserDatas(null, null, null, setOf())
-val sampleQuizCardsWithTagList = listOf(
-    QuizCardsWithTag("tag1", sampleQuizCardList),
-    QuizCardsWithTag("tag2", sampleQuizCardList),
-    QuizCardsWithTag("tag3", sampleQuizCardList),
-    QuizCardsWithTag("tag4", sampleQuizCardList)
-)
+
 val sampleMusicList = listOf<MusicAllInOne>(
     MusicAllInOne(
         music = Music(

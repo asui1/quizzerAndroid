@@ -4,6 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,17 +24,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.R
+import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.serializers.QuizDataSerializer
+import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
-import com.asu1.quizzer.data.QuizDataSerializer
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizcardmodel.QuizCard
-import com.asu1.quizzer.model.ScoreCard
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
-import com.asu1.quizzer.viewModels.QuizTheme
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 import java.util.Base64
 
 @Composable
@@ -63,12 +66,19 @@ fun LoadItems(
     Scaffold(
         topBar = {
             RowWithAppIconAndName(
-                showBackButton = true,
-                onBackPressed = {
-                    navController.popBackStack(
-                        Route.CreateQuizLayout,
-                        inclusive = false
-                    )
+                header = @Composable {
+                    IconButton(onClick = {
+                        navController.popBackStack(
+                            Route.CreateQuizLayout,
+                            inclusive = false
+                        )
+                    }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                        )
+                    }
                 }
             )
         }

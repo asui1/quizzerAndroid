@@ -6,14 +6,13 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.serializers.QuizDataSerializer
+import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.models.serializers.json
-import com.asu1.quizzer.R
-import com.asu1.quizzer.data.QuizDataSerializer
-import com.asu1.quizzer.data.QuizLayoutSerializer
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizcardmodel.QuizCard
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +40,7 @@ class QuizLoadViewModel: ViewModel() {
         if(email.isEmpty()) return
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getMyQuiz(email)
+                val response = com.asu1.network.RetrofitInstance.api.getMyQuiz(email)
                 if(response.isSuccessful){
                     val quizCards = response.body()?.searchResult
                     if(quizCards != null){
@@ -87,7 +86,7 @@ class QuizLoadViewModel: ViewModel() {
         val quiz = _myQuizList.value?.find { it.id == uuid }
         if(quiz == null) return
         viewModelScope.launch {
-            val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
+            val response = com.asu1.network.RetrofitInstance.api.deleteQuiz(quiz.id, email)
             if(response.isSuccessful){
                 val updatedList = _myQuizList.value?.toMutableList()
                 updatedList?.remove(quiz)

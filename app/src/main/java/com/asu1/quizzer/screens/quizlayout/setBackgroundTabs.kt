@@ -24,13 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
+import com.asu1.colorpicker.ColorPicker
+import com.asu1.imagecolor.ImageColor
+import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
-import com.asu1.quizzer.composables.base.ColorPicker
-import com.asu1.quizzer.composables.base.FastCreateDropDown
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.ShaderType
+import com.asu1.resources.R
+import com.asu1.resources.ShaderType
 
 @Composable
 fun BackgroundTabs(
@@ -102,7 +101,7 @@ fun BackgroundTabs(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
                     ){
-                        FastCreateDropDown(
+                        com.asu1.customdropdown.FastCreateDropDown(
                             showDropdownMenu = showGradientDropdown,
                             labelText = "Gradient Type",
                             onClick = { index ->
@@ -121,7 +120,7 @@ fun BackgroundTabs(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        ColorPicker(
+                        com.asu1.colorpicker.ColorPicker(
                             initialColor = background.color,
                             onColorSelected = { color ->
                                 onBackgroundColorUpdate(color)
@@ -131,7 +130,7 @@ fun BackgroundTabs(
                             },
                             modifier = Modifier.weight(1f),
                         )
-                        ColorPicker(
+                        com.asu1.colorpicker.ColorPicker(
                             initialColor = background.colorGradient,
                             onColorSelected = { color ->
                                 onGradientColorUpdate(color)

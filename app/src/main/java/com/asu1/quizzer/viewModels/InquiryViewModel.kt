@@ -5,10 +5,10 @@ import ToastType
 import android.net.TrafficStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.R
-import com.asu1.quizzer.model.UserRequest
-import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.constants.NetworkTags
+import com.asu1.network.RetrofitInstance
+import com.asu1.resources.NetworkTags
+import com.asu1.resources.R
+import com.asu1.userdatamodels.UserRequest
 import kotlinx.coroutines.launch
 
 class InquiryViewModel : ViewModel() {

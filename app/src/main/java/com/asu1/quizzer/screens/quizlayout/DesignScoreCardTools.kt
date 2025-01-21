@@ -30,18 +30,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.asu1.quizzer.R
+import com.asu1.imagecolor.Effect
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.ImageGetter
-import com.asu1.quizzer.composables.base.FastCreateDropDown
-import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
-import com.asu1.quizzer.model.Effect
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.ShaderType
-import com.asu1.quizzer.model.sampleScoreCard
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import com.asu1.resources.R
+import com.asu1.resources.ShaderType
 
 @Composable
 fun DesignScoreCardTools(
@@ -192,7 +190,7 @@ fun DesignScoreCardTools(
         )
         colorNames.forEachIndexed { index, colorName ->
             if (colorName == R.string.effect) {
-                FastCreateDropDown(
+                com.asu1.customdropdown.FastCreateDropDown(
                     showDropdownMenu = showEffectDropdown,
                     labelText = stringResource(R.string.effects),
                     onClick = { dropdownIndex ->
@@ -209,7 +207,7 @@ fun DesignScoreCardTools(
                     currentSelection = scoreCard.background.effect.ordinal
                 )
             } else if (colorName == R.string.gradient) {
-                FastCreateDropDown(
+                com.asu1.customdropdown.FastCreateDropDown(
                     showDropdownMenu = showGradientDropdown,
                     labelText = stringResource(R.string.gradient),
                     onClick = { dropdownIndex ->

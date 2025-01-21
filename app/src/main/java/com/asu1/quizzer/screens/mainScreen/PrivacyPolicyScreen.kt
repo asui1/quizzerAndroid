@@ -22,9 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.R
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
+import com.asu1.resources.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

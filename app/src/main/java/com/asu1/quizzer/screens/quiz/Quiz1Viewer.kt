@@ -28,8 +28,8 @@ import com.asu1.models.quiz.Quiz1
 import com.asu1.models.sampleQuiz1
 import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.model.TextStyles
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
+import com.asu1.resources.TextStyles
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView

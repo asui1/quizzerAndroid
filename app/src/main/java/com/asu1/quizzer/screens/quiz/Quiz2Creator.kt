@@ -48,13 +48,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.getBorder
 import com.asu1.quizzer.composables.getColor
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
+import com.asu1.resources.R
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay

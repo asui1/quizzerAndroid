@@ -6,9 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.R
-import com.asu1.quizzer.model.UserRegister
-import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.resources.R
 import com.asu1.utils.Logger
 import kotlinx.coroutines.launch
 
@@ -65,7 +63,7 @@ class RegisterViewModel : ViewModel() {
         }
         else{
             viewModelScope.launch {
-                val response = RetrofitInstance.api.checkDuplicateNickname(nickName)
+                val response = com.asu1.network.RetrofitInstance.api.checkDuplicateNickname(nickName)
                 if(response.isSuccessful){
                     if(response.code() == 200){
                         Logger.debug("Can use this nickname")
@@ -86,7 +84,14 @@ class RegisterViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            val response = RetrofitInstance.api.register(UserRegister(_email.value!!, _nickname.value!!, _tags.value!!.toList(), photoUri.value ?: ""))
+            val response = com.asu1.network.RetrofitInstance.api.register(
+                com.asu1.userdatamodels.UserRegister(
+                    _email.value!!,
+                    _nickname.value!!,
+                    _tags.value!!.toList(),
+                    photoUri.value ?: ""
+                )
+            )
             if(response.isSuccessful){
                 if(response.code() == 201){
                     ToastManager.showToast(R.string.registered_successfully, ToastType.SUCCESS)

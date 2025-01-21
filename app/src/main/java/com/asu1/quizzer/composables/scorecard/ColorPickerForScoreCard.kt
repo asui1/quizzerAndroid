@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.composables.base.ColorPicker
 
 @Composable
 fun TextColorPickerModalSheet(
@@ -38,12 +37,12 @@ fun TextColorPickerModalSheet(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ColorPicker(
+        com.asu1.colorpicker.ColorPicker(
             initialColor = initialColor,
             onColorSelected = { color ->
                 onColorSelected(color)
             },
-            onClose = {onClose()},
+            onClose = { onClose() },
             testTag = "DesignScoreCardTextColorPicker"
         )
     }

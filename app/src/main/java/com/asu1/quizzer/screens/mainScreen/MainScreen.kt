@@ -48,7 +48,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcard.VerticalQuizCardLargeColumn
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.UserRankComposableList
 import com.asu1.quizzer.composables.mainscreen.DrawerContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
@@ -59,6 +58,7 @@ import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

@@ -10,47 +10,45 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quiz.QuizData
+import com.asu1.models.quiz.QuizResult
+import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.quiz.SendQuizResult
+import com.asu1.models.quiz.sampleResult
 import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizError
-import com.asu1.quizzer.R
-import com.asu1.quizzer.data.ColorSchemeSerializer
-import com.asu1.quizzer.data.QuizDataSerializer
-import com.asu1.quizzer.data.QuizResult
-import com.asu1.quizzer.data.SendQuizResult
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.data.sampleResult
-import com.asu1.quizzer.data.toJson
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.ShaderType
+import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.network.getErrorMessage
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
-import com.asu1.resources.LightColorScheme
-import com.asu1.quizzer.util.byteArrayToImageBitmap
-import com.asu1.quizzer.util.calculateSeedColor
-import com.asu1.quizzer.util.constants.ColorList
-import com.asu1.quizzer.util.constants.GenerateWith
-import com.asu1.quizzer.util.constants.borders
-import com.asu1.quizzer.util.constants.colors
-import com.asu1.quizzer.util.constants.contrastSize
-import com.asu1.quizzer.util.constants.fonts
-import com.asu1.quizzer.util.constants.outlines
-import com.asu1.quizzer.util.constants.paletteSize
-import com.asu1.quizzer.util.toScheme
-import com.asu1.quizzer.util.withPrimaryColor
-import com.asu1.quizzer.util.withSecondaryColor
-import com.asu1.quizzer.util.withTertiaryColor
+import com.asu1.resources.ColorList
+import com.asu1.resources.GenerateWith
+import com.asu1.resources.LayoutSteps
+import com.asu1.resources.R
+import com.asu1.resources.ShaderType
+import com.asu1.resources.ViewModelState
+import com.asu1.resources.borders
+import com.asu1.resources.colors
+import com.asu1.resources.contrastSize
+import com.asu1.resources.fonts
+import com.asu1.resources.outlines
+import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
+import com.asu1.utils.byteArrayToImageBitmap
+import com.asu1.utils.calculateSeedColor
+import com.asu1.utils.toScheme
+import com.asu1.utils.withPrimaryColor
+import com.asu1.utils.withSecondaryColor
+import com.asu1.utils.withTertiaryColor
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -61,71 +59,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.time.LocalDate
 import java.util.Base64
-
-@Serializable
-data class QuizTheme(
-    var backgroundImage: ImageColor = ImageColor(
-        imageData = byteArrayOf(),
-        color = Color.White,
-        color2 = Color.White,
-        colorGradient = Color.White,
-        state = ImageColorState.COLOR
-    ),
-    var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 2),
-    var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1, 0),
-    var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
-    @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = com.asu1.resources.LightColorScheme,
-)
-
-data class QuizData(
-    var title: String = "",
-    var image: ByteArray = byteArrayOf(),
-    var description: String = "",
-    var tags: Set<String> = emptySet(),
-    var shuffleQuestions: Boolean = false,
-    var creator: String = "GUEST",
-    var uuid : String? = null,
-)
-
-enum class LayoutSteps(val value: Int, val stringResourceId: Int) {
-    POLICY(0, R.string.agree_policy),
-    TITLE(1, R.string.set_quiz_title),
-    DESCRIPTION(2, R.string.set_quiz_description),
-    TAGS(3, R.string.set_quiz_tags),
-    IMAGE(4, R.string.set_quiz_image),
-    THEME(5, R.string.set_color_setting),
-    TEXTSTYLE(6, R.string.set_text_setting),;
-
-    operator fun minus(i: Int): LayoutSteps {
-        return when (this) {
-            POLICY -> POLICY
-            TITLE -> POLICY
-            DESCRIPTION -> TITLE
-            TAGS -> DESCRIPTION
-            IMAGE -> TAGS
-            THEME -> IMAGE
-            TEXTSTYLE -> THEME
-        }
-    }
-
-    operator fun plus(i: Int): LayoutSteps {
-        return when (this) {
-            POLICY -> TITLE
-            TITLE -> DESCRIPTION
-            DESCRIPTION -> TAGS
-            TAGS -> IMAGE
-            IMAGE -> THEME
-            THEME -> TEXTSTYLE
-            TEXTSTYLE -> TEXTSTYLE
-        }
-    }
-}
 
 class QuizLayoutViewModel : ViewModel() {
     private val _viewModelState = MutableLiveData(ViewModelState.IDLE)
@@ -209,7 +147,7 @@ class QuizLayoutViewModel : ViewModel() {
         _viewModelState.value = ViewModelState.LOADING
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.api.getResult(resultId)
+                val response = com.asu1.network.RetrofitInstance.api.getResult(resultId)
                 if (response.isSuccessful) {
                     val quizResult = response.body()!!
                     coroutineScope {
@@ -261,7 +199,7 @@ class QuizLayoutViewModel : ViewModel() {
         )
         viewModelScope.launch {
             try{
-                val response = RetrofitInstance.api.submitQuiz(result)
+                val response = com.asu1.network.RetrofitInstance.api.submitQuiz(result)
                 if(response.isSuccessful){
                     _viewModelState.value = ViewModelState.LOADING
                     onDone()
@@ -282,7 +220,7 @@ class QuizLayoutViewModel : ViewModel() {
         _viewModelState.postValue(ViewModelState.LOADING)
         viewModelScope.launch(Dispatchers.IO){
             try {
-                val response = RetrofitInstance.api.getQuizData(quizId)
+                val response = com.asu1.network.RetrofitInstance.api.getQuizData(quizId)
                 Logger.debug("RESPONSE SUCCESS")
                 if (response.isSuccessful) {
                     coroutineScope{
@@ -350,7 +288,7 @@ class QuizLayoutViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val jsoned = toJson(scoreCard)
-                val response = RetrofitInstance.api.addQuiz(jsoned)
+                val response = com.asu1.network.RetrofitInstance.api.addQuiz(jsoned)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         ToastManager.showToast(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
@@ -358,7 +296,11 @@ class QuizLayoutViewModel : ViewModel() {
                         _viewModelState.postValue(ViewModelState.IDLE)
                     } else {
                         _viewModelState.postValue(ViewModelState.IDLE)
-                        val errorMessage = response.errorBody()?.string()?.let { getErrorMessage(it) }
+                        val errorMessage = response.errorBody()?.string()?.let {
+                            com.asu1.network.getErrorMessage(
+                                it
+                            )
+                        }
                         ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }
@@ -738,6 +680,37 @@ class QuizLayoutViewModel : ViewModel() {
         _quizResult.value = quizResult
         _viewModelState.postValue(ViewModelState.IDLE)
     }
+}
+
+suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
+    if (quizData.value.uuid == null) {
+        withContext(Dispatchers.Default) {
+            generateUUIDWithTitle()
+        }
+    }
+    val quizDataSerializer = QuizDataSerializer(
+        title = quizData.value.title,
+        creator = quizData.value.creator,
+        titleImage = Base64.getEncoder().encodeToString(quizData.value.image),
+        uuid = quizData.value.uuid!!,
+        tags = quizData.value.tags,
+        quizzes = quizzes.value.map {
+            it.changeToJson()
+        },
+        description = quizData.value.description
+    )
+    return quizDataSerializer
+}
+
+suspend fun QuizLayoutViewModel.toJson(scoreCard: ScoreCard): QuizLayoutSerializer {
+    val localQuizData = quizDataToJson()
+    val scoreCardCopy = scoreCard.copy(quizUuid = localQuizData.uuid)
+    val quizLayoutSerializer = QuizLayoutSerializer(
+        quizData = localQuizData,
+        quizTheme = quizTheme.value,
+        scoreCard = scoreCardCopy
+    )
+    return quizLayoutSerializer
 }
 
 fun createSampleQuizLayoutViewModel(): QuizLayoutViewModel {

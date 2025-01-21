@@ -8,40 +8,19 @@ https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
 
 일단 면접 이후 개선해야 될 것들:
-1. 모듈 나눠서 멀티모듈 프로젝트로 만들어야함 + 주요 기능에 따라서 프로세스 분리해주기.
-2. coroutine 사용하던 곳 Rxjava로 몇 개 바꾸기.
-3. 그리고 면접 관련 대답 제대로 못한 부분 메꾸기... aar이 뭔지, java reflect가 뭔지, coroutine 주의할 점..., 다른 clean architecture,
+1. 모듈 나눠서 멀티모듈 프로젝트로 만들어야함 (완)
 
-1. FEATURE
+2. GoogleFont사용해서 앱 크기 줄이기.(완)
 
+3.주요 기능에 따라서 프로세스 분리해주기.
+-> Exoplayer 사용하는 Service 다른 프로세스로 분리 + message queue 사용해서 통신하기.
 
-2. DOMAIN
+4. coroutine 사용하던 곳 Rxjava로 몇 개 바꾸기.
+-> Init화면 가져올 때 3가지를 가져오는데 이걸 RxJava를 써서 3개를 동시에 요청하고 3개의 stream을 합쳐서 처리하는 방식으로 바꾸기.
 
+5. 그리고 면접 관련 대답 제대로 못한 부분 메꾸기... aar이 뭔지, java reflect가 뭔지, coroutine 주의할 점..., 다른 clean architecture -> UI Composable 구조 관련해서?
 
-3. REPOSITORY
-
-
-4. DATA
-    - 퀴즈
-    - 노래 목록
-
-
-Android Library -> 안드로이드 프레임워크가 필요한 것.
- - 노래 재생 관련 1
- - Database 관련 1
- - 서버 통신 관련 1
- - UI 공통 콤포넌트
-    - 이미지
-    - 색
-    - 텍스트
- - 퀴즈 관련 UI 콤포넌트 1
-    - 퀴즈 생성
-    - 퀴즈 풀기
-
-Kotlin Library -> 안드로이드 프레임워크가 필요 없는 것.
- - 퀴즈 관련 작업.
- - 기타 Util 관련 작업.
-
+6. ContextualFlowRow가 Runtime에 찾을 수 가 없다고 뜨는데;; Experimental API라서 그런가? 일단은 비활성화...
 
 개선점 발견. 객체 지향적으로 프로그래밍이 되어있지않음...
 모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.

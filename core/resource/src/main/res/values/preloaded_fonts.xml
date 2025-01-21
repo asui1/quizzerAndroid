@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/gothic_a1_bold</item>
+        <item>@font/gothic_a1_light</item>
+        <item>@font/gothic_a1_medium</item>
+    </array>
+</resources>

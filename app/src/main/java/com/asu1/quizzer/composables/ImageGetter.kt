@@ -37,12 +37,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizcard.loadImageAsByteArray
+import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.util.uriToByteArray
-import kotlinx.coroutines.launch
 import com.asu1.resources.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null,

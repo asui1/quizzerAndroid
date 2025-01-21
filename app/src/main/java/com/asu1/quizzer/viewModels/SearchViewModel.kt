@@ -6,9 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.R
-import com.asu1.quizcardmodel.QuizCard
-import com.asu1.quizzer.network.RetrofitInstance
+import com.asu1.resources.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +31,7 @@ class SearchViewModel : ViewModel() {
         viewModelScope.launch {
             _searchResult.value = emptyList()
             try {
-                val response = RetrofitInstance.api.searchQuiz(searchText)
+                val response = com.asu1.network.RetrofitInstance.api.searchQuiz(searchText)
                 if(response.isSuccessful){
                     val quizCards = response.body()?.searchResult
                     if(quizCards == null){

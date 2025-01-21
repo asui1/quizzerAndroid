@@ -33,11 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.animations.UserRankAnimation
-import com.asu1.quizzer.model.UserRank
-import com.asu1.quizzer.model.userRankSample
 import com.asu1.quizzer.screens.mainScreen.UriImageButton
+import com.asu1.resources.R
+import com.asu1.userdatamodels.UserRank
 import java.util.Locale
 import kotlin.math.round
 
@@ -179,8 +178,8 @@ fun UserRankComposableList(
 @Preview(showBackground = true)
 @Composable
 fun UserRankComposablePreview() {
-    val userRank = userRankSample
-    val userRanks = mutableListOf<UserRank>()
+    val userRank = com.asu1.userdatamodels.userRankSample
+    val userRanks = mutableListOf<com.asu1.userdatamodels.UserRank>()
     for (i in 1..20) {
         userRanks.add(
             userRank

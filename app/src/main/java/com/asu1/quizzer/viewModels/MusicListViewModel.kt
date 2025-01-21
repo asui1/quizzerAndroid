@@ -39,7 +39,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicListViewModel @Inject constructor(
     private val musicServiceHandler: MusicServiceHandler,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ): ViewModel(){
 
     private var isMusicServiceRunning by savedStateHandle.saveable { mutableStateOf(false) }

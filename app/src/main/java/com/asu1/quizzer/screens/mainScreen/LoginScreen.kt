@@ -36,10 +36,9 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
-import com.asu1.resources.R
-import com.asu1.quizzer.network.SecurePreferences
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.R
 import com.asu1.utils.Logger
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -102,7 +101,7 @@ fun LoginScreen(navController: NavController,
     val loginGoogleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(true)
         .setAutoSelectEnabled(true)
-        .setServerClientId(SecurePreferences.GOOGLE_CLIENT_ID)
+        .setServerClientId(com.asu1.network.SecurePreferences.GOOGLE_CLIENT_ID)
         .build()
 
     val loginRequest: GetCredentialRequest = GetCredentialRequest.Builder()
@@ -112,7 +111,7 @@ fun LoginScreen(navController: NavController,
     val registerGoogleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setAutoSelectEnabled(true)
-        .setServerClientId(SecurePreferences.GOOGLE_CLIENT_ID)
+        .setServerClientId(com.asu1.network.SecurePreferences.GOOGLE_CLIENT_ID)
         .build()
 
     val registerRequest: GetCredentialRequest = GetCredentialRequest.Builder()
@@ -129,7 +128,7 @@ fun LoginScreen(navController: NavController,
                         context = context,
                     )
                     Logger.debug("Received credential: $result")
-                    handleSignIn(result, {email, profileUri ->  userViewModel.logIn(email, profileUri)})
+                    handleSignIn(result, {email, profileUri ->  userViewModel.login(email)})
 
                 } catch (e: GetCredentialException) {
                     ToastManager.showToast(R.string.google_login_is_in_development, ToastType.ERROR)

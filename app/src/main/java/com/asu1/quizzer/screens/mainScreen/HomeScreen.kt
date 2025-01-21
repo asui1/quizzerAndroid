@@ -28,13 +28,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.R
-import com.asu1.quizzer.composables.musics.MusicPlayer
 import com.asu1.quizcard.HorizontalQuizCardItemLarge
 import com.asu1.quizcard.HorizontalQuizCardItemVertical
+import com.asu1.quizcardmodel.QuizCardsWithTag
+import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.constants.sampleQuizCardsWithTagList
-import com.asu1.quizzer.viewModels.QuizCardMainViewModel.QuizCardsWithTag
+import com.asu1.resources.R
 
 @Composable
 fun HomeScreen(
@@ -68,7 +67,7 @@ fun HomeScreen(
             }
         }
         item {
-            MusicPlayer()
+//            MusicPlayer()
             Spacer(modifier = Modifier.size(24.dp))
             PrivacyPolicyRow(navController)
         }

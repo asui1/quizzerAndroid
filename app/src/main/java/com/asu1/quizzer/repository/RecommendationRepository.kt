@@ -1,9 +1,9 @@
 // RecommendationRepository.kt
 package com.asu1.quizzer.repository
 
-import com.asu1.quizzer.model.QuizCardList
-import com.asu1.quizzer.model.RecommendationList
-import com.asu1.quizzer.model.UserRankList
+import com.asu1.quizcardmodel.QuizCardList
+import com.asu1.quizcardmodel.RecommendationList
+import com.asu1.userdatamodels.UserRankList
 import retrofit2.Response
 
 interface RecommendationRepository {

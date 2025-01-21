@@ -109,6 +109,7 @@ android {
 //    }
 
     composeCompiler {
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
         featureFlags = setOf(
 
         )
@@ -130,28 +131,35 @@ android {
 
 
 dependencies {
+    implementation(project(":feature:quizCard"))
     //Module management
-    implementation(project(":feature:quizcard"))
-    implementation(project(":core:quizcardmodel"))
-    implementation(project(":feature:customButtons"))
-    implementation(project(":core:resources"))
+    implementation(project(":core:quizCardModel"))
+    implementation(project(":feature:customButton"))
+    implementation(project(":core:resource"))
     implementation(project(":feature:toastManager"))
-    implementation(project(":feature:customdialogs"))
+    implementation(project(":feature:customDialog"))
     implementation(project(":feature:pageIndicator"))
-    testImplementation(project(":feature:quizcard"))
-    androidTestImplementation(project(":feature:quizcard"))
+    implementation(project(":feature:colorPicker"))
+    implementation(project(":core:imageColor"))
+    implementation(project(":core:quizModel"))
+    implementation(project(":feature:customFlipper"))
+    implementation(project(":feature:customFlipper"))
+    implementation(project(":feature:customDropdown"))
+    implementation(project(":repository:network"))
+    implementation(project(":domain:userDataUseCase"))
+    implementation(project(":core:userDataModels"))
+    testImplementation(project(":feature:quizCard"))
+    androidTestImplementation(project(":feature:quizCard"))
+    implementation(project(":feature:musicUi"))
+    testImplementation(project(":feature:musicUi"))
+    androidTestImplementation(project(":feature:musicUi"))
 
-    implementation(project(":feature:musicui"))
-    testImplementation(project(":feature:musicui"))
-    androidTestImplementation(project(":feature:musicui"))
-
-    implementation(project(":core:quizModels"))
-    testImplementation(project(":core:quizModels"))
-    androidTestImplementation(project(":core:quizModels"))
-
-    implementation(project(":core:utils"))
-    testImplementation(project(":core:utils"))
-    androidTestImplementation(project(":core:utils"))
+    implementation(project(":core:quizModel"))
+    testImplementation(project(":core:quizModel"))
+    androidTestImplementation(project(":core:quizModel"))
+    implementation(project(":core:util"))
+    testImplementation(project(":core:util"))
+    androidTestImplementation(project(":core:util"))
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -213,6 +221,12 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraint.layout)
     implementation(libs.androidx.tracing)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.ui.text.google.fonts)
+
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
 
     //EXOPLAYER
     implementation(libs.exoplayer)

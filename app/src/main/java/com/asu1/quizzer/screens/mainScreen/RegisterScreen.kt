@@ -48,13 +48,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.RegisterViewModel
+import com.asu1.resources.R
 import kotlinx.coroutines.launch
 
 const val registerSteps = 3

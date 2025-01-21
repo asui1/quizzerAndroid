@@ -8,11 +8,11 @@ import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
 import com.asu1.models.sampleQuiz3
 import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.viewModels.QuizTheme
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import java.time.LocalDate
 

@@ -23,8 +23,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.asu1.quizzer.R
-import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.R
 
 @Composable
 fun QuizLayoutSetDescription(

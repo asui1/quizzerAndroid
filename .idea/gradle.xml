@@ -12,19 +12,32 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/core/quizModels" />
-            <option value="$PROJECT_DIR$/core/quizcardmodel" />
-            <option value="$PROJECT_DIR$/core/resources" />
-            <option value="$PROJECT_DIR$/core/utils" />
+            <option value="$PROJECT_DIR$/core/colorModel" />
+            <option value="$PROJECT_DIR$/core/imageColor" />
+            <option value="$PROJECT_DIR$/core/quizCardModel" />
+            <option value="$PROJECT_DIR$/core/quizModel" />
+            <option value="$PROJECT_DIR$/core/resource" />
+            <option value="$PROJECT_DIR$/core/scoreCardModel" />
+            <option value="$PROJECT_DIR$/core/userDataModels" />
+            <option value="$PROJECT_DIR$/core/util" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/domain/imagecolor" />
+            <option value="$PROJECT_DIR$/domain/userDataUseCase" />
             <option value="$PROJECT_DIR$/feature" />
-            <option value="$PROJECT_DIR$/feature/customButtons" />
-            <option value="$PROJECT_DIR$/feature/customdialogs" />
-            <option value="$PROJECT_DIR$/feature/musicui" />
+            <option value="$PROJECT_DIR$/feature/colorPicker" />
+            <option value="$PROJECT_DIR$/feature/customButton" />
+            <option value="$PROJECT_DIR$/feature/customDialog" />
+            <option value="$PROJECT_DIR$/feature/customDropdown" />
+            <option value="$PROJECT_DIR$/feature/customFlipper" />
+            <option value="$PROJECT_DIR$/feature/musicUi" />
             <option value="$PROJECT_DIR$/feature/pageIndicator" />
-            <option value="$PROJECT_DIR$/feature/quizcard" />
+            <option value="$PROJECT_DIR$/feature/quizCard" />
             <option value="$PROJECT_DIR$/feature/toastManager" />
             <option value="$PROJECT_DIR$/macrobenchmark" />
             <option value="$PROJECT_DIR$/microbenchmark" />
+            <option value="$PROJECT_DIR$/repository" />
+            <option value="$PROJECT_DIR$/repository/network" />
+            <option value="$PROJECT_DIR$/repository/userData" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

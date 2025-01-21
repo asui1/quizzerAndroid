@@ -1,14 +1,13 @@
 package com.asu1.quizzer.repository
 
-import com.asu1.quizzer.model.QuizCardList
-import com.asu1.quizzer.model.RecommendationList
-import com.asu1.quizzer.model.UserRankList
-import com.asu1.quizzer.network.ApiService
+import com.asu1.quizcardmodel.QuizCardList
+import com.asu1.quizcardmodel.RecommendationList
+import com.asu1.userdatamodels.UserRankList
 import retrofit2.Response
 import javax.inject.Inject
 
 class RecommendationRepositoryImpl @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: com.asu1.network.ApiService
 ) : RecommendationRepository {
     override suspend fun getRecommendations(
         language: String,

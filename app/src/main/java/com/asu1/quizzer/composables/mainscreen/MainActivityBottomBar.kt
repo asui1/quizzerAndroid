@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,

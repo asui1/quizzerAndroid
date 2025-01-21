@@ -38,17 +38,17 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.asu1.quizzer.R
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.animations.OpenCloseColumn
 import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.sampleScoreCard
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 import kotlinx.coroutines.launch
 
 val colorNames: List<Int> = listOf(R.string.background_newline,
@@ -68,6 +68,7 @@ fun DesignScoreCardScreen(
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var expanded by remember {mutableStateOf(true)}
     var immerseMode by remember { mutableStateOf(false) }
+    //TODO: Fix this
     val context = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
 

@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ShaderType
+import com.asu1.imagecolor.ImageColor
+import com.asu1.resources.ShaderType
 import com.asu1.utils.shaders.diagonalHalf
 import com.asu1.utils.shaders.horizontalHalf
 import com.asu1.utils.shaders.leftBottomDist

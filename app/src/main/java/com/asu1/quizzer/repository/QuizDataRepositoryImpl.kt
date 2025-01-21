@@ -1,15 +1,14 @@
 package com.asu1.quizzer.repository
 
-import com.asu1.quizzer.data.GetQuizResult
-import com.asu1.quizzer.data.QuizLayoutSerializer
-import com.asu1.quizzer.data.QuizResult
-import com.asu1.quizzer.data.SendQuizResult
-import com.asu1.quizzer.network.ApiService
+import com.asu1.models.quiz.GetQuizResult
+import com.asu1.models.quiz.QuizResult
+import com.asu1.models.quiz.SendQuizResult
+import com.asu1.models.serializers.QuizLayoutSerializer
 import retrofit2.Response
 import javax.inject.Inject
 
 class QuizDataRepositoryImpl @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: com.asu1.network.ApiService
 ) : QuizDataRepository {
     override suspend fun deleteQuiz(uuid: String, email: String): Response<Void> {
         return apiService.deleteQuiz(uuid, email)

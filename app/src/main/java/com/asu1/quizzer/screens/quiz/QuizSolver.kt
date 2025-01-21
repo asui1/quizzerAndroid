@@ -32,16 +32,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.data.ViewModelState
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.QuizTheme
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 import java.time.LocalDate
 
 @Composable

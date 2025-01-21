@@ -9,7 +9,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.quizzer.composables.TagSetter
-import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun QuizLayoutSetTags(

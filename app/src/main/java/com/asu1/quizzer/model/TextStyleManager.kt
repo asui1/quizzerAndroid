@@ -12,14 +12,8 @@ import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.quizzer.composables.flipAlpha
 import com.asu1.quizzer.composables.getBorder
 import com.asu1.quizzer.composables.getColor
-import com.asu1.resources.LightColorScheme
-import com.asu1.resources.getFontFamily
+import com.asu1.resources.TextStyles
 
-enum class TextStyles{
-    QUESTION,
-    ANSWER,
-    BODY,
-}
 
 data class TextStyle(
     val fontFamily: FontFamily,

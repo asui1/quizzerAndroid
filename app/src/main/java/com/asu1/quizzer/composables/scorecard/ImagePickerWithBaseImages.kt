@@ -25,11 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
-import com.asu1.quizzer.model.BackgroundBase
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.resources.LightPrimary
-import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun ImagePickerWithBaseImages(

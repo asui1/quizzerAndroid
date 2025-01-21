@@ -58,17 +58,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.asu1.quizzer.R
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
-import com.asu1.quizzer.viewModels.LayoutSteps
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.resources.LayoutSteps
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 import com.asu1.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -445,9 +444,16 @@ fun StepProgressBar(
             verticalAlignment = Alignment.CenterVertically,
         ){
             RowWithAppIconAndName(
-                showBackButton = true,
-                onBackPressed = {
-                    showExitDialog()
+                header = @Composable {
+                    IconButton(onClick = {
+                        showExitDialog()
+                    }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                        )
+                    }
                 },
                 modifier = Modifier.weight(1f),
             )

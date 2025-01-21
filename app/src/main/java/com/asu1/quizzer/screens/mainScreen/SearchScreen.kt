@@ -49,12 +49,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.R
 import com.asu1.quizcard.QuizCardHorizontalVerticalShareList
 import com.asu1.quizcardmodel.sampleQuizCardList
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.SearchViewModel
+import com.asu1.resources.R
 
 @Composable
 fun  SearchScreen(navController: NavHostController,

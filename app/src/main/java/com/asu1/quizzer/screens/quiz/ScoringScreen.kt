@@ -48,18 +48,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.asu1.quizzer.R
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
-import com.asu1.customdialogs.ShareDialog
-import com.asu1.quizzer.data.ViewModelState
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.sampleScoreCard
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.resources.R
+import com.asu1.resources.ViewModelState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

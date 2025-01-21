@@ -1,33 +1,42 @@
 package com.asu1.quizzer.viewModels.quizModels
 
 import androidx.compose.ui.geometry.Offset
-import androidx.lifecycle.viewModelScope
 import com.asu1.models.quiz.Quiz4
 import com.asu1.models.serializers.BodyType
-import kotlinx.coroutines.channels.Channel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class Quiz4ViewModel: BaseQuizViewModel<Quiz4>() {
     private val _quiz4State = MutableStateFlow(Quiz4())
     val quiz4State: StateFlow<Quiz4> get() = _quiz4State.asStateFlow()
 
-    private val stateUpdateChannel = Channel<(Quiz4) -> Quiz4>(Channel.UNLIMITED)
+    private val offsetSubject = PublishSubject.create<Triple<Int, Offset, Boolean>>()
+    private val compositeDisposable = CompositeDisposable()
 
     init {
         resetQuiz()
-        processStateUpdates()
+        subscribeToOffsetUpdates()
     }
 
-    private fun processStateUpdates() {
-        viewModelScope.launch {
-            for (update in stateUpdateChannel) {
-                _quiz4State.value = update(_quiz4State.value)
+    private fun subscribeToOffsetUpdates(){
+        val disposable = offsetSubject
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { (index, offset, isLeft) ->
+                updateDotOffset(index, offset, isLeft)
             }
-        }
+        compositeDisposable.add(disposable)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 
     override fun viewerInit() {

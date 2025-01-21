@@ -31,8 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.resources.getFontFamily
 
 @Composable
 fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu1.quizzer.model.TextStyle) {

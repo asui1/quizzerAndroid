@@ -39,12 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.asu1.quizzer.R
 import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -49,6 +49,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.asu1.imagecolor.Effect
+import com.asu1.imagecolor.ImageColor
+import com.asu1.imagecolor.ImageColorState
+import com.asu1.models.quiz.QuizResult
+import com.asu1.models.quiz.sampleResult
+import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.effects.Christmas
 import com.asu1.quizzer.composables.effects.ChristmasBell
 import com.asu1.quizzer.composables.effects.Clouds
@@ -61,18 +68,10 @@ import com.asu1.quizzer.composables.effects.WithFlowers
 import com.asu1.quizzer.composables.effects.WithMoon
 import com.asu1.quizzer.composables.effects.WithShootingStar
 import com.asu1.quizzer.composables.effects.Wreath
-import com.asu1.quizzer.data.QuizResult
-import com.asu1.quizzer.data.sampleResult
-import com.asu1.quizzer.model.Effect
-import com.asu1.quizzer.model.ImageColor
-import com.asu1.quizzer.model.ImageColorState
-import com.asu1.quizzer.model.ScoreCard
-import com.asu1.quizzer.model.sampleScoreCard
+import com.asu1.resources.NotoSans
+import com.asu1.resources.R
 import java.util.Locale
 import kotlin.math.round
-import com.asu1.resources.R
-import com.asu1.resources.NotoSans
-import com.asu1.pageindicator.HorizontalPageIndicator
 
 @Composable
 fun ScoreCardBackground(

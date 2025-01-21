@@ -12,10 +12,10 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
+import com.asu1.resources.NOTIFICATION_CHANNEL_ID
+import com.asu1.resources.NOTIFICATION_CHANNEL_NAME
+import com.asu1.resources.NOTIFICATION_ID
 import com.asu1.resources.R
-import com.asu1.quizzer.util.constants.NOTIFICATION_CHANNEL_ID
-import com.asu1.quizzer.util.constants.NOTIFICATION_CHANNEL_NAME
-import com.asu1.quizzer.util.constants.NOTIFICATION_ID
 
 @OptIn(UnstableApi::class)
 class MediaNotificationManager

@@ -1,10 +1,10 @@
 // QuizRepository.kt
 package com.asu1.quizzer.repository
 
-import com.asu1.quizzer.data.GetQuizResult
-import com.asu1.quizzer.data.QuizLayoutSerializer
-import com.asu1.quizzer.data.QuizResult
-import com.asu1.quizzer.data.SendQuizResult
+import com.asu1.models.quiz.GetQuizResult
+import com.asu1.models.quiz.QuizResult
+import com.asu1.models.quiz.SendQuizResult
+import com.asu1.models.serializers.QuizLayoutSerializer
 import retrofit2.Response
 
 // Manage all items related to Quiz's data.

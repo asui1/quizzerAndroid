@@ -2,7 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
+      <module name="quizzerAndroid.core.userDataModel" target="21" />
+      <module name="quizzerAndroid.core.util" target="21" />
       <module name="quizzerAndroid.domain.toastManager" target="21" />
+      <module name="quizzerAndroid.feature.customDialog" target="21" />
       <module name="quizzerAndroid.feature.pagerIndicator" target="21" />
       <module name="quizzerAndroid.models" target="21" />
     </bytecodeTargetLevel>

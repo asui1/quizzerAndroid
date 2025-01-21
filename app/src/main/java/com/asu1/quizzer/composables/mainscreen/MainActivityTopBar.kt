@@ -15,12 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.resources.R
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

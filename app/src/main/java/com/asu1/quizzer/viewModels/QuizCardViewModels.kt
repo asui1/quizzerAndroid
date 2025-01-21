@@ -6,11 +6,10 @@ import android.net.TrafficStats
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.quizzer.R
 import com.asu1.quizcardmodel.QuizCard
-import com.asu1.quizzer.model.UserRank
-import com.asu1.quizzer.network.RetrofitInstance
-import com.asu1.quizzer.util.constants.NetworkTags
+import com.asu1.quizcardmodel.QuizCardsWithTag
+import com.asu1.resources.NetworkTags
+import com.asu1.resources.R
 import com.asu1.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +20,6 @@ import kotlinx.coroutines.launch
 
 class QuizCardMainViewModel : ViewModel() {
 
-    data class QuizCardsWithTag(
-        val tag: String,
-        val quizCards: List<com.asu1.quizcardmodel.QuizCard>
-    )
-
     private val _loadResultId = MutableLiveData<String?>(null)
     val loadResultId: MutableLiveData<String?> get() = _loadResultId
 
@@ -35,17 +29,17 @@ class QuizCardMainViewModel : ViewModel() {
     private val _quizCards = MutableStateFlow<List<QuizCardsWithTag>>(emptyList())
     val quizCards: StateFlow<List<QuizCardsWithTag>> get() = _quizCards.asStateFlow()
 
-    private val _quizTrends = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>>(emptyList())
+    private val _quizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
 
     private val trendPageCount = 5
-    private val _visibleQuizTrends = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>>(emptyList())
-    val visibleQuizTrends: StateFlow<List<com.asu1.quizcardmodel.QuizCard>> get() = _visibleQuizTrends.asStateFlow()
+    private val _visibleQuizTrends = MutableStateFlow<List<QuizCard>>(emptyList())
+    val visibleQuizTrends: StateFlow<List<QuizCard>> get() = _visibleQuizTrends.asStateFlow()
 
-    private val _userRanks = MutableStateFlow<List<UserRank>>(emptyList())
+    private val _userRanks = MutableStateFlow<List<com.asu1.userdatamodels.UserRank>>(emptyList())
 
     private val userRankPageCount = 8
-    private val _visibleUserRanks = MutableStateFlow<List<UserRank>>(emptyList())
-    val visibleUserRanks: StateFlow<List<UserRank>> get() = _visibleUserRanks.asStateFlow()
+    private val _visibleUserRanks = MutableStateFlow<List<com.asu1.userdatamodels.UserRank>>(emptyList())
+    val visibleUserRanks: StateFlow<List<com.asu1.userdatamodels.UserRank>> get() = _visibleUserRanks.asStateFlow()
 
     fun getMoreQuizTrends(){
         viewModelScope.launch {
@@ -102,7 +96,7 @@ class QuizCardMainViewModel : ViewModel() {
         _visibleUserRanks.value = emptyList()
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getUserRanks()
+                val response = com.asu1.network.RetrofitInstance.api.getUserRanks()
                 if (response.isSuccessful && response.body() != null) {
                     _userRanks.value = response.body()!!.searchResult
                     _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
@@ -120,7 +114,7 @@ class QuizCardMainViewModel : ViewModel() {
         _visibleQuizTrends.value = emptyList()
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getTrends(language)
+                val response = com.asu1.network.RetrofitInstance.api.getTrends(language)
                 if (response.isSuccessful && response.body() != null) {
                     _quizTrends.value = response.body()!!.searchResult
                     _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
@@ -151,7 +145,7 @@ class QuizCardMainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 TrafficStats.setThreadStatsTag(NetworkTags.FETCH_QUIZ_CARDS_TAG)
-                val response = RetrofitInstance.api.getRecommendations(language, email)
+                val response = com.asu1.network.RetrofitInstance.api.getRecommendations(language, email)
                 if (response.isSuccessful && response.body() != null) {
                     _quizCards.value = response.body()!!.searchResult.map {
                         QuizCardsWithTag(it.key, it.items)

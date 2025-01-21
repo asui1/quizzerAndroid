@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileDownload
@@ -62,14 +63,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.serializers.QuizType
-import com.asu1.quizzer.R
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.constants.questionTypes
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.resources.R
+import com.asu1.resources.questionTypes
 import kotlinx.coroutines.launch
 
 @Composable
@@ -192,12 +192,19 @@ fun QuizBuilderScreen(navController: NavController,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RowWithAppIconAndName(
-                            showBackButton = true,
-                            onBackPressed = {
-                                navController.popBackStack(
-                                    Route.CreateQuizLayout,
-                                    inclusive = false,
-                                )
+                            header = @Composable {
+                                IconButton(onClick = {
+                                    navController.popBackStack(
+                                        Route.CreateQuizLayout,
+                                        inclusive = false,
+                                    )
+                                }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowBackIosNew,
+                                        contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                                    )
+                                }
                             }
                         )
                         IconButton(
