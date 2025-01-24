@@ -32,6 +32,7 @@ import com.asu1.quizcard.HorizontalQuizCardItemLarge
 import com.asu1.quizcard.HorizontalQuizCardItemVertical
 import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
+import com.asu1.quizzer.composables.musics.MusicPlayer
 import com.asu1.quizzer.util.Route
 import com.asu1.resources.R
 
@@ -67,7 +68,7 @@ fun HomeScreen(
             }
         }
         item {
-//            MusicPlayer()
+            MusicPlayer()
             Spacer(modifier = Modifier.size(24.dp))
             PrivacyPolicyRow(navController)
         }

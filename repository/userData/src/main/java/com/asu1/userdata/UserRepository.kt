@@ -43,4 +43,11 @@ object UserRepositoryModule {
     ): UserRepository {
         return UserRepositoryImpl(context, retrofitInstance)
     }
+
+//    Binds가 더 맞는 구현일듯. Provide보다는.
+//    @Binds
+//    @Singleton
+//    abstract fun bindUserRepository(
+//        userRepositoryImpl: UserRepositoryImpl
+//    ): UserRepository
 }

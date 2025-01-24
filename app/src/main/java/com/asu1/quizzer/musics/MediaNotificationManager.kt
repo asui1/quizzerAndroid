@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
@@ -23,34 +24,33 @@ class MediaNotificationManager
     private val context: Context,
     private val exoPlayer: Player
 ) {
-    private val musicNotificationManager: NotificationManagerCompat =
-        NotificationManagerCompat.from(context)
+    private var musicNotificationManager: NotificationManagerCompat? = null
     private var playerNotificationManager: PlayerNotificationManager? = null
 
-    init {
-        createMusicNotificationChannel()
-    }
-
-    private fun createMusicNotificationChannel() {
+    private fun createMusicNotificationChannel(
+        mediaSessionService: MediaSessionService,
+    ) {
         val musicNotificationChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_LOW
         )
-
-        musicNotificationManager.createNotificationChannel(musicNotificationChannel)
+        musicNotificationManager = NotificationManagerCompat.from(mediaSessionService)
+        musicNotificationManager!!.createNotificationChannel(musicNotificationChannel)
     }
 
     @UnstableApi
-    private fun buildMusicNotification(mediaSession: MediaSession) {
+    private fun buildMusicNotification(
+        mediaSessionService: MediaSessionService,
+        mediaSession: MediaSession) {
         playerNotificationManager = PlayerNotificationManager.Builder(
-            context,
+            mediaSessionService,
             NOTIFICATION_ID,
             NOTIFICATION_CHANNEL_ID
         )
             .setMediaDescriptionAdapter(
                 MusicNotificationDescriptorAdapter(
-                    context = context,
+                    context = mediaSessionService,
                     pendingIntent = mediaSession.sessionActivity
                 )
             )
@@ -72,14 +72,16 @@ class MediaNotificationManager
         mediaSessionService: MediaSessionService,
         mediaSession: MediaSession
     ) {
-        buildMusicNotification(mediaSession)
+        if(musicNotificationManager == null) {
+            createMusicNotificationChannel(mediaSessionService)
+            buildMusicNotification(mediaSessionService, mediaSession)
+        }
         startForegroundMusicService(mediaSessionService)
     }
 
     private fun startForegroundMusicService(mediaSessionService: MediaSessionService) {
         val musicNotification = Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setCategory(Notification.CATEGORY_SERVICE)
-            .setSmallIcon(R.drawable.quizzerresize2) // Ensure you have a valid small icon
             .setContentTitle("Music Playback") // Set a title for the notification
             .setContentText("Playing music") // Set content text for the notification
             .build()

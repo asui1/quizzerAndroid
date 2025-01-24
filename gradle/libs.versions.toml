@@ -28,6 +28,7 @@ junit-version = "1.2.1"
 kotlin = "2.1.0"
 kotlin-test = "1.8.22"
 kotlin-test-junit = "1.8.22"
+kotlinx-coroutines-rx3 = "1.6.4"
 kotlinx-coroutines-test = "1.9.0"
 kotlinx-serialization-json = "1.7.1"
 ksp = "2.1.0-1.0.29"
@@ -138,6 +139,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 hilt-android-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-test-junit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin-test" }
+kotlinx-coroutines-rx3 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "kotlinx-coroutines-rx3" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist-glide" }

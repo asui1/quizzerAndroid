@@ -2,6 +2,9 @@ package com.asu1.quizzer.viewModels
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -24,6 +27,7 @@ import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +37,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.rx3.asObservable
 
 //TODO: MUSIC STATE SHOULD BE BASED ON SERVICE Escpecially on Init.(Current Init overrides service even if it is running.)
 @OptIn(SavedStateHandleSaveableApi::class)
@@ -65,35 +71,94 @@ class MusicListViewModel @Inject constructor(
     private val _homeUiState: MutableStateFlow<HomeUIState> =
         MutableStateFlow(HomeUIState.InitialHome)
 
+    private val handler = Handler(Looper.getMainLooper())
+    private val disposables = CompositeDisposable()
+
     //TODO: VIEWMODEL이 새로 시작될 때 리셋되버림.
     init{
-        Logger.debug("MusicListViewModel created1")
         setMusicItems()
+        observeMusicStates()
     }
 
-    init {
-        viewModelScope.launch {
-            musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
-                when (musicStates) {
-                    MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
-                    is MusicStates.MediaBuffering -> {
-                        progressCalculation(musicStates.progress)
-                    }
-                    is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
-                    is MusicStates.MediaProgress -> {
-                        progressCalculation(musicStates.progress)
-                    }
-                    is MusicStates.CurrentMediaPlaying -> {
-                        _currentMusicIndex.postValue(musicStates.mediaItemIndex)
-                    }
+//    init {
+//        viewModelScope.launch {
+//            musicServiceHandler.musicStates.collectLatest { musicStates: MusicStates ->
+//                when (musicStates) {
+//                    MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
+//                    is MusicStates.MediaBuffering -> {
+//                        progressCalculation(musicStates.progress)
+//                    }
+//                    is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
+//                    is MusicStates.MediaProgress -> {
+//                        progressCalculation(musicStates.progress)
+//                    }
+//                    is MusicStates.CurrentMediaPlaying -> {
+//                        _currentMusicIndex.postValue(musicStates.mediaItemIndex)
+//                    }
+//
+//                    is MusicStates.MediaReady -> {
+//                        duration = musicStates.duration
+//                        _homeUiState.value = HomeUIState.HomeReady
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-                    is MusicStates.MediaReady -> {
-                        duration = musicStates.duration
-                        _homeUiState.value = HomeUIState.HomeReady
+//    private fun observeMusicStates(){
+//        musicServiceHandler.musicStates
+//            .asObservable()
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(
+//                { musicStates ->
+//                    when (musicStates) {
+//                        MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
+//                        is MusicStates.MediaBuffering -> progressCalculation(musicStates.progress)
+//                        is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
+//                        is MusicStates.MediaProgress -> progressCalculation(musicStates.progress)
+//                        is MusicStates.CurrentMediaPlaying -> _currentMusicIndex.postValue(musicStates.mediaItemIndex)
+//                        is MusicStates.MediaReady -> {
+//                            duration = musicStates.duration
+//                            _homeUiState.value = HomeUIState.HomeReady
+//                        }
+//                    }
+//                },
+//                { error -> Logger.debug("Error observing music states", error) }
+//            )
+//            .also { disposables.add(it) }
+//    }
+
+    // 얘는 handler에다가 1초마다 state를 확인하세요 하는 메세지를 보내는 역할을 합니다. 근데 이건 쓰는거 아님ㅋㅋ..
+    private fun observeMusicStates(){
+        handler.post(object: Runnable{
+            override fun run() {
+                viewModelScope.launch {
+                    musicServiceHandler.musicStates.collect { musicStates ->
+                        when (musicStates) {
+                            MusicStates.Initial -> _homeUiState.value = HomeUIState.InitialHome
+                            is MusicStates.MediaBuffering -> progressCalculation(musicStates.progress)
+                            is MusicStates.MediaPlaying -> isMusicPlaying = musicStates.isPlaying
+                            is MusicStates.MediaProgress -> progressCalculation(musicStates.progress)
+                            is MusicStates.CurrentMediaPlaying -> _currentMusicIndex.postValue(musicStates.mediaItemIndex)
+                            is MusicStates.MediaReady -> {
+                                duration = musicStates.duration
+                                _homeUiState.value = HomeUIState.HomeReady
+                            }
+                        }
                     }
                 }
+                handler.postDelayed(this, 1000) // 1초마다 반복
             }
+        })
+    }
+
+    override fun onCleared() {
+        disposables.clear()
+        handler.removeCallbacksAndMessages(null)
+        viewModelScope.launch {
+            musicServiceHandler.onMediaStateEvents(MediaStateEvents.Stop)
         }
+        super.onCleared()
     }
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -243,10 +308,4 @@ class MusicListViewModel @Inject constructor(
         tryProgressUpdate(duration)
     }
 
-    override fun onCleared() {
-        viewModelScope.launch {
-            musicServiceHandler.onMediaStateEvents(MediaStateEvents.Stop)
-        }
-        super.onCleared()
-    }
 }

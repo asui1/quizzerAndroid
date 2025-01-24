@@ -6,6 +6,7 @@ import com.asu1.models.quiz.SendQuizResult
 import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList
+import com.asu1.quizcardmodel.Recommendations
 import com.asu1.userdatamodels.UserRankList
 import retrofit2.Response
 import retrofit2.http.Body
@@ -19,6 +20,18 @@ interface ApiService {
     @UseKotlinxSerialization
     @GET("recommendations")
     suspend fun getRecommendations(@Query("language") language: String, @Query("email") email: String): Response<RecommendationList>
+
+    @UseKotlinxSerialization
+    @GET("mostviewed")
+    suspend fun mostViewed(@Query("language") language: String): Response<Recommendations>
+
+    @UseKotlinxSerialization
+    @GET("mostrecent")
+    suspend fun mostRecent(@Query("language") language: String): Response<Recommendations>
+
+    @UseKotlinxSerialization
+    @GET("related")
+    suspend fun getRelated(@Query("language") language: String): Response<Recommendations>
 
     @UseKotlinxSerialization
     @POST("guestAccount")

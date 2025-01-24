@@ -10,6 +10,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.LoadControl
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.session.MediaSession
+import com.asu1.quizzer.musics.CustomMediaSessionCallback
 import com.asu1.quizzer.musics.MediaNotificationManager
 import com.asu1.quizzer.service.MusicServiceHandler
 import dagger.Module
@@ -61,7 +62,8 @@ object MusicModules {
         @ApplicationContext context: Context,
         exoPlayer: ExoPlayer
     ): MediaSession {
-        return MediaSession.Builder(context, exoPlayer).build()
+        return MediaSession.Builder(context, exoPlayer)
+            .build()
     }
 
     @Provides

@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.ui.text.google.fonts)
+    implementation(libs.androidx.media3.session)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

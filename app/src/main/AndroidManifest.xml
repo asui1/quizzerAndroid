@@ -26,7 +26,6 @@
             android:theme="@style/theme.quizzer_android"
             tools:targetApi="33">
         <profileable android:shell="true" />
-
         <service
                 android:name="com.asu1.quizzer.service.QuizzerMusicPlayerService"
                 android:exported="true"
