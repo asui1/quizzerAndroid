@@ -2,7 +2,6 @@ package com.asu1.quizzer.viewModels
 
 import ToastManager
 import ToastType
-import android.net.TrafficStats
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,14 +9,13 @@ import com.asu1.network.RetrofitInstance
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.quizcardmodel.Recommendations
-import com.asu1.resources.NetworkTags
 import com.asu1.resources.R
+import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -86,21 +84,21 @@ class QuizCardMainViewModel : ViewModel() {
         _loadQuizId.value = quizId
     }
 
-    fun tryUpdate(index: Int, language: String = "ko"){
+    fun tryUpdate(index: Int){
         if(index == 0){
             if(_quizCards.value.isEmpty()){
-                fetchQuizCards(language)
+                fetchQuizCards()
             }
         }else if (index == 1){
             if(_quizTrends.value.isEmpty()){
-                fetchQuizTrends(language)
+                fetchQuizTrends()
             }
         }else if (index == 2){
             fetchUserRanks()
         }
     }
 
-    fun fetchUserRanks(){
+    private fun fetchUserRanks(){
         _userRanks.value = emptyList()
         _visibleUserRanks.value = emptyList()
         viewModelScope.launch {
@@ -118,12 +116,13 @@ class QuizCardMainViewModel : ViewModel() {
         }
     }
 
-    fun fetchQuizTrends(language: String){
+    private fun fetchQuizTrends(){
+        val language = if (LanguageSetter.isKo) "ko" else "en"
         _quizTrends.value = emptyList()
         _visibleQuizTrends.value = emptyList()
         viewModelScope.launch {
             try {
-                val response = com.asu1.network.RetrofitInstance.api.getTrends(language)
+                val response = RetrofitInstance.api.getTrends(language)
                 if (response.isSuccessful && response.body() != null) {
                     _quizTrends.value = response.body()!!.searchResult
                     _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
@@ -154,7 +153,8 @@ class QuizCardMainViewModel : ViewModel() {
         _userRanks.value = emptyList()
     }
 
-    fun fetchQuizCards(language: String, email: String = "GUEST") {
+    fun fetchQuizCards() {
+        val language = if (LanguageSetter.isKo) "ko" else "en"
         _quizCards.value = emptyList()
         val disposable = Observable.zip(
             Observable.fromCallable{

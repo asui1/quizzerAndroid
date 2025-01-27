@@ -48,7 +48,6 @@ import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
-import com.asu1.quizzer.viewModels.MusicListViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -158,7 +157,7 @@ class MainActivity : ComponentActivity() {
                             val email = userViewModel.userData.value?.email ?: "GUEST"
                             quizCardMainViewModel.resetQuizTrends()
                             quizCardMainViewModel.resetUserRanks()
-                            if (fetchData) quizCardMainViewModel.fetchQuizCards(lang, email)
+                            if (fetchData) quizCardMainViewModel.fetchQuizCards()
                             navController.navigate(
                                 Route.Home
                             ) {

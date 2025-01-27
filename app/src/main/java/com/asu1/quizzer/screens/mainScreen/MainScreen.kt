@@ -13,15 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -35,11 +31,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,7 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcard.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.composables.UserRankComposableList
-import com.asu1.quizzer.composables.mainscreen.DrawerContent
+import com.asu1.quizzer.composables.mainscreen.UserSettings
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
 import com.asu1.quizzer.util.Route
@@ -80,16 +74,14 @@ fun MainScreen(
     loadQuizResult: (String) -> Unit = { },
     moveHome: () -> Unit = {},
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
     val quizTrends by quizCardMainViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.visibleUserRanks.collectAsStateWithLifecycle()
     val userData by userViewModel.userData.observeAsState()
     val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
-    val lang = remember{if(Locale.getDefault().language == "ko") "ko" else "en"}
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { 3 },
+        pageCount = { 4 },
     )
     val coroutineScope = rememberCoroutineScope()
     val loadQuizId by quizCardMainViewModel.loadQuizId.observeAsState()
@@ -100,13 +92,19 @@ fun MainScreen(
     var backPressedTime by remember { mutableLongStateOf(0L) }
     val context = LocalContext.current
 
+    fun updateSelectedTab(index: Int) {
+        coroutineScope.launch {
+            withContext(Dispatchers.Main) {
+                pagerState.scrollToPage(index)
+            }
+            quizCardMainViewModel.tryUpdate(index)
+        }
+    }
 
     BackHandler(
     ) {
-        if(drawerState.isOpen){
-            coroutineScope.launch {
-                drawerState.close()
-            }
+        if(pagerState.currentPage != 0){
+            updateSelectedTab(0)
             return@BackHandler
         }
         val currentTime = System.currentTimeMillis()
@@ -147,102 +145,81 @@ fun MainScreen(
         }
     }
 
-    fun updateSelectedTab(index: Int) {
-        coroutineScope.launch {
-            withContext(Dispatchers.Main) {
-                pagerState.scrollToPage(index)
-            }
-            quizCardMainViewModel.tryUpdate(index, language = lang)
-        }
-    }
 
-    fun openDrawer() {
-        scope.launch {
-            withContext(Dispatchers.Main) {
-                drawerState.open()
-            }
-        }
-    }
-
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                DrawerContent(closeDrawer = { scope.launch { drawerState.close() } },
-                    isLoggedIn = isLoggedIn,
-                    userData = userData,
-                    onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
-                    logOut = { userViewModel.logOut() },
-                    signOut = { email -> userViewModel.signout(email) },
-                    navigateToMyQuizzes = { navigateToMyQuizzes() }
-                )
-            },
-            content = {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                    Scaffold(
-                        topBar = {
-                            MainActivityTopbar(
-                                navController,
-                                onTopbarProfileClick = {
-                                    if(isLoggedIn){
-                                        openDrawer()
-                                    }else{
-                                        navController.navigate(Route.Login){
-                                            launchSingleTop = true
-                                        }
-                                    }
-                                },
-                                userData,
-                                resetHome = moveHome
-                            )
-                        },
-                        bottomBar = {
-                            MainActivityBottomBar({openDrawer()}, bottomBarSelection = pagerState.currentPage,
-                                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
-                                setSelectedTab ={updateSelectedTab(it)})
-                        },
-                        content = { paddingValues ->
-                            HorizontalPager(
-                                state = pagerState,
-                                userScrollEnabled = false,
-                                modifier = Modifier.fillMaxSize().padding(paddingValues),
-                            ){page ->
-                                when(page){
-                                    0 -> {
-                                        HomeScreen(
-                                            quizCards = quizCards,
-                                            loadQuiz = loadQuiz,
-                                            isKo = lang == "ko",
-                                            navController = navController,
-                                        )
-                                    }
-                                    1 -> {
-                                        VerticalQuizCardLargeColumn(
-                                            quizCards = quizTrends,
-                                            onClick = loadQuiz,
-                                            getMoreTrends = {
-                                                quizCardMainViewModel.getMoreQuizTrends()
-                                            },
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                    }
-                                    2 -> {
-                                        UserRankComposableList(
-                                            userRanks = userRanks,
-                                            getMoreUserRanks = {
-                                                quizCardMainViewModel.getMoreUserRanks()
-                                            },
-                                            modifier = Modifier.fillMaxSize(),
-                                        )
-                                    }
+    Scaffold(
+        topBar = {
+            MainActivityTopbar(
+                navController,
+                onTopbarProfileClick = {
+                    if(isLoggedIn){
+                        updateSelectedTab(3)
+                    }else{
+                        navController.navigate(Route.Login){
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                userData,
+                resetHome = moveHome
+            )
+        },
+        bottomBar = {
+            MainActivityBottomBar(
+                bottomBarSelection = pagerState.currentPage,
+                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
+                setSelectedTab ={updateSelectedTab(it)})
+        },
+        content = { paddingValues ->
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = false,
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+            ){page ->
+                when(page){
+                    0 -> {
+                        HomeScreen(
+                            quizCards = quizCards,
+                            loadQuiz = loadQuiz,
+                            moveToPrivacyPolicy = {
+                                navController.navigate(Route.PrivacyPolicy){
+                                    launchSingleTop = true
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
+                    1 -> {
+                        VerticalQuizCardLargeColumn(
+                            quizCards = quizTrends,
+                            onClick = loadQuiz,
+                            getMoreTrends = {
+                                quizCardMainViewModel.getMoreQuizTrends()
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    2 -> {
+                        UserRankComposableList(
+                            userRanks = userRanks,
+                            getMoreUserRanks = {
+                                quizCardMainViewModel.getMoreUserRanks()
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    3 ->{
+                        UserSettings(
+                            isLoggedIn = isLoggedIn,
+                            userData = userData,
+                            onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
+                            logOut = { userViewModel.logOut() },
+                            signOut = { email -> userViewModel.signout(email) },
+                            navigateToMyQuizzes = { navigateToMyQuizzes() }
+                        )
+                    }
                 }
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable

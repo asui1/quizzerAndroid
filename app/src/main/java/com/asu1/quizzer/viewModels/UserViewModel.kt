@@ -14,6 +14,7 @@ import com.asu1.userdatausecase.InitLoginUseCase
 import com.asu1.userdatausecase.TryLoginUseCase
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
+import com.google.common.collect.ImmutableSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ class UserViewModel @Inject constructor(
             try{
                 val userInfo = initLoginUseCase(LanguageSetter.isKo)
                 if(userInfo != null){
-                    _userData.postValue(UserDatas(userInfo.email, userInfo.nickname, userInfo.urlToImage, userInfo.tags ?: emptySet()))
+                    _userData.postValue(UserDatas(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
                     if(userInfo.email.contains("@gmail")){
                         _isUserLoggedIn.postValue(true)
                     }
@@ -84,7 +85,7 @@ class UserViewModel @Inject constructor(
                         ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
                         return@launch
                     }
-                    _userData.postValue(UserDatas(email, nickname, null, emptySet()))
+                    _userData.postValue(UserDatas(email, nickname, null, ImmutableSet.of()))
                     //TODO: DATASTORE
                     _isUserLoggedIn.postValue(false)
                 } else {
@@ -131,7 +132,7 @@ class UserViewModel @Inject constructor(
         val email: String?,
         val nickname: String?,
         val urlToImage: String?,
-        val tags: Set<String>
+        val tags: ImmutableSet<String>
     )
 
 }

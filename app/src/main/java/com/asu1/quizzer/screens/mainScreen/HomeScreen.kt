@@ -35,21 +35,21 @@ import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
 import com.asu1.quizzer.composables.musics.MusicPlayer
 import com.asu1.quizzer.util.Route
 import com.asu1.resources.R
+import com.asu1.utils.LanguageSetter.isKo
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     quizCards: List<QuizCardsWithTag>,
     loadQuiz: (String) -> Unit,
-    isKo: Boolean = false,
-    navController: NavController,
+    moveToPrivacyPolicy: () -> Unit = {},
 ) {
     LazyColumn(
         contentPadding = PaddingValues(top = 12.dp),
         modifier = modifier.fillMaxSize()
     ) {
         itemsIndexed(
-            quizCards, key = { index, item ->
+            quizCards, key = { _, item ->
                 item.tag
             }
         ) {index, item ->
@@ -69,7 +69,7 @@ fun HomeScreen(
         }
         item {
             Spacer(modifier = Modifier.size(24.dp))
-            PrivacyPolicyRow(navController)
+            PrivacyPolicyRow(moveToPrivacyPolicy)
         }
     }
 }
@@ -95,12 +95,13 @@ fun HomeScreenPreview(){
     HomeScreen(
         quizCards = quizCardsWithTagList,
         loadQuiz = {},
-        navController = rememberNavController()
     )
 }
 
 @Composable
-fun PrivacyPolicyRow(navController: NavController) {
+fun PrivacyPolicyRow(
+    moveToPrivacyPolicy: () -> Unit = {},
+) {
     val context = LocalContext.current
 
     Row(
@@ -111,9 +112,7 @@ fun PrivacyPolicyRow(navController: NavController) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = {
-            navController.navigate(Route.PrivacyPolicy){
-                launchSingleTop = true
-            }
+            moveToPrivacyPolicy()
         }) {
             Text(stringResource(R.string.privacy_policy))
         }
@@ -138,6 +137,5 @@ fun PrivacyPolicyRow(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun PrivacyPolicyRowPreview() {
-    val navController = rememberNavController()
-    PrivacyPolicyRow(navController)
+    PrivacyPolicyRow()
 }

@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 
 @Composable
-fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int = 0,
-                          navigateToQuizLayoutBuilder: () -> Unit = {},
-                          setSelectedTab: (Int) -> Unit = {}) {
+fun MainActivityBottomBar(
+    bottomBarSelection: Int = 0,
+    navigateToQuizLayoutBuilder: () -> Unit = {},
+    setSelectedTab: (Int) -> Unit = {}) {
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -79,12 +80,10 @@ fun MainActivityBottomBar(onDrawerOpen: () -> Unit = {}, bottomBarSelection: Int
                     Icon(Icons.Default.BarChart, contentDescription = "User Statistics", modifier = Modifier.size(defaultIconSize))
                 }
                 IconButton(
-                    onClick = {
-                        onDrawerOpen()
-                    },
+                    onClick = { setSelectedTab(3) },
                     modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(defaultIconSize))
