@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
     // NEED INITIALIZATION WITH HIGH PRIORITY
     private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
-    private val musicListViewModel: MusicListViewModel by viewModels()
 
     // CAN BE INITIALIZED LATER
     private val searchViewModel: SearchViewModel by viewModels()

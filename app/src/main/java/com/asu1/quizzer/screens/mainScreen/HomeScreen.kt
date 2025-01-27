@@ -55,7 +55,7 @@ fun HomeScreen(
         ) {index, item ->
             Text(
                 text = remember{if(isKo) changeTagToText(item.tag) else item.tag},
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 2.dp),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
@@ -68,7 +68,6 @@ fun HomeScreen(
             }
         }
         item {
-            MusicPlayer()
             Spacer(modifier = Modifier.size(24.dp))
             PrivacyPolicyRow(navController)
         }
