@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.landscapist.glide)
     implementation(project(":feature:pageIndicator"))
+    implementation(project(":core:BaseInterfaces"))
+    implementation(project(":core:BaseInterfaces"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

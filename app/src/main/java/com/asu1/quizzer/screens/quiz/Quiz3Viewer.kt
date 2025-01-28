@@ -74,7 +74,7 @@ fun Quiz3Viewer(
             quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
-                quizState = quiz,
+                quizBody = quiz.bodyType,
                 quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))

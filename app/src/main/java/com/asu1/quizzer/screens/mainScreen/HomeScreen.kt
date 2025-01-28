@@ -26,14 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.HorizontalQuizCardItemLarge
 import com.asu1.quizcard.HorizontalQuizCardItemVertical
 import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
-import com.asu1.quizzer.composables.musics.MusicPlayer
-import com.asu1.quizzer.util.Route
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter.isKo
 

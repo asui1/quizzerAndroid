@@ -28,6 +28,7 @@ import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
+import com.asu1.quizcard.QuizCardHorizontal
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
@@ -98,17 +99,22 @@ fun LoadItems(
             } else {
                 LazyColumnWithSwipeToDismiss(
                     quizList = quizList,
-                    onLoadQuiz = { index ->
-                        val quizLayout = quizSerializerList!![index]
-                        onClickLoad(
-                            quizLayout.quizData,
-                            quizLayout.quizTheme,
-                            quizLayout.scoreCard
-                        )
-                    },
                     deleteQuiz = { deleteUuid ->
                         quizLoadViewModel.deleteLocalQuiz(context, deleteUuid)
                     },
+                    content = {quizCard, index ->
+                        QuizCardHorizontal(
+                            quizCard = quizCard,
+                            onClick = {
+                                val quizLayout = quizSerializerList!![index]
+                                onClickLoad(
+                                    quizLayout.quizData,
+                                    quizLayout.quizTheme,
+                                    quizLayout.scoreCard
+                                )
+                            }
+                        )
+                    }
                 )
             }
         }

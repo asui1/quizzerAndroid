@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -27,18 +26,15 @@ import com.asu1.quizzer.util.musics.MediaStateEvents
 import com.asu1.quizzer.util.musics.MusicStates
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.coroutines.rx3.asObservable
 
 //TODO: MUSIC STATE SHOULD BE BASED ON SERVICE Escpecially on Init.(Current Init overrides service even if it is running.)
 @OptIn(SavedStateHandleSaveableApi::class)

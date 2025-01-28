@@ -43,9 +43,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcard.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.composables.UserRankComposableList
-import com.asu1.quizzer.composables.mainscreen.UserSettings
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
+import com.asu1.quizzer.composables.mainscreen.UserSettings
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
@@ -58,7 +58,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import kotlin.random.Random
 
 
@@ -144,7 +143,6 @@ fun MainScreen(
             )
         }
     }
-
 
     Scaffold(
         topBar = {

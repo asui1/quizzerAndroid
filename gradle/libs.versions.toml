@@ -87,6 +87,7 @@ foundation-layout-android = "1.7.6"
 ui-text-android = "1.7.6"
 ui-tooling = "1.7.6"
 ui-text-google-fonts = "1.7.6"
+runtime-android = "1.7.6"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist-flowlayout" }
@@ -129,6 +130,7 @@ credentials-play-services-auth = { module = "androidx.credentials:credentials-pl
 dotlottie-android = { module = "com.github.LottieFiles:dotlottie-android", version.ref = "dotlottie-android" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundation-layout" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 java-dotenv = { module = "io.github.cdimascio:java-dotenv", version.ref = "java-dotenv" }
@@ -199,6 +201,7 @@ androidx-foundation-layout-android = { group = "androidx.compose.foundation", na
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "ui-text-android" }
 androidx-compose-ui-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
 ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtime-android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

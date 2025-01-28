@@ -36,14 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcardmodel.QuizCard
+import com.asu1.baseinterfaces.Identifiable
 import com.asu1.resources.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun LazyColumnWithSwipeToDismiss(
-    quizList: List<QuizCard>,
-    onLoadQuiz: (Int) -> Unit,
+fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
+    quizList: List<T>,
     deleteQuiz: (String) -> Unit = {},
+    content: @Composable (T, Int) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var deleteUuid by remember { mutableStateOf("") }
@@ -126,12 +127,7 @@ fun LazyColumnWithSwipeToDismiss(
                         enableDismissFromStartToEnd = false,
                         modifier = Modifier.padding(vertical = 2.dp),
                         content = {
-                            QuizCardHorizontal(
-                                quizCard = quizCard,
-                                onClick = {
-                                    onLoadQuiz(index)
-                                }
-                            )
+                            content(quizCard, index)
                         }
                     )
                 }
@@ -181,7 +177,9 @@ fun LazyColumnWithSwipeToDismissPreview() {
     )
     LazyColumnWithSwipeToDismiss(
         quizList = quizList,
-        onLoadQuiz = {},
+        content = { quizCard, index ->
+            QuizCardHorizontal(quizCard)
+        }
     )
 }
 

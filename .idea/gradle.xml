@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/BaseInterfaces" />
             <option value="$PROJECT_DIR$/core/colorModel" />
             <option value="$PROJECT_DIR$/core/imageColor" />
             <option value="$PROJECT_DIR$/core/quizCardModel" />
@@ -31,6 +32,7 @@
             <option value="$PROJECT_DIR$/feature/customFlipper" />
             <option value="$PROJECT_DIR$/feature/musicUi" />
             <option value="$PROJECT_DIR$/feature/pageIndicator" />
+            <option value="$PROJECT_DIR$/feature/permissionRequest" />
             <option value="$PROJECT_DIR$/feature/quizCard" />
             <option value="$PROJECT_DIR$/feature/toastManager" />
             <option value="$PROJECT_DIR$/macrobenchmark" />

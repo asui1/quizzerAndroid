@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
+import com.asu1.quizcard.QuizCardHorizontal
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
@@ -93,11 +94,16 @@ fun LoadMyQuiz(
                     else ->{
                         LazyColumnWithSwipeToDismiss(
                             quizList = quizList ?: mutableListOf(),
-                            onLoadQuiz = { index ->
-                                onLoadQuiz(index)
-                            },
                             deleteQuiz = {deleteUuid ->
                                 quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
+                            },
+                            content = { quizCard, index ->
+                                QuizCardHorizontal(
+                                    quizCard = quizCard,
+                                    onClick = {
+                                        onLoadQuiz(index)
+                                    }
+                                )
                             }
                         )
                     }

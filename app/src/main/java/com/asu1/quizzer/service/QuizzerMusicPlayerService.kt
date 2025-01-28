@@ -1,21 +1,13 @@
 package com.asu1.quizzer.service
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.annotation.OptIn
 import androidx.media3.common.Player
-import androidx.media3.common.Player.COMMAND_SEEK_TO_NEXT
-import androidx.media3.common.Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM
-import androidx.media3.common.Player.COMMAND_SEEK_TO_PREVIOUS
-import androidx.media3.common.Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import androidx.media3.session.SessionCommand
 import com.asu1.quizzer.musics.MediaNotificationManager
 import com.asu1.utils.Logger
-import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

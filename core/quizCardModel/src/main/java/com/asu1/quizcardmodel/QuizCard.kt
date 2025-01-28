@@ -1,5 +1,6 @@
 package com.asu1.quizcardmodel
 
+import com.asu1.baseinterfaces.Identifiable
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID
@@ -7,7 +8,7 @@ import java.util.UUID
 @Serializable(with = KQuizCardDeserializer::class)
 data class QuizCard(
     @SerializedName("id")
-    val id: String,
+    override val id: String,
     @SerializedName("title")
     val title: String,
     @SerializedName("tags")
@@ -20,7 +21,7 @@ data class QuizCard(
     val count: Int,
     @SerializedName("description")
     val description: String = ""
-) {
+) : Identifiable {
     constructor(
         title: String,
         creator: String,

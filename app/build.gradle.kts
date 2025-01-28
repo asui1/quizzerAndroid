@@ -136,6 +136,7 @@ dependencies {
     implementation(project(":core:quizCardModel"))
     implementation(project(":feature:customButton"))
     implementation(project(":core:resource"))
+    implementation(project(":core:BaseInterfaces"))
     implementation(project(":feature:toastManager"))
     implementation(project(":feature:customDialog"))
     implementation(project(":feature:pageIndicator"))
@@ -148,6 +149,7 @@ dependencies {
     implementation(project(":repository:network"))
     implementation(project(":domain:userDataUseCase"))
     implementation(project(":core:userDataModels"))
+    implementation(project(":feature:permissionRequest"))
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:musicUi"))
@@ -239,6 +241,7 @@ dependencies {
     //firebase login
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
 
     androidTestImplementation(project(":app"))
     testImplementation(libs.junit)

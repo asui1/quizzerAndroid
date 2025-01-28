@@ -37,6 +37,7 @@ import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
+import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
@@ -194,17 +195,13 @@ fun QuizViewerPager(
                 QuizViewer(
                     quiz = visibleQuizzes[page],
                     quizTheme = quizTheme,
-                    updateQuiz1 = { index ->
-                        updateQuiz1(page, index)
-                    },
-                    updateQuiz2 = { date ->
-                        updateQuiz2(page, date)
-                    },
-                    updateQuiz3 = { first, second ->
-                        updateQuiz3(page, first, second)
-                    },
-                    updateQuiz4 = { first, second ->
-                        updateQuiz4(page, first, second)
+                    updateQuiz = {quizUserUpdate ->
+                        when(quizUserUpdate){
+                            is QuizUserUpdates.Quiz1Update -> updateQuiz1(page, quizUserUpdate.index)
+                            is QuizUserUpdates.Quiz2Update -> updateQuiz2(page, quizUserUpdate.date)
+                            is QuizUserUpdates.Quiz3Update -> updateQuiz3(page, quizUserUpdate.first, quizUserUpdate.second)
+                            is QuizUserUpdates.Quiz4Update -> updateQuiz4(page, quizUserUpdate.first, quizUserUpdate.second)
+                        }
                     },
                     quizStyleManager = textStyleManager,
                     isPreview = isPreview

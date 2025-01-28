@@ -72,7 +72,7 @@ fun Quiz4Viewer(
             }
             item{
                 BuildBody(
-                    quizState = quizState,
+                    quizBody = quizState.bodyType,
                     quizStyleManager = quizStyleManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))

@@ -7,46 +7,12 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
 
-일단 면접 이후 개선해야 될 것들:
-1. 모듈 나눠서 멀티모듈 프로젝트로 만들어야함 (완)
-
-2. GoogleFont사용해서 앱 크기 줄이기.(완)
-
-3.주요 기능에 따라서 프로세스 분리해주기.
--> Exoplayer 사용하는 Service 다른 프로세스로 분리 + message queue 사용해서 통신하기.
-
-4. coroutine 사용하던 곳 Rxjava로 몇 개 바꾸기.
--> Init화면 가져올 때 3가지를 가져오는데 이걸 RxJava를 써서 3개를 동시에 요청하고 3개의 stream을 합쳐서 처리하는 방식으로 바꾸기.
-
-5. 그리고 면접 관련 대답 제대로 못한 부분 메꾸기... aar이 뭔지, java reflect가 뭔지, coroutine 주의할 점..., 다른 clean architecture -> UI Composable 구조 관련해서?
-
-6. ContextualFlowRow가 Runtime에 찾을 수 가 없다고 뜨는데;; Experimental API라서 그런가? 일단은 비활성화...
-
-개선점 발견. 객체 지향적으로 프로그래밍이 되어있지않음...
-모든 로직을 Viewmodel레벨에서 사용하는 비대한 viewmodel이 되어있음.
-Viewmodel에서의 책임을 Data class와 Domain layer로 나눠줄 필요가 있음.
-DI를 사용해서 Usecase 구현하는걸 시도해보자.
--> 단계별로 구현중인데 일단... 미루고 exoplayer부터.
-
-unit test랑 end-to-end test랑 병렬화해야함.
-github action 공통 body 만들고 그거 바탕으로 unit test랑 end-to-end test 실행되도록.
--> 일단 구현했는데 firebase testing으로 UI 테스트 하도록 이전해야함.
-
-앱 부팅 Flow를 만들어야겠음.
-1. 업데이트 확인
-2. 회원 로그인/알림 권한 요청.
-3. 서버에 Home 화면 데이터 요청. (이거도 나눠야함 한번에 받지 말고 3개로 나눠서 ㄱㄱ)/
-    (회원 로그인 실패시) 게스트 로그인 시도.
-4. (게스트 로그인 실패시) 서버에 게스트 계정 요청.
-5. 계정 설정 완료 후 홈 화면으로 이동.
-
 
 Firebase cloud messaging 사용해서 앱에 알림 보내기
++ 사용자에게 알림 권한 요청하기.
+
 
 Usecase 추가하기.
-
-Tensorflow light 사용해서 이미지 생성 ai 추가하기.
-
 
 Error getting credential
 androidx.credentials.exceptions.NoCredentialException: No credentials available

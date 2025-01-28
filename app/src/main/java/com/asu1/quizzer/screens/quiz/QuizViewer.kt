@@ -12,18 +12,15 @@ import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
 import com.asu1.models.sampleQuiz3
+import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
-import java.time.LocalDate
 
 @Composable
 fun QuizViewer(
     quiz: Quiz,
     quizTheme: QuizTheme = QuizTheme(),
-    updateQuiz1: (Int) -> Unit = {},
-    updateQuiz2: (LocalDate) -> Unit = {},
-    updateQuiz3: (Int, Int) -> Unit = {_, _ ->},
-    updateQuiz4: (Int, Int?) -> Unit = {_, _ ->},
+    updateQuiz: (QuizUserUpdates) -> Unit = {},
     quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
 ) {
@@ -32,7 +29,7 @@ fun QuizViewer(
             Quiz1Viewer(
                 quiz = quiz,
                 toggleUserAnswer = {
-                    updateQuiz1(it)
+                    updateQuiz(QuizUserUpdates.Quiz1Update(it))
                 },
                 quizStyleManager = quizStyleManager,
                 isPreview = isPreview,
@@ -43,7 +40,7 @@ fun QuizViewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
                 onUserInput = {
-                    updateQuiz2(it)
+                    updateQuiz(QuizUserUpdates.Quiz2Update(it))
                 },
                 quizStyleManager = quizStyleManager,
                 isPreview = isPreview,
@@ -53,7 +50,7 @@ fun QuizViewer(
             Quiz3Viewer(
                 quiz = quiz,
                 onUserInput = {first, second ->
-                    updateQuiz3(first, second)
+                    updateQuiz(QuizUserUpdates.Quiz3Update(first, second))
                 },
                 quizStyleManager = quizStyleManager,
                 isPreview = isPreview,
@@ -68,7 +65,7 @@ fun QuizViewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
                 onUserInput = {first, second ->
-                    updateQuiz4(first, second)
+                    updateQuiz(QuizUserUpdates.Quiz4Update(first, second))
                 },
                 quizStyleManager = quizStyleManager,
                 isPreview = isPreview,

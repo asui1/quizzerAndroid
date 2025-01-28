@@ -50,9 +50,24 @@ fun ImagePickerWithBaseImages(
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             modifier = Modifier
-                .weight(7f)
                 .fillMaxWidth()
         ) {
+            item(
+                key = currentImage.take(100)
+            ){
+                val isSelected = (imageColorState == ImageColorState.IMAGE)
+                ImageGetter(
+                    image = currentImage,
+                    onImageUpdate = onImageSelected,
+                    onImageDelete = {onImageSelected(byteArrayOf())},
+                    width = width,
+                    height = height,
+                    modifier = Modifier.fillMaxSize()
+                        .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
+                            com.asu1.resources.LightPrimary
+                        )) else Modifier)
+                )
+            }
             itemsIndexed(
                 BackgroundBase.entries.toTypedArray(),
                 key = { _, item -> item }
@@ -74,26 +89,6 @@ fun ImagePickerWithBaseImages(
             }
         }
 
-        // Placeholder for ImagePicker
-        Column(
-            modifier = Modifier
-                .weight(3f)
-                .fillMaxWidth()
-        ) {
-            val isSelected = (imageColorState == ImageColorState.IMAGE)
-            ImageGetter(
-                image = currentImage,
-                onImageUpdate = onImageSelected,
-                onImageDelete = {onImageSelected(byteArrayOf())},
-                width = width,
-                height = height,
-                modifier = Modifier.fillMaxSize()
-                    .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
-                        com.asu1.resources.LightPrimary
-                    )) else Modifier)
-            )
-            // Your ImagePicker implementation here
-        }
     }
 }
 
