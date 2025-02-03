@@ -60,9 +60,8 @@ fun ImagePickerWithBaseImages(
                     image = currentImage,
                     onImageUpdate = onImageSelected,
                     onImageDelete = {onImageSelected(byteArrayOf())},
-                    width = width,
-                    height = height,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .aspectRatio(0.6f)
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
                             com.asu1.resources.LightPrimary
                         )) else Modifier)

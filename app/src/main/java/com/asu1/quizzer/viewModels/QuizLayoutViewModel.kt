@@ -205,11 +205,13 @@ class QuizLayoutViewModel : ViewModel() {
                     onDone()
                     updateQuizResult(response.body()!!)
                 } else {
+                    Logger.debug("Failed to grade quiz ${response.errorBody()?.string()}")
                     _viewModelState.postValue(ViewModelState.IDLE)
                     ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
+                Logger.debug("Failed to grade quiz ${e.message}")
                 _viewModelState.postValue(ViewModelState.IDLE)
                 ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
             }

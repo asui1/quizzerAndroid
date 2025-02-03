@@ -139,8 +139,8 @@
 -dontwarn java.awt.HeadlessException
 -dontwarn java.awt.Window
 
--keep class com.asu1.quizzer.model.** { *; }
--keep interface com.asu1.quizzer.* { *; }
+-keep class com.asu1.** { *; }
+-keep interface com.asu1.* { *; }
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
 -keep class * extends android.app.Activity { *; }
@@ -152,7 +152,7 @@
 -keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
 }
--keep class com.asu1.quizzer.** { *; }
+-keep class com.asu1.** { *; }
 -keep class retrofit2.** { *; }
 -keep class okhttp3.** { *; }
 -keep class com.squareup.moshi.** { *; }

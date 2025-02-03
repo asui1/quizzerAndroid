@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -221,14 +222,13 @@ fun MainScreen(
 }
 
 @Composable
-fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}) {
+fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}, modifier: Modifier = Modifier,
+                   iconSIze: Dp = 30.dp) {
     val urlToImage = userData?.urlToImage
-    val iconSize = 30.dp
-
-    IconButton(onClick = onClick) {
+    IconButton(onClick = onClick, modifier = modifier) {
         if (userData != null) {
             UriImageButton(modifier = Modifier
-                .size(iconSize)
+                .size(iconSIze)
                 .clip(shape = RoundedCornerShape(8.dp)),
                 urlToImage = urlToImage,
                 nickname = userData.nickname?.get(0) ?: 'O'

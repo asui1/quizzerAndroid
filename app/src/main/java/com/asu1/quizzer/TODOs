@@ -7,12 +7,10 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
 
+사용자에게 알림 권한 요청하기.
 
-Firebase cloud messaging 사용해서 앱에 알림 보내기
-+ 사용자에게 알림 권한 요청하기.
-
-
-Usecase 추가하기.
+일단은 사용자 타겟을 LCK 메인으로 두고 + 방송인들? 정도로 생각해보자.
+그러면 LCK 검색을 위한 기능이 필요하니까 일단 그거부터 Json으로 만들자.
 
 Error getting credential
 androidx.credentials.exceptions.NoCredentialException: No credentials available

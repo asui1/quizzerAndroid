@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -50,10 +51,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.QuizCardHorizontalVerticalShareList
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.resources.R
+import androidx.compose.foundation.layout.FlowRow
 
 @Composable
 fun  SearchScreen(navController: NavHostController,
@@ -96,53 +99,81 @@ fun  SearchScreen(navController: NavHostController,
             )
         },
         content = { paddingValues ->
-            Column(
+            SearchScreenBody(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                if (isFocused || searchResult == null) {
-                    Text(
-                        text = stringResource(R.string.searching),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                } else {
-                    if (searchResult?.isEmpty() != false) {
-                        Text(
-                            text = stringResource(R.string.no_search_result),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    } else {
-                        QuizCardHorizontalVerticalShareList(
-                            quizCards = searchResult ?: emptyList(),
-                            onClick = {
-                                onQuizClick(it)
-                            }
-                        )
-                    }
-                }
-            }
+                isFocused = isFocused,
+                searchResult = searchResult,
+                onQuizClick = onQuizClick
+            )
         }
     )
 }
 
-@Preview
 @Composable
-fun PreviewSearchScreen(){
-    val searchViewModel: SearchViewModel = viewModel()
-    val quizCards = sampleQuizCardList
-    searchViewModel.setSearchResult(
-        quizCards
-    )
+private fun SearchScreenBody(
+    modifier: Modifier = Modifier,
+    isFocused: Boolean,
+    searchResult: List<QuizCard>?,
+    onQuizClick: (quizId: String) -> Unit
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (isFocused || searchResult == null) {
+            Text(
+                text = stringResource(R.string.searching),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+        } else {
+            if (searchResult.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.no_search_result),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                QuizCardHorizontalVerticalShareList(
+                    quizCards = searchResult,
+                    onClick = {
+                        onQuizClick(it)
+                    }
+                )
+            }
+        }
+    }
+}
 
+@Preview(showBackground = false)
+@Composable
+fun PreviewSearchScreenBody(){
+    val quizCards = sampleQuizCardList
     com.asu1.resources.QuizzerAndroidTheme {
-        SearchScreen(
+        SearchScreenBody(
+            isFocused = false,
+            searchResult = quizCards,
+            onQuizClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchScreenTopBar(){
+    com.asu1.resources.QuizzerAndroidTheme {
+        SearchTopBar(
             navController = rememberNavController(),
-            searchViewModel = searchViewModel,
+            searchText = TextFieldValue(""),
+            onSearchTextChanged = {},
+            search = {},
+            focusManager = LocalFocusManager.current,
+            onTextFieldFocused = {},
+            onTextFieldUnfocused = {},
+            focusRequester = remember{ FocusRequester() }
         )
     }
 }

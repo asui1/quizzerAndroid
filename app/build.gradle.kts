@@ -163,6 +163,7 @@ dependencies {
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
 
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.animation.graphics.android)
@@ -181,6 +182,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.coil.compose)
+    implementation(libs.accompanist.flowlayout)
     implementation(libs.uuid.creator)
     implementation(libs.compose.ui)
     implementation(libs.ui.graphics)
@@ -264,6 +266,7 @@ dependencies {
     testImplementation(libs.robolectric.v4103)
     testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.mockk)
 
     androidTestImplementation(libs.androidx.fragment.ktx)
     androidTestImplementation(libs.androidx.core.testing)

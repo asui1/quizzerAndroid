@@ -118,26 +118,26 @@ fun VerticalQuizCardLargeShare(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                 ){
-                    IconButton(
-                        onClick = {  }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "Recommend Quiz",
-                            tint = Color.Gray,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    IconButton(
-                        onClick = { }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Comment,
-                            contentDescription = "Recommend Quiz",
-                            tint = Color.Gray,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
+//                    IconButton(
+//                        onClick = {  }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.ThumbUp,
+//                            contentDescription = "Recommend Quiz",
+//                            tint = Color.Gray,
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(4.dp))
+//                    IconButton(
+//                        onClick = { }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.Comment,
+//                            contentDescription = "Recommend Quiz",
+//                            tint = Color.Gray,
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(4.dp))
                     IconButton(
                         onClick = { showShareBottomSheet = true }
                     ) {

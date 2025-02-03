@@ -2,15 +2,20 @@ package com.asu1.quizzer.viewModels
 
 import ToastManager
 import ToastType
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.resources.R
+import com.asu1.resources.SearchBase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import java.io.InputStream
 
 class SearchViewModel : ViewModel() {
     private val _searchResult = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>?>(null)
@@ -19,8 +24,24 @@ class SearchViewModel : ViewModel() {
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> get() = _searchText
 
+    private var searchBase = emptyList<SearchBase>()
+
+    private val _searchRecommendations = MutableLiveData<List<SearchBase>>()
+    val searchRecommendations: LiveData<List<SearchBase>> get() = _searchRecommendations
+
     fun reset(){
         _searchResult.value = null
+    }
+
+    fun initRecommendations(context: Context){
+        if(searchBase.isNotEmpty()){
+            return
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val inputStream: InputStream = context.resources.openRawResource(R.raw.quizzer_search)
+            val jsonString = inputStream.bufferedReader().use { it.readText() }
+            searchBase = Json.decodeFromString(jsonString)
+        }
     }
 
     fun setSearchText(searchText: String){
@@ -28,6 +49,7 @@ class SearchViewModel : ViewModel() {
     }
 
     fun search(searchText: String){
+        _searchText.value = searchText
         viewModelScope.launch {
             _searchResult.value = emptyList()
             try {

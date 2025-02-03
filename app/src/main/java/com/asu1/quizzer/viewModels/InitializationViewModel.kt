@@ -59,12 +59,10 @@ class InitializationViewModel(application: Application) : AndroidViewModel(appli
         }
 
         //NEEDED FOR LOCAL TESTING. MUST REMOVE ON RELEASE
-        if(BuildConfig.isDebug){
-            viewModelScope.launch {
-                delay(2000)
-                _initializationState.postValue(InitializationState.GETTING_USER_DATA)
-                _isUpdateAvailable.postValue(false)
-            }
+        viewModelScope.launch {
+            delay(10000)
+            _initializationState.postValue(InitializationState.GETTING_USER_DATA)
+            _isUpdateAvailable.postValue(false)
         }
     }
 }

@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.landscapist.glide)
+    implementation(libs.accompanist.flowlayout)
     implementation(project(":feature:pageIndicator"))
     implementation(project(":core:BaseInterfaces"))
     implementation(project(":core:BaseInterfaces"))

@@ -3,6 +3,8 @@ package com.asu1.quizzer.composables.scorecard
 import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -70,8 +72,8 @@ import com.asu1.quizzer.composables.effects.WithShootingStar
 import com.asu1.quizzer.composables.effects.Wreath
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
+import com.google.common.collect.ImmutableList
 import java.util.Locale
-import kotlin.math.round
 
 @Composable
 fun ScoreCardBackground(
@@ -234,13 +236,6 @@ fun ScoreCardComposable(
     ){
         pageNum
     }
-    val formattedScore = remember(quizResult.score){
-        if (quizResult.score % 1 == 0f) {
-            quizResult.score.toInt().toString()
-        } else {
-            String.format(Locale.US, "%.1f", round(quizResult.score * 10) / 10)
-        }
-    }
     val redded = remember(scoreCard.textColor){
         rotateHue(scoreCard.textColor, -30f)
     }
@@ -310,6 +305,7 @@ fun ScoreCardComposable(
             )
             HorizontalPager(
                 state = pagerState,
+                key = {it},
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.Transparent)
@@ -341,7 +337,7 @@ fun ScoreCardComposable(
 
                         }
                         else -> {
-                            Score(scoreCard, formattedScore)
+                            Score(scoreCard.textColor, quizResult.score)
                         }
                     }
                 }
@@ -362,7 +358,18 @@ fun ScoreCardComposable(
 }
 
 @Composable
-private fun Score(scoreCard: ScoreCard, formattedScore: String) {
+private fun Score(scoreCardTextColor: Color, score: Float) {
+    val animatedScore by animateFloatAsState(
+        targetValue = score,
+        animationSpec = tween(durationMillis = 1000)
+    )
+    val displayedScore = remember(animatedScore) {
+        if (animatedScore % 1 == 0f) {
+            animatedScore.toInt().toString()
+        } else {
+            String.format(Locale.US, "%.1f", animatedScore)
+        }
+    }
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -372,7 +379,7 @@ private fun Score(scoreCard: ScoreCard, formattedScore: String) {
     ) {
         Text(
             text = stringResource(R.string.score_is),
-            color = scoreCard.textColor,
+            color = scoreCardTextColor,
             fontSize = 30.sp,
             fontStyle = FontStyle.Italic,
             fontFamily = NotoSans,
@@ -381,8 +388,8 @@ private fun Score(scoreCard: ScoreCard, formattedScore: String) {
                 .zIndex(2f),
         )
         Text(
-            text = formattedScore,
-            color = scoreCard.textColor,
+            text = displayedScore,
+            color = scoreCardTextColor,
             fontSize = 75.sp,
             fontFamily = NotoSans,
             maxLines = 1,
@@ -403,7 +410,7 @@ fun ScoreCardComposablePreview() {
 
 @Composable
 fun AnswerCorrection(
-    correction: List<Boolean> = listOf(true, true, false, false, true, false, true, false, true, false),
+    correction: ImmutableList<Boolean> = ImmutableList.of(true, true, false, false, true, false, true, false, true, false),
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
@@ -440,7 +447,7 @@ fun AnswerCorrection(
 
 @Composable
 fun PointDistribution(
-    distribution: List<Int>,
+    distribution: ImmutableList<Int>,
     percent: Float,
     score: Float,
     textColor: Color,
