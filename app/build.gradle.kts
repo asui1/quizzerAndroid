@@ -38,7 +38,7 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = project.findProperty("versionCode")?.toString()?.toInt() ?: localVersionCode
+        versionCode = 53
         versionName = "$versionMain.$versionSub.$versionChild"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -72,7 +72,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "isDebug", "false")
             buildConfigField("String", "PASSWORD", "\"${System.getenv("PASSWORD") ?: throw IllegalArgumentException("PASSWORD environment variable not set")}\"")
-            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
+            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID_RELEASE") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
         }
         debug {
             isMinifyEnabled = false

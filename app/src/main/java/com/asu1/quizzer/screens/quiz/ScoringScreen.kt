@@ -2,7 +2,7 @@ package com.asu1.quizzer.screens.quiz
 
 import ToastManager
 import ToastType
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,8 +40,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,13 +68,11 @@ fun ScoringScreen(
     loadQuiz: (String) -> Unit = {},
 ) {
     val quizResult by quizLayoutViewModel.quizResult.collectAsStateWithLifecycle()
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var showShareBottomSheet by remember{ mutableStateOf(false) }
     var immerseMode by remember { mutableStateOf(false) }
-    val context = LocalContext.current as Activity
+    val localActivity = LocalActivity.current
 
     LaunchedEffect(quizLayoutViewModelState){
         if(quizLayoutViewModelState == ViewModelState.ERROR){
@@ -87,7 +83,7 @@ fun ScoringScreen(
 
     DisposableEffect(key1 = Unit) {
         onDispose {
-            context.disableImmersiveMode()
+            localActivity?.disableImmersiveMode()
             scoreCardViewModel.resetScoreCard()
             quizLayoutViewModel.resetQuizResult()
         }
@@ -134,9 +130,9 @@ fun ScoringScreen(
                                     indication = null
                                 ) {
                                     if(immerseMode) {
-                                        context.disableImmersiveMode()
+                                        localActivity?.disableImmersiveMode()
                                     }else{
-                                        context.enableImmersiveMode()
+                                        localActivity?.enableImmersiveMode()
                                     }
                                     immerseMode = !immerseMode
                                 }

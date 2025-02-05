@@ -12,6 +12,7 @@ import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
 import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorldsKR24
+import com.asu1.quizzer.quizCreateUtils.datacreation.t1geng20250201
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
@@ -71,7 +72,7 @@ val textColors: List<String> = listOf(
 
 // Default goes with addbody:true, upload: false
 const val addBody = true
-const val upLoad = false
+const val upLoad = true
 
 class MyComposeTest {
     @get:Rule
@@ -83,19 +84,19 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = lolWorldsKR24
+        val testQuizData = t1geng20250201
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout
         testUtils.waitUntilTag("MainScreenCreateQuiz")
-        testUtils.waitFor(1500)
+        testUtils.waitFor(2000)
         val scoreCardViewModel = ViewModelProvider(activity)[ScoreCardViewModel::class.java]
 
         //LOGIN
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
         userViewModel.login("whwkd122@gmail.com")
         onIdle()
-        testUtils.waitFor(2000)
+        testUtils.waitFor(1500)
         testUtils.clickOnTag("MainScreenCreateQuiz")
 
         //AGREE POLICY
@@ -104,18 +105,21 @@ class MyComposeTest {
 
         //SET TITLE
         testUtils.waitUntilTag("QuizLayoutTitleTextField")
-        testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizData.title, withIme = true)
+        testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizData.title, withIme = false)
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
 
+        testUtils.waitFor(300)
         //Set Quiz Description
-        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizData.description, withIme = true)
+        testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizData.description, withIme = false)
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
 
         //SET TAGS
-        testUtils.waitFor(1000)
+        testUtils.waitFor(300)
         testUtils.enterTextsOnTag("TagSetterTextField", testQuizData.tags.toList(), true)
 
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
-        testUtils.waitFor(1000)
+        testUtils.waitFor(500)
         val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
         testUtils.setImage(context, instContext.packageName, testQuizData.titleImage, onImagePicked = { image ->
             quizLayoutViewModel.setQuizImage(image)
@@ -147,7 +151,7 @@ class MyComposeTest {
         testUtils.waitFor(300)
 
         if(addBody) {
-            for (i in 0 until testQuizData.quizzes.size) {
+            for(i in testQuizData.quizzes.size -1 downTo 0){
                 val quiz = testQuizData.quizzes[i]
                 when (quiz) {
                     is TestQuiz1 -> {

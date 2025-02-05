@@ -1,6 +1,7 @@
 package com.asu1.quizzer.screens.quizlayout
 
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -68,13 +69,12 @@ fun DesignScoreCardScreen(
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var expanded by remember {mutableStateOf(true)}
     var immerseMode by remember { mutableStateOf(false) }
-    //TODO: Fix this
-    val context = LocalContext.current as Activity
+    val localActivity = LocalActivity.current
     val scope = rememberCoroutineScope()
 
     DisposableEffect(Unit) {
         onDispose {
-            context.disableImmersiveMode()
+            localActivity?.disableImmersiveMode()
         }
     }
 
@@ -102,9 +102,9 @@ fun DesignScoreCardScreen(
                     indication = null
                 ) {
                     if (immerseMode) {
-                        context.disableImmersiveMode()
+                        localActivity?.disableImmersiveMode()
                     } else {
-                        context.enableImmersiveMode()
+                        localActivity?.enableImmersiveMode()
                     }
                     immerseMode = !immerseMode
                 }

@@ -9,25 +9,9 @@ https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 
 사용자에게 알림 권한 요청하기.
 
-일단은 사용자 타겟을 LCK 메인으로 두고 + 방송인들? 정도로 생각해보자.
-그러면 LCK 검색을 위한 기능이 필요하니까 일단 그거부터 Json으로 만들자.
+Quiz4 같은 경우, 좌우 비율 조정, 왼쪽 오른쪽 개수 다르게 할 수 있게 조절.
 
-Error getting credential
-androidx.credentials.exceptions.NoCredentialException: No credentials available
-
-at androidx.credentials.internal.ConversionUtilsKt.toJetpackGetException(Unknown Source:40)
-at androidx.credentials.CredentialProviderFrameworkImpl.convertToJetpackGetException$credentials_release(Unknown Source:18)
-at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:3)
-at androidx.credentials.CredentialProviderFrameworkImpl$onGetCredential$outcome$2.onError(SourceFile:1)
-at android.credentials.CredentialManager$GetCredentialTransport.lambda$onError$2(CredentialManager.java:694)
-at android.credentials.CredentialManager$GetCredentialTransport.$r8$lambda$nlbYav9mLBoE6Yh1vFKCvITF3ks(Unknown Source:0)
-at android.credentials.CredentialManager$GetCredentialTransport$$ExternalSyntheticLambda2.run(Unknown Source:6)
-at androidx.arch.core.executor.a.execute(Unknown Source:5)
-at android.credentials.CredentialManager$GetCredentialTransport.onError(CredentialManager.java:693)
-at android.credentials.IGetCredentialCallback$Stub.onTransact(IGetCredentialCallback.java:123)
-at android.os.Binder.execTransactInternal(Binder.java:1380)
-at android.os.Binder.execTransact(Binder.java:1311)
-
+Viewer를 위한 Immutable Data class들 만들기.
 
 NCS 음악 저작권 체크용 -> 아마 저작권 관련 탭을 앱+웹에 추가하고 관련 내용들 작성하면 될 듯.
 Song: BAYZY, Sayfro - On and On [NCS Release]

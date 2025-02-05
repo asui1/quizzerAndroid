@@ -197,7 +197,6 @@
     <string name="agree_policy">Agree Policy</string>
     <string name="quiz_title_cannot_be_empty">Quiz Title cannot be empty</string>
     <string name="can_not_access_server">Can not access server</string>
-    <string name="google_login_is_in_development">Google Login is in Development</string>
     <string name="quizzer_music_player">Quizzer Music Player</string>
     <string name="checking_update">Checking for updates</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>

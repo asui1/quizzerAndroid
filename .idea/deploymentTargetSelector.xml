@@ -30,10 +30,10 @@
       <SelectionState runConfigName="getquiz()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ExampleStartupBenchmark">
+      <SelectionState runConfigName="benchmark_getresult()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="benchmark_getresult()">
+      <SelectionState runConfigName="testQuizCreateUpload()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

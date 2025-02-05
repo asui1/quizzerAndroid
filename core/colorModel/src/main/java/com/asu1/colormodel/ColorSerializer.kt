@@ -8,6 +8,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import com.asu1.utils.Logger
 
 object ColorSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
@@ -23,7 +24,7 @@ object ColorSerializer : KSerializer<Color> {
         return color
     }
     private fun String.toColor(): Color {
-        val value = this.substring(1, 9).toLong(16)
+        val value = if(this.contains("#")) this.substring(1, 9).toLong(16) else this.toLong(16)
         return Color(value.toInt())
     }
 

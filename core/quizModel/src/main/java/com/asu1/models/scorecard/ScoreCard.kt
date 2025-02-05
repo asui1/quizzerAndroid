@@ -20,9 +20,9 @@ data class ScoreCard (
     var score: Float = 100f,
     var background: ImageColor = ImageColor(
         imageData = ByteArray(0),
-        color = Color.White,
-        color2 = Color.White,
-        colorGradient = Color.White,
+        color = Color.Transparent,
+        color2 = Color.Transparent,
+        colorGradient = Color.Transparent,
         state = ImageColorState.COLOR,
         backgroundBase = BackgroundBase.SKY,
         effect = Effect.SNOWFLAKES,

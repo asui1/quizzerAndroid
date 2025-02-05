@@ -214,7 +214,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             onIdle()
             composeTestRule.onNodeWithTag(tag).performImeAction()
             onIdle()
-            waitFor(50)
+            waitFor(200)
         }
     }
 

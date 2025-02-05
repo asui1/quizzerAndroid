@@ -14,7 +14,7 @@ data class Quiz1(
     var shuffleAnswers: Boolean = false,
     var shuffledAnswers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override val layoutType: QuizType = QuizType.QUIZ1,
-    override var answers: MutableList<String> = mutableListOf(),
+    override var answers: MutableList<String> = mutableListOf("", "", "", "", ""),
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE

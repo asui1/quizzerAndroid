@@ -3,6 +3,7 @@ package com.asu1.quizzer.composables.scorecard
 import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -27,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -72,6 +74,7 @@ import com.asu1.quizzer.composables.effects.WithShootingStar
 import com.asu1.quizzer.composables.effects.Wreath
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 import com.google.common.collect.ImmutableList
 import java.util.Locale
 
@@ -331,6 +334,7 @@ fun ScoreCardComposable(
                                 score = quizResult.score,
                                 textColor = scoreCard.textColor,
                                 errorColor = redded,
+                                correctColor = greened,
                             )
                         }
                         3 -> {
@@ -359,16 +363,15 @@ fun ScoreCardComposable(
 
 @Composable
 private fun Score(scoreCardTextColor: Color, score: Float) {
-    val animatedScore by animateFloatAsState(
-        targetValue = score,
-        animationSpec = tween(durationMillis = 1000)
-    )
-    val displayedScore = remember(animatedScore) {
-        if (animatedScore % 1 == 0f) {
-            animatedScore.toInt().toString()
-        } else {
-            String.format(Locale.US, "%.1f", animatedScore)
-        }
+
+    val animatedScore = remember { Animatable(0f) }
+    // Launch the animation when targetScore changes
+    LaunchedEffect(score) {
+        Logger.debug("Launch Score Animation: $score")
+        animatedScore.animateTo(
+            targetValue = score,
+            animationSpec = tween(durationMillis = 2000)
+        )
     }
     Column(
         verticalArrangement = Arrangement.Center,
@@ -388,7 +391,7 @@ private fun Score(scoreCardTextColor: Color, score: Float) {
                 .zIndex(2f),
         )
         Text(
-            text = displayedScore,
+            text = String.format(Locale.US, "%.1f", animatedScore.value),
             color = scoreCardTextColor,
             fontSize = 75.sp,
             fontFamily = NotoSans,
@@ -405,6 +408,7 @@ fun ScoreCardComposablePreview() {
     val scoreCard = sampleScoreCard
     ScoreCardComposable(
         scoreCard = scoreCard,
+        pagerInit = 2,
     )
 }
 
@@ -452,6 +456,7 @@ fun PointDistribution(
     score: Float,
     textColor: Color,
     errorColor: Color,
+    correctColor: Color,
     height: Dp = 200.dp
 ){
     val maxItem = distribution.maxOrNull() ?: 1
@@ -475,7 +480,7 @@ fun PointDistribution(
         ) {
             distribution.forEachIndexed { index, value ->
                 val isSelected = (index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()
-                val color = if (isSelected) errorColor else textColor
+                val color = if (isSelected) correctColor else errorColor
                 Box(
                     modifier = Modifier
                         .weight(1f)

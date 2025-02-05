@@ -131,7 +131,7 @@ fun LoginScreen(navController: NavController,
                     handleSignIn(result, {email, profileUri ->  userViewModel.login(email)})
 
                 } catch (e: GetCredentialException) {
-                    ToastManager.showToast(R.string.google_login_is_in_development, ToastType.ERROR)
+                    ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
                     Log.e("Quizzer", "Error getting credential", e)
                 }
             }
@@ -164,7 +164,7 @@ fun LoginScreen(navController: NavController,
                         launchSingleTop = true
                     }
                 } catch (e: GetCredentialException) {
-                    ToastManager.showToast(R.string.google_login_is_in_development, ToastType.ERROR)
+                    ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
                     Log.e("Quizzer", "Error getting credential", e)
                 }
             }

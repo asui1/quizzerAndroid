@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 
 @Composable
 fun QuizLayoutSetDescription(
@@ -77,6 +78,7 @@ fun QuizLayoutSetDescription(
 
     LaunchedEffect(enabled) {
         if(enabled){
+            Logger.debug("Requesting focus for description")
             focusRequester.requestFocus()
             textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
             keyboardController?.show()

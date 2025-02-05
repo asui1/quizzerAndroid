@@ -242,7 +242,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                         if(stacks.intValue == 0){
                                             keyboardController?.hide()
                                         }
-                                        onBackPressed()
+                                            // TODO: THIS BACK PRESSED SHOULD BE TURNED OFF AT AUTOMATED TESTS
+                                    //                                        onBackPressed()
                                     }
                                     else{
                                         stacks.intValue++

@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 data class ImageColor(
     val imageData: ByteArray = byteArrayOf(),
     @Serializable(with = ColorSerializer::class) val color: Color = Color.Transparent,
-    @Serializable(with = ColorSerializer::class) val color2: Color = Color.White,
+    @Serializable(with = ColorSerializer::class) val color2: Color = Color.Transparent,
     @Serializable(with = ColorSerializer::class) val colorGradient: Color = Color.Black,
     val state: ImageColorState = ImageColorState.COLOR,
     val backgroundBase: BackgroundBase = BackgroundBase.SKY,

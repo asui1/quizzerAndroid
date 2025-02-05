@@ -17,7 +17,7 @@ data class Quiz4(
     var dotPairOffsets: List<Pair<Offset?, Offset?>> = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
     var userConnectionIndex: List<Int?> = mutableListOf(null, null, null, null),
     override val layoutType: QuizType = QuizType.QUIZ4,
-    override var answers: MutableList<String> = mutableListOf(),
+    override var answers: MutableList<String> = mutableListOf("", "", "", ""),
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE

@@ -93,23 +93,11 @@ class ScoreCardViewModel : ViewModel() {
     }
 
     fun updateScoreCard(quizData: QuizData, colorScheme: ColorScheme){
-        val currentColorScheme = _scoreCard.value.colorScheme
-        val imageColor = _scoreCard.value.background
-
-        if (currentColorScheme != colorScheme) {
-            _scoreCard.value = _scoreCard.value.copy(
-                title = quizData.title,
-                solver = quizData.creator,
-                colorScheme = colorScheme,
-                background = imageColor.copy(color = Color.White)
-            )
-        } else {
-            _scoreCard.value = _scoreCard.value.copy(
-                title = quizData.title,
-                solver = quizData.creator,
-                colorScheme = colorScheme
-            )
-        }
+        _scoreCard.value = _scoreCard.value.copy(
+            title = quizData.title,
+            solver = quizData.creator,
+            colorScheme = colorScheme,
+        )
     }
 
     fun updateBackgroundState(imageColorState: ImageColorState){

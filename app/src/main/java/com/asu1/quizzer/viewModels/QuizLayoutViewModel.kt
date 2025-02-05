@@ -303,10 +303,12 @@ class QuizLayoutViewModel : ViewModel() {
                                 it
                             )
                         }
+                        Logger.debug("Failed to upload quiz from server $errorMessage")
                         ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }
             } catch (e: Exception) {
+                Logger.debug("Failed to upload quiz exception ${e.message}")
                 _viewModelState.postValue(ViewModelState.IDLE)
                 ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
             }
@@ -370,6 +372,7 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun updateStep(step: LayoutSteps) {
+        Logger.debug("Updating step to $step")
         _step.value = step
     }
 
