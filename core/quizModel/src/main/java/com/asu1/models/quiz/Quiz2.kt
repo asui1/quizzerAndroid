@@ -14,7 +14,7 @@ data class Quiz2(
     var answerDate: MutableSet<LocalDate> = mutableSetOf(),
     var userAnswerDate: MutableSet<LocalDate> = mutableSetOf(),
     override val layoutType: QuizType = QuizType.QUIZ2,
-    override var answers: MutableList<String> = mutableListOf(),
+    override var answers: List<String> = listOf(),
     override var question: String = "",
     override var point: Int = 5,
 ): Quiz(answers, question, point) {

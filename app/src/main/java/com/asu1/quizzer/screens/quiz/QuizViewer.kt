@@ -64,9 +64,6 @@ fun QuizViewer(
             Quiz4Viewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
-                onUserInput = {first, second ->
-                    updateQuiz(QuizUserUpdates.Quiz4Update(first, second))
-                },
                 quizStyleManager = quizStyleManager,
                 isPreview = isPreview,
                 )

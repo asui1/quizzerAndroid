@@ -207,10 +207,16 @@ sealed class QuizJson {
                 answers = body.answers.toMutableList(),
                 connectionAnswers = body.connectionAnswers.toMutableList(),
                 connectionAnswerIndex = body.connectionAnswerIndex.toMutableList(),
-                dotPairOffsets = mutableListOf<Pair<Offset?, Offset?>>().apply {
-                    body.connectionAnswers.forEach { _ -> add(null to null) }
+                leftDots = mutableListOf<Offset?>().apply {
+                    body.answers.forEach { _ -> add(null) }
+                },
+                rightDots = mutableListOf<Offset?>().apply {
+                    body.connectionAnswers.forEach { _ -> add(null) }
                 },
                 bodyType = manualDeserializer(body.bodyValue),
+                userConnectionIndex = mutableListOf<Int?>().apply {
+                    body.answers.forEach { _ -> add(null) }
+                },
                 point = body.points
             )
             quiz.initViewState()

@@ -14,6 +14,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -67,7 +69,11 @@ fun Quiz1Viewer(
                         if(isPreview) return@Checkbox
                         toggleLocalUserAnswers(index)
                         toggleUserAnswer(index)
-                    }
+                    },
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = "Checkbox at $index, and is ${if(userAnswers[index]) "checked" else "unchecked"}"
+                        }
                 )
                 quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
             }

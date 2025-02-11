@@ -42,6 +42,7 @@ val sampleQuiz4 = Quiz4(
     connectionAnswers = mutableListOf("1", "2", "3", "4"),
     userConnectionIndex = mutableListOf(null, null, null, null),
     connectionAnswerIndex = mutableListOf(null, null, null, null),
-    dotPairOffsets = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
+    leftDots = mutableListOf(null, null, null, null),
+    rightDots = mutableListOf(null, null, null, null),
 )
 

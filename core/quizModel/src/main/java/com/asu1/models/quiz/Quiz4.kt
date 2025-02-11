@@ -6,44 +6,108 @@ import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizJson
 import com.asu1.models.serializers.QuizType
 import com.asu1.models.serializers.json
+import com.asu1.utils.Logger
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.abs
 
 data class Quiz4(
-
-    var connectionAnswers: List<String> = mutableListOf("", "", "", ""),
-    var connectionAnswerIndex: List<Int?> = mutableListOf(null, null, null, null),
-    var dotPairOffsets: List<Pair<Offset?, Offset?>> = mutableListOf(Pair(null, null), Pair(null, null), Pair(null, null), Pair(null, null)),
-    var userConnectionIndex: List<Int?> = mutableListOf(null, null, null, null),
+    var connectionAnswers: List<String> = listOf("", "", "", ""),
+    var connectionAnswerIndex: List<Int?> = listOf(null, null, null, null),
+    var leftDots: List<Offset?> = listOf(null, null, null, null),
+    var rightDots: List<Offset?> = listOf(null, null, null, null),
+    var userConnectionIndex: List<Int?> = listOf(null, null, null, null),
     override val layoutType: QuizType = QuizType.QUIZ4,
-    override var answers: MutableList<String> = mutableListOf("", "", "", ""),
+    override var answers: List<String> = listOf("", "", "", ""),
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
 ): Quiz(answers, question, point, bodyType) {
-    fun updateUserConnection(from: Int, to: Int?){
-        userConnectionIndex = userConnectionIndex.toMutableList().apply {
-            set(from, to)
+    fun addAnswer(){
+        answers = answers.toMutableList().apply {
+            add("")
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                add(null)
+            }
+            leftDots = leftDots.toMutableList().apply {
+                add(null)
+            }
         }
     }
 
-    fun onDragEnd(from: Int, offset: Offset){
-        if(dotPairOffsets[0].second == null) return
-        if(abs(offset.x - (dotPairOffsets[0].second!!.x)) > 10) return
-        for(i in dotPairOffsets.indices){
-            if(dotPairOffsets[i].second == null) continue
-            else if(abs(offset.y - dotPairOffsets[i].second!!.y) < 10) {
-                updateUserConnection(
-                    from = from,
-                    to = i,
-                )
+    fun addConnectionAnswer(){
+        connectionAnswers = connectionAnswers.toMutableList().apply {
+            add("")
+            rightDots = rightDots.toMutableList().apply {
+                add(null)
+            }
+        }
+    }
+
+    fun deleteAnswerAt(index: Int){
+        answers = answers.toMutableList().apply {
+            removeAt(index)
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                removeAt(index)
+            }
+            leftDots = leftDots.toMutableList().apply {
+                removeAt(index)
+            }
+        }
+    }
+
+    fun deleteConnectionAnswerAt(index: Int){
+        connectionAnswers = connectionAnswers.toMutableList().apply {
+            removeAt(index)
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                for(i in indices){
+                    this[i]?.let{
+                        if (it == index) {
+                            this[i] = null
+                        } else if (it > index) {
+                            this[i] = it - 1
+                        }
+                    }
+                }
+            }
+            rightDots = rightDots.toMutableList().apply {
+                removeAt(index)
+            }
+        }
+    }
+
+    fun updateUserConnection(from: Int, to: Int?){
+        userConnectionIndex = userConnectionIndex.toMutableList().apply {
+            this[from] = to
+        }
+    }
+
+    fun onDragEnd(from: Int, offset: Offset, isCreator: Boolean){
+        Logger.debug("onDragEnd $from ${offset.x}, ${offset.y}")
+        if(rightDots[0] == null) return
+        if(abs(offset.x - (rightDots[0]!!.x)) > 25) return
+        for(i in rightDots.indices){
+            Logger.debug("onDragEnd $i $rightDots")
+            if(rightDots[i] == null) continue
+            if(abs(offset.y - rightDots[i]!!.y) < 25) {
+                Logger.debug("onDragEnd $i")
+                if(isCreator) {
+                    connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                        this[from] = i
+                    }
+                }else{
+                    userConnectionIndex = userConnectionIndex.toMutableList().apply {
+                        this[from] = i
+                    }
+                }
+                break
             }
         }
     }
 
     override fun initViewState() {
-        userConnectionIndex = MutableList(answers.size) { null }
+        Logger.debug("initViewState, ${answers.size}")
+        userConnectionIndex = List(answers.size) { null }
         validateBody()
     }
 
@@ -89,15 +153,6 @@ data class Quiz4(
         point = body.points
 
         initViewState()
-    }
-    fun updateOffset(index: Int, offset: Offset, isStart: Boolean){
-        dotPairOffsets = dotPairOffsets.toMutableList().apply {
-            set(index, if(isStart){
-                Pair(offset, get(index).second)
-            }else{
-                Pair(get(index).first, offset)
-            })
-        }
     }
 
     override fun gradeQuiz(): Boolean {

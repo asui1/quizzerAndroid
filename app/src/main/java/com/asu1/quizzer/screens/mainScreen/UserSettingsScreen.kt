@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -26,6 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,12 +114,16 @@ fun UserSettings(
             ) {
                 val (icon, nickname, email, logout) = createRefs()
                 UserProfilePic(userData, onClick = {
-                }, modifier = Modifier.constrainAs(icon) {
+                }, modifier = Modifier
+                    .constrainAs(icon) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
-                },
-                    iconSIze = 48.dp,
+                }
+                    .semantics {
+                        contentDescription = "User Profile Image"
+                    },
+                    iconSIze = 72.dp,
                 )
                 Text(userData?.nickname ?: "Guest", modifier = Modifier.constrainAs(nickname) {
                     top.linkTo(icon.top)
@@ -123,8 +131,9 @@ fun UserSettings(
                     bottom.linkTo(email.top)
                 })
                 Text(userData?.email ?: "",
-                    fontSize = 10.sp,
+                    fontSize = 9.sp,
                     maxLines = 1,
+                    fontWeight = FontWeight.Light,
                     modifier = Modifier.constrainAs(email) {
                     top.linkTo(nickname.bottom)
                     start.linkTo(icon.end, margin = 8.dp)

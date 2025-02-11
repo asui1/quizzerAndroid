@@ -6,7 +6,7 @@ import com.asu1.models.serializers.QuizJson
 import com.asu1.models.serializers.QuizType
 
 abstract class Quiz(
-    open var answers: MutableList<String> = mutableListOf(),
+    open var answers: List<String> = listOf(),
     open var question: String = "",
     open var point: Int = 5,
     open var bodyType: BodyType = BodyType.NONE,
@@ -15,14 +15,6 @@ abstract class Quiz(
 ){
     fun validateBody(){
         bodyType = bodyType.validate()
-    }
-
-    fun getSolvedPoint(): Int{
-        return if(gradeQuiz()){
-            point
-        }else{
-            0
-        }
     }
 
     abstract fun initViewState()

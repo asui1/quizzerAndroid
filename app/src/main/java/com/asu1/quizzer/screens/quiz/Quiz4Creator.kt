@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +38,6 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -48,6 +48,9 @@ import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
+import com.asu1.quizzer.composables.TextFieldWithDelete
+import com.asu1.quizzer.model.Quiz4ViewModelStates
+import com.asu1.utils.Logger
 
 @Composable
 fun Quiz4Creator(
@@ -61,10 +64,10 @@ fun Quiz4Creator(
     var isDragging by remember { mutableStateOf(true) }
     val color = MaterialTheme.colorScheme.primary
     val focusManager = LocalFocusManager.current
-    var boxPosition by remember { mutableStateOf(Offset.Zero) }
     val dotSizeDp = 20.dp
     val paddingDp = 4.dp
     val boxPadding = 16.dp
+    var boxPosition by remember { mutableStateOf(Offset.Zero) }
     val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
     val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
 
@@ -76,7 +79,7 @@ fun Quiz4Creator(
                 boxPosition = coordinates.positionInRoot()
             }
     ) {
-        DrawLines(dotOffsets = quizState.dotPairOffsets, connections = quizState.connectionAnswerIndex)
+        DrawLines(leftDots = quizState.leftDots, rightDots = quizState.rightDots, connections = quizState.connectionAnswerIndex)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
@@ -108,114 +111,164 @@ fun Quiz4Creator(
                     },
                 )
             }
-            items(quizState.answers.size) { index ->
+            item{
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    MyTextField(
-                        value = quizState.answers[index],
-                        onValueChange = { quiz.updateAnswerAt(index, it) },
-                        onNext = {
-                            focusManager.moveFocus(FocusDirection.Right)
-                        },
-                        modifier = Modifier.weight(1f),
-                        label = "Answer ${index + 1}",
-                        key = "QuizCreatorAnswerLeftTextField$index"
-                    )
-                    DraggableDot(
-                        setOffset = {offset ->
-                            quiz.updateDotOffset(index, offset, true)
-                        },
-                        pointerEvent = { it ->
-                            detectDragGestures(
-                                onDragStart = {
-                                    startOffset = quizState.dotPairOffsets[index].first ?: Offset(0f, 0f)
-
-                                    endOffset = quizState.dotPairOffsets[index].second ?: Offset(0f, 0f)
-                                    quiz.updateConnection(index, null)
-                                    initOffset = null
-                                    isDragging = true
-                                },
-                                onDragEnd = {
-                                    isDragging = false
-                                    quiz.updateConnection(index, endOffset)
-                                    startOffset = Offset(0f, 0f)
-                                    endOffset = Offset(0f, 0f)
-                                },
-                            ) { change, dragAmount ->
-                                change.consume()
-                                if(initOffset == null){
-                                    initOffset = change.position
-                                }
-                                endOffset = Offset(
-                                    x = startOffset.x + change.position.x - initOffset!!.x,
-                                    y = startOffset.y + change.position.y - initOffset!!.y
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        quizState.answers.forEachIndexed { index, answer ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                TextFieldWithDelete(
+                                    value = answer,
+                                    onValueChange = { quiz.updateAnswerAt(index, it) },
+                                    onNext = {
+                                        focusManager.moveFocus(FocusDirection.Right)
+                                    },
+                                    modifier = Modifier.weight(1f).testTag(
+                                        "QuizCreatorAnswerLeftTextField$index"
+                                    ),
+                                    label = "Answer ${index + 1}",
+                                    deleteAnswer = {
+                                        quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveLeft(index))
+                                    }
+                                )
+                                DraggableDot(
+                                    setOffset = { offset ->
+                                        quiz.onQuiz4Update(
+                                            Quiz4ViewModelStates.UpdateLeftDotOffset(
+                                                index,
+                                                offset
+                                            )
+                                        )
+                                    },
+                                    pointerEvent = { it ->
+                                        detectDragGestures(
+                                            onDragStart = {
+                                                startOffset =
+                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
+                                                endOffset =
+                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
+                                                quiz.onQuiz4Update(
+                                                    Quiz4ViewModelStates.ResetConnectionCreator(
+                                                        index
+                                                    )
+                                                )
+                                                initOffset = null
+                                                isDragging = true
+                                            },
+                                            onDragEnd = {
+                                                isDragging = false
+                                                quiz.onQuiz4Update(
+                                                    Quiz4ViewModelStates.OnDragEndCreator(
+                                                        index,
+                                                        endOffset
+                                                    )
+                                                )
+                                                startOffset = Offset(0f, 0f)
+                                                endOffset = Offset(0f, 0f)
+                                            },
+                                        ) { change, dragAmount ->
+                                            change.consume()
+                                            if (initOffset == null) {
+                                                initOffset = change.position
+                                            }
+                                            endOffset = Offset(
+                                                x = startOffset.x + change.position.x - initOffset!!.x,
+                                                y = startOffset.y + change.position.y - initOffset!!.y
+                                            )
+                                        }
+                                    },
+                                    boxPosition = boxPosition,
+                                    dotSize = dotSizeDp,
+                                    padding = paddingDp,
+                                    moveOffset = moveOffset,
+                                    key = "QuizCreatorLeftDot$index"
                                 )
                             }
-                        },
-                        boxPosition = boxPosition,
-                        dotSize = dotSizeDp,
-                        padding = paddingDp,
-                        moveOffset = moveOffset,
-                        key = "QuizCreatorLeftDot$index"
-                    )
-                    Spacer(modifier = Modifier.width(30.dp))
-                    DraggableDot(
-                        setOffset = {offset ->
-                            quiz.updateDotOffset(index, offset, false)
-                        },
-                        boxPosition = boxPosition,
-                        dotSize = dotSizeDp,
-                        padding = paddingDp,
-                        moveOffset = moveOffset,
-                        key = "QuizCreatorRightDot$index"
-                    )
-                    MyTextField(
-                        value = quizState.connectionAnswers[index],
-                        onValueChange = { quiz.updateConnectionAnswer(index, it) },
-                        imeAction = if(index == quizState.answers.size - 1) {
-                            ImeAction.Done
-                        } else {
-                            ImeAction.Next
-                        },
-                        onNext = {
-                            if(index == quizState.answers.size - 1) {
-                                focusManager.clearFocus()
-                            } else {
-                                focusManager.moveFocus(FocusDirection.Left)
-                                focusManager.moveFocus(FocusDirection.Down)
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                        label = "Answer ${index + 1}",
-                        key = "QuizCreatorAnswerRightTextField$index"
-                    )
-                    IconButton(
-                        onClick = {
-                            quiz.removeAnswerAt(index)
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
+                        IconButton(
+                            modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
+                            onClick = {
+                                quiz.onQuiz4Update(Quiz4ViewModelStates.AddLeft)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircleOutline,
+                                contentDescription = "Add answer"
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(40.dp))
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Remove,
-                            contentDescription = "Remove answer"
-                        )
+                        quizState.connectionAnswers.forEachIndexed{index, answer ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                DraggableDot(
+                                    setOffset = { offset ->
+                                        quiz.onQuiz4Update(
+                                            Quiz4ViewModelStates.UpdateRightDotOffset(
+                                                index,
+                                                offset
+                                            )
+                                        )
+                                    },
+                                    boxPosition = boxPosition,
+                                    dotSize = dotSizeDp,
+                                    padding = paddingDp,
+                                    moveOffset = moveOffset,
+                                    key = "QuizCreatorRightDot$index"
+                                )
+                                TextFieldWithDelete(
+                                    value = quizState.connectionAnswers[index],
+                                    onValueChange = { quiz.updateConnectionAnswerAt(index, it) },
+                                    isLast = index == quizState.connectionAnswers.size - 1,
+                                    onNext = {
+                                        if (index == quizState.answers.size - 1) {
+                                            focusManager.clearFocus()
+                                        } else {
+                                            focusManager.moveFocus(FocusDirection.Left)
+                                            focusManager.moveFocus(FocusDirection.Down)
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f).testTag("QuizCreatorAnswerRightTextField$index"),
+                                    label = "Answer ${index + 1}",
+                                    deleteAnswer = {
+                                        quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveRight(index))
+                                    },
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        IconButton(
+                            modifier = Modifier
+                                .testTag("QuizCreatorAddAnswerButton"),
+                            onClick = {
+                                quiz.onQuiz4Update(Quiz4ViewModelStates.AddRight)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircleOutline,
+                                contentDescription = "Add answer"
+                            )
+                        }
                     }
-
-                }
-            }
-            item{
-                Spacer(modifier = Modifier.height(8.dp))
-                IconButton(
-                    modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
-                    onClick = {
-                        quiz.addAnswer()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircleOutline,
-                        contentDescription = "Add answer"
-                    )
                 }
             }
         }
@@ -237,6 +290,7 @@ fun Quiz4Creator(
 
 @Composable
 fun DraggableDot(
+    modifier: Modifier = Modifier,
     setOffset: (Offset) -> Unit = {},
     pointerEvent: suspend PointerInputScope.(Offset) -> Unit = {},
     boxPosition: Offset = Offset.Zero,
@@ -246,7 +300,7 @@ fun DraggableDot(
     key: String = "",
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(dotSize)
             .padding(padding)
             .background(color = MaterialTheme.colorScheme.primary,
@@ -270,20 +324,19 @@ fun DraggableDot(
 
 @Composable
 fun DrawLines(
-    dotOffsets: List<Pair<Offset?, Offset?>> = emptyList(),
+    leftDots: List<Offset?> = emptyList(),
+    rightDots: List<Offset?> = emptyList(),
     connections: List<Int?> = emptyList()
 ) {
-    val leftDotOffsets = dotOffsets.map { it.first }
-    val rightDotOffsets = dotOffsets.map { it.second }
     val color = MaterialTheme.colorScheme.primary
     Canvas(modifier = Modifier.fillMaxSize()) {
         for(i in connections.indices) {
-            if(connections[i] == null || leftDotOffsets[i] == null || rightDotOffsets[connections[i]!!] == null) continue
+            if(connections[i] == null || leftDots[i] == null || rightDots[connections[i]!!] == null) continue
             else{
                 drawLine(
                     color = color,
-                    start = leftDotOffsets[i]!!, // Center of left dot
-                    end = rightDotOffsets[connections[i]!!]!!, // Center of right dot
+                    start = leftDots[i]!!, // Center of left dot
+                    end = rightDots[connections[i]!!]!!, // Center of right dot
                     strokeWidth = 4f
                 )
             }

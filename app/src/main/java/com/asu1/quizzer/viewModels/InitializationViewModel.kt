@@ -37,34 +37,33 @@ class InitializationViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun checkForUpdates() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val context = getApplication<Application>().applicationContext
-            val appUpdateManager = AppUpdateManagerFactory.create(context)
-            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-            // Checks that the platform will allow the specified type of update.
-            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    // This example applies an immediate update. To apply a flexible update
-                    // instead, pass in AppUpdateType.FLEXIBLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                ) {
-                    _isUpdateAvailable.postValue(true)
-                    // Request the update.
-                }else{
-                    _initializationState.postValue(InitializationState.GETTING_USER_DATA)
-                    _isUpdateAvailable.postValue(false)
-                }
-            }
-
-        }
+        // TODO: Temporarily disabled for Closed Testing
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val context = getApplication<Application>().applicationContext
+//            val appUpdateManager = AppUpdateManagerFactory.create(context)
+//            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+//            // Checks that the platform will allow the specified type of update.
+//            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+//                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+//                    // This example applies an immediate update. To apply a flexible update
+//                    // instead, pass in AppUpdateType.FLEXIBLE
+//                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+//                ) {
+//                    _isUpdateAvailable.postValue(true)
+//                    // Request the update.
+//                }else{
+//                    _initializationState.postValue(InitializationState.GETTING_USER_DATA)
+//                    _isUpdateAvailable.postValue(false)
+//                }
+//            }
+//
+//        }
 
         //NEEDED FOR LOCAL TESTING. MUST REMOVE ON RELEASE
-        if(BuildConfig.DEBUG){
-            viewModelScope.launch {
-                delay(1000)
-                _initializationState.postValue(InitializationState.GETTING_USER_DATA)
-                _isUpdateAvailable.postValue(false)
-            }
+        viewModelScope.launch {
+            delay(1000)
+            _initializationState.postValue(InitializationState.GETTING_USER_DATA)
+            _isUpdateAvailable.postValue(false)
         }
     }
 }

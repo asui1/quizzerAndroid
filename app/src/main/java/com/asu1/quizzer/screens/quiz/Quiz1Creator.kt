@@ -28,6 +28,8 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +39,7 @@ import com.asu1.models.quiz.Quiz
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
+import com.asu1.quizzer.composables.TextFieldWithDelete
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.resources.R
 
@@ -198,7 +201,6 @@ fun AnswerTextField(
         modifier = Modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Checkbox(
             modifier = Modifier.testTag(key+"Checkbox"),
@@ -207,33 +209,15 @@ fun AnswerTextField(
                 toggleAnswer()
             },
         )
-        TextField(
-            modifier = Modifier
+        TextFieldWithDelete(
+            modifier = Modifier.weight(1f)
                 .testTag(key+"TextField"),
             value = value,
             onValueChange = onValueChange,
-            label = { Text("Answer") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = if(isLast) ImeAction.Done else ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    onNext()
-                },
-            ),
-            trailingIcon = {
-                IconButton(
-                    onClick = deleteAnswer,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete Answer"
-                    )
-                }
-            }
+            label = "Answer",
+            isLast = isLast,
+            onNext = onNext,
+            deleteAnswer = deleteAnswer
         )
     }
 }

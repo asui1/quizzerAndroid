@@ -38,7 +38,7 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 53
+        versionCode = 55
         versionName = "$versionMain.$versionSub.$versionChild"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
