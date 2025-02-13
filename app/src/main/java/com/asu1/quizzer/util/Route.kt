@@ -32,5 +32,9 @@ sealed interface Route {
     data object LoadUserQuiz: Route
     @Serializable
     data object ScoringScreen: Route
+    @Serializable
+    data object MyActivities: Route
+    @Serializable
+    data object QuizChecker: Route
 }
 

@@ -1,7 +1,5 @@
 package com.asu1.quizzer.screens.quiz
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,42 +28,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz4
-import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz4
+import com.asu1.quizzer.composables.AnswerShower
 import com.asu1.quizzer.model.Quiz4ViewModelStates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import com.asu1.resources.TextStyles
-import com.asu1.utils.Logger
 
 @Composable
-fun Quiz4Viewer(
+fun Quiz4Checker(
     quiz: Quiz4ViewModel = viewModel(),
-    quizTheme: QuizTheme = QuizTheme(),
     quizStyleManager: TextStyleManager,
-    isPreview: Boolean = false,
-    onUpdate: (List<Int?>) -> Unit = {},
 ) {
     val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
-    var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
-    var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
-    var initOffset by remember { mutableStateOf<Offset?>(null) }
-    var isDragging by remember { mutableStateOf(false) }
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
-    val color = remember{quizTheme.colorScheme.primary}
     val dotSizeDp = 20.dp
     val paddingDp = 4.dp
     val boxPadding = 16.dp
     val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
     val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
-
-    DisposableEffect(Unit){
-        onDispose {
-            Logger.debug("Save")
-            onUpdate(quizState.userConnectionIndex)
-        }
-    }
+    val result = remember{quizState.gradeQuiz()}
 
     Box(
         modifier = Modifier
@@ -76,13 +58,17 @@ fun Quiz4Viewer(
             }
     ) {
         LazyColumn(
-            userScrollEnabled = !isPreview,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
             item {
-                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
+                AnswerShower(
+                    isCorrect = result,
+                    contentAlignment = Alignment.CenterStart
+                ){
+                    quizStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
+                }
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
@@ -105,66 +91,34 @@ fun Quiz4Viewer(
                         modifier = Modifier.weight(1f)
                     ) {
                         quizState.answers.forEachIndexed { index, answer ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                            AnswerShower(
+                                isCorrect = quizState.connectionAnswerIndex[index] == quizState.userConnectionIndex[index],
                             ) {
-                                quizStyleManager.GetTextComposable(TextStyles.ANSWER,
-                                    quizState.answers[index],
-                                    modifier = Modifier.weight(1f)
-                                )
-                                DraggableDot(
-                                    setOffset = { offset ->
-                                        quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateLeftDotOffset(
-                                                index,
-                                                offset
-                                            )
-                                        )
-                                    },
-                                    pointerEvent = { it ->
-                                        detectDragGestures(
-                                            onDragStart = {
-                                                startOffset =
-                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
-                                                endOffset =
-                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
-                                                quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.ResetConnectionViewer(
-                                                        index
-                                                    )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    quizStyleManager.GetTextComposable(
+                                        TextStyles.ANSWER,
+                                        quizState.answers[index],
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    DraggableDot(
+                                        setOffset = { offset ->
+                                            quiz.onQuiz4Update(
+                                                Quiz4ViewModelStates.UpdateLeftDotOffset(
+                                                    index,
+                                                    offset
                                                 )
-                                                initOffset = null
-                                                isDragging = true
-                                            },
-                                            onDragEnd = {
-                                                isDragging = false
-                                                quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.OnDragEndViewer(
-                                                        index,
-                                                        endOffset
-                                                    )
-                                                )
-                                                startOffset = Offset(0f, 0f)
-                                                endOffset = Offset(0f, 0f)
-                                            },
-                                        ) { change, dragAmount ->
-                                            change.consume()
-                                            if (initOffset == null) {
-                                                initOffset = change.position
-                                            }
-                                            endOffset = Offset(
-                                                x = startOffset.x + change.position.x - initOffset!!.x,
-                                                y = startOffset.y + change.position.y - initOffset!!.y
                                             )
-                                        }
-                                    },
-                                    boxPosition = boxPosition,
-                                    dotSize = dotSizeDp,
-                                    padding = paddingDp,
-                                    moveOffset = moveOffset,
-                                    key = "QuizCreatorLeftDot$index"
-                                )
+                                        },
+                                        boxPosition = boxPosition,
+                                        dotSize = dotSizeDp,
+                                        padding = paddingDp,
+                                        moveOffset = moveOffset,
+                                        key = "QuizCreatorLeftDot$index"
+                                    )
+                                }
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
@@ -207,36 +161,28 @@ fun Quiz4Viewer(
                 }
             }
         }
-        if(!isPreview) {
-            DrawLines(
-                leftDots = quizState.leftDots,
-                rightDots = quizState.rightDots,
-                connections = quizState.userConnectionIndex
-            )
-            if(isDragging) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawLine(
-                        color = color,
-                        start = startOffset,
-                        end = endOffset,
-                        strokeWidth = 4f
-                    )
-                }
-            }
-        }
+        DrawLines(
+            leftDots = quizState.leftDots,
+            rightDots = quizState.rightDots,
+            connections = quizState.connectionAnswerIndex,
+            color = MaterialTheme.colorScheme.error
+        )
+        DrawLines(
+            leftDots = quizState.leftDots,
+            rightDots = quizState.rightDots,
+            connections = quizState.userConnectionIndex
+        )
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun Quiz4ViewerPreview() {
+fun Quiz4CheckerPreview() {
     val quiz4ViewModel: Quiz4ViewModel = viewModel()
     quiz4ViewModel.loadQuiz(sampleQuiz4)
 
-    Quiz4Viewer(
+    Quiz4Checker(
         quiz = quiz4ViewModel,
-        quizTheme = QuizTheme(),
         quizStyleManager = TextStyleManager()
     )
 }

@@ -21,19 +21,19 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="ExoPlayerHandlerTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="startup()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="getquiz()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="benchmark_getresult()">
+      <SelectionState runConfigName="testQuizCreateUpload()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testQuizCreateUpload()">
+      <SelectionState runConfigName="QuizCheckerPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="Quiz4CheckerPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

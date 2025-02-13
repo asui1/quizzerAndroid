@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
 import com.asu1.quizzer.screens.mainScreen.UserProfilePic
+import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.R
@@ -49,7 +50,7 @@ fun UserSettings(
     onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
     logOut: () -> Unit = { },
     signOut: (String) -> Unit = { },
-    navigateToMyQuizzes: () -> Unit = {},
+    navigateTo: (Route) -> Unit = {},
 ) {
     var showInquiry by remember { mutableStateOf(false) }
     var showSignOut by remember { mutableStateOf(false) }
@@ -171,7 +172,7 @@ fun UserSettings(
                 TextButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navigateToMyQuizzes()
+                        navigateTo(Route.LoadUserQuiz)
                     },
                 )
                 {
@@ -184,6 +185,22 @@ fun UserSettings(
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
+//                TextButton(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    onClick = {
+//                        navigateTo(Route.MyActivities)
+//                    },
+//                )
+//                {
+//                    Text(
+//                        stringResource(R.string.my_activities),
+//                        textAlign = TextAlign.Start,
+//                        modifier = Modifier
+//                            .padding(16.dp)
+//                            .fillMaxWidth(),
+//                        style = MaterialTheme.typography.labelMedium
+//                    )
+//                }
 //                TextButton(
 //                    modifier = Modifier.fillMaxWidth(),
 //                    onClick = {},

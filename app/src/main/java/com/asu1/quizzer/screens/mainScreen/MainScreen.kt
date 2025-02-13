@@ -68,8 +68,7 @@ fun MainScreen(
     quizCardMainViewModel: QuizCardMainViewModel = viewModel(),
     inquiryViewModel: InquiryViewModel = viewModel(),
     userViewModel: UserViewModel = viewModel(),
-    navigateToQuizLayoutBuilder: () -> Unit = {},
-    navigateToMyQuizzes: () -> Unit = {},
+    navigateTo: (Route) -> Unit = { },
     loadQuiz: (String) -> Unit = { },
     loadQuizResult: (String) -> Unit = { },
     moveHome: () -> Unit = {},
@@ -165,14 +164,16 @@ fun MainScreen(
         bottomBar = {
             MainActivityBottomBar(
                 bottomBarSelection = pagerState.currentPage,
-                navigateToQuizLayoutBuilder = navigateToQuizLayoutBuilder,
+                navigateToQuizLayoutBuilder = { navigateTo(Route.CreateQuizLayout) },
                 setSelectedTab ={updateSelectedTab(it)})
         },
         content = { paddingValues ->
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
             ){page ->
                 when(page){
                     0 -> {
@@ -212,7 +213,7 @@ fun MainScreen(
                             onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
                             logOut = { userViewModel.logOut() },
                             signOut = { email -> userViewModel.signout(email) },
-                            navigateToMyQuizzes = { navigateToMyQuizzes() }
+                            navigateTo = navigateTo
                         )
                     }
                 }

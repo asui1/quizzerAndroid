@@ -40,7 +40,6 @@ import com.asu1.resources.TextStyles
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Quiz3Viewer(
     quiz: Quiz3,

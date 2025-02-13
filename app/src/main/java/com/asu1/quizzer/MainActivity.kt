@@ -32,11 +32,13 @@ import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
+import com.asu1.quizzer.screens.mainScreen.MyActivitiesScreen
 import com.asu1.quizzer.screens.mainScreen.PrivacyPolicy
 import com.asu1.quizzer.screens.mainScreen.RegisterScreen
 import com.asu1.quizzer.screens.mainScreen.SearchScreen
 import com.asu1.quizzer.screens.quiz.QuizBuilderScreen
 import com.asu1.quizzer.screens.quiz.QuizCaller
+import com.asu1.quizzer.screens.quiz.QuizChecker
 import com.asu1.quizzer.screens.quiz.QuizSolver
 import com.asu1.quizzer.screens.quiz.ScoringScreen
 import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
@@ -165,6 +167,47 @@ class MainActivity : ComponentActivity() {
                                 launchSingleTop = true
                             }
                         }
+
+                        fun navigateToCreateQuizLayout(){
+                            if (userViewModel.userData.value?.email == null) {
+                                ToastManager.showToast(
+                                    R.string.please_login_first,
+                                    ToastType.INFO
+                                )
+                                navController.navigate(
+                                    Route.Login
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            } else {
+                                quizLayoutViewModel.resetQuizLayout()
+                                quizLayoutViewModel.initQuizLayout(
+                                    userViewModel.userData.value?.email,
+                                    colorScheme
+                                )
+                                scope.launch {
+                                    scoreCardViewModel.resetScoreCard()
+                                    quizLoadViewModel.reset()
+                                }
+                                navController.navigate(
+                                    Route.CreateQuizLayout
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+
+                        fun navigateToLoadUserQuiz(){
+                            quizLoadViewModel.loadUserQuiz(
+                                userViewModel.userData.value?.email ?: ""
+                            )
+                            navController.navigate(
+                                Route.LoadUserQuiz
+                            ) {
+                                launchSingleTop = true
+                            }
+                        }
+
                         NavHost(
                             navController = navController,
                             startDestination = Route.Init,
@@ -182,46 +225,17 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
+                                quizLayoutViewModel.resetQuizLayout()
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
                                     userViewModel = userViewModel,
-                                    navigateToQuizLayoutBuilder = {
-                                        if (userViewModel.userData.value?.email == null) {
-                                            ToastManager.showToast(
-                                                R.string.please_login_first,
-                                                ToastType.INFO
-                                            )
-                                            navController.navigate(
-                                                Route.Login
-                                            ) {
-                                                launchSingleTop = true
-                                            }
-                                        } else {
-                                            quizLayoutViewModel.resetQuizLayout()
-                                            quizLayoutViewModel.initQuizLayout(
-                                                userViewModel.userData.value?.email,
-                                                colorScheme
-                                            )
-                                            scope.launch {
-                                                scoreCardViewModel.resetScoreCard()
-                                                quizLoadViewModel.reset()
-                                            }
-                                            navController.navigate(
-                                                Route.CreateQuizLayout
-                                            ) {
-                                                launchSingleTop = true
-                                            }
+                                    navigateTo = {route ->
+                                        if(route is Route.CreateQuizLayout){
+                                            navigateToCreateQuizLayout()
                                         }
-                                    },
-                                    navigateToMyQuizzes = {
-                                        quizLoadViewModel.loadUserQuiz(
-                                            userViewModel.userData.value?.email ?: ""
-                                        )
-                                        navController.navigate(
-                                            Route.LoadUserQuiz
-                                        ) {
-                                            launchSingleTop = true
+                                        if(route is Route.LoadUserQuiz){
+                                            navigateToLoadUserQuiz()
                                         }
                                     },
                                     loadQuiz = { loadQuiz(it) },
@@ -432,6 +446,27 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     quizLoadViewModel = quizLoadViewModel,
                                     email = userViewModel.userData.value?.email ?: ""
+                                )
+                            }
+                            composable<Route.MyActivities>(
+                                enterTransition = enterFadeInTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFadeInTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                MyActivitiesScreen(
+                                    userViewModel = userViewModel,
+
+                                )
+                            }
+                            composable<Route.QuizChecker>(
+                                enterTransition = enterFadeInTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFadeInTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                QuizChecker(
+                                    quizLayoutViewModel = quizLayoutViewModel
                                 )
                             }
                             composable<Route.ScoringScreen>(

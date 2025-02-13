@@ -107,6 +107,7 @@
     <string name="pt">" 점"</string>
     <string name="end_of_quiz_do_you_want_to_submit_your_answers">마지막입니다.\n정답을 제출하시겠습니까?</string>
     <string name="solve_again">다시 풀기</string>
+    <string name="check_answer">정답 확인</string>
     <string name="move_home">메인으로</string>
     <string name="select_color1">배경 색 필터</string>
     <string name="select_color2">효과 색</string>
@@ -176,6 +177,7 @@
     <string name="share">공유하기</string>
     <string name="checking_update">업데이트 확인 중 입니다</string>
     <string name="can_not_load_quiz">퀴즈를 불러오지 못했습니다.</string>
+    <string name="can_not_get_answer_check">정답지를 불러오지 못했습니다.</string>
     <string name="copy_quiz_link">퀴즈 링크 복사하기</string>
     <string name="copy_quiz_result_link">퀴즈 결과 링크 복사하기</string>
     <string name="link_copied_to_clipboard">링크가 복사되었습니다.</string>
@@ -200,6 +202,7 @@
     <string name="can_not_access_server">서버에 접속할 수 없습니다</string>
     <string name="quizzer_music_player">Quizzer 뮤직 플레이어</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
+    <string name="my_activities">내 활동</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

@@ -106,6 +106,7 @@
     <string name="pt">" pt"</string>
     <string name="end_of_quiz_do_you_want_to_submit_your_answers">End of Quiz.\nDo you want to submit your answers?</string>
     <string name="solve_again">Solve Again</string>
+    <string name="check_answer">Check Answer</string>
     <string name="move_home">Move Home</string>
     <string name="select_color1">Background Color Filter</string>
     <string name="select_color2">Effect Color</string>
@@ -175,6 +176,7 @@
     <string name="youtube">Youtube</string>
     <string name="share">Share</string>
     <string name="can_not_load_quiz">Can not load quiz</string>
+    <string name="can_not_get_answer_check">Can not get quiz answers</string>
     <string name="copy_quiz_link">Copy quiz link</string>
     <string name="copy_quiz_result_link">Copy quiz result link</string>
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
@@ -199,6 +201,7 @@
     <string name="can_not_access_server">Can not access server</string>
     <string name="quizzer_music_player">Quizzer Music Player</string>
     <string name="checking_update">Checking for updates</string>
+    <string name="my_activities">My Activities</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>

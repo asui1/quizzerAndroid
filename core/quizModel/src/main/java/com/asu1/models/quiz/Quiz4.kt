@@ -83,14 +83,11 @@ data class Quiz4(
     }
 
     fun onDragEnd(from: Int, offset: Offset, isCreator: Boolean){
-        Logger.debug("onDragEnd $from ${offset.x}, ${offset.y}")
         if(rightDots[0] == null) return
         if(abs(offset.x - (rightDots[0]!!.x)) > 25) return
         for(i in rightDots.indices){
-            Logger.debug("onDragEnd $i $rightDots")
             if(rightDots[i] == null) continue
             if(abs(offset.y - rightDots[i]!!.y) < 25) {
-                Logger.debug("onDragEnd $i")
                 if(isCreator) {
                     connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
                         this[from] = i
@@ -106,7 +103,6 @@ data class Quiz4(
     }
 
     override fun initViewState() {
-        Logger.debug("initViewState, ${answers.size}")
         userConnectionIndex = List(answers.size) { null }
         validateBody()
     }

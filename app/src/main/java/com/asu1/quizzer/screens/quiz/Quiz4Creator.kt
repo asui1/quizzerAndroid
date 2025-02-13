@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -326,9 +327,9 @@ fun DraggableDot(
 fun DrawLines(
     leftDots: List<Offset?> = emptyList(),
     rightDots: List<Offset?> = emptyList(),
-    connections: List<Int?> = emptyList()
+    connections: List<Int?> = emptyList(),
+    color: Color = MaterialTheme.colorScheme.primary
 ) {
-    val color = MaterialTheme.colorScheme.primary
     Canvas(modifier = Modifier.fillMaxSize()) {
         for(i in connections.indices) {
             if(connections[i] == null || leftDots[i] == null || rightDots[connections[i]!!] == null) continue

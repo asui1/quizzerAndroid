@@ -67,12 +67,14 @@ fun ScoringScreen(
     email: String = "GUEST",
     loadQuiz: (String) -> Unit = {},
 ) {
+    val quiz by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
     val quizResult by quizLayoutViewModel.quizResult.collectAsStateWithLifecycle()
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var showShareBottomSheet by remember{ mutableStateOf(false) }
     var immerseMode by remember { mutableStateOf(false) }
     val localActivity = LocalActivity.current
+    var movingToQuizChecker = false
 
     LaunchedEffect(quizLayoutViewModelState){
         if(quizLayoutViewModelState == ViewModelState.ERROR){
@@ -84,8 +86,10 @@ fun ScoringScreen(
     DisposableEffect(key1 = Unit) {
         onDispose {
             localActivity?.disableImmersiveMode()
-            scoreCardViewModel.resetScoreCard()
-            quizLayoutViewModel.resetQuizResult()
+            if(!movingToQuizChecker){
+                scoreCardViewModel.resetScoreCard()
+                quizLayoutViewModel.resetQuizResult()
+            }
         }
     }
 
@@ -157,7 +161,14 @@ fun ScoringScreen(
                                             }
                                         }
                                     },
-                                    showShareBottomSheet = { showShareBottomSheet = true }
+                                    showShareBottomSheet = { showShareBottomSheet = true },
+                                    isResultView = quiz.isEmpty(),
+                                    navigateToQuizChecker = {
+                                        movingToQuizChecker = true
+                                        navController.navigate(Route.QuizChecker){
+                                            launchSingleTop = true
+                                        }
+                                    }
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                             }
@@ -174,32 +185,51 @@ private fun ScoringScreenBottomRow(
     loadQuiz: (String) -> Unit,
     onClickMoveHome: () -> Unit,
     showShareBottomSheet: () -> Unit,
+    isResultView: Boolean = false,
+    navigateToQuizChecker: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
-        Button(
-            onClick = {
-                if (scoreCard.quizUuid != null) {
-                    loadQuiz(scoreCard.quizUuid!!)
-                } else {
-                    ToastManager.showToast(
-                        message = R.string.can_not_load_quiz,
-                        type = ToastType.ERROR,
-                    )
-                }
-            },
-            modifier = Modifier
-                .height(height = 36.dp)
-                .width(150.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.solve_again),
-                style = MaterialTheme.typography.bodySmall
-            )
+        if(isResultView){
+            Button(
+                onClick = {
+                    if (scoreCard.quizUuid != null) {
+                        loadQuiz(scoreCard.quizUuid!!)
+                    } else {
+                        ToastManager.showToast(
+                            message = R.string.can_not_load_quiz,
+                            type = ToastType.ERROR,
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .height(height = 36.dp)
+                    .width(150.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.solve_again),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }else{
+            Button(
+                onClick = {
+                    navigateToQuizChecker()
+                },
+                modifier = Modifier
+                    .height(height = 36.dp)
+                    .width(150.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.check_answer),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
+
         Spacer(
             modifier = Modifier.width(8.dp)
         )

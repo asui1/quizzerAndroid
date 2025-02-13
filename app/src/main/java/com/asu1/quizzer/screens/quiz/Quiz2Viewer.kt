@@ -82,10 +82,6 @@ fun Quiz2Viewer(
 
 }
 
-private operator fun <E> MutableSet<E>.get(it: Int): String {
-    return this.elementAt(it).toString()
-}
-
 @Preview(showBackground = true)
 @Composable
 fun Quiz2ViewerPreview(){

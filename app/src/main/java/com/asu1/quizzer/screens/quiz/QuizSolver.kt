@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -37,6 +38,7 @@ import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
+import com.asu1.quizzer.model.Quiz4ViewModelStates
 import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
@@ -143,11 +145,10 @@ fun QuizSolver(
                                     to
                                 )
                             },
-                            updateQuiz4 = { index, from, to ->
+                            updateQuiz4 = { index, items ->
                                 quizLayoutViewModel.updateQuiz4(
                                     index,
-                                    from,
-                                    to
+                                    items
                                 )
                             },
                             modifier = Modifier.fillMaxSize(),
@@ -169,16 +170,16 @@ fun QuizSolver(
 
 @Composable
 fun QuizViewerPager(
+    modifier: Modifier = Modifier,
     pagerState: PagerState,
     quizSize: Int,
     visibleQuizzes: List<Quiz>,
     quizTheme: QuizTheme = QuizTheme(),
-    modifier: Modifier = Modifier,
     textStyleManager: TextStyleManager,
     updateQuiz1: (page: Int, index: Int) -> Unit,
     updateQuiz2: (page: Int, date: LocalDate) -> Unit,
     updateQuiz3: (page: Int, first: Int, second: Int) -> Unit,
-    updateQuiz4: (page: Int, first: Int, second: Int?) -> Unit,
+    updateQuiz4: (page: Int, items: List<Int?>) -> Unit,
     lastElement: @Composable () -> Unit,
     isPreview: Boolean = false,
 ) {
@@ -186,6 +187,7 @@ fun QuizViewerPager(
         state = pagerState,
         key = { index -> if (index in visibleQuizzes.indices) visibleQuizzes[index].uuid else "Add NewQuiz" },
         modifier = modifier,
+        beyondViewportPageCount = PagerDefaults.BeyondViewportPageCount,
     ) { page ->
         if (page in visibleQuizzes.indices) {
             Box(
@@ -200,7 +202,7 @@ fun QuizViewerPager(
                             is QuizUserUpdates.Quiz1Update -> updateQuiz1(page, quizUserUpdate.index)
                             is QuizUserUpdates.Quiz2Update -> updateQuiz2(page, quizUserUpdate.date)
                             is QuizUserUpdates.Quiz3Update -> updateQuiz3(page, quizUserUpdate.first, quizUserUpdate.second)
-                            is QuizUserUpdates.Quiz4Update -> updateQuiz4(page, quizUserUpdate.first, quizUserUpdate.second)
+                            is QuizUserUpdates.Quiz4Update -> updateQuiz4(page, quizUserUpdate.items)
                         }
                     },
                     quizStyleManager = textStyleManager,

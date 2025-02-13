@@ -28,6 +28,8 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizLayoutSerializer
+import com.asu1.models.serializers.QuizType
+import com.asu1.quizzer.model.Quiz4ViewModelStates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.resources.ColorList
@@ -377,13 +379,15 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun resetQuizLayout() {
-        _quizTheme.value = QuizTheme()
-        _quizData.value = QuizData()
-        _quizzes.value = emptyList()
-        _visibleQuizzes.value = emptyList()
-        _viewModelState.value = ViewModelState.IDLE
-        _policyAgreement.value = false
-        _step.value = LayoutSteps.POLICY
+        if(_quizzes.value.isNotEmpty()){
+            _quizTheme.value = QuizTheme()
+            _quizData.value = QuizData()
+            _quizzes.value = emptyList()
+            _visibleQuizzes.value = emptyList()
+            _viewModelState.value = ViewModelState.IDLE
+            _policyAgreement.value = false
+            _step.value = LayoutSteps.POLICY
+        }
     }
 
     fun setQuizTitle(title: String) {
@@ -645,13 +649,17 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateQuiz4(quizIndex: Int, from: Int, to: Int?){
-        val quiz = quizzes.value[quizIndex] as Quiz4
-        quiz.updateUserConnection(from, to)
-        _quizzes.update {
-            it.toMutableList().apply {
-                set(quizIndex, quiz)
+    fun updateQuiz4(quizIndex: Int, items: List<Int?>){
+        try{
+            val quiz = quizzes.value[quizIndex] as Quiz4
+            quiz.userConnectionIndex = items
+            _quizzes.update {
+                it.toMutableList().apply {
+                    set(quizIndex, quiz)
+                }
             }
+        }catch (e: Exception){
+
         }
     }
 

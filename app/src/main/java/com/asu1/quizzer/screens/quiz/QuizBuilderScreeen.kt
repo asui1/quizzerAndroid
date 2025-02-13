@@ -161,11 +161,10 @@ fun QuizBuilderScreen(navController: NavController,
                                 to
                             )
                         },
-                        updateQuiz4 = { index, from, to ->
+                        updateQuiz4 = { index, items ->
                             quizLayoutViewModel.updateQuiz4(
                                 index,
-                                from,
-                                to
+                                items
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
@@ -273,7 +272,7 @@ fun QuizBuilderScreen(navController: NavController,
                         },
                         updateQuiz3 = { index, from, to ->
                         },
-                        updateQuiz4 = { index, from, to ->
+                        updateQuiz4 = { index, items ->
                         },
                         modifier = Modifier
                             .fillMaxWidth(0.8f)

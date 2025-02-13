@@ -12,7 +12,7 @@ val sampleQuiz1 = Quiz1(
     question = "What is the capital of India?",
     answers = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai"),
     shuffledAnswers = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai"),
-    userAns = mutableListOf(false, false, false, false),
+    userAns = mutableListOf(false, false, true, false),
     ans = mutableListOf(true, false, false, false),
     bodyType = BodyType.TEXT("This is a sample body text"),
 )
@@ -33,15 +33,15 @@ val sampleQuiz2 = Quiz2(
 val sampleQuiz3 = Quiz3(
     question = "Arrange the following in ascending order",
     answers = mutableListOf("1", "2", "3", "4", "5"),
-    shuffledAnswers = mutableListOf("1", "4", "2", "5", "3"),
+    shuffledAnswers = mutableListOf("1", "2", "4", "5", "3"),
 )
 
 val sampleQuiz4 = Quiz4(
     question = "Connect the following",
     answers = mutableListOf("A", "B", "C", "D"),
     connectionAnswers = mutableListOf("1", "2", "3", "4"),
-    userConnectionIndex = mutableListOf(null, null, null, null),
-    connectionAnswerIndex = mutableListOf(null, null, null, null),
+    userConnectionIndex = mutableListOf(0, 1, 2, 3),
+    connectionAnswerIndex = mutableListOf(0, 2, 1, 3),
     leftDots = mutableListOf(null, null, null, null),
     rightDots = mutableListOf(null, null, null, null),
 )
