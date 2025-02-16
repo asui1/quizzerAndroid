@@ -17,5 +17,7 @@ enum class Effect(val stringId: Int){
     RAIN(R.string.rain),
     CHRISTMAS(R.string.christmas),
     CHRISTMASBELL(R.string.christmas_bell),
+    BUBBLES(R.string.bubbles),
+    HEARTS(R.string.hearts),
     WREATH(R.string.wreath);
 }

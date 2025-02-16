@@ -60,11 +60,13 @@ import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.sampleResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
+import com.asu1.quizzer.composables.effects.Bubbles
 import com.asu1.quizzer.composables.effects.Christmas
 import com.asu1.quizzer.composables.effects.ChristmasBell
 import com.asu1.quizzer.composables.effects.Clouds
 import com.asu1.quizzer.composables.effects.Fireworks
 import com.asu1.quizzer.composables.effects.GradientBrush
+import com.asu1.quizzer.composables.effects.Hearts
 import com.asu1.quizzer.composables.effects.Notes
 import com.asu1.quizzer.composables.effects.Rain
 import com.asu1.quizzer.composables.effects.Snowflake
@@ -130,6 +132,7 @@ fun ScoreCardBackground(
                 )
             }
         }
+        //TODO: 이거 갈아엎어서 공통파트 만들고 effect + graphicLayer modification + color filter 형태로 구현.
         when(backgroundImageColor.effect) {
             Effect.FIREWORKS->{
                 Fireworks(
@@ -202,6 +205,19 @@ fun ScoreCardBackground(
                     color = backgroundImageColor.color2,
                     rawResource = R.raw.wreath,
                 )
+            }
+            Effect.BUBBLES -> {
+                Bubbles(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.bubbles,
+                )
+            }
+            Effect.HEARTS ->{
+                Hearts(
+                    color = backgroundImageColor.color2,
+                    rawResource = R.raw.hearts,
+                    )
+
             }
             else ->{
             }
