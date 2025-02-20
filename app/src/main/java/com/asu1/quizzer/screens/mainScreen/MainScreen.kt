@@ -164,7 +164,9 @@ fun MainScreen(
         bottomBar = {
             MainActivityBottomBar(
                 bottomBarSelection = pagerState.currentPage,
-                navigateToQuizLayoutBuilder = { navigateTo(Route.CreateQuizLayout) },
+                navigateToQuizLayoutBuilder = {
+                    navigateTo(Route.CreateQuizLayout)
+                },
                 setSelectedTab ={updateSelectedTab(it)})
         },
         content = { paddingValues ->

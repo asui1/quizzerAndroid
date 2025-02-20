@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import com.asu1.colormodel.ColorSerializer
 import com.asu1.resources.ShaderType
-import com.asu1.utils.ImmutableListSerializer
 import com.asu1.utils.ShaderTypeSerializer
 import kotlinx.serialization.Serializable
 

@@ -3,7 +3,6 @@ package com.asu1.quizzer.screens.quiz
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

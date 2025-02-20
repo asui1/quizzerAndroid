@@ -55,6 +55,7 @@ fun DesignScoreCardTools(
     var showBackgroundImagePicker by remember { mutableStateOf(false) }
     var showOverlayImagePicker by remember { mutableStateOf(false) }
     var colorChange by remember{ mutableIntStateOf(0) }
+    var showEffectsDialog by remember {mutableStateOf(false)}
 
     if(showScoreCardColorPicker){
         Dialog(
@@ -190,22 +191,36 @@ fun DesignScoreCardTools(
         )
         colorNames.forEachIndexed { index, colorName ->
             if (colorName == R.string.effect) {
-                com.asu1.customdropdown.FastCreateDropDown(
-                    showDropdownMenu = showEffectDropdown,
+                com.asu1.customdropdown.FastCreateDialog(
+                    showDialog= showEffectsDialog,
                     labelText = stringResource(R.string.effects),
                     onClick = { dropdownIndex ->
-
                         showEffectDropdown = false
                         scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
                     },
-                    onChangeDropDown = { showEffectDropdown = it },
+                    onChangeDialog= { showEffectsDialog = it },
                     inputItems = remember { Effect.entries.map { it.stringId } },
-                    imageVector = Icons.Filled.Animation,
                     modifier = Modifier.width(iconSize * 1.7f),
+                    imageVector = Icons.Filled.Animation,
                     testTag = "DesignScoreCardAnimationButton",
                     iconSize = iconSize,
                     currentSelection = scoreCard.background.effect.ordinal
                 )
+//                com.asu1.customdropdown.FastCreateDropDown(
+//                    showDropdownMenu = showEffectDropdown,
+//                    labelText = stringResource(R.string.effects),
+//                    onClick = { dropdownIndex ->
+//                        showEffectDropdown = false
+//                        scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
+//                    },
+//                    onChangeDropDown = { showEffectDropdown = it },
+//                    inputItems = remember { Effect.entries.map { it.stringId } },
+//                    imageVector = Icons.Filled.Animation,
+//                    modifier = Modifier.width(iconSize * 1.7f),
+//                    testTag = "DesignScoreCardAnimationButton",
+//                    iconSize = iconSize,
+//                    currentSelection = scoreCard.background.effect.ordinal
+//                )
             } else if (colorName == R.string.gradient) {
                 com.asu1.customdropdown.FastCreateDropDown(
                     showDropdownMenu = showGradientDropdown,

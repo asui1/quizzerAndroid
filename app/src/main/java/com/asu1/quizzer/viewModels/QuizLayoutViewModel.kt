@@ -28,8 +28,6 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizLayoutSerializer
-import com.asu1.models.serializers.QuizType
-import com.asu1.quizzer.model.Quiz4ViewModelStates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
 import com.asu1.resources.ColorList

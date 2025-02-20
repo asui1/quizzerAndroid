@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -56,7 +55,6 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.resources.R
-import androidx.compose.foundation.layout.FlowRow
 
 @Composable
 fun  SearchScreen(navController: NavHostController,

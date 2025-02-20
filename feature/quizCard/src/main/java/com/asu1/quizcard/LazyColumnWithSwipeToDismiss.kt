@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcardmodel.QuizCard
-import com.asu1.baseinterfaces.Identifiable
 import com.asu1.resources.R
 import kotlinx.coroutines.launch
 

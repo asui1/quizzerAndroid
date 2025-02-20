@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.quiz
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,15 +29,12 @@ import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz1
-import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import com.asu1.resources.R
-import java.time.LocalDate
 
 @Composable
 fun QuizChecker(

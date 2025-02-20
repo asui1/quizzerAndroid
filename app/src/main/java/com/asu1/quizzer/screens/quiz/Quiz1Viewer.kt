@@ -18,11 +18,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz1
 import com.asu1.models.sampleQuiz1
 import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.resources.TextStyles
 
 @Composable

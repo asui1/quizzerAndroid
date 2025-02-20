@@ -1,9 +1,7 @@
 package com.asu1.quizzer.screens.quiz
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz1

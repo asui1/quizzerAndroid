@@ -1,13 +1,10 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
 import com.asu1.quizzer.quizCreateUtils.TestQuiz1
-import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
 import com.asu1.quizzer.quizCreateUtils.allInOneForTest
 import com.asu1.quizzer.test.R
-import java.time.LocalDate
-import java.time.YearMonth
 
 val t1GenQuiz20250201 = listOf(
     TestQuiz1(

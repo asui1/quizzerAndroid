@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz4
 import com.asu1.quizzer.model.Quiz4ViewModelStates

@@ -38,7 +38,6 @@ import com.asu1.models.sampleQuiz1
 import com.asu1.models.sampleQuiz2
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.model.Quiz4ViewModelStates
 import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor

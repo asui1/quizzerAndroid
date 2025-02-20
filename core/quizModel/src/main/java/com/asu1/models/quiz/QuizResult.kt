@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.utils.ImmutableListSerializer
 import com.google.common.collect.ImmutableList
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
