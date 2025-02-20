@@ -321,7 +321,8 @@ private fun QuizLayoutBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .imePadding()
+            .imePadding(),
+        verticalAlignment = Alignment.CenterVertically
     )
     {
         IconButton(

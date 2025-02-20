@@ -191,6 +191,7 @@ fun QuizBuilderScreen(navController: NavController,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RowWithAppIconAndName(
+                            modifier = Modifier.weight(1f),
                             header = @Composable {
                                 IconButton(onClick = {
                                     navController.popBackStack(
@@ -207,6 +208,7 @@ fun QuizBuilderScreen(navController: NavController,
                             }
                         )
                         IconButton(
+                            modifier = Modifier.width(30.dp),
                             onClick = {
                                 navigateToQuizLoad()
                             }
@@ -220,6 +222,12 @@ fun QuizBuilderScreen(navController: NavController,
                 },
                 bottomBar = {
                     QuizBuilderBottomBar(
+                        onBack = {
+                            navController.popBackStack(
+                                Route.CreateQuizLayout,
+                                inclusive = false,
+                            )
+                        },
                         onPreview = {
                             isPreview = true
                         },
@@ -451,17 +459,27 @@ fun QuizEditIconsRow(
 
 @Composable
 fun QuizBuilderBottomBar(
+    onBack: () -> Unit = {},
     onPreview: () -> Unit = {},
     onProceed: () -> Unit = {},
     onLocalSave: () -> Unit = {},
 ){
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ){
+        IconButton(
+            onClick = {
+                onBack()
+            }
+        ){
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Back to Home"
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(
             onClick = {
                 onLocalSave()
@@ -472,6 +490,7 @@ fun QuizBuilderBottomBar(
                 contentDescription = "Save Local."
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
         TextButton(
             onClick = {
                 onPreview()
@@ -479,6 +498,7 @@ fun QuizBuilderBottomBar(
         ) {
             Text(stringResource(R.string.preview))
         }
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(
             modifier = Modifier.testTag("QuizBuilderScreenProceedButton"),
             onClick = {

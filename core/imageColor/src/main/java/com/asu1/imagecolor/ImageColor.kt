@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import com.asu1.colormodel.ColorSerializer
 import com.asu1.resources.ShaderType
+import com.asu1.utils.ImmutableListSerializer
 import com.asu1.utils.ShaderTypeSerializer
 import kotlinx.serialization.Serializable
 
@@ -21,7 +22,8 @@ data class ImageColor(
     val backgroundBase: BackgroundBase = BackgroundBase.SKY,
     val effect: Effect = Effect.NONE,
     @Serializable(with = ShaderTypeSerializer::class) var shaderType: ShaderType = ShaderType.Brush1,
-    val overlayImage: ByteArray = byteArrayOf()
+    val overlayImage: ByteArray = byteArrayOf(),
+    val effectGraphics: List<EffectGraphicsInfo> = listOf(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

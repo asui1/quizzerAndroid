@@ -26,8 +26,9 @@ import com.asu1.resources.R
 
 @Composable
 fun RowWithAppIconAndName(
+    modifier: Modifier = Modifier,
     header: @Composable () -> Unit = {},
-    modifier: Modifier = Modifier) {
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,

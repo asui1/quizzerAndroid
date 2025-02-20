@@ -205,6 +205,10 @@
     <string name="quizzer_music_player">Quizzer 뮤직 플레이어</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
     <string name="my_activities">내 활동</string>
+    <string name="horizontal_flowers">꽃2</string>
+    <string name="hourglass">모래시계</string>
+    <string name="computation">컴퓨터</string>
+    <string name="wings">날개</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

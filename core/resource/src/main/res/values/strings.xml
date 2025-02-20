@@ -205,6 +205,10 @@
     <string name="checking_update">Checking for updates</string>
     <string name="my_activities">My Activities</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
+    <string name="horizontal_flowers">Flowers2</string>
+    <string name="hourglass">Hourglass</string>
+    <string name="computation">Computation</string>
+    <string name="wings">Wing</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

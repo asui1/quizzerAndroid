@@ -4,7 +4,6 @@ import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,20 +59,8 @@ import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.sampleResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.quizzer.composables.effects.Bubbles
-import com.asu1.quizzer.composables.effects.Christmas
-import com.asu1.quizzer.composables.effects.ChristmasBell
-import com.asu1.quizzer.composables.effects.Clouds
-import com.asu1.quizzer.composables.effects.Fireworks
+import com.asu1.quizzer.composables.effects.EffectBuilder
 import com.asu1.quizzer.composables.effects.GradientBrush
-import com.asu1.quizzer.composables.effects.Hearts
-import com.asu1.quizzer.composables.effects.Notes
-import com.asu1.quizzer.composables.effects.Rain
-import com.asu1.quizzer.composables.effects.Snowflake
-import com.asu1.quizzer.composables.effects.WithFlowers
-import com.asu1.quizzer.composables.effects.WithMoon
-import com.asu1.quizzer.composables.effects.WithShootingStar
-import com.asu1.quizzer.composables.effects.Wreath
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
 import com.asu1.utils.Logger
@@ -132,95 +119,18 @@ fun ScoreCardBackground(
                 )
             }
         }
-        //TODO: 이거 갈아엎어서 공통파트 만들고 effect + graphicLayer modification + color filter 형태로 구현.
-        when(backgroundImageColor.effect) {
-            Effect.FIREWORKS->{
-                Fireworks(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.firework_2,
-                )
-            }
-            Effect.MOON->{
-                WithMoon(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.moon,
-                )
-            }
-            Effect.SHOOTING_STAR-> {
-                WithShootingStar(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.shootingstar,
-                )
-            }
-            Effect.CLOUDS->{
-                Clouds(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.clouds,
-                )
-            }
-            Effect.SNOWFLAKES ->{
-                Snowflake(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.snowfalling,
-                )
-            }
-            Effect.FLOWERS ->{
-                WithFlowers(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.flowers,
-                )
-            }
-            Effect.CHRISTMAS -> {
-                Christmas(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.greyscalechristmas,
-                )
-            }
-            Effect.NOTES -> {
-                Notes(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.greyscalenotes,
-                )
-            }
-            Effect.RAIN -> {
-                Rain(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.greyscalerain,
-                )
-            }
-            Effect.FIREWORKS2->{
-                Fireworks(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.firework,
-                )
-            }
-            Effect.CHRISTMASBELL -> {
-                ChristmasBell(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.christmasbell,
-                )
-            }
-            Effect.WREATH -> {
-                Wreath(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.wreath,
-                )
-            }
-            Effect.BUBBLES -> {
-                Bubbles(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.bubbles,
-                )
-            }
-            Effect.HEARTS ->{
-                Hearts(
-                    color = backgroundImageColor.color2,
-                    rawResource = R.raw.hearts,
-                    )
-
-            }
-            else ->{
-            }
+        //TODO: BUILD getDefaultEffects for all EFFECTS.
+        if(backgroundImageColor.effect != Effect.NONE){
+            EffectBuilder(
+                color = backgroundImageColor.color2,
+                resourceUrl = backgroundImageColor.effect.resourceUrl,
+                blendModeCompat = backgroundImageColor.effect.blendmode,
+                contentScale = backgroundImageColor.effect.contentScale,
+                effectGraphicsInfos =
+                backgroundImageColor.effectGraphics.ifEmpty {
+                    backgroundImageColor.effect.defaultEffectGraphicsInfos
+                },
+            )
         }
         if(backgroundImageColor.overlayImage.isNotEmpty()){
             val bitmap = remember(backgroundImageColor.overlayImage.take(16), backgroundImageColor.overlayImage.size) {
