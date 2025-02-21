@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -75,13 +76,13 @@ fun YoutubeLinkInput(
                     }
                 }
             )
-            Button(
+            TextButton(
                 onClick = {
                     val (id, time) = parseYoutubeLink(link)
                     if(id == "") {
                         Toast.makeText(context,
                             context.getString(R.string.invalid_youtube_link), Toast.LENGTH_SHORT).show()
-                        return@Button
+                        return@TextButton
                     }
                     onYoutubeUpdate(id, time)
                 },

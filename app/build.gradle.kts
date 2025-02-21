@@ -38,8 +38,8 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 59
-        versionName = "1.0.3"
+        versionCode = 60
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -188,6 +188,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.ui.tooling)
+    implementation(libs.androidx.material3.android)
     implementation(libs.material3)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)

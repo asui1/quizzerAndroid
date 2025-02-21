@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -21,13 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 
 @Composable
 fun MainActivityBottomBar(
     bottomBarSelection: Int = 0,
-    navigateToQuizLayoutBuilder: () -> Unit = {},
-    setSelectedTab: (Int) -> Unit = {}) {
+    setSelectedTab: (Int) -> Unit = {},
+    navigateToCreateQuizLayout: () -> Unit = {},
+    ) {
     val defaultIconSize = 24.dp
 
     BottomAppBar(
@@ -41,7 +44,6 @@ fun MainActivityBottomBar(
                     onClick = {
                         setSelectedTab(0)
                     },
-                    modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -52,27 +54,27 @@ fun MainActivityBottomBar(
                     onClick = {
                         setSelectedTab(1)
                     },
-                    modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 ) {
                     Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = "Trends", modifier = Modifier.size(defaultIconSize))
                 }
-                IconButton(
-                    onClick = { navigateToQuizLayoutBuilder() },
+                FloatingActionButton(
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                    onClick = { navigateToCreateQuizLayout() },
+                    shape = CircleShape,
                     modifier = Modifier
-                        .weight(1.5f)
                         .testTag("MainScreenCreateQuiz"),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    )
                 ) {
-                    Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Quiz", modifier = Modifier.size(1.5f * defaultIconSize))
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Create Quiz",
+                        modifier = Modifier.size(defaultIconSize * 1.5f)
+                    )
                 }
                 IconButton(
                     onClick = { setSelectedTab(2) },
-                    modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -81,7 +83,6 @@ fun MainActivityBottomBar(
                 }
                 IconButton(
                     onClick = { setSelectedTab(3) },
-                    modifier = Modifier.weight(1f),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
