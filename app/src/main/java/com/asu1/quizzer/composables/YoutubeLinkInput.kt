@@ -11,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveCircleOutline
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -24,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -47,8 +47,8 @@ fun YoutubeLinkInput(
     val context = LocalContext.current
     var link by remember { mutableStateOf("") }
 
-    val clipboardManager = LocalClipboardManager.current
-    val clipboardText = remember { clipboardManager.getText()?.text ?: "" }
+    val clipboardManager = LocalClipboard.current
+    val clipboardText = remember { clipboardManager.nativeClipboard.primaryClip.toString()}
 
     if (youtubeId.isEmpty()) {
         Column(modifier = Modifier
