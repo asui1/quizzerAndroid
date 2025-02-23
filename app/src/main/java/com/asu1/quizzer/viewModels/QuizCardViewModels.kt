@@ -108,9 +108,11 @@ class QuizCardMainViewModel : ViewModel() {
                     _userRanks.value = response.body()!!.searchResult
                     _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
                 } else {
+                    Logger.debug("Failed to get user ranks")
                     ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
                 }
             } catch (e: Exception) {
+                Logger.debug("Failed to get user ranks", e)
                 ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
             }
         }
@@ -127,11 +129,9 @@ class QuizCardMainViewModel : ViewModel() {
                     _quizTrends.value = response.body()!!.searchResult
                     _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
                 } else {
-                    ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
                 }
             } catch (e: Exception) {
                 Logger.debug("Failed to fetch quiz trends", e)
-                ToastManager.showToast(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
             }
         }
     }
