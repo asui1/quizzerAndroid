@@ -209,6 +209,10 @@
     <string name="hourglass">Hourglass</string>
     <string name="computation">Computation</string>
     <string name="wings">Wing</string>
+    <string name="home">Home</string>
+    <string name="trends">Trend</string>
+    <string name="ranks">Rank</string>
+    <string name="setting">Setting</string>
     <string-array name = "palette_style_names">
         <item>Tonal Spot</item>
         <item>Neutral</item>

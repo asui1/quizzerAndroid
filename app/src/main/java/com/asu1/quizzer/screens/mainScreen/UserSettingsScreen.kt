@@ -104,8 +104,7 @@ fun UserSettings(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.secondaryContainer),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             ConstraintLayout(

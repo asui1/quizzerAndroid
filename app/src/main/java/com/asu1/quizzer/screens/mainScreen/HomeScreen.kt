@@ -41,7 +41,6 @@ fun HomeScreen(
     moveToPrivacyPolicy: () -> Unit = {},
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(top = 12.dp),
         modifier = modifier.fillMaxSize()
     ) {
         itemsIndexed(

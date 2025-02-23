@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.resources.R
 import com.asu1.resources.SearchBase
+import com.asu1.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +36,7 @@ class SearchViewModel : ViewModel() {
 
     fun search(searchText: String){
         _searchText.value = searchText
+        Logger.debug("searching for $searchText")
         viewModelScope.launch {
             _searchResult.value = emptyList()
             try {

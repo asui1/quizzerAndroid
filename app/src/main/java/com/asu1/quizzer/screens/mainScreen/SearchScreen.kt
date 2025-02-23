@@ -55,6 +55,7 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 
 @Composable
 fun  SearchScreen(navController: NavHostController,
@@ -66,12 +67,16 @@ fun  SearchScreen(navController: NavHostController,
     val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
     val focusRequester = remember{ FocusRequester() }
 
-    BackHandler(
-        enabled = searchTextField.text.isNotEmpty(),
-    ) {
+    fun onBackPressed() {
         searchTextField = TextFieldValue("")
         searchViewModel.setSearchText("")
         focusRequester.requestFocus()
+    }
+
+    BackHandler(
+        enabled = searchTextField.text.isNotEmpty(),
+    ) {
+        onBackPressed()
     }
 
     LaunchedEffect(Unit) {
@@ -93,6 +98,7 @@ fun  SearchScreen(navController: NavHostController,
                 focusManager = focusManager,
                 onTextFieldFocused = { isFocused = true },
                 onTextFieldUnfocused = { isFocused = false },
+                onBackPressed = { onBackPressed() },
                 focusRequester = focusRequester
             )
         },
@@ -186,34 +192,20 @@ fun SearchTopBar(
     focusManager: FocusManager,
     onTextFieldFocused: () -> Unit,
     onTextFieldUnfocused: () -> Unit,
+    onBackPressed: () -> Unit = {},
     focusRequester: FocusRequester,
 ) {
     TopAppBar(
-        modifier = Modifier.height(80.dp),
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
         title = {
             Box(
                 modifier = Modifier.fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
                 TextField(
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
                     value = searchText,
-                    shape = RoundedCornerShape(50.dp),
+                    shape = RoundedCornerShape(40.dp),
                     onValueChange = onSearchTextChanged,
                     modifier = Modifier
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(50.dp))
                         .focusRequester(focusRequester)
                         .onFocusChanged { focusState ->
                             if (focusState.isFocused) {
@@ -227,20 +219,28 @@ fun SearchTopBar(
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
+                            Logger.debug("SearchScreen", "Search: ${searchText.text}")
                             search(searchText.text)
                             focusManager.clearFocus()
                         }
                     ),
                     trailingIcon = {
                         if (searchText.text.isNotEmpty()) {
-                            IconButton(onClick = { onSearchTextChanged(TextFieldValue("")) }) {
+                            IconButton(onClick = {
+                                onBackPressed()
+                            }) {
                                 Icon(
                                     Icons.Default.RemoveCircleOutline,
                                     contentDescription = "Clear"
                                 )
                             }
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
                 )
             }
         },

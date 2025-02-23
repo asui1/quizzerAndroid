@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,8 +28,8 @@ import androidx.compose.ui.unit.times
 fun CustomSnackbarInfo(
     message: String,
 ) {
-    val backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
-    val contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+    val contentColor = MaterialTheme.colorScheme.onSurface
     val borderColor = MaterialTheme.colorScheme.outline
 
     DrawSnackbar(backgroundColor, borderColor, message, contentColor)
@@ -86,7 +87,8 @@ fun CustomSnackbarHost(
     hostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier

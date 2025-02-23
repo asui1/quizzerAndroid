@@ -209,6 +209,10 @@
     <string name="hourglass">모래시계</string>
     <string name="computation">컴퓨터</string>
     <string name="wings">날개</string>
+    <string name="home">홈</string>
+    <string name="trends">트랜드</string>
+    <string name="ranks">랭킹</string>
+    <string name="setting">설정</string>
     <string-array name = "palette_style_names">
         <item>차분한</item>
         <item>중립적</item>

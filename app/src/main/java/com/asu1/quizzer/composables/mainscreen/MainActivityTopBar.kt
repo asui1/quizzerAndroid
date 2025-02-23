@@ -1,5 +1,9 @@
 package com.asu1.quizzer.composables.mainscreen
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,6 +15,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -28,35 +34,30 @@ fun MainActivityTopbar(navController: NavController, onTopbarProfileClick: () ->
                        userData: UserViewModel.UserDatas?,
                        resetHome: () -> Unit = {}) {
     val scope = rememberCoroutineScope()
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        title = { Text("Quizzer") },
-        navigationIcon = {
-            IconButton(onClick = {  resetHome()}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "App Icon"
-                )
+    Row(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically
+        ){
+        IconButton(onClick = {  resetHome()}) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "App Icon"
+            )
+        }
+        Spacer(
+            modifier = Modifier.weight(1f),
+        )
+        IconButton(onClick = { navController.navigate(Route.Search("")){
+            launchSingleTop = true
+        } }) {
+            Icon(Icons.Default.Search, contentDescription = "Search")
+        }
+        UserProfilePic(userData, onClick = {
+            scope.launch {
+                onTopbarProfileClick()
             }
-        },
-        actions = {
-            IconButton(onClick = { navController.navigate(Route.Search("")){
-                launchSingleTop = true
-            } }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            }
-            UserProfilePic(userData, onClick = {
-                scope.launch {
-                    onTopbarProfileClick()
-                }
-            })
-        },
-    )
+        })
+    }
 }
 
 @Preview
