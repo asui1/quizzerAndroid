@@ -1,13 +1,9 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
-import ToastType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.resources.R
-import com.asu1.resources.SearchBase
 import com.asu1.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,15 +16,6 @@ class SearchViewModel : ViewModel() {
 
     private val _searchText = MutableLiveData("")
     val searchText: LiveData<String> get() = _searchText
-
-    private var searchBase = emptyList<SearchBase>()
-
-    private val _searchRecommendations = MutableLiveData<List<SearchBase>>()
-    val searchRecommendations: LiveData<List<SearchBase>> get() = _searchRecommendations
-
-    fun reset(){
-        _searchResult.value = null
-    }
 
     fun setSearchText(searchText: String){
         _searchText.value = searchText
