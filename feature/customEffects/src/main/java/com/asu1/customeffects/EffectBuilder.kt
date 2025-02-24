@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables.effects
+package com.asu1.customeffects
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

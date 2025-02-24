@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables.effects
+package com.asu1.customeffects
 
 import android.graphics.RuntimeShader
 import android.os.Build

@@ -2,11 +2,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.asu1.utils"
+    namespace = "com.asu1.customeffects"
     compileSdk = 35
 
     defaultConfig {
@@ -35,21 +34,24 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:resource"))
+    implementation(project(":core:util"))
+    implementation(project(":core:imageColor"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.foundation.layout.android)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.material3.android)
-    implementation(libs.material.kolor)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.datastore.core)
-    implementation(libs.guava)
-    implementation(libs.mlkit.segmentation.selfie)
-
+    implementation(project(":core:resource"))
+    implementation(libs.foundation.android)
+    implementation(libs.androidx.animation.core.android)
+    implementation(libs.androidx.animation.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.lottie.compose)
+    implementation(libs.dotlottie.android)
+    debugImplementation(libs.androidx.compose.ui.ui.tooling)
 }

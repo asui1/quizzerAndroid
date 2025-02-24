@@ -59,8 +59,8 @@ import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.sampleResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.quizzer.composables.effects.EffectBuilder
-import com.asu1.quizzer.composables.effects.GradientBrush
+import com.asu1.customeffects.EffectBuilder
+import com.asu1.customeffects.GradientBrush
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
 import com.asu1.utils.Logger
@@ -112,7 +112,7 @@ fun ScoreCardBackground(
                 )
             }
             ImageColorState.GRADIENT -> {
-                GradientBrush(
+                com.asu1.customeffects.GradientBrush(
                     imageColor = backgroundImageColor,
                     shaderType = backgroundImageColor.shaderType,
                     modifier = Modifier.fillMaxSize()
@@ -121,7 +121,7 @@ fun ScoreCardBackground(
         }
         //TODO: BUILD getDefaultEffects for all EFFECTS.
         if(backgroundImageColor.effect != Effect.NONE){
-            EffectBuilder(
+            com.asu1.customeffects.EffectBuilder(
                 color = backgroundImageColor.color2,
                 resourceUrl = backgroundImageColor.effect.resourceUrl,
                 blendModeCompat = backgroundImageColor.effect.blendmode,
@@ -176,7 +176,6 @@ fun ScoreCardComposable(
             pagerState.currentPage != 3
         }
     }
-
 
     Box(
         contentAlignment = Alignment.BottomCenter,
