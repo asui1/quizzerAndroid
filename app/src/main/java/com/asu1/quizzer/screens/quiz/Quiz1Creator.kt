@@ -151,11 +151,11 @@ fun PointSetterPreview() {
 
 @Composable
 fun MyTextField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     imeAction : ImeAction = ImeAction.Next,
     onNext: () -> Unit = {},
-    modifier: Modifier = Modifier.fillMaxWidth(),
     label: String = "Question",
     key: String = "",
 ){

@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables.scorecard
 
-import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -59,11 +58,8 @@ import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.sampleResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.customeffects.EffectBuilder
-import com.asu1.customeffects.GradientBrush
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
-import com.asu1.utils.Logger
 import com.google.common.collect.ImmutableList
 import java.util.Locale
 

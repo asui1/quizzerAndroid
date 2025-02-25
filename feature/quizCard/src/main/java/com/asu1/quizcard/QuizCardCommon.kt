@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.io.ByteArrayOutputStream
 
 fun loadImageAsByteArray(context: Context, resId: Int): Bitmap {
     val bitmap = BitmapFactory.decodeResource(context.resources, resId)

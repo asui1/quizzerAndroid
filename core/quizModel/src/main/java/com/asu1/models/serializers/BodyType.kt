@@ -1,7 +1,6 @@
 package com.asu1.models.serializers
 
 import android.graphics.Bitmap
-import androidx.compose.ui.graphics.ImageBitmap
 import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.serialization.Serializable
 
@@ -55,7 +54,6 @@ sealed class BodyType(val value: Int) {
                     this
                 }
             }
-            is NONE -> NONE
             else -> NONE
         }
     }

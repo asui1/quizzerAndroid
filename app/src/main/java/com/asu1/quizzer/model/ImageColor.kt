@@ -1,6 +1,5 @@
 package com.asu1.quizzer.model
 
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -11,9 +10,9 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.asu1.customeffects.GradientBrush
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.customeffects.GradientBrush
 import com.asu1.resources.R
 
 
@@ -44,7 +43,7 @@ fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){
             }
         }
         ImageColorState.GRADIENT -> {
-            com.asu1.customeffects.GradientBrush(
+            GradientBrush(
                 imageColor, imageColor.shaderType, modifier,
                 thisShape = RoundedCornerShape(0.dp)
             )

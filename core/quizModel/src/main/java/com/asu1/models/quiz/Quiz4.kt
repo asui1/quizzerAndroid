@@ -75,12 +75,6 @@ data class Quiz4(
         }
     }
 
-    fun updateUserConnection(from: Int, to: Int?){
-        userConnectionIndex = userConnectionIndex.toMutableList().apply {
-            this[from] = to
-        }
-    }
-
     fun onDragEnd(from: Int, offset: Offset, isCreator: Boolean){
         if(rightDots[0] == null) return
         if(abs(offset.x - (rightDots[0]!!.x)) > 25) return

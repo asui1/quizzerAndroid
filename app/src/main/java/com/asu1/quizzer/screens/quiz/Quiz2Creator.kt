@@ -148,8 +148,9 @@ fun Quiz2Creator(
 }
 
 @Composable
-fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {},
-                      modifier: Modifier = Modifier,
+fun YearMonthDropDown(
+    modifier: Modifier = Modifier,
+    yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Unit = {},
                       key: String = "YearMonthDropDown"
 ){
     val months = 1..12
@@ -192,7 +193,7 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                 modifier = Modifier
                     .border(
                         1.dp,
-                        androidx.compose.ui.graphics.Color.Black,
+                        Color.Black,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp)
@@ -219,7 +220,7 @@ fun YearMonthDropDown(yearMonth: YearMonth, onYearMonthChange: (YearMonth) -> Un
                                 modifier = Modifier
                                     .border(
                                         1.dp,
-                                        androidx.compose.ui.graphics.Color.Black,
+                                        Color.Black,
                                         shape = androidx.compose.foundation.shape.RoundedCornerShape(
                                             8.dp
                                         )

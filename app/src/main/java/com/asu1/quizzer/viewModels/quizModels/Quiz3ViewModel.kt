@@ -1,10 +1,7 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class Quiz3ViewModel: BaseQuizViewModel<Quiz3>(Quiz3()) {
     override val _quizState: MutableStateFlow<Quiz3> = MutableStateFlow(Quiz3())
@@ -43,17 +40,6 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>(Quiz3()) {
     override fun addAnswer() {
         this._quizState.value = this._quizState.value.cloneQuiz(answers = this._quizState.value.answers.toMutableList().apply {
             add("")
-        })
-    }
-
-    fun updateShuffledAnswers(shuffledAnswers: List<String>){
-        val newShuffledAnswers = mutableListOf(this._quizState.value.shuffledAnswers[0]) + shuffledAnswers
-        this._quizState.value = this._quizState.value.copy(shuffledAnswers = newShuffledAnswers.toMutableList())
-    }
-
-    fun switchShuffledAnswers(from: Int, to: Int){
-        this._quizState.value = this._quizState.value.copy(shuffledAnswers = this._quizState.value.shuffledAnswers.toMutableList().apply {
-            add(to, removeAt(from))
         })
     }
 }

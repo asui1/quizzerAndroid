@@ -1,20 +1,16 @@
 package com.asu1.quizzer.viewModels
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.Effect
-import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.resources.ShaderType
-import com.asu1.resources.ViewModelState
 import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.images.processImage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,16 +23,12 @@ class ScoreCardViewModel : ViewModel() {
     private val _scoreCard = MutableStateFlow(ScoreCard())
     val scoreCard: StateFlow<ScoreCard> = _scoreCard.asStateFlow()
 
-    private val _viewModelState = MutableLiveData(ViewModelState.IDLE)
-    val viewModelState: MutableLiveData<ViewModelState> get() = _viewModelState
-
     fun loadScoreCard(scoreCard: ScoreCard) {
         _scoreCard.value = scoreCard
     }
 
     fun resetScoreCard() {
         _scoreCard.value = ScoreCard()
-        _viewModelState.value = ViewModelState.IDLE
     }
 
     fun updateTextColor(color: Color){
@@ -56,33 +48,6 @@ class ScoreCardViewModel : ViewModel() {
                 it.copy(background = currentBackground.copy(color = color))
             }
         }
-    }
-
-    fun updateColor1(color: Color){
-        val currentBackground = _scoreCard.value.background
-        _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
-    }
-
-    fun updateColor2(color: Color){
-        val currentBackground = _scoreCard.value.background
-        _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
-    }
-
-    fun onColorSelection(color: Color){
-        val currentBackground = _scoreCard.value.background
-
-        if (currentBackground.color == color) {
-            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = Color.Transparent))
-        } else if (currentBackground.color2 == color) {
-            _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = Color.Transparent))
-        } else {
-            if (currentBackground.color == Color.Transparent) {
-                _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color = color))
-            } else if (currentBackground.color2 == Color.Transparent) {
-                _scoreCard.value = _scoreCard.value.copy(background = currentBackground.copy(color2 = color))
-            }
-        }
-
     }
 
     fun updateBackgroundImage(image: Bitmap?){
@@ -129,21 +94,6 @@ class ScoreCardViewModel : ViewModel() {
         }
     }
 
-    fun updateImageColorState(imageColorState: ImageColorState){
-        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(state = imageColorState))
-    }
-
-    fun updateScore(score: Float){
-        _scoreCard.value = _scoreCard.value.copy(score = score)
-    }
-
-    fun updateImageState(imageState: Int){
-        _scoreCard.value = _scoreCard.value.copy(imageStateval = imageState)
-    }
-
-    fun updateBackground(background: ImageColor){
-        _scoreCard.value = _scoreCard.value.copy(background = background)
-    }
 }
 
 fun createSampleScoreCardViewModel(): ScoreCardViewModel {

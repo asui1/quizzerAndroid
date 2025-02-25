@@ -1,6 +1,5 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.LocalDate
@@ -14,7 +13,7 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>(Quiz2()) {
     }
 
     override fun viewerInit() {
-        this._quizState.value?.initViewState()
+        this._quizState.value.initViewState()
     }
 
     override fun loadQuiz(quiz: Quiz2) {
@@ -54,15 +53,5 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>(Quiz2()) {
             answerDate.add(date)
         }
         this._quizState.value = this._quizState.value.copy(answerDate = answerDate)
-    }
-
-    fun updateUserAnswerDate(date: LocalDate){
-        val userAnswerDate = this._quizState.value.userAnswerDate.toMutableSet()
-        if(userAnswerDate.contains(date)){
-            userAnswerDate.remove(date)
-        }else{
-            userAnswerDate.add(date)
-        }
-        this._quizState.value = this._quizState.value.copy(userAnswerDate = userAnswerDate)
     }
 }

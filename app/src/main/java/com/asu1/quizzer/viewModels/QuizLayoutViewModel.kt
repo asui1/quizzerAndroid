@@ -368,8 +368,8 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun updateInitIndex(index: Int) {
-        if(index > quizzes.value!!.size){
-            _initIndex.value = quizzes.value!!.size
+        if(index > quizzes.value.size){
+            _initIndex.value = quizzes.value.size
             return
         }
         _initIndex.value = index
@@ -437,18 +437,6 @@ class QuizLayoutViewModel : ViewModel() {
 
     fun setQuizDescription(description: String) {
         _quizData.value = _quizData.value.copy(description = description)
-    }
-
-    fun addTag(tag: String) {
-        val tags = _quizData.value.tags.toMutableSet()
-        tags.add(tag)
-        _quizData.value = _quizData.value.copy(tags = tags)
-    }
-
-    fun removeTag(tag: String) {
-        val tags = _quizData.value.tags.toMutableSet()
-        tags.remove(tag)
-        _quizData.value = _quizData.value.copy(tags = tags)
     }
 
     fun updateTag(tag: String){
@@ -567,10 +555,6 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateShuffleQuestions(shuffleQuestions: Boolean) {
-        _quizData.value = _quizData.value.copy(shuffleQuestions = shuffleQuestions)
-    }
-
     fun textStyleUpdater(textStyle: List<Int>, indexSelector: Int, isIncrease: Boolean): List<Int> {
         val size = when(indexSelector){
             0 -> fonts.size
@@ -618,14 +602,14 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun addQuiz(quiz: Quiz<*>, index: Int? = null) {
-        if(index == null || index >= quizzes.value!!.size || index == -1){
-            val quizzes = quizzes.value!!.toMutableList()
+        if(index == null || index >= quizzes.value.size || index == -1){
+            val quizzes = quizzes.value.toMutableList()
             quizzes.add(quiz)
             _quizzes.value = quizzes
 
             return
         } else{
-            val quizzes = quizzes.value!!.toMutableList()
+            val quizzes = quizzes.value.toMutableList()
             quizzes.add(index, quiz)
             _quizzes.value = quizzes
             return
@@ -672,7 +656,7 @@ class QuizLayoutViewModel : ViewModel() {
                 }
             }
         }catch (e: Exception){
-
+            Logger.debug("Failed to update quiz 4 ${e.message}")
         }
     }
 
@@ -683,10 +667,10 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun removeQuizAt(index: Int) {
-        if(index >= quizzes.value!!.size || index < 0){
+        if(index >= quizzes.value.size || index < 0){
             return
         }
-        _quizzes.value = quizzes.value!!.toMutableList().apply {
+        _quizzes.value = quizzes.value.toMutableList().apply {
             removeAt(index)
         }
     }

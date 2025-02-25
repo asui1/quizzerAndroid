@@ -453,7 +453,7 @@ fun StepProgressBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                            contentDescription = stringResource(R.string.move_back_home)
                         )
                     }
                 },

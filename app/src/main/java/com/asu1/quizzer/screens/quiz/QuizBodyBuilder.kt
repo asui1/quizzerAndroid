@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.quiz
 
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -28,15 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.serializers.BodyType
 import com.asu1.resources.R
-import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun QuizBodyBuilder(
@@ -169,13 +166,6 @@ fun BodyPreviews() {
 
     }
 }
-
-
-val mapItemToVector = mapOf(
-    1 to Icons.Default.TextFields,
-    2 to Icons.Default.Image,
-    3 to Icons.Default.VideoLibrary,
-)
 
 @Composable
 fun BodyTypeDialog(

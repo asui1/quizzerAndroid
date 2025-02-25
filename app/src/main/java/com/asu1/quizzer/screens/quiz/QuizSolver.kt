@@ -48,10 +48,10 @@ import java.time.LocalDate
 
 @Composable
 fun QuizSolver(
+    modifier: Modifier = Modifier,
     navController: NavController,
     quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
     navigateToScoreCard: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
     val visibleQuizzes by quizLayoutViewModel.visibleQuizzes.collectAsStateWithLifecycle()
@@ -230,8 +230,8 @@ fun QuizViewerPager(
 //ANSWER SCREEN, Button to Move to Scoring Screen
 @Composable
 fun QuizSubmit(
-    title: String = "Title",
     modifier: Modifier = Modifier,
+    title: String = "Title",
     onSubmit: () -> Unit = {}
 ){
     Box(

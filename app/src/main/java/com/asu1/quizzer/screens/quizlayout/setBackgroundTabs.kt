@@ -121,7 +121,7 @@ fun BackgroundTabs(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        com.asu1.colorpicker.ColorPicker(
+                        ColorPicker(
                             initialColor = background.color,
                             onColorSelected = { color ->
                                 onBackgroundColorUpdate(color)
@@ -131,7 +131,7 @@ fun BackgroundTabs(
                             },
                             modifier = Modifier.weight(1f),
                         )
-                        com.asu1.colorpicker.ColorPicker(
+                        ColorPicker(
                             initialColor = background.colorGradient,
                             onColorSelected = { color ->
                                 onGradientColorUpdate(color)
