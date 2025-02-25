@@ -132,9 +132,9 @@ fun ScoreCardBackground(
                 },
             )
         }
-        if(backgroundImageColor.overlayImage.isNotEmpty()){
-            val bitmap = remember(backgroundImageColor.overlayImage.take(16), backgroundImageColor.overlayImage.size) {
-                BitmapFactory.decodeByteArray(backgroundImageColor.overlayImage, 0, backgroundImageColor.overlayImage.size).asImageBitmap().apply {
+        if(backgroundImageColor.overlayImage.width > 1){
+            val bitmap = remember(backgroundImageColor.overlayImage) {
+                backgroundImageColor.overlayImage.asImageBitmap().apply {
                     prepareToDraw()
                 }
             }
@@ -155,10 +155,10 @@ const val pageNum = 4
 
 @Composable
 fun ScoreCardComposable(
+    modifier: Modifier = Modifier,
     scoreCard: ScoreCard,
     quizResult: QuizResult = sampleResult,
     pagerInit: Int = 0,
-    modifier: Modifier = Modifier,
 ){
     val pagerState = rememberPagerState(
         initialPage = pagerInit,
@@ -292,7 +292,6 @@ private fun Score(scoreCardTextColor: Color, score: Float) {
     val animatedScore = remember { Animatable(0f) }
     // Launch the animation when targetScore changes
     LaunchedEffect(score) {
-        Logger.debug("Launch Score Animation: $score")
         animatedScore.animateTo(
             targetValue = score,
             animationSpec = tween(durationMillis = 2000)

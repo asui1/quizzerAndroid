@@ -1,5 +1,8 @@
 package com.asu1.models.serializers
 
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.ImageBitmap
+import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.serialization.Serializable
 
 @Serializable(with = BodyTypeSerializer::class)
@@ -9,7 +12,7 @@ sealed class BodyType(val value: Int) {
 
     data class TEXT(val bodyText: String) : BodyType(value = 1)
 
-    data class IMAGE(val bodyImage: ByteArray) : BodyType(value = 2) {
+    data class IMAGE(val bodyImage: Bitmap = createEmptyBitmap()) : BodyType(value = 2) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -17,12 +20,12 @@ sealed class BodyType(val value: Int) {
 
             other as IMAGE
 
-            return bodyImage.contentEquals(other.bodyImage)
+            return bodyImage == other.bodyImage
         }
 
         override fun hashCode(): Int {
             var result = super.hashCode()
-            result = 31 * result + bodyImage.contentHashCode()
+            result = 31 * result + bodyImage.hashCode()
             return result
         }
     }
@@ -39,7 +42,7 @@ sealed class BodyType(val value: Int) {
                 }
             }
             is IMAGE -> {
-                if(this.bodyImage.isEmpty()){
+                if(this.bodyImage.width <= 1){
                     NONE
                 }else{
                     this

@@ -32,18 +32,12 @@ fun launchPhotoPicker(
     )
 }
 
-suspend fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): ByteArray? {
+suspend fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight: Dp?): Bitmap? {
     return withContext(Dispatchers.IO) {
         context.contentResolver.openInputStream(uri)?.use { inputStream ->
             val originalBitmap = BitmapFactory.decodeStream(inputStream)
             val resizedBitmap = resizeBitmap(originalBitmap, maxWidth, maxHeight)
-            val buffer = ByteArrayOutputStream()
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-                resizedBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, buffer)
-            } else {
-                resizedBitmap.compress(Bitmap.CompressFormat.WEBP, 100, buffer)
-            }
-            buffer.toByteArray()
+            resizedBitmap
         }
     }
 }

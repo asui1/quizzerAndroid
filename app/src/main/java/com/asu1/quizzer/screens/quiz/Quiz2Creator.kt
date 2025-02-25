@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz2
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.SaveButton
 import com.asu1.quizzer.composables.getBorder
@@ -66,9 +67,9 @@ import java.time.YearMonth
 @Composable
 fun Quiz2Creator(
     quiz: Quiz2ViewModel = viewModel(),
-    onSave: (Quiz) -> Unit
+    onSave: (Quiz<Quiz2>) -> Unit
 ){
-    val quiz2State by quiz.quiz2State.collectAsStateWithLifecycle()
+    val quiz2State by quiz.quizState.collectAsStateWithLifecycle()
     var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
     val focusManager = LocalFocusManager.current
 

@@ -1,5 +1,6 @@
 package com.asu1.models.quiz
 
+import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizJson
 import com.asu1.models.serializers.QuizType
@@ -17,7 +18,7 @@ data class Quiz2(
     override var answers: List<String> = listOf(),
     override var question: String = "",
     override var point: Int = 5,
-): Quiz(answers, question, point) {
+): Quiz<Quiz2>(answers, question, point) {
     fun toggleUserAnswer(date: LocalDate){
         userAnswerDate = userAnswerDate.toMutableSet().apply{
             if(contains(date)){
@@ -26,6 +27,44 @@ data class Quiz2(
                 add(date)
             }
         }
+    }
+
+    override fun cloneQuiz(
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+        uuid: String
+    ): Quiz2 {
+        return this.copy(
+            answers = answers,
+            question = question,
+            point = point,
+            layoutType = layoutType,
+        )
+    }
+
+    fun cloneQuiz(
+        maxAnswerSelection: Int,
+        centerDate: YearMonth,
+        yearRange: Int,
+        answerDate: MutableSet<LocalDate>,
+        userAnswerDate: MutableSet<LocalDate>,
+        answers: List<String>,
+        question: String,
+        point: Int,
+    ): Quiz2 {
+        return this.copy(
+            maxAnswerSelection = maxAnswerSelection,
+            centerDate = centerDate,
+            yearRange = yearRange,
+            answerDate = answerDate.toMutableSet(),
+            userAnswerDate = userAnswerDate.toMutableSet(),
+            answers = answers,
+            question = question,
+            point = point,
+        )
     }
 
     override fun initViewState() {

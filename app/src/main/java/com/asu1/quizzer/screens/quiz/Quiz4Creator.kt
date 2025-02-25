@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz4
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
@@ -55,9 +56,9 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 @Composable
 fun Quiz4Creator(
     quiz: Quiz4ViewModel = viewModel(),
-    onSave: (Quiz) -> Unit
+    onSave: (Quiz<Quiz4>) -> Unit
 ) {
-    val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
+    val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }

@@ -21,12 +21,13 @@ import com.asu1.resources.R
 fun ImageColorBackground(imageColor: ImageColor, modifier: Modifier = Modifier){
     when(imageColor.state) {
         ImageColorState.IMAGE -> {
-            if (imageColor.imageData.isNotEmpty()) {
+            if (imageColor.imageData.width > 1) {
                 val bitmap = remember(
-                    imageColor.imageData.take(16),
-                    imageColor.imageData.size
+                    imageColor.imageData
                 ) {
-                    BitmapFactory.decodeByteArray(imageColor.imageData, 0, imageColor.imageData.size).asImageBitmap()
+                    imageColor.imageData.asImageBitmap().apply {
+                        prepareToDraw()
+                    }
                 }
                 Image(
                     bitmap = bitmap,

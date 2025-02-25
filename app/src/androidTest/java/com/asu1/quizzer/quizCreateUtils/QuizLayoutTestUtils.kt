@@ -1,6 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
@@ -132,7 +133,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setImage(context: Context, packageName: String, image: Int, onImagePicked: (ByteArray) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
+    fun setImage(context: Context, packageName: String, image: Int, onImagePicked: (Bitmap) -> Unit = {}, width: Dp? = null, height: Dp? = null) {
         val mockRegistry = object : ActivityResultRegistry() {
             override fun <I : Any?, O : Any?> onLaunch(
                 requestCode: Int,
@@ -148,15 +149,15 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         val launcher = mockRegistry.register("key", ActivityResultContracts.PickVisualMedia()) { result: Uri? ->
             if (result != null) {
                 runBlocking {
-                    val byteArray = uriToByteArray(
+                    val bitmap = uriToByteArray(
                         context = context,
                         uri = result,
                         maxWidth = width,
                         maxHeight = height,
                     )
-                    if(byteArray != null){
-                        Logger.debug("Image Picked ${byteArray.size}")
-                        onImagePicked(byteArray)
+                    if(bitmap != null){
+                        Logger.debug("Image Picked ${bitmap.width}")
+                        onImagePicked(bitmap)
                     }
                 }
             }

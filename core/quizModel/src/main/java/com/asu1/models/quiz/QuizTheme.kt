@@ -21,7 +21,6 @@ interface QuizThemeInterface {
 @Serializable
 data class QuizTheme(
     override var backgroundImage: ImageColor = ImageColor(
-        imageData = byteArrayOf(),
         color = Color.White,
         color2 = Color.White,
         colorGradient = Color.White,

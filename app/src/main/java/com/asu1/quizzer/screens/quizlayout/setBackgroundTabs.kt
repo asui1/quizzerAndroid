@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.quizlayout
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +40,7 @@ fun BackgroundTabs(
     onBackgroundColorUpdate: (Color) -> Unit,
     onGradientColorUpdate: (Color) -> Unit,
     onGradientTypeUpdate: (ShaderType) -> Unit = {},
-    onImageUpdate: (ByteArray) -> Unit,
+    onImageUpdate: (Bitmap?) -> Unit,
     onClose: () -> Unit,
 ) {
     var showGradientDropdown by remember { mutableStateOf(false) }
@@ -149,11 +150,11 @@ fun BackgroundTabs(
                 Spacer(modifier = Modifier.height(24.dp))
                 ImageGetter(
                     image = background.imageData,
-                    onImageUpdate = { byteArray ->
-                        onImageUpdate(byteArray)
+                    onImageUpdate = { bitmap ->
+                        onImageUpdate(bitmap)
                     },
                     onImageDelete = {
-                        onImageUpdate(byteArrayOf())
+                        onImageUpdate(null)
                     },
                 )
             }

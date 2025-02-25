@@ -1,40 +1,28 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
-import com.asu1.models.serializers.BodyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
-    private val _quiz3State = MutableStateFlow(Quiz3())
-    val quiz3State: StateFlow<Quiz3> get() = _quiz3State.asStateFlow()
+class Quiz3ViewModel: BaseQuizViewModel<Quiz3>(Quiz3()) {
+    override val _quizState: MutableStateFlow<Quiz3> = MutableStateFlow(Quiz3())
 
     init {
         resetQuiz()
     }
 
     override fun viewerInit() {
-        _quiz3State.value.initViewState()
+        this._quizState.value.initViewState()
     }
 
     override fun loadQuiz(quiz: Quiz3) {
-        _quiz3State.value = quiz
+        this._quizState.value = quiz
     }
 
     override fun resetQuiz() {
-        _quiz3State.value = Quiz3()
-    }
-
-    override fun updateAnswerAt(index: Int, answer: String) {
-        _quiz3State.value = _quiz3State.value.copy(answers = _quiz3State.value.answers.toMutableList().apply {
-            if(index >= size){
-                add(answer)
-            }else{
-                set(index, answer)
-            }
-        })
+        this._quizState.value = Quiz3()
     }
 
     override fun toggleAnsAt(index: Int) {
@@ -42,10 +30,10 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun removeAnswerAt(index: Int) {
-        if(_quiz3State.value.answers.size <= 3){
+        if(this._quizState.value.answers.size <= 3){
             return
         }
-        _quiz3State.value = _quiz3State.value.copy(answers = _quiz3State.value.answers.toMutableList().apply {
+        this._quizState.value = this._quizState.value.cloneQuiz(answers = this._quizState.value.answers.toMutableList().apply {
             if(index < size){
                 removeAt(index)
             }
@@ -53,52 +41,19 @@ class Quiz3ViewModel: BaseQuizViewModel<Quiz3>() {
     }
 
     override fun addAnswer() {
-        _quiz3State.value = _quiz3State.value.copy(answers = _quiz3State.value.answers.toMutableList().apply {
+        this._quizState.value = this._quizState.value.cloneQuiz(answers = this._quizState.value.answers.toMutableList().apply {
             add("")
         })
     }
 
-    override fun updateQuestion(question: String) {
-        _quiz3State.value = _quiz3State.value.copy(question = question)
-    }
-
     fun updateShuffledAnswers(shuffledAnswers: List<String>){
-        val newShuffledAnswers = mutableListOf(_quiz3State.value.shuffledAnswers[0]) + shuffledAnswers
-        _quiz3State.value = _quiz3State.value.copy(shuffledAnswers = newShuffledAnswers.toMutableList())
+        val newShuffledAnswers = mutableListOf(this._quizState.value.shuffledAnswers[0]) + shuffledAnswers
+        this._quizState.value = this._quizState.value.copy(shuffledAnswers = newShuffledAnswers.toMutableList())
     }
 
     fun switchShuffledAnswers(from: Int, to: Int){
-        _quiz3State.value = _quiz3State.value.copy(shuffledAnswers = _quiz3State.value.shuffledAnswers.toMutableList().apply {
+        this._quizState.value = this._quizState.value.copy(shuffledAnswers = this._quizState.value.shuffledAnswers.toMutableList().apply {
             add(to, removeAt(from))
         })
     }
-
-    override fun updateBodyState(bodyType: BodyType){
-        _quiz3State.value = _quiz3State.value.copy(bodyType = bodyType)
-    }
-
-    override fun updateBodyText(bodyText: String){
-        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.TEXT(bodyText = bodyText))
-    }
-
-    override fun updateBodyImage(image: ByteArray){
-        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.IMAGE(bodyImage = image))
-    }
-
-    override fun updateBodyYoutube(youtubeId: String, startTime: Int){
-        if(youtubeId == "DELETE"){
-            _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.YOUTUBE("", 0))
-            return
-        }
-        if(youtubeId == ""){
-            return
-        }
-        _quiz3State.value = _quiz3State.value.copy(bodyType = BodyType.YOUTUBE(youtubeId = youtubeId, youtubeStartTime = startTime))
-    }
-    override fun setPoint(point: Int){
-        _quiz3State.update{
-            it.copy(point = point)
-        }
-    }
-
 }

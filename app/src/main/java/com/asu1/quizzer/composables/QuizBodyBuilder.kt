@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,19 +28,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.serializers.BodyType
 import com.asu1.resources.R
+import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun QuizBodyBuilder(
     bodyState: BodyType,
     updateBody: (BodyType) -> Unit,
     onBodyTextChange: (String) -> Unit,
-    onImageSelected: (ByteArray) -> Unit,
+    onImageSelected: (Bitmap?) -> Unit,
     onYoutubeUpdate: (String, Int) -> Unit,
 ){
     var showBodyDialog by remember { mutableStateOf(false) }
@@ -52,7 +56,7 @@ fun QuizBodyBuilder(
                 showBodyDialog = false
             },
             onImageSelected = {
-                updateBody(BodyType.IMAGE(ByteArray(0)))
+                updateBody(BodyType.IMAGE(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)))
                 showBodyDialog = false
             },
             onYoutubeSelected = {
@@ -100,7 +104,7 @@ fun QuizBodyBuilder(
                 ImageGetter(
                     image = bodyState.bodyImage,
                     onImageUpdate = onImageSelected,
-                    onImageDelete = { onImageSelected(ByteArray(0)) },
+                    onImageDelete = { onImageSelected(null) },
                 )
             }
             is BodyType.YOUTUBE -> {
@@ -143,7 +147,7 @@ fun BodyPreviews() {
                     .background(color = Color.Black)
             )
             QuizBodyBuilder(
-                bodyState = BodyType.IMAGE(ByteArray(0)),
+                bodyState = BodyType.IMAGE(),
                 updateBody = {},
                 onBodyTextChange = {},
                 onImageSelected = {},

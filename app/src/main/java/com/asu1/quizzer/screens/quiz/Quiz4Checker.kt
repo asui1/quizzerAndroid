@@ -40,7 +40,7 @@ fun Quiz4Checker(
     quiz: Quiz4ViewModel = viewModel(),
     quizStyleManager: TextStyleManager,
 ) {
-    val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
+    val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
     val dotSizeDp = 20.dp
     val paddingDp = 4.dp

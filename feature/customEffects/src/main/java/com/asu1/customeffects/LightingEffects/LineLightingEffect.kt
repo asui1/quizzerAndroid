@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -37,29 +38,24 @@ import kotlin.math.sin
 // has a starting width (startWidth) and an ending width (endWidth), and is filled with a gradient.
 fun DrawScope.drawConcertBeam(
     startPoint: Offset,
-    baseAngle: Float,       // e.g. -90° to have beam going upward
-    angleOffset: Float,     // animated offset (in degrees) relative to baseAngle
-    beamLength: Float,
+    effectiveEnd: Offset,
     startWidth: Float,
     endWidth: Float,
     color: Color
 ) {
-    // Compute the actual angle (in degrees) and convert to radians.
-    val actualAngle = baseAngle + angleOffset
-    val radians = Math.toRadians(actualAngle.toDouble())
-    // Unit vector in beam direction.
-    val direction = Offset(cos(radians).toFloat(), sin(radians).toFloat())
-    // Perpendicular vector (rotate direction by 90°).
+    // Compute the direction vector from start to end.
+    val delta = effectiveEnd - startPoint
+    // Normalize (if delta is zero, we fallback to (0, 1)).
+    val distance = delta.getDistance().coerceAtLeast(1f)
+    val direction = Offset(delta.x / distance, delta.y / distance)
+    // Compute a perpendicular vector.
     val perpendicular = Offset(-direction.y, direction.x)
-    // At the fixed starting point, the beam is narrow.
-    val p0 = startPoint + perpendicular * (-startWidth / 2)
-    val p1 = startPoint + perpendicular * (startWidth / 2)
-    // The far end of the beam.
-    val endPoint = startPoint + direction * beamLength
-    val p2 = endPoint + perpendicular * (endWidth / 2)
-    val p3 = endPoint + perpendicular * (-endWidth / 2)
+    // Compute the four corners of the trapezoidal beam.
+    val p0 = startPoint + perpendicular * (-startWidth / 2f)
+    val p1 = startPoint + perpendicular * (startWidth / 2f)
+    val p2 = effectiveEnd + perpendicular * (endWidth / 2f)
+    val p3 = effectiveEnd + perpendicular * (-endWidth / 2f)
 
-    // Build the trapezoidal beam.
     val path = Path().apply {
         moveTo(p0.x, p0.y)
         lineTo(p1.x, p1.y)
@@ -68,65 +64,58 @@ fun DrawScope.drawConcertBeam(
         close()
     }
 
-    // Fill the beam with a gradient that fades from opaque at the start to transparent at the end.
+    // Apply a linear gradient along the beam’s length.
     drawPath(
         path = path,
         brush = Brush.linearGradient(
             colors = listOf(
-                color.copy(alpha = 0.8f),
+                color.copy(alpha = 0.7f),
                 color.copy(alpha = 0f)
             ),
             start = startPoint,
-            end = endPoint
+            end = effectiveEnd
         )
     )
 }
 
 @Composable
-fun ConcertLineLightsFixedStart(
+fun ConcertLineLightsWithOffsets(
     modifier: Modifier,
     color: Color,
+    offsets: List<Offset>,
+    endPoint: Offset,
     beamLength: Dp = 150.dp,
     startWidth: Dp = 8.dp,
-    // The far end's width will be startWidth * endWidthFactor.
-    endWidthFactor: Float = 2f,
-    beamCount: Int = 3,
-    // Angle offset relative to the base angle.
-    minAngleOffset: Float = -15f,
-    maxAngleOffset: Float = 15f,
-    // Base angle: -90° means beams emanate upward.
-    baseAngle: Float = -90f
+    endWidthFactor: Float = 2f
 ) {
-    BoxWithConstraints(modifier = modifier) {
+    Box(modifier = modifier) {
         val density = LocalDensity.current
         val beamLengthPx = with(density) { beamLength.toPx() }
         val startWidthPx = with(density) { startWidth.toPx() }
         val endWidthPx = startWidthPx * endWidthFactor
 
-        // The fixed starting point: bottom center of the canvas.
-        val startPoint = Offset(constraints.maxWidth / 2f, constraints.maxHeight.toFloat())
-
+        // Shared animation: at 0 the beams end at gatheredEnd; at 1 they end at (endPoint + offset).
         val infiniteTransition = rememberInfiniteTransition()
-        val angleOffsetAnim by infiniteTransition.animateFloat(
-            initialValue = minAngleOffset,
-            targetValue = maxAngleOffset,
+        val gatherProgress by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
             animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 2000,
-                    easing = FastOutSlowInEasing
-                ),
+                animation = tween(durationMillis = 2000, easing = LinearEasing),
                 repeatMode = RepeatMode.Reverse
             )
         )
+
         Canvas(modifier = Modifier.fillMaxSize()) {
-            // Draw multiple beams.
-            for (i in 0 until beamCount) {
-                // Draw one beam with the current animated angle.
+            offsets.forEach { offset ->
+                // For each beam, the target (spread) endpoint is endPoint + offset.
+                val spreadEnd = offset.copy(
+                    y = beamLengthPx + offset.y,
+                )
+                // Interpolate between gatheredEnd and spreadEnd based on gatherProgress.
+                val effectiveEnd = lerp(spreadEnd, endPoint, gatherProgress)
                 drawConcertBeam(
-                    startPoint = startPoint,
-                    baseAngle = baseAngle,
-                    angleOffset = angleOffsetAnim,
-                    beamLength = beamLengthPx,
+                    startPoint = offset,
+                    effectiveEnd = effectiveEnd,
                     startWidth = startWidthPx,
                     endWidth = endWidthPx,
                     color = color
@@ -136,32 +125,42 @@ fun ConcertLineLightsFixedStart(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun StageCardWithLinearLightPreview() {
-    val cardHeight = 300.dp
+fun ConcertLineLightsWithOffsetsPreview() {
+    // In this preview, we simulate a stage area.
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(cardHeight)
+            .height(300.dp)
     ) {
-        // The card that holds your content
+        // Example list of offsets to further separate the beams when fully spread.
+        // You can tweak these to get the desired spread.
+        val beamOffsets = listOf(
+            Offset(0f, 0f),
+            Offset(100f, 0f),
+            Offset(200f, 0f),
+            Offset(300f, 0f),
+            Offset(400f, 0f),
+        )
+
+        val targetEnd = Offset(x = 200f, y = 300f)
+
         Card(
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            shape = RoundedCornerShape(16.dp)
         ) {
-            // Place your card content here
+            // Underlying stage or content could go here.
         }
-        ConcertLineLightsFixedStart(
+
+        ConcertLineLightsWithOffsets(
             modifier = Modifier.fillMaxSize(),
             color = Color.Cyan,
+            offsets = beamOffsets,
+            endPoint = targetEnd,
             beamLength = 200.dp,
             startWidth = 8.dp,
-            endWidthFactor = 2f,
-            beamCount = 3,
-            minAngleOffset = -15f,
-            maxAngleOffset = 15f,
-            baseAngle = -90f
+            endWidthFactor = 2f
         )
     }
 }

@@ -150,6 +150,8 @@ dependencies {
     implementation(project(":domain:userDataUseCase"))
     implementation(project(":core:userDataModels"))
     implementation(project(":feature:permissionRequest"))
+    implementation(project(":feature:customEffects"))
+    implementation(project(":feature:customEffects"))
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:musicUi"))

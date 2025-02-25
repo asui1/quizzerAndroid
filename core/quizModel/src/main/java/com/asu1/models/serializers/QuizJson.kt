@@ -66,7 +66,7 @@ fun manualDeserializer(input: String): BodyType{
         val bodyText = extractBodyText(input)
         return BodyType.TEXT(bodyText)
     }else if(input.contains("quizzer.model.BodyType.IMAGE")) {
-        return BodyType.IMAGE(ByteArray(0))
+        return BodyType.NONE
     }else if(input.contains("quizzer.model.BodyType.YOUTUBE")) {
 //Old Input: {"type":"com.asu1.quizzer.model.BodyType.YOUTUBE","value":3,"youtubeId":"v7bnOxV4jAc","youtubeStartTime":0}
         val (youtubeId, youtubeStartTime) = extractYouTubeDetails(input)
@@ -79,8 +79,8 @@ fun manualDeserializer(input: String): BodyType{
 @JsonClassDiscriminator("layoutType")
 @Serializable
 sealed class QuizJson {
-    abstract fun load() : Quiz
-    abstract fun toQuiz(): Quiz
+    abstract fun load() : Quiz<*>
+    abstract fun toQuiz(): Quiz<*>
 
     @Serializable
     @SerialName("0")
@@ -201,7 +201,7 @@ sealed class QuizJson {
             return quiz
         }
 
-        override fun toQuiz(): Quiz {
+        override fun toQuiz(): Quiz4 {
             val quiz = Quiz4(
                 question = body.question,
                 answers = body.answers.toMutableList(),

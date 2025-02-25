@@ -1,10 +1,8 @@
 package com.asu1.utils
 
-import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import com.materialkolor.ktx.themeColors
 
 fun ColorScheme.withPrimaryColor(newPrimaryColor: Color): ColorScheme {
@@ -100,8 +98,4 @@ fun ColorScheme.withSurfaceColor(newSurfaceColor: Color): ColorScheme {
 fun calculateSeedColor(bitmap: ImageBitmap): List<Color> {
     val suitableColors = bitmap.themeColors(fallback = Color.Blue)
     return suitableColors.take(3)
-}
-fun byteArrayToImageBitmap(byteArray: ByteArray): ImageBitmap {
-    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-    return bitmap.asImageBitmap()
 }

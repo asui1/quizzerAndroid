@@ -172,7 +172,7 @@ fun QuizViewerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     quizSize: Int,
-    visibleQuizzes: List<Quiz>,
+    visibleQuizzes: List<Quiz<*>>,
     quizTheme: QuizTheme = QuizTheme(),
     textStyleManager: TextStyleManager,
     updateQuiz1: (page: Int, index: Int) -> Unit,

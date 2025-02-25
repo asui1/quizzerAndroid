@@ -86,7 +86,7 @@ fun QuizChecker(
 fun QuizCheckerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    quizzes: List<Quiz>,
+    quizzes: List<Quiz<*>>,
     quizTheme: QuizTheme = QuizTheme(),
     textStyleManager: TextStyleManager,
 ) {
@@ -123,7 +123,7 @@ fun QuizCheckerPager(
 
 @Composable
 fun QuizCheckerBody(
-    quiz: Quiz,
+    quiz: Quiz<*>,
     quizTheme: QuizTheme = QuizTheme(),
     quizStyleManager: TextStyleManager,
 ) {

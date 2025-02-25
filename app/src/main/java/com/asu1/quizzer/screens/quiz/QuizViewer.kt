@@ -18,7 +18,7 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 
 @Composable
 fun QuizViewer(
-    quiz: Quiz,
+    quiz: Quiz<*>,
     quizTheme: QuizTheme = QuizTheme(),
     updateQuiz: (QuizUserUpdates) -> Unit = {},
     quizStyleManager: TextStyleManager,

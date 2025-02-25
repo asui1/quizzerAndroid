@@ -19,7 +19,6 @@ data class ScoreCard (
     var solver: String = "Nickname",
     var score: Float = 100f,
     var background: ImageColor = ImageColor(
-        imageData = ByteArray(0),
         color = Color.Transparent,
         color2 = Color.Transparent,
         colorGradient = Color.Transparent,
@@ -54,7 +53,6 @@ val sampleScoreCard = ScoreCard(
     solver = "John Doe",
     score = 80f,
     background = ImageColor(
-        imageData = ByteArray(0),
         color = Color.White,
         color2 = Color.Black,
         colorGradient = Color.White,

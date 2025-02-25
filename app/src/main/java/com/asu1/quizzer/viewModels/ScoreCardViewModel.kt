@@ -1,9 +1,12 @@
 package com.asu1.quizzer.viewModels
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
@@ -12,10 +15,13 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.resources.ShaderType
 import com.asu1.resources.ViewModelState
+import com.asu1.utils.images.createEmptyBitmap
+import com.asu1.utils.images.processImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ScoreCardViewModel : ViewModel() {
     private val _scoreCard = MutableStateFlow(ScoreCard())
@@ -79,13 +85,12 @@ class ScoreCardViewModel : ViewModel() {
 
     }
 
-    fun updateBackgroundImage(image: ByteArray){
-        if(image.isEmpty()){
-            _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE, color = Color.White))
+    fun updateBackgroundImage(image: Bitmap?){
+        if(image == null){
+            _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = createEmptyBitmap(), state = ImageColorState.IMAGE))
+            return
         }
-        else{
-            _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE))
-        }
+        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE, color = Color.White))
     }
 
     fun updateBackgroundBase(base: BackgroundBase){
@@ -112,8 +117,16 @@ class ScoreCardViewModel : ViewModel() {
         _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(effect = effect))
     }
 
-    fun updateOverLayImage(image: ByteArray){
-        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = image))
+    fun updateOverLayImage(bitmap: Bitmap?){
+        if(bitmap == null){
+            _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = createEmptyBitmap()))
+            return
+        }
+        viewModelScope.launch {
+            processImage(bitmap){
+                _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = it))
+            }
+        }
     }
 
     fun updateImageColorState(imageColorState: ImageColorState){

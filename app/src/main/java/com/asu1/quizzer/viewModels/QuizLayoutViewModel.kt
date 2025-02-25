@@ -3,8 +3,11 @@ package com.asu1.quizzer.viewModels
 import ToastManager
 import ToastType
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,8 +46,8 @@ import com.asu1.resources.fonts
 import com.asu1.resources.outlines
 import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
-import com.asu1.utils.byteArrayToImageBitmap
 import com.asu1.utils.calculateSeedColor
+import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.toScheme
 import com.asu1.utils.withPrimaryColor
 import com.asu1.utils.withSecondaryColor
@@ -61,6 +64,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
 import java.util.Base64
@@ -75,11 +79,11 @@ class QuizLayoutViewModel : ViewModel() {
     private val _quizData = MutableStateFlow(QuizData())
     val quizData: StateFlow<QuizData> = _quizData.asStateFlow()
 
-    private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
-    val quizzes: StateFlow<List<Quiz>> get() = _quizzes.asStateFlow()
+    private val _quizzes = MutableStateFlow<List<Quiz<*>>>(emptyList())
+    val quizzes: StateFlow<List<Quiz<*>>> get() = _quizzes.asStateFlow()
 
-    private val _visibleQuizzes = MutableStateFlow<List<Quiz>>(emptyList())
-    val visibleQuizzes: StateFlow<List<Quiz>> = _visibleQuizzes
+    private val _visibleQuizzes = MutableStateFlow<List<Quiz<*>>>(emptyList())
+    val visibleQuizzes: StateFlow<List<Quiz<*>>> = _visibleQuizzes
 
     private val pageSize = 4
 
@@ -247,16 +251,21 @@ class QuizLayoutViewModel : ViewModel() {
     }
 
     fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme) {
+        val decodedBytes = Base64.getDecoder().decode(quizData.titleImage)
+        val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+            ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply {
+                eraseColor(android.graphics.Color.TRANSPARENT)
+            }
         _quizData.value = QuizData(
             title = quizData.title,
-            image = Base64.getDecoder().decode(quizData.titleImage),
+            image = bitmap,
             description = quizData.description,
             tags = quizData.tags,
             shuffleQuestions = quizData.shuffleQuestions,
             creator = quizData.creator,
             uuid = quizData.uuid
         )
-        val quiz = mutableListOf<Quiz>()
+        val quiz = mutableListOf<Quiz<*>>()
         for(quizJson in quizData.quizzes){
             val curQuiz = quizJson.toQuiz()
             quiz.add(curQuiz)
@@ -392,18 +401,20 @@ class QuizLayoutViewModel : ViewModel() {
         _quizData.value = _quizData.value.copy(title = title, uuid = null)
     }
 
-    fun setQuizImage(image: ByteArray) {
-        if(image.size > 80000){
+    fun setQuizImage(image: Bitmap?) {
+        if(image == null){
+            _quizData.value = _quizData.value.copy(image = createEmptyBitmap())
+            _titleImageColors.value = emptyList()
+            return
+        }
+
+        if(image.width * image.height > 80000 * 4){
             ToastManager.showToast(R.string.image_size_too_large, ToastType.ERROR)
             return
         }
         _quizData.value = _quizData.value.copy(image = image)
-        if(image.isEmpty()){
-            _titleImageColors.value = emptyList()
-            return
-        }
         viewModelScope.launch(Dispatchers.Default) {
-            val seedColor = calculateSeedColor(byteArrayToImageBitmap(image))
+            val seedColor = calculateSeedColor(image.asImageBitmap())
             if(seedColor.size < 3){
                 _titleImageColors.value = seedColor + List(3 - seedColor.size) { seedColor[0] }
             }
@@ -411,7 +422,7 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun setQuizBodyImage(image: ByteArray){
+    fun setQuizBodyImage(image: Bitmap){
         if(_quizzes.value.isEmpty()){
             return
         }
@@ -450,7 +461,11 @@ class QuizLayoutViewModel : ViewModel() {
         _quizData.value = _quizData.value.copy(tags = tags)
     }
 
-    fun updateBackgroundImage(image: ByteArray){
+    fun updateBackgroundImage(image: Bitmap?){
+        if(image == null){
+            _quizTheme.value = _quizTheme.value.copy(backgroundImage = _quizTheme.value.backgroundImage.copy(imageData = createEmptyBitmap()))
+            return
+        }
         val imageColor = _quizTheme.value.backgroundImage
         _quizTheme.value = _quizTheme.value.copy(backgroundImage = imageColor.copy(imageData = image))
     }
@@ -602,7 +617,7 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun addQuiz(quiz: Quiz, index: Int? = null) {
+    fun addQuiz(quiz: Quiz<*>, index: Int? = null) {
         if(index == null || index >= quizzes.value!!.size || index == -1){
             val quizzes = quizzes.value!!.toMutableList()
             quizzes.add(quiz)
@@ -661,8 +676,8 @@ class QuizLayoutViewModel : ViewModel() {
         }
     }
 
-    fun updateQuiz(quiz: Quiz, index: Int) {
-        val quizzes = quizzes.value!!.toMutableList()
+    fun updateQuiz(quiz: Quiz<*>, index: Int) {
+        val quizzes = quizzes.value.toMutableList()
         quizzes[index] = quiz
         _quizzes.value = quizzes
     }
@@ -699,10 +714,14 @@ suspend fun QuizLayoutViewModel.quizDataToJson(): QuizDataSerializer {
             generateUUIDWithTitle()
         }
     }
+    val stream = ByteArrayOutputStream()
+    quizData.value.image.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    val byteArray = stream.toByteArray()
+    val titleImage = Base64.getEncoder().encodeToString(byteArray)
     val quizDataSerializer = QuizDataSerializer(
         title = quizData.value.title,
         creator = quizData.value.creator,
-        titleImage = Base64.getEncoder().encodeToString(quizData.value.image),
+        titleImage = titleImage,
         uuid = quizData.value.uuid!!,
         tags = quizData.value.tags,
         quizzes = quizzes.value.map {

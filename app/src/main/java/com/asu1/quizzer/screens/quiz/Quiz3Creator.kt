@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz3
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
@@ -39,9 +40,9 @@ import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 @Composable
 fun Quiz3Creator(
     quiz: Quiz3ViewModel = viewModel(),
-    onSave: (Quiz) -> Unit
+    onSave: (Quiz<Quiz3>) -> Unit
 ){
-    val quiz3State by quiz.quiz3State.collectAsStateWithLifecycle()
+    val quiz3State by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
 

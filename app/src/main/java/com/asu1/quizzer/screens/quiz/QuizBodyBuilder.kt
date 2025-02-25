@@ -28,8 +28,8 @@ fun BuildBody(
     when(quizBody){
         is BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizBody.bodyText, modifier = Modifier.fillMaxWidth())
         is BodyType.IMAGE -> {
-            val image = remember(quizBody.bodyImage[0]){
-                BitmapFactory.decodeByteArray(quizBody.bodyImage, 0, quizBody.bodyImage.size).asImageBitmap().apply{
+            val image = remember(quizBody.bodyImage){
+                quizBody.bodyImage.asImageBitmap().apply {
                     prepareToDraw()
                 }
             }

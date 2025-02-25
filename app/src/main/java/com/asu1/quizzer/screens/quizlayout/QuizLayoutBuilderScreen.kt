@@ -269,7 +269,7 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                                 // Set Color Setting
                                 QuizLayoutSetColorScheme(
                                     colorScheme = quizTheme.colorScheme,
-                                    isTitleImageSet = quizData.image.isNotEmpty(),
+                                    isTitleImageSet = quizData.image.width > 2,
                                     onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
                                     backgroundImage = quizTheme.backgroundImage,
                                     onBackgroundColorUpdate = { quizLayoutViewModel.updateBackgroundColor(it) },

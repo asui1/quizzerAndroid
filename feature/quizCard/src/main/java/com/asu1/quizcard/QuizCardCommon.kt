@@ -15,11 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.io.ByteArrayOutputStream
 
-fun loadImageAsByteArray(context: Context, resId: Int): ByteArray {
+fun loadImageAsByteArray(context: Context, resId: Int): Bitmap {
     val bitmap = BitmapFactory.decodeResource(context.resources, resId)
-    val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-    return stream.toByteArray()
+    return bitmap
 }
 
 @OptIn(ExperimentalLayoutApi::class)

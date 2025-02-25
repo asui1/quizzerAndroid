@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables.scorecard
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,10 +33,10 @@ import com.asu1.quizzer.composables.ImageGetter
 fun ImagePickerWithBaseImages(
     modifier: Modifier = Modifier,
     onBaseImageSelected: (BackgroundBase) -> Unit = {},
-    onImageSelected: (ByteArray) -> Unit = {},
+    onImageSelected: (Bitmap?) -> Unit = {},
     imageColorState: ImageColorState = ImageColorState.BASEIMAGE,
     currentSelection: BackgroundBase = BackgroundBase.SKY,
-    currentImage: ByteArray = byteArrayOf(),
+    currentImage: Bitmap,
     width: Dp = 200.dp,
     height: Dp = 200.dp,
 ) {
@@ -52,13 +53,13 @@ fun ImagePickerWithBaseImages(
                 .fillMaxWidth()
         ) {
             item(
-                key = currentImage.take(100)
+                key = currentImage
             ){
                 val isSelected = (imageColorState == ImageColorState.IMAGE)
                 ImageGetter(
                     image = currentImage,
                     onImageUpdate = onImageSelected,
-                    onImageDelete = {onImageSelected(byteArrayOf())},
+                    onImageDelete = {onImageSelected(null)},
                     modifier = Modifier
                         .aspectRatio(0.6f)
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
@@ -97,7 +98,15 @@ fun ImagePickerWithBaseImagesPreview() {
         Dialog(
             onDismissRequest = { },
         ) {
-            ImagePickerWithBaseImages()
+            ImagePickerWithBaseImages(
+                currentImage = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
+                onBaseImageSelected = {},
+                onImageSelected = {},
+                imageColorState = ImageColorState.BASEIMAGE,
+                currentSelection = BackgroundBase.SKY,
+                width = 200.dp,
+                height = 200.dp
+            )
         }
     }
 }

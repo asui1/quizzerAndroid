@@ -18,9 +18,50 @@ data class Quiz1(
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz(answers, question, point, bodyType) {
+): Quiz<Quiz1>(answers, question, point, bodyType) {
     fun toggleUserAnswerAt(index: Int){
         userAns[index] = !userAns[index]
+    }
+
+    override fun cloneQuiz(
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+        uuid: String
+    ): Quiz1 {
+        return this.copy(
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
+    }
+
+    fun cloneQuiz(
+        ans: List<Boolean>,
+        userAns: List<Boolean>,
+        shuffleAnswers: Boolean,
+        shuffledAnswers: List<String>,
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+    ): Quiz1 {
+        return this.copy(
+            ans = ans.toMutableList(),
+            userAns = userAns.toMutableList(),
+            shuffleAnswers = shuffleAnswers,
+            shuffledAnswers = shuffledAnswers.toMutableList(),
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
     }
 
     override fun initViewState() {

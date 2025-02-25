@@ -21,7 +21,7 @@ data class Quiz4(
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz(answers, question, point, bodyType) {
+): Quiz<Quiz4>(answers, question, point, bodyType) {
     fun addAnswer(){
         answers = answers.toMutableList().apply {
             add("")
@@ -99,6 +99,49 @@ data class Quiz4(
                 break
             }
         }
+    }
+
+    override fun cloneQuiz(
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+        uuid: String
+    ): Quiz4 {
+        return this.copy(
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
+    }
+
+    fun cloneQuiz(
+        connectionAnswers: List<String>,
+        connectionAnswerIndex: List<Int?>,
+        leftDots: List<Offset?>,
+        rightDots: List<Offset?>,
+        userConnectionIndex: List<Int?>,
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+    ): Quiz4 {
+        return this.copy(
+            connectionAnswers = connectionAnswers.toMutableList(),
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList(),
+            leftDots = leftDots.toMutableList(),
+            rightDots = rightDots.toMutableList(),
+            userConnectionIndex = userConnectionIndex.toMutableList(),
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
     }
 
     override fun initViewState() {

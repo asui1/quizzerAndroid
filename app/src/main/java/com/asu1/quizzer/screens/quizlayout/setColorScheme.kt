@@ -1,6 +1,7 @@
 package com.asu1.quizzer.screens.quizlayout
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -69,11 +70,11 @@ fun QuizLayoutSetColorScheme(
     colorScheme: ColorScheme = lightColorScheme(),
     isTitleImageSet: Boolean = false,
     onColorUpdate: (String, Color) -> Unit = {_, _ -> },
-    backgroundImage: ImageColor = ImageColor( color = Color.White, imageData = ByteArray(0), color2 = Color.White, state = ImageColorState.COLOR),
+    backgroundImage: ImageColor = ImageColor( color = Color.White, color2 = Color.White, state = ImageColorState.COLOR),
     onBackgroundColorUpdate: (Color) -> Unit = { },
     onGradientColorUpdate: (Color) -> Unit = { },
     onGradientTypeUpdate: (ShaderType) -> Unit = { },
-    onImageUpdate: (ByteArray) -> Unit = { },
+    onImageUpdate: (Bitmap?) -> Unit = { },
     onImageColorStateUpdate: (ImageColorState) -> Unit = { },
     generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
 ) {
@@ -179,7 +180,7 @@ fun BackgroundRow(
     onBackgroundColorUpdate: (Color) -> Unit,
     onGradientColorUpdate: (Color) -> Unit,
     onGradientTypeUpdate: (ShaderType) -> Unit = {},
-    onImageUpdate: (ByteArray) -> Unit,
+    onImageUpdate: (Bitmap?) -> Unit,
     updateBackgroundType: (ImageColorState) -> Unit = { },
 ) {
     var isOpen by remember { mutableStateOf(false) }

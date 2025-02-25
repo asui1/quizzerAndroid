@@ -5,7 +5,7 @@ import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizJson
 import com.asu1.models.serializers.QuizType
 
-abstract class Quiz(
+abstract class Quiz<T : Quiz<T>>(
     open var answers: List<String> = listOf(),
     open var question: String = "",
     open var point: Int = 5,
@@ -16,6 +16,15 @@ abstract class Quiz(
     fun validateBody(){
         bodyType = bodyType.validate()
     }
+
+    abstract fun cloneQuiz(
+        answers: List<String> = this.answers,
+        question: String = this.question,
+        point: Int = this.point,
+        bodyType: BodyType = this.bodyType,
+        layoutType: QuizType = this.layoutType,
+        uuid: String = this.uuid
+    ): T
 
     abstract fun initViewState()
     abstract fun validateQuiz() : QuizError

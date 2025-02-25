@@ -15,13 +15,48 @@ data class Quiz3(
     override var question: String = "",
     override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz(answers, question, point, bodyType) {
+): Quiz<Quiz3>(answers, question, point, bodyType) {
     fun swap(index1: Int, index2: Int){
         shuffledAnswers = shuffledAnswers.toMutableList().apply {
             val temp = get(index1)
             set(index1, get(index2))
             set(index2, temp)
         }
+    }
+
+    override fun cloneQuiz(
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+        uuid: String
+    ): Quiz3 {
+        return this.copy(
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
+    }
+
+    fun cloneQuiz(
+        shuffledAnswers: List<String>,
+        answers: List<String>,
+        question: String,
+        point: Int,
+        bodyType: BodyType,
+        layoutType: QuizType,
+    ): Quiz3 {
+        return this.copy(
+            shuffledAnswers = shuffledAnswers.toMutableList(),
+            answers = answers,
+            question = question,
+            point = point,
+            bodyType = bodyType,
+            layoutType = layoutType,
+        )
     }
 
     override fun initViewState() {

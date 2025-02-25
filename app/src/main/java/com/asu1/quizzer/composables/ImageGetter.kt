@@ -1,5 +1,6 @@
 package com.asu1.quizzer.composables
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -45,17 +47,22 @@ import com.asu1.resources.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDelete: () -> Unit, width: Dp? = null, height: Dp? = null,
-                modifier: Modifier = Modifier) {
+fun ImageGetter(
+    modifier: Modifier = Modifier,
+    image: Bitmap,
+    onImageUpdate: (Bitmap) -> Unit,
+    onImageDelete: () -> Unit,
+    width: Dp? = null, height: Dp? = null,
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
     val photoPickerLauncher = launchPhotoPicker() { uri ->
         isLoading = true
         scope.launch {
-            val byteArray = uriToByteArray(context, uri, width, height)
-            if (byteArray != null) {
-                onImageUpdate(byteArray)
+            val imageBitmap = uriToByteArray(context, uri, width, height)
+            if (imageBitmap != null) {
+                onImageUpdate(imageBitmap)
             }
             isLoading = false
         }
@@ -93,20 +100,20 @@ fun ImageGetter(image: ByteArray, onImageUpdate: (ByteArray) -> Unit, onImageDel
                         .testTag("ImageGetterBoxGetImage"),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (image.isEmpty()) {
+                    if (image.width <= 1 || image.height <= 1) {
                         Icon(
                             imageVector = Icons.Default.Photo,
                             contentDescription = stringResource(R.string.add_image),
                             modifier = Modifier.size(size/2)
                         )
                     } else {
-                        val bitmap = remember(image.take(16), image.size) {
-                            BitmapFactory.decodeByteArray(image, 0, image.size).asImageBitmap().apply {
+                        val imageBitmap = remember(image) {
+                            image.asImageBitmap().apply {
                                 prepareToDraw()
                             }
                         }
                         Image(
-                            bitmap = bitmap,
+                            bitmap = imageBitmap,
                             contentDescription = stringResource(R.string.selected_image),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop

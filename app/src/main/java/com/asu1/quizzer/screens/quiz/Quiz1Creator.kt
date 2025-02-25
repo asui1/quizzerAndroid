@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
+import com.asu1.models.quiz.Quiz1
 import com.asu1.quizzer.composables.QuestionTextFieldWithPoints
 import com.asu1.quizzer.composables.QuizBodyBuilder
 import com.asu1.quizzer.composables.SaveButton
@@ -40,10 +41,10 @@ import com.asu1.resources.R
 
 @Composable
 fun Quiz1Creator(
-    quiz: Quiz1ViewModel = viewModel(),
-    onSave: (Quiz) -> Unit
+    quiz: Quiz1ViewModel,
+    onSave: (Quiz<Quiz1>) -> Unit
 ) {
-    val quiz1State by quiz.quiz1State.collectAsStateWithLifecycle()
+    val quiz1State by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -262,6 +263,7 @@ fun Quiz1AnswerSelection(
 fun Quiz1Preview() {
     com.asu1.resources.QuizzerAndroidTheme {
         Quiz1Creator(
+            quiz = viewModel(),
             onSave = {}
         )
     }

@@ -46,7 +46,7 @@ fun Quiz4Viewer(
     isPreview: Boolean = false,
     onUpdate: (List<Int?>) -> Unit = {},
 ) {
-    val quizState by quiz.quiz4State.collectAsStateWithLifecycle()
+    val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
     var initOffset by remember { mutableStateOf<Offset?>(null) }

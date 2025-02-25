@@ -26,14 +26,14 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
     val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
     val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
 
-    val quiz: Quiz? = if (loadIndex != -1 && quizzes.size > loadIndex
+    val quiz: Quiz<*>? = if (loadIndex != -1 && quizzes.size > loadIndex
     ) {
         quizzes[loadIndex]
     } else {
         null
     }
 
-    fun onSave(newQuiz: Quiz){
+    fun onSave(newQuiz: Quiz<*>){
         newQuiz.initViewState()
         if(quiz != null){
             quizLayoutViewModel.updateQuiz(newQuiz, loadIndex)

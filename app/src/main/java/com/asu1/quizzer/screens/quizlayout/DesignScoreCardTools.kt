@@ -40,6 +40,7 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ShaderType
+import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun DesignScoreCardTools(
@@ -95,7 +96,7 @@ fun DesignScoreCardTools(
             ImageGetter(
                 image = scoreCard.background.overlayImage,
                 onImageUpdate = {scoreCardViewModel.updateOverLayImage(it)},
-                onImageDelete = {scoreCardViewModel.updateOverLayImage(byteArrayOf())},
+                onImageDelete = {scoreCardViewModel.updateOverLayImage(null)},
                 modifier = Modifier
                     .background(
                         MaterialTheme.colorScheme.surfaceContainerHigh,

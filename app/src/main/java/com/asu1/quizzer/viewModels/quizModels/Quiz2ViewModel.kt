@@ -1,36 +1,28 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
-import com.asu1.models.serializers.BodyType
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.YearMonth
 
-class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
-    private val _quiz2State = MutableStateFlow(Quiz2())
-    val quiz2State: StateFlow<Quiz2> get() = _quiz2State.asStateFlow()
+class Quiz2ViewModel: BaseQuizViewModel<Quiz2>(Quiz2()) {
+    override val _quizState: MutableStateFlow<Quiz2> = MutableStateFlow(Quiz2())
 
     init {
         resetQuiz()
     }
 
     override fun viewerInit() {
-        _quiz2State.value.initViewState()
+        this._quizState.value?.initViewState()
     }
 
     override fun loadQuiz(quiz: Quiz2) {
-        _quiz2State.value = quiz
+        this._quizState.value = quiz
     }
 
     override fun resetQuiz() {
-        _quiz2State.value = Quiz2()
-    }
-
-    override fun updateAnswerAt(index: Int, answer: String) {
-        //NOT USED IN QUIZ2
+        this._quizState.value = Quiz2()
     }
 
     override fun toggleAnsAt(index: Int) {
@@ -45,58 +37,32 @@ class Quiz2ViewModel: BaseQuizViewModel<Quiz2>() {
         //NOT USED IN QUIZ2
     }
 
-    override fun updateQuestion(question: String) {
-        _quiz2State.value = _quiz2State.value.copy(question = question)
-    }
-
     fun updateCenterDate(date: YearMonth){
         val tenYearsBefore = date.minusYears(10).atEndOfMonth()
         val tenYearsAfter = date.plusYears(10).atEndOfMonth()
-        val filteredAnswerDates = _quiz2State.value.answerDate.filter {
+        val filteredAnswerDates = this._quizState.value.answerDate.filter {
             it.isAfter(tenYearsBefore) && it.isBefore(tenYearsAfter)
         }.toMutableSet()
-        _quiz2State.value = _quiz2State.value.copy(centerDate = date, answerDate = filteredAnswerDates, userAnswerDate = mutableSetOf())
+        this._quizState.value = this._quizState.value.copy(centerDate = date, answerDate = filteredAnswerDates, userAnswerDate = mutableSetOf())
     }
 
     fun updateDate(date: LocalDate){
-        val answerDate = _quiz2State.value.answerDate.toMutableSet()
+        val answerDate = this._quizState.value.answerDate.toMutableSet()
         if(answerDate.contains(date)){
             answerDate.remove(date)
         }else{
             answerDate.add(date)
         }
-        _quiz2State.value = _quiz2State.value.copy(answerDate = answerDate)
+        this._quizState.value = this._quizState.value.copy(answerDate = answerDate)
     }
 
     fun updateUserAnswerDate(date: LocalDate){
-        val userAnswerDate = _quiz2State.value.userAnswerDate.toMutableSet()
+        val userAnswerDate = this._quizState.value.userAnswerDate.toMutableSet()
         if(userAnswerDate.contains(date)){
             userAnswerDate.remove(date)
         }else{
             userAnswerDate.add(date)
         }
-        _quiz2State.value = _quiz2State.value.copy(userAnswerDate = userAnswerDate)
+        this._quizState.value = this._quizState.value.copy(userAnswerDate = userAnswerDate)
     }
-
-    override fun updateBodyState(bodyType: BodyType){
-        //NOT USED IN QUIZ2
-    }
-
-    override fun updateBodyText(bodyText: String){
-        //NOT USED IN QUIZ2
-    }
-
-    override fun updateBodyImage(image: ByteArray){
-        //NOT USED IN QUIZ2
-    }
-
-    override fun updateBodyYoutube(youtubeId: String, startTime: Int){
-        //NOT USED IN QUIZ2
-    }
-    override fun setPoint(point: Int){
-        _quiz2State.update{
-            it.copy(point = point)
-        }
-    }
-
 }
