@@ -376,7 +376,9 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
                             ) { backStackEntry ->
-                                QuizSolver(navController, quizLayoutViewModel,
+                                QuizSolver(
+                                    navController = navController,
+                                    quizLayoutViewModel = quizLayoutViewModel,
                                     navigateToScoreCard = {
                                         val creatingQuiz =
                                             hasVisitedRoute(navController, Route.QuizBuilder)

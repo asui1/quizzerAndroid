@@ -11,7 +11,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,11 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.compose.ui.zIndex
 import com.asu1.quizcard.loadImageAsByteArray
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.util.uriToByteArray
 import com.asu1.resources.R
+import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,6 +57,7 @@ fun ImageGetter(
     onImageUpdate: (Bitmap) -> Unit,
     onImageDelete: () -> Unit,
     width: Dp? = null, height: Dp? = null,
+    topbar: @Composable (Modifier) -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -86,55 +93,61 @@ fun ImageGetter(
                 )
             }
             false -> {
-                Box(
-                    modifier = modifier
-                        .width(localWidth)
-                        .height(localHeight)
-                        .clickable {
-                            photoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                Column(
+                    modifier = modifier.width(localWidth)
+                ){
+                    topbar(Modifier.fillMaxWidth())
+                    Box(
+                        modifier = Modifier
+                            .width(localWidth)
+                            .height(localHeight)
+                            .clickable {
+                                photoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }
+                            .testTag("ImageGetterBoxGetImage"),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (image.width <= 1 || image.height <= 1) {
+                            Icon(
+                                imageVector = Icons.Default.Photo,
+                                contentDescription = stringResource(R.string.add_image),
+                                modifier = Modifier.size(size/2)
+                            )
+                        } else {
+                            val imageBitmap = remember(image) {
+                                image.asImageBitmap().apply {
+                                    prepareToDraw()
+                                }
+                            }
+                            Image(
+                                bitmap = imageBitmap,
+                                contentDescription = stringResource(R.string.selected_image),
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                            Icon(
+                                imageVector = Icons.Default.RemoveCircle,
+                                contentDescription = stringResource(R.string.delete_image),
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .clickable {
+                                        onImageDelete()
+                                    }
+                                    .padding(top = 4.dp, end = 4.dp)
                             )
                         }
-                        .testTag("ImageGetterBoxGetImage"),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (image.width <= 1 || image.height <= 1) {
-                        Icon(
-                            imageVector = Icons.Default.Photo,
-                            contentDescription = stringResource(R.string.add_image),
-                            modifier = Modifier.size(size/2)
-                        )
-                    } else {
-                        val imageBitmap = remember(image) {
-                            image.asImageBitmap().apply {
-                                prepareToDraw()
-                            }
-                        }
-                        Image(
-                            bitmap = imageBitmap,
-                            contentDescription = stringResource(R.string.selected_image),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Icon(
-                            imageVector = Icons.Default.RemoveCircle,
-                            contentDescription = stringResource(R.string.delete_image),
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .clickable {
-                                    onImageDelete()
-                                }
-                                .padding(top = 4.dp, end = 4.dp)
-                        )
                     }
                 }
+
             }
         }
     }
 
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun ImageGetterPreview() {
     val context = LocalContext.current
@@ -142,7 +155,14 @@ fun ImageGetterPreview() {
 
     com.asu1.resources.QuizzerAndroidTheme {
         ImageGetter(
-            image = image,
+            topbar = {modifier ->
+                Row(
+                    modifier = modifier.fillMaxWidth()
+                ){
+                    Text("Remove Background")
+                }
+            },
+            image = createEmptyBitmap(),
             onImageUpdate = {},
             onImageDelete = {}
         )

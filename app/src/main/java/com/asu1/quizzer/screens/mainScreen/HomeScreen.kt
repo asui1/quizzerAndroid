@@ -51,7 +51,7 @@ fun HomeScreen(
             Text(
                 text = remember{if(isKo) changeTagToText(item.tag) else item.tag},
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 2.dp),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
             if (index == 0) {

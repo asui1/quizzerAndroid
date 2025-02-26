@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.asu1.custombuttons.LabeledSwitch
 import com.asu1.imagecolor.Effect
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
@@ -37,6 +39,7 @@ import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
 import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.ScoreCardViewModelActions
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ShaderType
@@ -56,6 +59,7 @@ fun DesignScoreCardTools(
     var showOverlayImagePicker by remember { mutableStateOf(false) }
     var colorChange by remember{ mutableIntStateOf(0) }
     var showEffectsDialog by remember {mutableStateOf(false)}
+    val removeBackground by scoreCardViewModel.removeBackground.observeAsState(false)
 
     if(showScoreCardColorPicker){
         Dialog(
@@ -96,6 +100,15 @@ fun DesignScoreCardTools(
                 image = scoreCard.background.overlayImage,
                 onImageUpdate = {scoreCardViewModel.updateOverLayImage(it)},
                 onImageDelete = {scoreCardViewModel.updateOverLayImage(null)},
+                topbar = {
+                    LabeledSwitch(
+                        label = "Remove Background ",
+                        checked = removeBackground,
+                        onCheckedChange = { scoreCardViewModel.updateScoreCardViewModel(
+                            ScoreCardViewModelActions.UpdateRemoveBackground(it)
+                        ) }
+                    )
+                },
                 modifier = Modifier
                     .background(
                         MaterialTheme.colorScheme.surfaceContainerHigh,
