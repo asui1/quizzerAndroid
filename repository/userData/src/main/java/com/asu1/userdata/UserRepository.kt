@@ -5,6 +5,7 @@ import android.content.Context
 import com.asu1.network.RetrofitInstance
 import com.asu1.resources.UserLoginInfo
 import com.asu1.userdatamodels.GuestAccount
+import com.asu1.userdatamodels.UserActivity
 import com.asu1.userdatamodels.UserInfo
 import com.asu1.userdatamodels.UserRegister
 import com.asu1.userdatamodels.UserRequest
@@ -29,12 +30,12 @@ interface UserRepository {
     suspend fun saveGuestLoginInfo(email: String, nickname: String, urlToImage: String?, tags: Set<String>, agreement: Boolean)
     fun getGuestLoginInfo(): Flow<UserLoginInfo?>
     suspend fun clearUserLoginInfo()
+    suspend fun getUserActivities(email: String): Result<List<UserActivity>>
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object UserRepositoryModule {
-
     @Provides
     @Singleton
     fun provideUserRepository(
@@ -43,11 +44,4 @@ object UserRepositoryModule {
     ): UserRepository {
         return UserRepositoryImpl(context, retrofitInstance)
     }
-
-//    Binds가 더 맞는 구현일듯. Provide보다는.
-//    @Binds
-//    @Singleton
-//    abstract fun bindUserRepository(
-//        userRepositoryImpl: UserRepositoryImpl
-//    ): UserRepository
 }

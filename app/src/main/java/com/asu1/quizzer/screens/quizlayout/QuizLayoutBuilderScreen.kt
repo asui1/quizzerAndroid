@@ -59,6 +59,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customdialogs.DialogComposable
+import com.asu1.quizzer.composables.QuizzerTopBarBase
+import com.asu1.quizzer.composables.QuizzerTopBarBasePreview
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
@@ -432,46 +434,46 @@ fun StepProgressBar(
     val progress by animateFloatAsState(targetValue = (currentStep.value + 1) / totalSteps.toFloat(),
         label = "Build QuizLayout Progress Bar"
     )
-
     Column(
         modifier = modifier
             .fillMaxWidth()
     )
     {
-        Row(
+        QuizzerTopBarBase(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ){
-            RowWithAppIconAndName(
-                header = @Composable {
-                    IconButton(onClick = {
-                        showExitDialog()
-                    }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = stringResource(R.string.move_back_home)
-                        )
-                    }
-                },
-                modifier = Modifier.weight(1f),
-            )
-            IconButton(
-                modifier = Modifier.width(30.dp),
-                onClick = {
-                    navigateToQuizLoad()
+            header = @Composable {
+                IconButton(onClick = {
+                    showExitDialog()
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FileDownload,
-                    contentDescription = "Load Local Save"
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = stringResource(R.string.move_back_home)
+                    )
+                }
+            },
+            body = @Composable {
+                Text(
+                    text = "Quizzer",
+                    style = MaterialTheme.typography.headlineMedium
                 )
+            },
+            actions = @Composable {
+                IconButton(
+                    modifier = Modifier.width(30.dp),
+                    onClick = {
+                        navigateToQuizLoad()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FileDownload,
+                        contentDescription = "Load Local Save"
+                    )
+                }
             }
-            Spacer(modifier = Modifier.width(8.dp))
-        }
+        )
         Text(
             text = buildString {
                 append(currentStep.value)

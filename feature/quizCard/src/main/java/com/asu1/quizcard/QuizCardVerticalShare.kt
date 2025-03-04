@@ -46,10 +46,10 @@ import com.asu1.resources.R
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun VerticalQuizCardLargeShare(
+    modifier: Modifier = Modifier,
     quizCard: QuizCard,
     onClick: () -> Unit = {},
     onIconClick: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
@@ -57,7 +57,6 @@ fun VerticalQuizCardLargeShare(
     val screenWidth = remember{configuration.screenWidthDp.dp}
     val screenHeight = remember{configuration.screenHeightDp.dp}
     val minSize = remember{minOf(screenWidth, screenHeight).times(0.45f).coerceAtMost(400.dp)}
-    val borderColor = MaterialTheme.colorScheme.onSurface
     var showShareBottomSheet by remember{ mutableStateOf(false) }
 
     if(showShareBottomSheet) {
@@ -79,7 +78,6 @@ fun VerticalQuizCardLargeShare(
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
             .clickable { onClick() }
-            .drawUnderBar(borderColor)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

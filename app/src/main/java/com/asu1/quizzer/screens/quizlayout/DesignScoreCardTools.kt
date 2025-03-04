@@ -102,7 +102,7 @@ fun DesignScoreCardTools(
                 onImageDelete = {scoreCardViewModel.updateOverLayImage(null)},
                 topbar = {
                     LabeledSwitch(
-                        label = "Remove Background ",
+                        label = stringResource(R.string.remove_background),
                         checked = removeBackground,
                         onCheckedChange = { scoreCardViewModel.updateScoreCardViewModel(
                             ScoreCardViewModelActions.UpdateRemoveBackground(it)

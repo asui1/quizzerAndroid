@@ -41,8 +41,7 @@ dependencies {
     implementation(project(":core:colorModel"))
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
-    implementation(libs.guava)
-
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.compose.ui)
     implementation(libs.core.ktx)

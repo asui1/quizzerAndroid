@@ -10,6 +10,7 @@
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="privacy_policy_body">1. 개인정보의 수집 및 이용 목적\nQuizzer(이하 \"앱\")은 사용자의 개인정보를 중요하게 생각하며, 아래와 같은 목적을 위해 개인정보를 수집 및 이용합니다.\n\n사용자 식별 및 앱 서비스 제공\n사용자와의 의사소통을 위한 이메일 사용\n앱 내부에서의 활동 정보 분석을 통한 서비스 개선\n\n2. 수집하는 개인정보 항목\n앱은 다음과 같은 개인정보를 수집합니다.\n\n이메일 주소: 사용자 식별 및 의사소통을 위해 사용됩니다.\n프로필 이미지: 사용자 식별 및 의사소통을 위해 사용됩니다.\n앱 내부 활동 정보: 앱 사용 패턴 분석 및 서비스 개선을 위해 사용됩니다.\n\n3. 개인정보의 보유 및 이용기간\n수집된 개인정보는 이용목적이 달성되거나 사용자가 삭제를 요청할 때까지 보유 및 이용됩니다. 사용자가 요청할 경우, 수집된 개인정보는 지체 없이 삭제됩니다.\n\n4. 개인정보의 제3자 제공\n앱은 사용자의 사전 동의 없이는 개인정보를 제3자에게 제공하지 않습니다.\n\n5. 개인정보의 안전성 확보 조치\n앱은 사용자의 개인정보를 안전하게 관리하기 위해 다음과 같은 조치를 취하고 있습니다.\n\n개인정보의 암호화\n해킹이나 컴퓨터 바이러스 등에 의한 개인정보 유출을 막기 위한 기술적 대책\n개인정보 접근 권한 제한\n\n6. 개인정보보호책임자\n개인정보와 관련된 문의사항은 아래의 개인정보보호책임자에게 연락해 주시기 바랍니다.\n\n책임자: 조장현\n연락처: whwkd122@gmail.com\n\n7. 개인정보 처리방침의 변경\n개인정보처리방침이 변경될 경우, 변경 사항은 앱 내 공지사항을 통해 고지됩니다.\n\n본 방침은 2024년 8월 4일부터 시행됩니다.</string>
     <string name="contact">문의</string>
+    <string name="notification">공지사항</string>
     <string name="profile">프로필</string>
     <string name="inquiry">문의</string>
     <string name="empty_string"></string>
@@ -49,6 +50,7 @@
     <string name="settings">설정</string>
     <string name="enter_sign_out">\"회원 탈퇴\"를 입력하세요.</string>
     <string name="move_back_home">홈으로</string>
+    <string name="move_back">뒤로가기</string>
     <string name="previous">이전</string>
     <string name="next">다음</string>
     <string name="add_image">이미지 추가</string>
@@ -113,6 +115,7 @@
     <string name="select_color2">효과 색</string>
     <string name="select_text_color">글자 색 선택</string>
     <string name="upload">업로드</string>
+    <string name="remove_background">배경 제거</string>
     <string name="searching_for_quizzes">검색 중 입니다…</string>
     <string name="will_be_using_colors">"사용할 색상표 : "</string>
     <string name="single_color">단색</string>

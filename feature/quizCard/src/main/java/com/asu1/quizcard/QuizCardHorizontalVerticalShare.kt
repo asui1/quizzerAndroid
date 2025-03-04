@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +68,9 @@ fun QuizCardHorizontalVerticalShareList(quizCards: List<QuizCard>, onClick: (Str
                 quizCard = quizCard,
                 onLoadQuiz = onClick
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
         }
     }
 }

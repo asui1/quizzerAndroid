@@ -4,8 +4,8 @@ import com.asu1.resources.UserLoginInfo
 import com.asu1.userdata.UserRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 import javax.inject.Inject
+import com.asu1.utils.Logger
 
 class CreateGuestAccountUseCase @Inject constructor(
     private val userRepository: UserRepository
@@ -13,10 +13,7 @@ class CreateGuestAccountUseCase @Inject constructor(
     suspend operator fun invoke(isKo: Boolean) : UserLoginInfo? = coroutineScope {
         try {
             val guestAccountResult = userRepository.guestAccount(isKo)
-            Logger.getLogger("CreateGuestAccountUseCase").info("Guest account creation result: ${guestAccountResult.isSuccessful}")
-            Logger.getLogger("CreateGuestAccountUseCase").info("Guest account creation result: ${guestAccountResult.raw()}")
             if (guestAccountResult.isSuccessful) {
-                Logger.getLogger("CreateGuestAccountUseCase").info("Guest account created")
                 launch {
                     userRepository.saveGuestLoginInfo(
                         email = guestAccountResult.body()!!.email,
@@ -34,10 +31,9 @@ class CreateGuestAccountUseCase @Inject constructor(
                     agreement = false
                 )
             }
-            Logger.getLogger("CreateGuestAccountUseCase").info("Guest account creation failed")
             return@coroutineScope null
         } catch (e: Exception) {
-            Logger.getLogger("CreateGuestAccountUseCase").info("Guest account creation failed ${e.message}")
+            Logger.debug("Error in CreateGuestAccountUseCase $e")
             return@coroutineScope null
         }
     }

@@ -42,5 +42,8 @@ object UserDataModule {
         return InitLoginUseCase(tryLoginUseCase, tryGuestLoginUseCase, createGuestAccountUseCase)
     }
 
-
+    @Provides
+    fun provideGetUserActivitiesUseCase(userRepository: UserRepository): GetUserActivitiesUseCase {
+        return GetUserActivitiesUseCase(userRepository)
+    }
 }

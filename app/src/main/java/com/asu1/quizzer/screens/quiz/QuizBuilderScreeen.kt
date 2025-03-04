@@ -63,6 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.serializers.QuizType
+import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.util.Route
@@ -183,42 +184,44 @@ fun QuizBuilderScreen(navController: NavController,
         else {
             Scaffold(
                 topBar = {
-                    Row(
+                    QuizzerTopBarBase(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(color = colorScheme.primaryContainer),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RowWithAppIconAndName(
-                            modifier = Modifier.weight(1f),
-                            header = @Composable {
-                                IconButton(onClick = {
-                                    navController.popBackStack(
-                                        Route.CreateQuizLayout,
-                                        inclusive = false,
-                                    )
-                                }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowBackIosNew,
-                                        contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
-                                    )
-                                }
+                        header = @Composable {
+                            IconButton(onClick = {
+                                navController.popBackStack(
+                                    Route.CreateQuizLayout,
+                                    inclusive = false,
+                                )
                             }
-                        )
-                        IconButton(
-                            modifier = Modifier.width(30.dp),
-                            onClick = {
-                                navigateToQuizLoad()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBackIosNew,
+                                    contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FileDownload,
-                                contentDescription = "Load Local Save"
+                        },
+                        body = {
+                            Text(
+                                text = "Quizzer",
+                                style = MaterialTheme.typography.headlineMedium
                             )
+                        },
+                        actions = {
+                            IconButton(
+                                modifier = Modifier.width(30.dp),
+                                onClick = {
+                                    navigateToQuizLoad()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FileDownload,
+                                    contentDescription = "Load Local Save"
+                                )
+                            }
                         }
-                    }
+                    )
                 },
                 bottomBar = {
                     QuizBuilderBottomBar(

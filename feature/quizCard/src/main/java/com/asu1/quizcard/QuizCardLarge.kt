@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,6 +106,7 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
                     text = quizCard.creator,
                     style = MaterialTheme.typography.labelSmall,
                     overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Light,
                     maxLines = 1,
                 )
                 Spacer(modifier = Modifier.weight(2f))

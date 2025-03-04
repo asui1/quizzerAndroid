@@ -8,13 +8,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,9 +48,10 @@ import coil.compose.rememberAsyncImagePainter
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcard.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.composables.UserRankComposableList
+import com.asu1.quizzer.composables.mainscreen.InquiryBottomSheetContent
 import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
-import com.asu1.quizzer.composables.mainscreen.UserSettings
+import com.asu1.quizzer.composables.mainscreen.SignoutBottomSheetContent
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
@@ -55,6 +60,7 @@ import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,6 +68,7 @@ import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
@@ -209,13 +216,51 @@ fun MainScreen(
                         )
                     }
                     3 ->{
+                        var showInquiry by remember { mutableStateOf(false) }
+                        var showSignOut by remember { mutableStateOf(false) }
+                        if(showInquiry) {
+                            ModalBottomSheet(onDismissRequest = {showInquiry = false },
+                                modifier = Modifier.imePadding()
+                            ) {
+                                InquiryBottomSheetContent(
+                                    onDismissRequest = { showInquiry = false
+                                    },
+                                    userData = userData,
+                                    isDone = false,
+                                    onSendInquiry = { email, type, text ->
+                                        inquiryViewModel.sendInquiry(email, type, text)
+                                        showInquiry = false
+                                    }
+                                )
+                            }
+                        }
+                        else if(showSignOut && isLoggedIn) {
+                            ModalBottomSheet(onDismissRequest = {showSignOut = false },
+                                modifier = Modifier.imePadding()) {
+                                SignoutBottomSheetContent(
+                                    onDismissRequest = { showSignOut = false
+                                        userViewModel.logOut()
+                                    },
+                                    userData = userData,
+                                    isDone = false,
+                                    onSendSignOut = { email ->
+                                        userViewModel.signout(email)
+                                        showSignOut = false
+                                    }
+                                )
+                            }
+                        }
                         UserSettings(
+                            settingItems = remember(isLoggedIn){listOfNotNull(
+                                Pair(R.string.my_quizzes, {navigateTo(Route.LoadUserQuiz)}),
+                                Pair(R.string.my_activities, {navigateTo(Route.MyActivities)}),
+                                Pair(R.string.notification, {navigateTo(Route.Notifications)}),
+                                Pair(R.string.inquiry, { showInquiry = true }),
+                                if (isLoggedIn) Pair(R.string.sign_out, { showSignOut = true }) else null
+                            ).toPersistentList()},
                             isLoggedIn = isLoggedIn,
                             userData = userData,
-                            onSendInquiry = { email, type, text -> inquiryViewModel.sendInquiry(email, type, text) },
-                            logOut = { userViewModel.logOut() },
-                            signOut = { email -> userViewModel.signout(email) },
-                            navigateTo = navigateTo
+                            logOut = {  }
                         )
                     }
                 }

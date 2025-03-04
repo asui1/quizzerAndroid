@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.rxandroid)
     implementation(project(":core:userDataModels"))
     implementation(project(":core:resource"))
+    implementation(project(":core:util"))
     ksp(libs.hilt.compiler)
     implementation(project(":repository:userData"))
     testImplementation(libs.junit)

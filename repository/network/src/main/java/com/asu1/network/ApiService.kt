@@ -1,5 +1,6 @@
 package com.asu1.network
 
+import com.asu1.appdatamodels.Notification
 import com.asu1.models.quiz.GetQuizResult
 import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.SendQuizResult
@@ -8,6 +9,7 @@ import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList
 import com.asu1.quizcardmodel.Recommendations
 import com.asu1.userdatamodels.UserRankList
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -87,4 +89,23 @@ interface ApiService {
     @GET("ranks")
     suspend fun getUserRanks(): Response<UserRankList>
 
+    @UseKotlinxSerialization
+    @GET("notifications")
+    suspend fun getNotifications(@Query("page") page: Int, @Query("lang") lang: String): Response<List<Notification>>
+
+    @UseKotlinxSerialization
+    @GET("notificationDetail")
+    suspend fun getNotificationDetail(@Query("id") id: Int, @Query("lang") lang: String): Response<ResponseBody>
+
+    @UseKotlinxSerialization
+    @GET("onboardingNotification")
+    suspend fun getOnBoardingNotification(@Query("id") id: Int): Response<Notification>
+
+    @UseKotlinxSerialization
+    @GET("notificationPageNumber")
+    suspend fun getNotificationPageNumber(): Response<Int>
+
+    @UseKotlinxSerialization
+    @GET("userActivity")
+    suspend fun getUserActivity(@Query("email") email: String): Response<List<com.asu1.userdatamodels.UserActivity>>
 }

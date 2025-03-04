@@ -1,21 +1,22 @@
 package com.asu1.utils
 
-import com.google.common.collect.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-class ImmutableListSerializer<T>(private val elementSerializer: KSerializer<T>) : KSerializer<ImmutableList<T>> {
+class ImmutableListSerializer<T>(private val elementSerializer: KSerializer<T>) : KSerializer<PersistentList<T>> {
     private val listSerializer = ListSerializer(elementSerializer)
     override val descriptor: SerialDescriptor = listSerializer.descriptor
 
-    override fun serialize(encoder: Encoder, value: ImmutableList<T>) {
+    override fun serialize(encoder: Encoder, value: PersistentList<T>) {
         listSerializer.serialize(encoder, value)
     }
 
-    override fun deserialize(decoder: Decoder): ImmutableList<T> {
-        return ImmutableList.copyOf(listSerializer.deserialize(decoder))
+    override fun deserialize(decoder: Decoder): PersistentList<T> {
+        return listSerializer.deserialize(decoder).toPersistentList()
     }
 }

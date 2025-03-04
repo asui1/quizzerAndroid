@@ -1,5 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,37 +17,33 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.util.Route
 import com.asu1.resources.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyPolicy(navController: NavController) {
-    val context = LocalContext.current
     Scaffold(
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                title = { Text(text = stringResource(R.string.privacy_policy)) },
-                navigationIcon = {
+            QuizzerTopBarBase(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                header = {
                     IconButton(onClick = { navController.popBackStack(
                         Route.Home,
                         inclusive = false
                     ) }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Move Back to Home")
                     }
-                }
+                },
+                body = {
+                    Text(text = stringResource(R.string.privacy_policy))
+                },
             )
         },
         content = { paddingValues ->

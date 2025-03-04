@@ -33,6 +33,7 @@ import com.asu1.quizzer.screens.mainScreen.InitializationScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
 import com.asu1.quizzer.screens.mainScreen.MyActivitiesScreen
+import com.asu1.quizzer.screens.mainScreen.NotificationScreen
 import com.asu1.quizzer.screens.mainScreen.PrivacyPolicy
 import com.asu1.quizzer.screens.mainScreen.RegisterScreen
 import com.asu1.quizzer.screens.mainScreen.SearchScreen
@@ -234,8 +235,19 @@ class MainActivity : ComponentActivity() {
                                         if(route is Route.CreateQuizLayout){
                                             navigateToCreateQuizLayout()
                                         }
-                                        if(route is Route.LoadUserQuiz){
+                                        else if(route is Route.LoadUserQuiz){
                                             navigateToLoadUserQuiz()
+                                        }
+                                        else if(route is Route.MyActivities){
+                                            userViewModel.getUserActivities()
+                                            navController.navigate(route) {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                        else{
+                                            navController.navigate(route) {
+                                                launchSingleTop = true
+                                            }
                                         }
                                     },
                                     loadQuiz = { loadQuiz(it) },
@@ -457,8 +469,19 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 MyActivitiesScreen(
+                                    navController = navController,
                                     userViewModel = userViewModel,
 
+                                    )
+                            }
+                            composable<Route.Notifications>(
+                                enterTransition = enterFadeInTransition(),
+                                exitTransition = exitFadeOutTransition(),
+                                popEnterTransition = enterFadeInTransition(),
+                                popExitTransition = exitFadeOutTransition(),
+                            ) {
+                                NotificationScreen(
+                                    navController = navController,
                                 )
                             }
                             composable<Route.QuizChecker>(

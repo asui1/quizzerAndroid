@@ -56,7 +56,7 @@ fun UserRankComposable(
         1 -> MaterialTheme.colorScheme.surfaceContainerHigh
         else -> Color.Transparent
     }
-    val average = String.format(Locale.US, "%.1f", round(userRank.totalScore / userRank.quizzesSolved * 10) / 10)
+    val average = remember(userRank.totalScore, userRank.quizzesSolved){String.format(Locale.US, "%.1f", round(userRank.totalScore / userRank.quizzesSolved * 10) / 10)}
     Card(
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         modifier = Modifier

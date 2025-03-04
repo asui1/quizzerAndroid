@@ -35,6 +35,11 @@ sealed interface Route {
     @Serializable
     data object MyActivities: Route
     @Serializable
+    data object Notifications: Route
+    @Serializable
     data object QuizChecker: Route
 }
 
+fun navigateTo(route: Route) {
+
+}

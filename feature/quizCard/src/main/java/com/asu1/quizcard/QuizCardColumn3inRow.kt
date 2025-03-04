@@ -20,8 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,12 +60,17 @@ fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) 
 }
 
 @Composable
-fun QuizCardItemVertical(quizCard: QuizCard,
-                         onClick: (String) -> Unit = {},
-                         modifier:Modifier = Modifier
+fun QuizCardItemVertical(
+    modifier:Modifier = Modifier,
+    quizCard: QuizCard,
+    onClick: (String) -> Unit = {},
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = remember{configuration.screenWidthDp.dp / 3}
+    //TODO: NEED TO CHANGE OTHER CONFIGURATIONS.WIDTH to this format.
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() } / 3
+    }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -92,7 +100,7 @@ fun QuizCardItemVertical(quizCard: QuizCard,
                     .fillMaxWidth(),
                 text = quizCard.title,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodySmall,
                 overflow = TextOverflow.Ellipsis,
                 minLines = 2,
                 maxLines = 2,
@@ -104,18 +112,12 @@ fun QuizCardItemVertical(quizCard: QuizCard,
                 textAlign = TextAlign.Center,
                 text = quizCard.creator,
                 style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Light,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
         }
     }
-}
-
-@Composable
-fun QuizCardHorizontalWithSharedTransition(
-
-){
-
 }
 
 @Preview(name = "QuizCardItemVertical Preview", showBackground = true)

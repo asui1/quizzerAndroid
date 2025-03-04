@@ -7,7 +7,7 @@ import com.asu1.imagecolor.ColorSchemeSerializer
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.utils.ImmutableListSerializer
-import com.google.common.collect.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.serialization.Serializable
 
 interface QuizThemeInterface {
@@ -36,8 +36,8 @@ data class QuizTheme(
 @Serializable
 data class QuizThemeViewer(
     override val backgroundImage: ImageColor,
-    @Serializable(with = ImmutableListSerializer::class) override val questionTextStyle: ImmutableList<Int>,
-    @Serializable(with = ImmutableListSerializer::class) override val bodyTextStyle: ImmutableList<Int>,
-    @Serializable(with = ImmutableListSerializer::class) override val answerTextStyle: ImmutableList<Int>,
+    @Serializable(with = ImmutableListSerializer::class) override val questionTextStyle: PersistentList<Int>,
+    @Serializable(with = ImmutableListSerializer::class) override val bodyTextStyle: PersistentList<Int>,
+    @Serializable(with = ImmutableListSerializer::class) override val answerTextStyle: PersistentList<Int>,
     @Serializable(with = ColorSchemeSerializer::class) override val colorScheme: ColorScheme,
 ): QuizThemeInterface

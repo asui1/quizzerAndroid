@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -44,7 +46,6 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
     val screenWidth = remember{configuration.screenWidthDp.dp}
     val screenHeight = remember{configuration.screenHeightDp.dp}
     val minSize = remember{minOf(screenWidth, screenHeight).times(0.45f).coerceAtMost(400.dp)}
-    val borderColor = MaterialTheme.colorScheme.onSurface
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         modifier = Modifier
@@ -52,7 +53,6 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
             .clickable { onClick(quizCard.id) }
-            .drawUnderBar(borderColor)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +107,8 @@ fun VerticalQuizCardLargeBody(
                     text = quizCard.creator,
                     style = MaterialTheme.typography.labelMedium,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 3,
+                    fontWeight = FontWeight.Light,
+                    maxLines = 1,
                 )
                 Spacer(modifier = Modifier.weight(2f))
                 TagsView(
@@ -144,10 +145,10 @@ fun VerticalQuizCardLargeBody(
 
 @Composable
 fun VerticalQuizCardLargeColumn(
+    modifier: Modifier = Modifier,
     quizCards: List<QuizCard>,
     onClick: (String) -> Unit = {},
     getMoreTrends: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val columnState = rememberLazyListState()
     val shouldLoadMore = remember {
@@ -171,7 +172,9 @@ fun VerticalQuizCardLargeColumn(
             key = { index -> quizCards[index].id }
         ) { index ->
             VerticalQuizCardLarge(quizCards[index], onClick, index)
-            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
         }
     }
 }
@@ -180,6 +183,8 @@ fun VerticalQuizCardLargeColumn(
 @Composable
 fun VerticalQuizCardLargePreview() {
     val quizCards = sampleQuizCardList
-    VerticalQuizCardLargeColumn(quizCards, {})
+    VerticalQuizCardLargeColumn(
+        quizCards = quizCards,
+    )
 }
 

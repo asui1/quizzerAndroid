@@ -13,6 +13,7 @@ import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.models.serializers.json
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import com.asu1.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,10 +52,12 @@ class QuizLoadViewModel: ViewModel() {
                     }
                 }
                 else{
+                    Logger.debug("loadUserQuiz Failure")
                     ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
+                Logger.debug("loadUserQuizFailed ${e.message}")
                 ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
             }
         }

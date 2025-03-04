@@ -28,6 +28,7 @@ class MyApplication : Application() {
             BuildConfig.GOOGLE_CLIENT_ID
         )
         LanguageSetter.isKo = Locale.getDefault().language == "ko"
+        LanguageSetter.lang = if(Locale.getDefault().language == "ko") "ko" else "en"
 
 //        if(BuildConfig.DEBUG){
 // 문제가 왜뜨는지 까지는 되겠는데 분명 고친거같은데...

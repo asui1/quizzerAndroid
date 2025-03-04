@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.core.graphics.BlendModeCompat
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
@@ -60,7 +61,8 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
-import com.google.common.collect.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import java.util.Locale
 
 @Composable
@@ -68,10 +70,6 @@ fun ScoreCardBackground(
     backgroundImageColor: ImageColor,
     modifier: Modifier = Modifier,
 ) {
-    val colorMatrix1 = remember(backgroundImageColor.color) {
-        ColorFilter.tint(backgroundImageColor.color, BlendMode.Color)
-    }
-
     val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
         backgroundImageColor.backgroundBase.resourceId
     }
@@ -82,9 +80,14 @@ fun ScoreCardBackground(
     ) {
         when(backgroundImageColor.state) {
             ImageColorState.IMAGE -> {
+                val bitmap = remember(backgroundImageColor.imageData) {
+                    backgroundImageColor.imageData.asImageBitmap().apply {
+                        prepareToDraw()
+                    }
+                }
                 Image(
-                    painter = remember(backgroundImageColor.imageData) { backgroundImageColor.getAsImage() },
-                    colorFilter = colorMatrix1,
+                    bitmap = bitmap,
+                    colorFilter = ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Color),
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -101,9 +104,9 @@ fun ScoreCardBackground(
             ImageColorState.BASEIMAGE -> {
                 Image(
                     painter = painterResource(id = baseBackgroundResourceId),
-                    colorFilter = colorMatrix1,
+                    colorFilter = ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Hue),
                     contentDescription = "ScoreCard Background",
-                    contentScale = ContentScale.FillHeight,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -137,10 +140,14 @@ fun ScoreCardBackground(
             Image(
                 bitmap = bitmap,
                 contentDescription = "ScoreCard Background",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+
+                //TODO: Check whether this Crop fits for existing quizzes.
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.FillWidth,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .align(Alignment.BottomCenter)
             )
         }
     }
@@ -215,7 +222,7 @@ fun ScoreCardComposable(
             Text(
                 text = scoreCard.title,
                 color = scoreCard.textColor,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -223,8 +230,8 @@ fun ScoreCardComposable(
             Text(
                 text = quizResult.nickname,
                 color = scoreCard.textColor,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Light,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.align(Alignment.End)
             )
             HorizontalPager(
@@ -284,9 +291,7 @@ fun ScoreCardComposable(
 
 @Composable
 private fun Score(scoreCardTextColor: Color, score: Float) {
-
     val animatedScore = remember { Animatable(0f) }
-    // Launch the animation when targetScore changes
     LaunchedEffect(score) {
         animatedScore.animateTo(
             targetValue = score,
@@ -334,7 +339,7 @@ fun ScoreCardComposablePreview() {
 
 @Composable
 fun AnswerCorrection(
-    correction: ImmutableList<Boolean> = ImmutableList.of(true, true, false, false, true, false, true, false, true, false),
+    correction: PersistentList<Boolean> = listOf(true, true, false, false, true, false, true, false, true, false).toPersistentList(),
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
@@ -371,7 +376,7 @@ fun AnswerCorrection(
 
 @Composable
 fun PointDistribution(
-    distribution: ImmutableList<Int>,
+    distribution: PersistentList<Int>,
     percent: Float,
     score: Float,
     textColor: Color,

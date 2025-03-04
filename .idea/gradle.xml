@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/BaseInterfaces" />
+            <option value="$PROJECT_DIR$/core/appDataModels" />
             <option value="$PROJECT_DIR$/core/colorModel" />
             <option value="$PROJECT_DIR$/core/imageColor" />
             <option value="$PROJECT_DIR$/core/quizCardModel" />
@@ -22,6 +23,7 @@
             <option value="$PROJECT_DIR$/core/userDataModels" />
             <option value="$PROJECT_DIR$/core/util" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/domain/appDataUseCase" />
             <option value="$PROJECT_DIR$/domain/imagecolor" />
             <option value="$PROJECT_DIR$/domain/userDataUseCase" />
             <option value="$PROJECT_DIR$/feature" />
@@ -39,6 +41,7 @@
             <option value="$PROJECT_DIR$/macrobenchmark" />
             <option value="$PROJECT_DIR$/microbenchmark" />
             <option value="$PROJECT_DIR$/repository" />
+            <option value="$PROJECT_DIR$/repository/appData" />
             <option value="$PROJECT_DIR$/repository/network" />
             <option value="$PROJECT_DIR$/repository/userData" />
           </set>

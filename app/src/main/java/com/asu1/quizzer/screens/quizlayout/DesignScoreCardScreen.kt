@@ -28,9 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -61,9 +64,14 @@ fun DesignScoreCardScreen(
     onUpload: () -> Unit = { }
 ) {
     val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = (configuration.screenWidthDp.dp).coerceAtMost(screenHeight * 0.6f)
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }.coerceAtMost(screenHeight * 0.6f)
+    }
     val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
     var expanded by remember {mutableStateOf(true)}
     var immerseMode by remember { mutableStateOf(false) }

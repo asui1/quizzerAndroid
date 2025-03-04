@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.asu1.network.RetrofitInstance
 import com.asu1.resources.UserLoginInfo
 import com.asu1.userdatamodels.GuestAccount
+import com.asu1.userdatamodels.UserActivity
 import com.asu1.userdatamodels.UserInfo
 import com.asu1.userdatamodels.UserRegister
 import com.asu1.userdatamodels.UserRequest
@@ -36,6 +37,7 @@ class UserRepositoryImpl @Inject constructor(
     private val guestTagsKey = stringPreferencesKey("guestTags")
     private val guestAgreementKey = stringPreferencesKey("guestAgreement")
 
+    private val userActivityCache = mutableMapOf<String, List<UserActivity>>() // email to activities
     private val dataStore = context.dataStore
 
     override suspend fun guestAccount(isKo: Boolean): Response<GuestAccount> {
@@ -69,6 +71,28 @@ class UserRepositoryImpl @Inject constructor(
             preferences.remove(urlToImageKey)
             preferences.remove(tagsKey)
             preferences.remove(agreementKey)
+        }
+    }
+
+    override suspend fun getUserActivities(email: String): Result<List<UserActivity>> {
+        if (userActivityCache.containsKey(email)) {
+            return Result.success(userActivityCache[email]!!)
+        }
+        return try {
+            val response = retrofitInstance.api.getUserActivity(email)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    userActivityCache[email] = body
+                    Result.success(body)
+                } else {
+                    Result.failure(Exception("Body is null"))
+                }
+            } else {
+                Result.failure(Exception(response.message()))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 

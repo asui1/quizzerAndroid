@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,16 +32,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -56,7 +58,6 @@ fun QuizCardHorizontal(quizCard: QuizCard,
     val screenWidth = remember{configuration.screenWidthDp.dp}
     val screenHeight = remember{configuration.screenHeightDp.dp}
     val minSize = remember{minOf(screenWidth, screenHeight).times(0.30f).coerceAtMost(200.dp)}
-    val borderColor = MaterialTheme.colorScheme.onSurface
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -65,7 +66,6 @@ fun QuizCardHorizontal(quizCard: QuizCard,
             .clickable { onClick() }
             .height(minSize+2.dp)
             .width(screenWidth)
-            .drawUnderBar(borderColor)
     ) {
         Row(modifier = Modifier) {
             with(sharedTransitionScope){
@@ -102,15 +102,20 @@ fun QuizCardHorizontal(quizCard: QuizCard,
 }
 
 @Composable
-fun QuizCardHorizontal(quizCard: QuizCard,
-                       onClick: (String) -> Unit = {},
-                       modifier: Modifier = Modifier,
+fun QuizCardHorizontal(
+    modifier: Modifier = Modifier,
+    quizCard: QuizCard,
+    onClick: (String) -> Unit = {},
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = remember{configuration.screenWidthDp.dp}
-    val screenHeight = remember{configuration.screenHeightDp.dp}
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }
+    }
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
     val minSize = remember{minOf(screenWidth, screenHeight).times(0.35f).coerceAtMost(200.dp)}
-    val borderColor = MaterialTheme.colorScheme.onSurface
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -119,7 +124,6 @@ fun QuizCardHorizontal(quizCard: QuizCard,
             .height(minSize+2.dp)
             .width(screenWidth)
             .clickable { onClick(quizCard.id) }
-            .drawUnderBar(borderColor)
     ) {
         Row(modifier = Modifier) {
             QuizImage(
@@ -141,22 +145,6 @@ fun QuizCardHorizontal(quizCard: QuizCard,
     }
 }
 
-fun Modifier.drawUnderBar(
-    borderColor: Color
-): Modifier{
-    return this.then(Modifier.drawBehind {
-        val strokeWidth = 1.dp.toPx()
-        val y = size.height - strokeWidth / 2
-        drawLine(
-            color = borderColor,
-            start = Offset(size.width * 0.05f, y),
-            end = Offset(size.width * 0.95f, y),
-            strokeWidth = strokeWidth
-        )
-    }
-    )
-}
-
 @Composable
 private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
     Column(
@@ -166,14 +154,14 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
     ) {
         Text(
             text = quizCard.title,
-            style = MaterialTheme.typography.titleMedium,
+            style = QuizzerTypographyDefaults.quizTitleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = quizCard.creator,
-            style = MaterialTheme.typography.labelSmall,
+            style = QuizzerTypographyDefaults.quizCreatorSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -193,7 +181,7 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
                 append(stringResource(R.string.solved))
                 append(quizCard.count)
             },
-            style = MaterialTheme.typography.bodySmall
+            style = QuizzerTypographyDefaults.quizzerBodySmall,
         )
     }
 }
@@ -208,9 +196,13 @@ fun QuizCardHorizontalList(quizCards: List<QuizCard>, onClick: (String) -> Unit 
         items(quizCards,
             key = { quizCard -> quizCard.id }
         ) { quizCard ->
-            QuizCardHorizontal(quizCard, onClick,
+            QuizCardHorizontal(
+                quizCard = quizCard,
+                onClick = onClick,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
         }
     }
 }

@@ -10,6 +10,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_body">1. Purpose of Collecting and Using Personal Information\nQuizzer (here in after referred to as \"the App\") highly values user privacy and collects and uses personal information for the following purposes:\n\nUser identification and provision of app services\nCommunication with users via email\nAnalyzing in-app activity information to improve services\n\n2. Items of Personal Information Collected\nThe App collects the following personal information:\n\nEmail Address: Used for user identification and communication.\nProfile Image: Used for user identification and communication.\nIn-app Activity Information: Used for analyzing app usage patterns and improving services.\n\n3. Retention and Use Period of Personal Information\nCollected personal information is retained and used until the purpose of use is achieved or the user requests deletion. Upon user request, the collected personal information will be promptly deleted.\n\n4. Provision of Personal Information to Third Parties\nThe App does not provide personal information to third parties without the prior consent of the user.\n\n5. Measures to Ensure the Safety of Personal Information\nThe App takes the following measures to ensure the safety of users\' personal information:\n\nEncryption of personal information\nTechnical measures to prevent personal information leakage due to hacking or computer viruses\nRestriction of access rights to personal information\n\n6. Personal Information Protection Officer\nFor inquiries related to personal information, please contact the Personal Information Protection Officer below.\n\nOfficer: [Name of Personal Information Protection Officer]\nContact: whwkd122@gmail.com\n\n7. Changes to the Privacy Policy\nIf there are any changes to the privacy policy, the changes will be notified through the app\'s notice board.\n\nThis policy is effective as of August 4, 2024.</string>
     <string name="contact">Contact</string>
+    <string name="notification">Notification</string>
     <string name="empty_string"></string>
     <string name="inquiry">Inquiry</string>
     <string name="sign_out">Sign out</string>
@@ -48,6 +49,7 @@
     <string name="settings">Settings</string>
     <string name="enter_sign_out">Enter \"Sign Out\"</string>
     <string name="move_back_home">Move Back Home</string>
+    <string name="move_back">Move Back</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="add_image">Add Image</string>
@@ -112,6 +114,7 @@
     <string name="select_color2">Effect Color</string>
     <string name="select_text_color">Select Text Color</string>
     <string name="upload">Upload</string>
+    <string name="remove_background">Remove BG</string>
     <string name="searching_for_quizzes">Searching for quizzes…</string>
     <string name="will_be_using_colors">"Will be using colors : "</string>
     <string name="single_color">Single Color</string>

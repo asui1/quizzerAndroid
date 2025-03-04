@@ -63,7 +63,7 @@ class ScoreCardViewModel : ViewModel() {
             _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = createEmptyBitmap(), state = ImageColorState.IMAGE))
             return
         }
-        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE, color = Color.White))
+        _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(imageData = image, state = ImageColorState.IMAGE))
     }
 
     fun updateBackgroundBase(base: BackgroundBase){
@@ -97,14 +97,15 @@ class ScoreCardViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            _overlayImage.value = bitmap
             if(_removeOverlayImageBackground.value == true) {
                 processImage(bitmap, viewModelScope) {
+                    _overlayImage.value = bitmap
                     _scoreCard.value = _scoreCard.value.copy(
                         background = _scoreCard.value.background.copy(overlayImage = it)
                     )
                 }
             }else{
+                _overlayImage.value = bitmap
                 _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = bitmap))
             }
         }

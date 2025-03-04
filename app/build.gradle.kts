@@ -152,6 +152,8 @@ dependencies {
     implementation(project(":feature:permissionRequest"))
     implementation(project(":feature:customEffects"))
     implementation(project(":feature:customEffects"))
+    implementation(project(":core:appDataModels"))
+    implementation(project(":domain:appDataUseCase"))
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:musicUi"))
@@ -223,6 +225,7 @@ dependencies {
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
     implementation(libs.landscapist.glide)
+//    ksp(libs.landscapist.glide) -> This line adds error in build
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -231,6 +234,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.rxjava)
     implementation(libs.rxandroid)

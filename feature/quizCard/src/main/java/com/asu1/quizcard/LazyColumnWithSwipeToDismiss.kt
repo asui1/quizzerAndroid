@@ -177,7 +177,7 @@ fun LazyColumnWithSwipeToDismissPreview() {
     LazyColumnWithSwipeToDismiss(
         quizList = quizList,
         content = { quizCard, index ->
-            QuizCardHorizontal(quizCard)
+            QuizCardHorizontal(quizCard = quizCard)
         }
     )
 }

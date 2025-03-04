@@ -104,7 +104,7 @@ fun BackgroundTabs(
                     ){
                         com.asu1.customdropdown.FastCreateDropDown(
                             showDropdownMenu = showGradientDropdown,
-                            labelText = "Gradient Type",
+                            labelText = stringResource(R.string.gradient),
                             onClick = { index ->
                                 onGradientTypeUpdate(ShaderType.entries[index])
                                 showGradientDropdown = false

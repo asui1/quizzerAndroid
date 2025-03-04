@@ -1,4 +1,4 @@
-package com.asu1.quizzer.composables.mainscreen
+package com.asu1.quizzer.screens.mainScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -6,16 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,60 +31,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.asu1.quizzer.screens.mainScreen.LogoutConfirmationDialog
-import com.asu1.quizzer.screens.mainScreen.UserProfilePic
-import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.R
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
-@OptIn(ExperimentalMaterial3Api::class)
+const val dividedIndex = 2
 @Composable
 fun UserSettings(
     userData: UserViewModel.UserDatas?,
+    settingItems: PersistentList<Pair<Int, () -> Unit>>,
     isLoggedIn: Boolean = false,
-    onSendInquiry: (String, String, String) -> Unit = { _, _, _ -> },
     logOut: () -> Unit = { },
-    signOut: (String) -> Unit = { },
-    navigateTo: (Route) -> Unit = {},
 ) {
-    var showInquiry by remember { mutableStateOf(false) }
-    var showSignOut by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
-
-    if(showInquiry) {
-        ModalBottomSheet(onDismissRequest = {showInquiry = false },
-            modifier = Modifier.imePadding()
-        ) {
-            InquiryBottomSheetContent(
-                onDismissRequest = { showInquiry = false
-                },
-                userData = userData,
-                isDone = false,
-                onSendInquiry = { email, type, text ->
-                    onSendInquiry(email, type, text)
-                    showInquiry = false
-                }
-            )
-        }
-    }
-    else if(showSignOut && isLoggedIn) {
-        ModalBottomSheet(onDismissRequest = {showSignOut = false },
-            modifier = Modifier.imePadding()) {
-            SignoutBottomSheetContent(
-                onDismissRequest = { showSignOut = false
-                    logOut()
-                },
-                userData = userData,
-                isDone = false,
-                onSendSignOut = { email ->
-                    signOut(email)
-                    showSignOut = false
-                }
-            )
-        }
-    }
-    else if(showLogoutDialog){
+    if(showLogoutDialog){
         LogoutConfirmationDialog(
             onConfirm = {
                 logOut()
@@ -167,93 +126,17 @@ fun UserSettings(
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        navigateTo(Route.LoadUserQuiz)
-                    },
-                )
-                {
-                    Text(
-                        stringResource(R.string.my_quizzes),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-//                TextButton(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    onClick = {
-//                        navigateTo(Route.MyActivities)
-//                    },
-//                )
-//                {
-//                    Text(
-//                        stringResource(R.string.my_activities),
-//                        textAlign = TextAlign.Start,
-//                        modifier = Modifier
-//                            .padding(16.dp)
-//                            .fillMaxWidth(),
-//                        style = MaterialTheme.typography.labelMedium
-//                    )
-//                }
-//                TextButton(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    onClick = {},
-//                ) {
-//                    Text(
-//                        stringResource(R.string.profile),
-//                        textAlign = TextAlign.Start,
-//                        modifier = Modifier
-//                            .padding(16.dp)
-//                            .fillMaxWidth(),
-//                        style = TextStyle(
-//                            textDecoration = TextDecoration.LineThrough,
-//                        )
-//                    )
-//                }
-//                TextButton(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    onClick = {},
-//                ) {
-//                    Text(
-//                        stringResource(R.string.settings),
-//                        textAlign = TextAlign.Start,
-//                        modifier = Modifier
-//                            .padding(16.dp)
-//                            .fillMaxWidth(),
-//                        style = TextStyle(
-//                            textDecoration = TextDecoration.LineThrough,
-//                        )
-//                    )
-//                }
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        showInquiry = true
-                    },
-                ) {
-                    Text(
-                        stringResource(R.string.inquiry),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-                if (isLoggedIn) {
+                settingItems.forEachIndexed { index, item ->
+                    if (index == dividedIndex) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                     TextButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            showSignOut = true
-                        },
-                    ) {
+                        onClick = item.second,
+                    )
+                    {
                         Text(
-                            stringResource(R.string.sign_out),
+                            stringResource(item.first),
                             textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .padding(16.dp)
@@ -273,6 +156,13 @@ fun DrawerPreview(){
     com.asu1.resources.QuizzerAndroidTheme {
         UserSettings(
             userData = userDataTest,
+            settingItems = listOfNotNull(
+                Pair(R.string.my_quizzes, {}),
+                Pair(R.string.my_activities, {}),
+                Pair(R.string.notification, {}),
+                Pair(R.string.inquiry, {}),
+                Pair(R.string.sign_out, {})
+            ).toPersistentList()
         )
     }
 }

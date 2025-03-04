@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.network.RetrofitInstance
 import com.asu1.resources.NetworkTags
 import com.asu1.resources.R
+import com.asu1.userdatamodels.UserActivity
+import com.asu1.userdatausecase.GetUserActivitiesUseCase
 import com.asu1.userdatausecase.InitLoginUseCase
 import com.asu1.userdatausecase.TryLoginUseCase
 import com.asu1.utils.LanguageSetter
@@ -17,6 +19,9 @@ import com.asu1.utils.Logger
 import com.google.common.collect.ImmutableSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -24,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val tryLoginUseCase: TryLoginUseCase,
-    private val initLoginUseCase: InitLoginUseCase
+    private val initLoginUseCase: InitLoginUseCase,
+    private val getUserActivitiesUseCase: GetUserActivitiesUseCase,
 ): ViewModel() {
 
     private val _isUserLoggedIn = MutableLiveData(false)
@@ -32,6 +38,9 @@ class UserViewModel @Inject constructor(
 
     private val _userData = MutableLiveData<UserDatas?>()
     val userData: MutableLiveData<UserDatas?> get() = _userData
+
+    private val _userActivities = MutableStateFlow<List<UserActivity>>(emptyList())
+    val userActivities: StateFlow<List<UserActivity>> get() = _userActivities.asStateFlow()
 
     fun initLogin(onDone: () -> Unit = {}){
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,6 +77,20 @@ class UserViewModel @Inject constructor(
             }
             catch (e: Exception){
                 Logger.debug("Login failed ${e.message}")
+                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+            }
+        }
+    }
+
+    fun getUserActivities(){
+        if(_userData.value == null || _userActivities.value.isNotEmpty()){
+            return
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserActivitiesUseCase(_userData.value!!.email ?: "").onSuccess {
+                _userActivities.value = it
+            }.onFailure {
+                Logger.debug("Get user activities failed ${it.message}")
                 ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
@@ -134,5 +157,4 @@ class UserViewModel @Inject constructor(
         val urlToImage: String?,
         val tags: ImmutableSet<String>
     )
-
 }
