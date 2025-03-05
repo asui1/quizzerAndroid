@@ -24,9 +24,6 @@
       <SelectionState runConfigName="testQuizCreateUpload()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Quiz4CheckerPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="StageCardWithAnimatedLightPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -34,6 +31,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ConcertLineLightsWithOffsetsPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="NotificationScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

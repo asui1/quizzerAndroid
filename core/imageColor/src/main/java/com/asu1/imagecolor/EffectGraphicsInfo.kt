@@ -2,6 +2,7 @@ package com.asu1.imagecolor
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.serialization.Serializable
 
@@ -19,6 +20,7 @@ fun Modifier.setEffectGraphicsLayer(
     effectGraphicsInfo: EffectGraphicsInfo
 ): Modifier{
     return this.then(Modifier.graphicsLayer {
+//        alpha = 0.8f
         translationY = size.height * effectGraphicsInfo.translationY
         translationX = size.width * effectGraphicsInfo.translationX
         scaleX = effectGraphicsInfo.scaleX

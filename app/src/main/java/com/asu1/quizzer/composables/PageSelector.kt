@@ -20,7 +20,7 @@ fun PageSelector(
     currentPage: Int,
     moveToPage: (Int) -> Unit
 ) {
-    // Compute which pages to display, up to 5 total
+
     val pagesToDisplay = remember(totalPages, currentPage) {
         if (totalPages <= 5) {
             (1..totalPages).toList()
@@ -36,22 +36,20 @@ fun PageSelector(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        // '<' button if we're not on the first page
-        if (currentPage > 1) {
-            TextButton(
-                onClick = {
-                    moveToPage(currentPage - 1)
-                },
-            ) {
-                Text(
-                    text = "<",
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+
+        TextButton(
+            onClick = {
+                moveToPage(currentPage - 1)
+            },
+        ) {
+            Text(
+                text = "<",
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
-        // Page numbers (up to 5)
+
         pagesToDisplay.forEach { page ->
             val isSelected = (page == currentPage)
             TextButton(
@@ -66,18 +64,15 @@ fun PageSelector(
             }
         }
 
-        // '>' button if we're not on the last page
-        if (currentPage < totalPages) {
-            TextButton(
-                onClick = {
-                    moveToPage(currentPage + 1)
-                },
-            ) {
-                Text(
-                    text = ">",
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+        TextButton(
+            onClick = {
+                moveToPage(currentPage + 1)
+            },
+        ) {
+            Text(
+                text = ">",
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
     }
 }

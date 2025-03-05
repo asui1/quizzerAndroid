@@ -44,7 +44,7 @@ fun ColorPicker(
 ) {
     val controller = rememberColorPickerController()
     var localColor by remember { mutableStateOf(initialColor) }
-    var rgbValue by remember { mutableStateOf(localColor.toRgbHex()) }
+    var rgbValue by remember(localColor) { mutableStateOf(localColor.toRgbHex()) }
 
     // Initialize color picker with the initial color
     LaunchedEffect(Unit) {

@@ -75,14 +75,6 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        item{
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.my_quizzes),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
-            )
-        }
         if (quizList.isEmpty()) {
             item {
                 Text(
@@ -113,15 +105,7 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
                                     .fillMaxSize()
                                     .background(backgroundColor)
                                     .padding(16.dp),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                if(backgroundColor != Color.Transparent){
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = stringResource(R.string.delete),
-                                    )
-                                }
-                            }
+                            )
                         },
                         enableDismissFromStartToEnd = false,
                         modifier = Modifier.padding(vertical = 2.dp),

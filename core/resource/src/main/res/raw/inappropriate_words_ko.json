@@ -1,0 +1,8 @@
+{
+  "admin_words": [
+    "admin", "administrator", "moderator", "mod", "staff", "gm", "sysop", "root", "owner", "developer"
+  ],
+  "inappropriate_words": [
+    "badword1", "insult", "slur", "hate", "harassment", "sexual", "violence", "offensive1", "offensive2"
+  ]
+}

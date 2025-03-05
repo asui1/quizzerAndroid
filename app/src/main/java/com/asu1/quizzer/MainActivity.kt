@@ -7,6 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -30,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
+import com.asu1.quizzer.screens.mainScreen.LoadMyQuiz
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
 import com.asu1.quizzer.screens.mainScreen.MyActivitiesScreen
@@ -44,13 +48,13 @@ import com.asu1.quizzer.screens.quiz.QuizSolver
 import com.asu1.quizzer.screens.quiz.ScoringScreen
 import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
 import com.asu1.quizzer.screens.quizlayout.LoadItems
-import com.asu1.quizzer.screens.quizlayout.LoadMyQuiz
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFadeInTransition
 import com.asu1.quizzer.util.enterFromRightTransition
 import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
+import com.asu1.quizzer.viewModels.InitializationViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
@@ -58,9 +62,15 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.R
+import com.asu1.utils.Logger
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -76,8 +86,50 @@ class MainActivity : ComponentActivity() {
     private val quizLoadViewModel: QuizLoadViewModel by viewModels()
     private lateinit var navController: NavHostController
 
+    private lateinit var appUpdateManager: AppUpdateManager
+    private lateinit var updateLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private val initializationViewModel: InitializationViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        updateLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            // Handle update result
+            if (result.resultCode != RESULT_OK) {
+                Logger.debug("Update flow failed! Result code: " + result.resultCode)
+                // Handle failure (maybe retry or show a message)
+            } else{
+                initializationViewModel.noUpdateAvailable()
+            }
+        }
+
+        lifecycleScope.launch {
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            // Checks that the platform will allow the specified type of update.
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    // This example applies an immediate update. To apply a flexible update
+                    // instead, pass in AppUpdateType.FLEXIBLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                ) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        updateLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+                    )
+                    // Request the update.
+                }else{
+                    initializationViewModel.noUpdateAvailable()
+                }
+            }
+            if(BuildConfig.isDebug){
+                delay(1000)
+                initializationViewModel.noUpdateAvailable()
+            }
+        }
         handleIntent(intent)
 
         lifecycleScope.launch {
@@ -155,9 +207,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         fun getHome(fetchData: Boolean = true) {
-                            val lang =
-                                if (Locale.getDefault().language == "ko") "ko" else "en"
-                            val email = userViewModel.userData.value?.email ?: "GUEST"
                             quizCardMainViewModel.resetQuizTrends()
                             quizCardMainViewModel.resetUserRanks()
                             if (fetchData) quizCardMainViewModel.fetchQuizCards()
@@ -217,6 +266,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable<Route.Init> {
                                 InitializationScreen(
+                                    initViewModel = initializationViewModel,
                                     userViewModel = userViewModel,
                                     navigateToHome = {
                                         getHome(
@@ -387,7 +437,7 @@ class MainActivity : ComponentActivity() {
                                 exitTransition = exitToRightTransition(),
                                 popEnterTransition = enterFromRightTransition(),
                                 popExitTransition = exitToRightTransition(),
-                            ) { backStackEntry ->
+                            ) {
                                 QuizSolver(
                                     navController = navController,
                                     quizLayoutViewModel = quizLayoutViewModel,
@@ -515,6 +565,23 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability()
+                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    // If an in-app update is already running, resume the update.
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        updateLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build())
+                }
+            }
     }
 
     override fun onNewIntent(intent: Intent) {

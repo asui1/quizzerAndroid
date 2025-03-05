@@ -45,7 +45,7 @@ fun InitializationScreen(initViewModel: InitializationViewModel = viewModel(),
     if(isUpdateAvailable == true){
         UpdateDialog(
             onUpdate = { redirectToPlayStore(it) },
-            onCancel = { initViewModel.finishApp() },
+            onCancel = {  },
         )
     }
 

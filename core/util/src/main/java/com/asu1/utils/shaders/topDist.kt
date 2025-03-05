@@ -10,7 +10,18 @@ val topDist = """
 
     half4 main(in float2 fragCoord){
         float2 uv = fragCoord / resolution;
-        float minValue = uv.y * 0.8 + 0.1;
+        
+        // Define the y-wave function
+        float yWave = 0.4 + sin(uv.x * 3.14159265359) * 0.2;
+        
+        // Compute minValue based on varying slope
+        float minValue;
+        if (uv.y < yWave) {
+            minValue = ((uv.y - yWave) * 0.8 / yWave) + 0.5;
+        } else {
+            minValue = ((uv.y - yWave) * 0.8 / (1.0 - yWave)) + 0.5;
+        }
+        
         return mix(color, color2, minValue);
     }
-    """.trimIndent()
+        """.trimIndent()

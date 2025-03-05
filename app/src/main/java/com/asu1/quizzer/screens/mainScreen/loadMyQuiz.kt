@@ -1,4 +1,4 @@
-package com.asu1.quizzer.screens.quizlayout
+package com.asu1.quizzer.screens.mainScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.QuizCardHorizontal
+import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
@@ -49,7 +50,7 @@ fun LoadMyQuiz(
 
     Scaffold(
         topBar = {
-            RowWithAppIconAndName(
+            QuizzerTopBarBase(
                 header = @Composable {
                     IconButton(onClick = {
                         navController.popBackStack(
@@ -60,11 +61,13 @@ fun LoadMyQuiz(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = stringResource(com.asu1.resources.R.string.move_back_home)
+                            contentDescription = stringResource(R.string.move_back)
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
+                body = {
+                    Text(stringResource(R.string.my_quizzes))
+                },
             )
         }
     ) { paddingValue ->
