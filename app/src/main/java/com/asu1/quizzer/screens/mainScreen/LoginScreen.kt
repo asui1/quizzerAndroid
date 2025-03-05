@@ -4,6 +4,7 @@ import ToastManager
 import ToastType
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +39,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.navigation.NavController
+import com.asu1.custombuttons.TextDivider
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.R
@@ -191,52 +195,44 @@ private fun LoginBody(
             contentScale = ContentScale.FillWidth,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
-        Text(
-            text = stringResource(R.string.sign_in),
-            style = MaterialTheme.typography.headlineSmall,
+        TextDivider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = {
+                Text(
+                    text = stringResource(R.string.login),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Button(
-            onClick = {
-                onClickSignin()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
+        Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painter = painterResource(id = R.drawable.android_neutral_rd_si),
+            contentDescription = "Sign in with Google",
             modifier = Modifier
-                .fillMaxWidth(0.55f)
-                .fillMaxHeight(0.15f),
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.android_neutral_rd_si),
-                contentDescription = "Sign in with Google",
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
+                .clickable{
+                    onClickSignin()
+                },
+        )
         Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = stringResource(R.string.register_with_google),
-            style = MaterialTheme.typography.bodySmall,
+        TextDivider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = {
+                Text(
+                    text = stringResource(R.string.register),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         )
-        Button(
+        Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painter = painterResource(id = R.drawable.android_neutral_rd_na), // Replace with your drawable resource
+            contentDescription = "Continue with Google",
             modifier = Modifier
-                .fillMaxWidth(0.45f)
-                .fillMaxHeight(0.15f),
-            onClick = {
-                onClickRegister()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                .size(30.dp)
+                .clickable {
+                    onClickRegister()
+                },
             )
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.android_neutral_sq_ctn), // Replace with your drawable resource
-                contentDescription = "Continue with Google",
-                modifier = Modifier
-                    .fillMaxSize(),
-            )
-        }
     }
 }
 
