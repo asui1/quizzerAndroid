@@ -9,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.asu1.quizzer.musics.MusicAllInOne
+import com.asu1.appdata.music.Music
+import com.asu1.appdata.music.MusicAllInOne
 
 @Composable
 fun MusicInfo(
@@ -38,7 +39,7 @@ fun MusicInfo(
 fun MusicInfoPreview() {
     MusicInfo(
         currentMusic = MusicAllInOne(
-            music = com.asu1.quizzer.musics.Music(
+            music = Music(
                 title = "Title",
                 artist = "Artist",
             ),

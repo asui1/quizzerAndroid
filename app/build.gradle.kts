@@ -159,6 +159,7 @@ dependencies {
     implementation(project(":feature:musicUi"))
     testImplementation(project(":feature:musicUi"))
     androidTestImplementation(project(":feature:musicUi"))
+    implementation(project(":repository:appData"))
 
     implementation(project(":core:quizModel"))
     testImplementation(project(":core:quizModel"))

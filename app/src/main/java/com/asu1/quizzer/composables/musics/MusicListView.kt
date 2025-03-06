@@ -45,7 +45,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.musics.MusicAllInOne
+import com.asu1.appdata.music.MusicAllInOne
 import com.asu1.quizzer.util.constants.sampleMusicList
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.resources.R
@@ -55,12 +55,12 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun PlayListView(
+    modifier: Modifier = Modifier,
     isPlaying: Boolean,
     currentMusicIndex: Int,
     musicList: List<MusicAllInOne>,
     initOpen: Boolean = true,
     updatePlayer: (HomeUiEvents) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val currentMusic = remember(currentMusicIndex) { musicList[currentMusicIndex].music.title }
     val localMusicList = remember { mutableStateListOf(*musicList.toTypedArray()) }

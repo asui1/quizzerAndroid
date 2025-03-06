@@ -97,6 +97,7 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="searching">Searching…</string>
+    <string name="search">Search</string>
     <string name="no_search_result">No search result</string>
     <string name="add_answer">Add Answer</string>
     <string name="shuffle_answers">Shuffle Answers: </string>

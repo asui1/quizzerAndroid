@@ -1,7 +1,7 @@
 package com.asu1.quizzer.domain.music
 
-import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.musics.MusicRepository
+import com.asu1.appdata.music.MusicAllInOne
+import com.asu1.appdata.music.MusicRepository
 import javax.inject.Inject
 
 class GetAllMusicUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.asu1.quizzer.musics
+package com.asu1.appdata.music
 
 import javax.inject.Inject
 import javax.inject.Singleton

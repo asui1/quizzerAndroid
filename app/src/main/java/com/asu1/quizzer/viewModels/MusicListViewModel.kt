@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.Util.startForegroundService
-import com.asu1.quizzer.musics.MusicAllInOne
+import com.asu1.appdata.music.MusicAllInOne
 import com.asu1.quizzer.service.MusicServiceHandler
 import com.asu1.quizzer.service.QuizzerMusicPlayerService
 import com.asu1.quizzer.util.constants.sampleMusicList

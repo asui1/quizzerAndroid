@@ -1,4 +1,4 @@
-package com.asu1.quizzer.musics
+package com.asu1.appdata.music
 
 import androidx.room.Embedded
 import androidx.room.Entity

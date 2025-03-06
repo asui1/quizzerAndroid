@@ -67,32 +67,11 @@ fun NoInternetDialog(onRetry: (Context) -> Unit, onExit: () -> Unit) {
     )
 }
 
-@Composable
-fun UpdateDialog(onUpdate: (Context) -> Unit, onCancel: () -> Unit) {
-    DialogComposable(
-        title = R.string.update_available,
-        message = R.string.a_new_update_is_available_would_you_like_to_update_now,
-        onContinue = onUpdate,
-        onContinueText = R.string.update,
-        onCancel = onCancel,
-        onCancelText = R.string.exit
-    )
-}
-
 @Preview
 @Composable
 fun NoInternetDialogPreview() {
     NoInternetDialog(
         onRetry = {},
         onExit = {}
-    )
-}
-
-@Preview
-@Composable
-fun UpdateDialogPreview() {
-    UpdateDialog(
-        onUpdate = {},
-        onCancel = {}
     )
 }

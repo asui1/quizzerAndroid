@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +23,7 @@ fun TextDivider(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically)
@@ -31,7 +31,7 @@ fun TextDivider(
             color = MaterialTheme.colorScheme.onSurface
         )
         text()
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically)

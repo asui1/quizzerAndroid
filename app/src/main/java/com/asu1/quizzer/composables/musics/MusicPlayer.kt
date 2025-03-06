@@ -15,8 +15,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
-import com.asu1.quizzer.musics.Music
-import com.asu1.quizzer.musics.MusicAllInOne
+import com.asu1.appdata.music.Music
+import com.asu1.appdata.music.MusicAllInOne
 import com.asu1.quizzer.util.musics.HomeUiEvents
 import com.asu1.quizzer.viewModels.MusicListViewModel
 

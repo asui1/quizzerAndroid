@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/domain/imagecolor" />
             <option value="$PROJECT_DIR$/domain/userDataUseCase" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/SearchSuggestion" />
             <option value="$PROJECT_DIR$/feature/colorPicker" />
             <option value="$PROJECT_DIR$/feature/customButton" />
             <option value="$PROJECT_DIR$/feature/customDialog" />

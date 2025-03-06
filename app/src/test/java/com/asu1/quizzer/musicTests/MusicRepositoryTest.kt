@@ -1,12 +1,12 @@
 package com.asu1.quizzer.musicTests
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.asu1.quizzer.musics.Mood
-import com.asu1.quizzer.musics.Music
-import com.asu1.quizzer.musics.MusicAllInOne
-import com.asu1.quizzer.musics.MusicDao
-import com.asu1.quizzer.musics.MusicMoodCrossRef
-import com.asu1.quizzer.musics.MusicRepository
+import com.asu1.appdata.music.Mood
+import com.asu1.appdata.music.Music
+import com.asu1.appdata.music.MusicAllInOne
+import com.asu1.appdata.music.MusicDao
+import com.asu1.appdata.music.MusicMoodCrossRef
+import com.asu1.appdata.music.MusicRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule

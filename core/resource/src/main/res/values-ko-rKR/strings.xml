@@ -98,6 +98,7 @@
     <string name="register">회원가입</string>
     <string name="login">로그인</string>
     <string name="searching">검색중…</string>
+    <string name="search">검색</string>
     <string name="no_search_result">검색 결과가 없습니다</string>
     <string name="add_answer">정답 추가</string>
     <string name="shuffle_answers">정답 섞기: </string>

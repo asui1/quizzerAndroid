@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.asu1.quizzer.musics.MusicAllInOne
+import com.asu1.appdata.music.MusicAllInOne
 import com.asu1.quizzer.util.constants.sampleMusicList
 
 @Composable
