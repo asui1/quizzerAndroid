@@ -14,6 +14,7 @@ import com.asu1.appdata.suggestion.SearchSuggestion
 import com.asu1.appdata.suggestion.SearchSuggestionDao
 
 const val DATABASE_NAME = "quizzer_database"
+const val PREPOPULATE_DB = "quizzerDB.db"
 
 @Database(
     entities = [Music::class, Mood::class, MusicMoodCrossRef::class, SearchSuggestion::class],
@@ -28,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context, prepopulateData: () -> Unit): AppDatabase {
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -36,12 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
                     DATABASE_NAME
                 )
                     .addMigrations(MIGRATION_1_2)
-                    .addCallback(object : Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            prepopulateData()
-                        }
-                    })
+                    .createFromAsset(PREPOPULATE_DB)
                     .build()
                 INSTANCE = instance
                 instance
@@ -51,7 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Add missing table if it doesn't exist (to avoid errors)
                 db.execSQL(
-                    "CREATE TABLE IF NOT EXISTS search_suggestions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, query TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0)"
+                    "CREATE TABLE IF NOT EXISTS search_suggestions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, query TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0, lang TEXT NOT NULL)"
                 )
             }
         }

@@ -15,15 +15,15 @@ class SearchSuggestionRepository @Inject constructor(
         dao.insertSuggestion(suggestion)
     }
 
-    fun getTopPrioritySuggestions(): Flow<List<SearchSuggestion>> {
-        return dao.getTopPrioritySuggestions()
+    fun getTopPrioritySuggestions(lang: String): Flow<List<SearchSuggestion>> {
+        return dao.getTopPrioritySuggestions(lang)
     }
 
-    fun getFilteredSuggestions(searchText: String): Flow<List<SearchSuggestion>> {
+    fun getFilteredSuggestions(searchText: String, lang: String): Flow<List<SearchSuggestion>> {
         return if (searchText.isEmpty()) {
-            getTopPrioritySuggestions()
+            getTopPrioritySuggestions(lang)
         } else {
-            dao.getFilteredSuggestions(searchText)
+            dao.getFilteredSuggestions(searchText, lang)
         }
     }
 

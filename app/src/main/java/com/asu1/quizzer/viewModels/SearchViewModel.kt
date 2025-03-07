@@ -3,6 +3,7 @@ package com.asu1.quizzer.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.suggestion.SearchSuggestionRepository
+import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +33,7 @@ class SearchViewModel @Inject constructor(
     val searchSuggestions = searchText
         .debounce(500L)
         .flatMapLatest { query ->
-            searchSuggestionRepository.getFilteredSuggestions(query)
+            searchSuggestionRepository.getFilteredSuggestions(query, LanguageSetter.lang)
                 .map { suggestions -> suggestions.map { it.query } }
         }
         .stateIn(

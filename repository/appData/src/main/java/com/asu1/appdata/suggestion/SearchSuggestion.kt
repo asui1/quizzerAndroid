@@ -8,6 +8,13 @@ data class SearchSuggestion(
     @PrimaryKey
     @ColumnInfo(name = "rowid") // 🔹 Maps `rowid` as an implicit primary key
     val id: Int = 0,
-    @ColumnInfo(name = "query") val query: String,
-    @ColumnInfo(name = "priority") val priority: Int = 0
+
+    @ColumnInfo(name = "query")
+    val query: String,
+
+    @ColumnInfo(name = "priority")
+    val priority: Int = 0,
+
+    @ColumnInfo(name = "lang")
+    val lang: String // 🔹 New column to store language (e.g., "ko", "en")
 )

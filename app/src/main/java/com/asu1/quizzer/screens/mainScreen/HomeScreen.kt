@@ -54,7 +54,7 @@ fun HomeScreen(
     moveToPrivacyPolicy: () -> Unit = {},
     pagerInit: Int = 0,
 ) {
-    val tabTitles = listOf("Main", "LCK", "Fun", "History", "Coding")
+    val tabTitles = listOf("Main", "LCK", "Coding", "Health", "Entertainment" , "History")
     val pagerState = rememberPagerState(
         initialPage = pagerInit,
     ){

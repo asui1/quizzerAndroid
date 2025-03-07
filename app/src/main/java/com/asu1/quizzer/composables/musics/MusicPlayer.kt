@@ -36,7 +36,6 @@ fun MusicPlayer(
         musicListViewModel.startMusicService(context)
     }
 
-    //TODO: NEED TO REQUEST FOR NOTIFICATION PERMISSION
     LaunchedEffect(isPlaying){
         if(isPlaying){
             startMusicService()

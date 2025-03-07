@@ -22,6 +22,8 @@ object DatabaseModule {
     ): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
             .addMigrations(AppDatabase.MIGRATION_1_2)
+            .createFromAsset(PREPOPULATE_DB)
+            .fallbackToDestructiveMigration()
             .build()
     }
 
