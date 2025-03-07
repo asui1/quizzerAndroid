@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -44,7 +45,17 @@ import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter.isKo
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+
+val tabTitles = persistentListOf(
+    R.string.main,
+    R.string.lck,
+    R.string.coding,
+    R.string.health,
+    R.string.entertainment,
+    R.string.history
+)
 
 @Composable
 fun HomeScreen(
@@ -54,7 +65,6 @@ fun HomeScreen(
     moveToPrivacyPolicy: () -> Unit = {},
     pagerInit: Int = 0,
 ) {
-    val tabTitles = listOf("Main", "LCK", "Coding", "Health", "Entertainment" , "History")
     val pagerState = rememberPagerState(
         initialPage = pagerInit,
     ){
@@ -87,7 +97,7 @@ fun HomeScreen(
             ) {
                 tabTitles.forEachIndexed { index, title ->
                     RoundTab(
-                        title = title,
+                        title = stringResource(title),
                         isSelected = pagerState.currentPage == index,
                         onClick = {
                             coroutineScope.launch { pagerState.animateScrollToPage(index) }
@@ -130,7 +140,6 @@ fun HomeScreen(
             }
         }
     }
-
 }
 
 fun changeTagToText(tag: String): String{

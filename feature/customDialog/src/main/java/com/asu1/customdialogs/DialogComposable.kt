@@ -11,10 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.asu1.resources.R
 
 @Composable
 fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
@@ -52,26 +50,5 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
             }
 
         }
-    )
-}
-
-@Composable
-fun NoInternetDialog(onRetry: (Context) -> Unit, onExit: () -> Unit) {
-    DialogComposable(
-        title = R.string.no_internet_connection,
-        message = R.string.please_check_your_internet_connection_and_try_again,
-        onContinue = onRetry,
-        onContinueText = R.string.retry,
-        onCancel = onExit,
-        onCancelText = R.string.exit
-    )
-}
-
-@Preview
-@Composable
-fun NoInternetDialogPreview() {
-    NoInternetDialog(
-        onRetry = {},
-        onExit = {}
     )
 }
