@@ -8,7 +8,7 @@ import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.resources.LightColorScheme
-import com.asu1.resources.ShaderType
+import com.asu1.utils.shaders.ShaderType
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 

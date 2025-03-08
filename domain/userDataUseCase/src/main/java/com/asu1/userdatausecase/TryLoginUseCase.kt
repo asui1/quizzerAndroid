@@ -13,21 +13,23 @@ class TryLoginUseCase @Inject constructor(
     suspend operator fun  invoke(): UserLoginInfo? = coroutineScope {
         val userLoginInfo = userRepository.getUserLoginInfo().firstOrNull()
 
-        if (userLoginInfo != null) {
-            val loginResult = userRepository.login(userLoginInfo.email)
-            if (loginResult.isSuccessful) {
+        if(userLoginInfo == null){
+            return@coroutineScope null
+        }
 
-                launch {
-                    userRepository.saveUserLoginInfo(
-                        email = userLoginInfo.email,
-                        nickname = userLoginInfo.nickname,
-                        urlToImage = userLoginInfo.urlToImage,
-                        tags = userLoginInfo.tags ?: emptySet(),
-                        agreement = userLoginInfo.agreement
-                    )
-                }
-                return@coroutineScope userLoginInfo
+        val loginResult = userRepository.login(userLoginInfo.email)
+        if (loginResult.isSuccessful) {
+
+            launch {
+                userRepository.saveUserLoginInfo(
+                    email = userLoginInfo.email,
+                    nickname = userLoginInfo.nickname,
+                    urlToImage = userLoginInfo.urlToImage,
+                    tags = userLoginInfo.tags ?: emptySet(),
+                    agreement = userLoginInfo.agreement
+                )
             }
+            return@coroutineScope userLoginInfo
         }
         return@coroutineScope null
     }

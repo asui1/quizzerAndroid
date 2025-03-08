@@ -156,6 +156,9 @@
     <string name="delete_failed">Delete Failed</string>
     <string name="please_enter_a_nickname">Please enter a nickname</string>
     <string name="can_not_use_this_nickname">Can not use this nickname</string>
+    <string name="nickname_contains_inappropriate_word">Inappropriate word in nickname</string>
+    <string name="contains_inappropriate_word">Inappropriate word detected</string>
+    <string name="nickname_contains_admin_word">Can not use admin like nickname</string>
     <string name="registered_successfully">Registered successfully</string>
     <string name="failed_to_register">Failed to register</string>
     <string name="logged_in">Logged in</string>
@@ -208,6 +211,7 @@
     <string name="agree_policy">Agree Policy</string>
     <string name="quiz_title_cannot_be_empty">Quiz Title cannot be empty</string>
     <string name="can_not_access_server">Can not access server</string>
+    <string name="failed_request">Failed Request… Please try again later.</string>
     <string name="quizzer_music_player">Quizzer Music Player</string>
     <string name="checking_update">Checking for updates</string>
     <string name="my_activities">My Activities</string>

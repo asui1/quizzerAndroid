@@ -2,18 +2,17 @@ package com.asu1.quizzer.viewModels
 
 import ToastManager
 import ToastType
-import android.net.TrafficStats
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.network.RetrofitInstance
-import com.asu1.resources.NetworkTags
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserActivity
 import com.asu1.userdatausecase.GetUserActivitiesUseCase
 import com.asu1.userdatausecase.InitLoginUseCase
-import com.asu1.userdatausecase.TryLoginUseCase
+import com.asu1.userdatausecase.LoginWithEmailUseCase
+import com.asu1.userdatausecase.LogoutToGuestUseCase
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import com.google.common.collect.ImmutableSet
@@ -23,21 +22,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val tryLoginUseCase: TryLoginUseCase,
     private val initLoginUseCase: InitLoginUseCase,
     private val getUserActivitiesUseCase: GetUserActivitiesUseCase,
+    private val loginWithEmailUseCase: LoginWithEmailUseCase,
+    private val logoutToGuestUseCase: LogoutToGuestUseCase,
 ): ViewModel() {
 
     private val _isUserLoggedIn = MutableLiveData(false)
     val isUserLoggedIn: LiveData<Boolean> get() = _isUserLoggedIn
 
-    private val _userData = MutableLiveData<UserDatas?>()
-    val userData: MutableLiveData<UserDatas?> get() = _userData
+    private val _userData = MutableLiveData<UserData?>()
+    val userData: MutableLiveData<UserData?> get() = _userData
 
     private val _userActivities = MutableStateFlow<List<UserActivity>>(emptyList())
     val userActivities: StateFlow<List<UserActivity>> get() = _userActivities.asStateFlow()
@@ -47,7 +46,7 @@ class UserViewModel @Inject constructor(
             try{
                 val userInfo = initLoginUseCase(LanguageSetter.isKo)
                 if(userInfo != null){
-                    _userData.postValue(UserDatas(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
+                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
                     if(userInfo.email.contains("@gmail")){
                         _isUserLoggedIn.postValue(true)
                     }
@@ -64,12 +63,14 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun login(email: String){
+    fun login(email: String, profileUri: String){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                val userInfo = tryLoginUseCase()
+                val userInfo = loginWithEmailUseCase(email, profileUri)
                 if(userInfo != null){
                     _isUserLoggedIn.postValue(true)
+                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
+                    ToastManager.showToast(R.string.logged_in, ToastType.SUCCESS)
                 }
                 else{
                     throw Exception("Login failed")
@@ -96,35 +97,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getGuestAccount(isKo: Boolean = Locale.getDefault().language == "ko") {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                TrafficStats.setThreadStatsTag(NetworkTags.GET_GUEST_ACCOUNT)
-                val response = RetrofitInstance.api.guestAccount(isKo)
-                if (response.isSuccessful) {
-                    val email = response.body()?.email ?: ""
-                    val nickname = response.body()?.nickname ?: ""
-                    if (email.isEmpty() || nickname.isEmpty()) {
-                        ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
-                        return@launch
-                    }
-                    _userData.postValue(UserDatas(email, nickname, null, ImmutableSet.of()))
-                    //TODO: DATASTORE
-                    _isUserLoggedIn.postValue(false)
-                } else {
-                    ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
-                }
-
-            } catch (e: Exception) {
-                Logger.debug("Get guest account failed ${e.message}")
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
-            } finally {
-                TrafficStats.clearThreadStatsTag()
-            }
-        }
-    }
-
-    fun signout(email: String){
+    fun signOut(email: String){
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.deleteUser(email)
@@ -137,21 +110,33 @@ class UserViewModel @Inject constructor(
                 }
             }
             catch (e: Exception){
+                Logger.debug("Delete user failed ${e.message}")
                 ToastManager.showToast(R.string.failed_to_delete_user, ToastType.ERROR)
             }
         }
     }
 
     fun logOut() {
-        _userData.value = null
-        _isUserLoggedIn.postValue(false)
         viewModelScope.launch(Dispatchers.IO) {
-
+            try {
+                val userInfo = logoutToGuestUseCase()
+                if(userInfo != null){
+                    _isUserLoggedIn.postValue(false)
+                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
+                    ToastManager.showToast(R.string.logged_out, ToastType.SUCCESS)
+                }
+                else{
+                    throw Exception("Logout failed")
+                }
+            }
+            catch (e: Exception){
+                Logger.debug("Logout failed ${e.message}")
+                ToastManager.showToast(R.string.failed_request, ToastType.ERROR)
+            }
         }
-        ToastManager.showToast(R.string.logged_out, ToastType.SUCCESS)
     }
 
-    data class UserDatas(
+    data class UserData(
         val email: String?,
         val nickname: String?,
         val urlToImage: String?,

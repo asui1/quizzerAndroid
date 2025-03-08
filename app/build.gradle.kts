@@ -72,7 +72,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "isDebug", "false")
             buildConfigField("String", "PASSWORD", "\"${System.getenv("PASSWORD") ?: throw IllegalArgumentException("PASSWORD environment variable not set")}\"")
-            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID_RELEASE") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
+            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENTID_WEB") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
         }
         debug {
             isMinifyEnabled = false
@@ -80,7 +80,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "isDebug", "true")
             buildConfigField("String", "PASSWORD", "\"${System.getenv("PASSWORD") ?: throw IllegalArgumentException("PASSWORD environment variable not set")}\"")
-            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENT_ID") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
+            buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENTID_WEB") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
         }
         create("benchmark") {
             initWith(buildTypes.getByName("release"))

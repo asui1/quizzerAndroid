@@ -5,18 +5,16 @@ https://quizzer.co.kr/?resultId=b0867d48334c84b00834226d93b87ebfeec5daac44435395
 https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
 
-업데이트를 플레이스토어로 이동하지 않고 앱에서 자연스럽게 업데이트 하도록 설정. -> 62빌드로 내부테스트.
-
 폰트 통일을 위한 QuizzerTypographyDefaults 설정하기.
 
 특정 닉네임(관리자, 개발자 등등 사용 불가)
 특정 단어 필터링(욕설, 성적인 발언 등등)
+ -> 현재 Room data에 추가하면 될 듯.
 
 배경 효과 Layout 설정할 수 있는 페이지 추가.
 배경음악 설정 페이지 추가.
 퀴즈 생성과 따로 퀴즈 테마만 만들수 있도록 수정.
 퀴즈 추천/댓글 만들기.
-검색 기록 관리.
 Viewer를 위한 Immutable Data class들 만들기.
 
 

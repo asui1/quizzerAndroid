@@ -244,7 +244,7 @@ fun MainScreen(
                                     userData = userData,
                                     isDone = false,
                                     onSendSignOut = { email ->
-                                        userViewModel.signout(email)
+                                        userViewModel.signOut(email)
                                         showSignOut = false
                                     }
                                 )
@@ -260,7 +260,7 @@ fun MainScreen(
                             ).toPersistentList()},
                             isLoggedIn = isLoggedIn,
                             userData = userData,
-                            logOut = {  }
+                            logOut = { userViewModel.logOut() }
                         )
                     }
                 }
@@ -270,7 +270,7 @@ fun MainScreen(
 }
 
 @Composable
-fun UserProfilePic(userData: UserViewModel.UserDatas?, onClick: () -> Unit = {}, modifier: Modifier = Modifier,
+fun UserProfilePic(userData: UserViewModel.UserData?, onClick: () -> Unit = {}, modifier: Modifier = Modifier,
                    iconSIze: Dp = 30.dp) {
     val urlToImage = userData?.urlToImage
     IconButton(onClick = onClick, modifier = modifier) {

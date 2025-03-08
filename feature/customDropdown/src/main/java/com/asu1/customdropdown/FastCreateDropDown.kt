@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.resources.ShaderType
+import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun FastCreateDropDown(
@@ -82,7 +82,7 @@ fun FastCreateDropDownPreview() {
             labelText = "Select",
             onClick = { },
             onChangeDropDown = { },
-            inputItems = ShaderType.values().map { it.shaderName },
+            inputItems = ShaderType.entries.map { it.shaderName },
             imageVector = Icons.Default.Animation,
             testTag = "DesignScoreCardDropDown",
             modifier = Modifier.size(50.dp)

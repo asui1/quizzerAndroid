@@ -1,8 +1,9 @@
 package com.asu1.appdata
 
 import android.content.Context
-import androidx.room.Room
 import com.asu1.appdata.music.MusicDao
+import com.asu1.appdata.stringFilter.AdminWordDao
+import com.asu1.appdata.stringFilter.InappropriateWordDao
 import com.asu1.appdata.suggestion.SearchSuggestionDao
 import dagger.Module
 import dagger.Provides
@@ -20,11 +21,12 @@ object DatabaseModule {
     fun provideDatabase(
         @ApplicationContext context: Context,
     ): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-            .addMigrations(AppDatabase.MIGRATION_1_2)
-            .createFromAsset(PREPOPULATE_DB)
-            .fallbackToDestructiveMigration()
-            .build()
+        return AppDatabase.getDatabase(context)
+//        return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+//            .addMigrations(AppDatabase.MIGRATION_1_2)
+//            .createFromAsset(PREPOPULATE_DB)
+//            .fallbackToDestructiveMigration()
+//            .build()
     }
 
     @Provides
@@ -32,4 +34,10 @@ object DatabaseModule {
 
     @Provides
     fun provideSearchSuggestionDao(database: AppDatabase): SearchSuggestionDao = database.searchSuggestionDao()
+
+    @Provides
+    fun providesAdminWordDao(database: AppDatabase): AdminWordDao = database.adminWordDao()
+
+    @Provides
+    fun provideInAppropriateWordDao(database: AppDatabase): InappropriateWordDao = database.inappropriateWordDao()
 }

@@ -40,7 +40,7 @@ import kotlinx.collections.immutable.toPersistentList
 const val dividedIndex = 2
 @Composable
 fun UserSettings(
-    userData: UserViewModel.UserDatas?,
+    userData: UserViewModel.UserData?,
     settingItems: PersistentList<Pair<Int, () -> Unit>>,
     isLoggedIn: Boolean = false,
     logOut: () -> Unit = { },

@@ -13,7 +13,7 @@ core = "12.1.1"
 core-ktx = "1.15.0"
 core-testing = "2.2.0"
 core-version = "1.6.1"
-credentials = "1.5.0-rc01"
+credentials = "1.3.0"
 datastore = "1.1.2"
 dotlottie-android = "0.4.1"
 espresso-core = "3.6.1"
@@ -142,9 +142,6 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundation-layout" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
-
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
-# need to remove guava change to kotlinx.collections.immutable
 
 java-dotenv = { module = "io.github.cdimascio:java-dotenv", version.ref = "java-dotenv" }
 junit = { module = "junit:junit", version.ref = "junit" }

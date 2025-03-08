@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.core.graphics.BlendModeCompat
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
@@ -112,7 +111,8 @@ fun ScoreCardBackground(
             }
             ImageColorState.GRADIENT -> {
                 com.asu1.customeffects.GradientBrush(
-                    imageColor = backgroundImageColor,
+                    color = backgroundImageColor.color,
+                    color2 = backgroundImageColor.colorGradient,
                     shaderType = backgroundImageColor.shaderType,
                     modifier = Modifier.fillMaxSize()
                 )

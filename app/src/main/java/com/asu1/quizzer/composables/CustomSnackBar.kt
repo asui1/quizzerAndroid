@@ -1,10 +1,8 @@
 package com.asu1.quizzer.composables
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -16,10 +14,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,9 +30,8 @@ fun CustomSnackbarInfo(
 ) {
     val backgroundColor = MaterialTheme.colorScheme.surfaceContainer
     val contentColor = MaterialTheme.colorScheme.onSurface
-    val borderColor = MaterialTheme.colorScheme.outline
 
-    DrawSnackbar(backgroundColor, borderColor, message, contentColor)
+    DrawSnackbar(backgroundColor, message, contentColor)
 }
 
 @Composable
@@ -42,9 +40,8 @@ fun CustomSnackbarError(
 ) {
     val backgroundColor = MaterialTheme.colorScheme.errorContainer
     val contentColor = MaterialTheme.colorScheme.onErrorContainer
-    val borderColor = MaterialTheme.colorScheme.error
 
-    DrawSnackbar(backgroundColor, borderColor, message, contentColor)
+    DrawSnackbar(backgroundColor, message, contentColor)
 }
 
 @Composable
@@ -53,14 +50,12 @@ fun CustomSnackbarSuccess(
 ) {
     val backgroundColor = MaterialTheme.colorScheme.primaryContainer
     val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-    val borderColor = MaterialTheme.colorScheme.outline
 
-    DrawSnackbar(backgroundColor, borderColor, message, contentColor)
+    DrawSnackbar(backgroundColor, message, contentColor)
 }
 @Composable
 private fun DrawSnackbar(
     backgroundColor: Color,
-    borderColor: Color,
     message: String,
     contentColor: Color
 ) {
@@ -68,12 +63,7 @@ private fun DrawSnackbar(
         containerColor = backgroundColor,
         contentColor = contentColor,
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .border(
-                width = 2.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(8.dp),
-            ),
+        modifier = Modifier,
         action = {
         }
     ) {
@@ -88,8 +78,11 @@ fun CustomSnackbarHost(
     hostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier

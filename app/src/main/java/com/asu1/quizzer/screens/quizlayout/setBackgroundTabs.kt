@@ -30,7 +30,7 @@ import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.resources.R
-import com.asu1.resources.ShaderType
+import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun BackgroundTabs(

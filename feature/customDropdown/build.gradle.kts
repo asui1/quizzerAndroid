@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(project(":feature:customButton"))
     implementation(project(":core:resource"))
+    implementation(project(":core:util"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

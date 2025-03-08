@@ -23,16 +23,6 @@ const val NOTIFICATION_ID = 1343
 const val NOTIFICATION_CHANNEL_NAME = "quizzer music notification channel 1343"
 const val NOTIFICATION_CHANNEL_ID = "quizzer music notification channel id 1343"
 
-enum class ShaderType(val shaderName: Int, val index: Int) {
-    Brush1(R.string.left_bottom, 0),
-    Brush2(R.string.left, 1),
-    Brush3(R.string.top, 2),
-    Brush4(R.string.diagonal, 3),
-    Brush5(R.string.horizontal, 4),
-    Brush6(R.string.vertical, 5),
-    Brush7(R.string.top_down, 6);
-}
-
 enum class TextStyles{
     QUESTION,
     ANSWER,

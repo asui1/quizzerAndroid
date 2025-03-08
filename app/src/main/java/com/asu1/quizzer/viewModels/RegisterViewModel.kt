@@ -6,11 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.asu1.appdata.stringFilter.StringFilterRepository
 import com.asu1.resources.R
 import com.asu1.utils.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val stringFilterRepository: StringFilterRepository,
+) : ViewModel() {
+
     private val _registerStep = MutableLiveData(0)
     val registerStep: LiveData<Int> get() = _registerStep
 
@@ -56,25 +63,41 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun setNickName(nickName: String){
-        Logger.debug("Set nickname")
         if(nickName.isEmpty()){
             ToastManager.showToast(R.string.please_enter_a_nickname, ToastType.ERROR)
             _isError.value = true
+            return
         }
-        else{
-            viewModelScope.launch {
-                val response = com.asu1.network.RetrofitInstance.api.checkDuplicateNickname(nickName)
-                if(response.isSuccessful){
-                    if(response.code() == 200){
-                        Logger.debug("Can use this nickname")
-                        _nickname.value = nickName
-                        _registerStep.postValue(2)
-                    }
+
+
+        viewModelScope.launch {
+            val containsAdminWord = stringFilterRepository.containsAdminWord(nickName)
+            val containsInappropriateWord = stringFilterRepository.containsInappropriateWord(nickName)
+            if (containsAdminWord || containsInappropriateWord) {
+                _isError.postValue(true)
+
+                // 🚨 Show appropriate toast message
+                val messageRes = when {
+                    containsInappropriateWord -> R.string.nickname_contains_inappropriate_word
+                    containsAdminWord -> R.string.nickname_contains_admin_word
+                    else -> R.string.can_not_use_this_nickname // Fallback (should not happen)
                 }
-                else {
-                    _isError.postValue(true)
-                    ToastManager.showToast(R.string.can_not_use_this_nickname, ToastType.ERROR)
+
+                ToastManager.showToast(messageRes, ToastType.ERROR)
+                return@launch
+            }
+
+            val response = com.asu1.network.RetrofitInstance.api.checkDuplicateNickname(nickName)
+            if(response.isSuccessful){
+                if(response.code() == 200){
+                    Logger.debug("Can use this nickname")
+                    _nickname.value = nickName
+                    _registerStep.postValue(2)
                 }
+            }
+            else {
+                _isError.postValue(true)
+                ToastManager.showToast(R.string.can_not_use_this_nickname, ToastType.ERROR)
             }
         }
     }
@@ -110,10 +133,19 @@ class RegisterViewModel : ViewModel() {
         val tags = _tags.value?.toMutableList() ?: mutableListOf()
         if(tags.contains(tag)){
             tags.remove(tag)
+            _tags.postValue(tags.toSet())
         }
         else{
-            tags.add(tag)
+            viewModelScope.launch {
+                val containsInappropriateWord = stringFilterRepository.containsInappropriateWord(tag)
+                if (containsInappropriateWord) {
+                    _isError.postValue(true)
+                    ToastManager.showToast(R.string.contains_inappropriate_word, ToastType.ERROR)
+                    return@launch
+                }
+                tags.add(tag)
+                _tags.postValue(tags.toSet())
+            }
         }
-        _tags.postValue(tags.toSet())
     }
 }

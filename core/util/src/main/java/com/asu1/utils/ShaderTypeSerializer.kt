@@ -1,6 +1,6 @@
 package com.asu1.utils
 
-import com.asu1.resources.ShaderType
+import com.asu1.utils.shaders.ShaderType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,14 +46,15 @@ import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter.isKo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 val tabTitles = persistentListOf(
     R.string.main,
-    R.string.lck,
-    R.string.coding,
-    R.string.health,
-    R.string.entertainment,
-    R.string.history
+//    R.string.lck,
+//    R.string.coding,
+//    R.string.health,
+//    R.string.entertainment,
+//    R.string.history
 )
 
 @Composable
@@ -194,7 +194,7 @@ fun PrivacyPolicyRow(
             modifier = Modifier.padding(start = 16.dp)
                 .clickable {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:whwkd122@gmail.com?subject=[Quizzer] ")
+                        data = "mailto:whwkd122@gmail.com?subject=[Quizzer] ".toUri()
                     }
                     context.startActivity(intent)
                 },

@@ -42,7 +42,7 @@ import com.asu1.resources.R
 @Composable
 fun InquiryBottomSheetContent(
     onDismissRequest: () -> Unit,
-    userData: UserViewModel.UserDatas?,
+    userData: UserViewModel.UserData?,
     isDone: Boolean,
     onSendInquiry: (String, String, String) -> Unit
 ) {

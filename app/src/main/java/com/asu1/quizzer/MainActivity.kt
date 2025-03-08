@@ -352,7 +352,7 @@ class MainActivity : ComponentActivity() {
                                     email = email,
                                     profileUri = profileUri,
                                     login = {
-                                        userViewModel.login(email)
+                                        userViewModel.login(email, profileUri)
                                     }
                                 )
                             }

@@ -26,18 +26,4 @@ class SearchSuggestionRepository @Inject constructor(
             dao.getFilteredSuggestions(searchText, lang)
         }
     }
-
-
-    suspend fun increasePriority(query: String, maxPriority: Int) = withContext(Dispatchers.IO) {
-        dao.increasePriority(query, maxPriority)
-    }
-
-    suspend fun decayOldPriorities() = withContext(Dispatchers.IO) {
-        dao.decayOldPriorities()
-    }
-
-    suspend fun clearAll() = withContext(Dispatchers.IO) {
-        dao.clearAll()
-    }
 }
-

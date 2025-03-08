@@ -12,9 +12,9 @@ import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.scorecard.ScoreCard
-import com.asu1.resources.ShaderType
 import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.images.processImage
+import com.asu1.utils.shaders.ShaderType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -112,18 +112,20 @@ class ScoreCardViewModel : ViewModel() {
     }
 
     private fun updateRemoveOverlayImageBackground(remove: Boolean){
-        _removeOverlayImageBackground.value = remove
         if(_overlayImage.value == null){
+            _removeOverlayImageBackground.value = remove
             return
         }
         if(remove){
             viewModelScope.launch(Dispatchers.Default) {
                 processImage(_overlayImage.value!!, viewModelScope){
                     _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = it))
+                    _removeOverlayImageBackground.value = true
                 }
             }
         }else{
             _scoreCard.value = _scoreCard.value.copy(background = _scoreCard.value.background.copy(overlayImage = _overlayImage.value!!))
+            _removeOverlayImageBackground.value = false
         }
     }
 

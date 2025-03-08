@@ -42,7 +42,7 @@ import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.ScoreCardViewModelActions
 import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
 import com.asu1.resources.R
-import com.asu1.resources.ShaderType
+import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun DesignScoreCardTools(

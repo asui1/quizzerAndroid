@@ -5,7 +5,7 @@ import com.asu1.appdata.music.MusicAllInOne
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.google.common.collect.ImmutableSet
 
-val userDataTest = UserViewModel.UserDatas("whwkd122@gmail.com", "whwkd122", null, ImmutableSet.of("tag1", "tag2"))
+val userDataTest = UserViewModel.UserData("whwkd122@gmail.com", "whwkd122", null, ImmutableSet.of("tag1", "tag2"))
 
 val sampleMusicList = listOf<MusicAllInOne>(
     MusicAllInOne(

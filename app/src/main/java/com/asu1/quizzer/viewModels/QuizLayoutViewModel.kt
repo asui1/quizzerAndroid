@@ -37,7 +37,6 @@ import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.LayoutSteps
 import com.asu1.resources.R
-import com.asu1.resources.ShaderType
 import com.asu1.resources.ViewModelState
 import com.asu1.resources.borders
 import com.asu1.resources.colors
@@ -48,6 +47,7 @@ import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
 import com.asu1.utils.calculateSeedColor
 import com.asu1.utils.images.createEmptyBitmap
+import com.asu1.utils.shaders.ShaderType
 import com.asu1.utils.toScheme
 import com.asu1.utils.withPrimaryColor
 import com.asu1.utils.withSecondaryColor
@@ -68,6 +68,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
 import java.util.Base64
+import androidx.core.graphics.createBitmap
 
 class QuizLayoutViewModel : ViewModel() {
     private val _viewModelState = MutableLiveData(ViewModelState.IDLE)
@@ -167,6 +168,7 @@ class QuizLayoutViewModel : ViewModel() {
                     ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
                 }
             } catch (e: Exception) {
+                Logger.debug("Failed to load quiz result ${e.message}")
                 _viewModelState.postValue(ViewModelState.ERROR)
                 ToastManager.showToast(R.string.failed_to_load_quiz_result, ToastType.ERROR)
             }
@@ -253,7 +255,7 @@ class QuizLayoutViewModel : ViewModel() {
     fun loadQuizData(quizData: QuizDataSerializer, quizTheme: QuizTheme) {
         val decodedBytes = Base64.getDecoder().decode(quizData.titleImage)
         val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-            ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply {
+            ?: createBitmap(1, 1).apply {
                 eraseColor(android.graphics.Color.TRANSPARENT)
             }
         _quizData.value = QuizData(

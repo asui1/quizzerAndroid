@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
@@ -61,7 +61,7 @@ const val registerSteps = 3
 @Composable
 fun RegisterScreen(
     navController: NavHostController,
-    registerViewModel: RegisterViewModel = viewModel(),
+    registerViewModel: RegisterViewModel = hiltViewModel(),
     email: String = "",
     profileUri: String = "",
     login: () -> Unit = {},
@@ -142,7 +142,7 @@ fun RegisterScreen(
                         onProceed = {
                             registerViewModel.setNickName(it)
                         },
-                        isError = isError ?: false,
+                        isError = isError == true,
                         undoError = {
                             registerViewModel.undoError()
                         },
@@ -280,7 +280,7 @@ fun EnterRegisterInputData(
                     isError = isError,
                     label = {
                         if (isError) Text(
-                            text = stringResource(R.string.duplicate_nickname),
+                            text = stringResource(R.string.can_not_use_this_nickname),
                             color = MaterialTheme.colorScheme.error
                         )
                         else
@@ -332,10 +332,10 @@ fun NicknameInputPreview() {
 
 @Composable
 fun TagSetting(
+    modifier: Modifier = Modifier,
     tags: Set<String> = emptySet(),
     toggleTag: (String) -> Unit = {},
     register: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val tagFocusRequester = remember { FocusRequester() }
     Column(

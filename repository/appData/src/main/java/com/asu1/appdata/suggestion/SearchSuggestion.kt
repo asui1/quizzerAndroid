@@ -6,7 +6,7 @@ import androidx.room.*
 @Entity(tableName = "search_suggestions")
 data class SearchSuggestion(
     @PrimaryKey
-    @ColumnInfo(name = "rowid") // 🔹 Maps `rowid` as an implicit primary key
+    @ColumnInfo(name = "rowid")
     val id: Int = 0,
 
     @ColumnInfo(name = "query")

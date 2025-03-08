@@ -28,7 +28,7 @@ import com.asu1.resources.R
 @Composable
 fun SignoutBottomSheetContent(
     onDismissRequest: () -> Unit,
-    userData: UserViewModel.UserDatas?,
+    userData: UserViewModel.UserData?,
     isDone: Boolean = false,
     onSendSignOut: (String) -> Unit = { },
 ){

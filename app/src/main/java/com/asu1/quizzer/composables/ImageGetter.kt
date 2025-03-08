@@ -41,8 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import androidx.compose.ui.zIndex
-import com.asu1.quizcard.loadImageAsByteArray
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.util.launchPhotoPicker
 import com.asu1.quizzer.util.uriToByteArray
@@ -147,12 +145,9 @@ fun ImageGetter(
 
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ImageGetterPreview() {
-    val context = LocalContext.current
-    val image = loadImageAsByteArray(context, R.drawable.question2)
-
     com.asu1.resources.QuizzerAndroidTheme {
         ImageGetter(
             topbar = {modifier ->

@@ -57,8 +57,8 @@ import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
-import com.asu1.resources.ShaderType
 import com.asu1.resources.paletteSize
+import com.asu1.utils.shaders.ShaderType
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme

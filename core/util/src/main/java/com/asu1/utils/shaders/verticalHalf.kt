@@ -18,15 +18,12 @@ val verticalhalf = """
         float y = uv.y;
         float value;
         
-        if (y <= 0.4) {
-            value = 0.0;
-        } else if (y <= 0.6) {
-            float noise = random(fragCoord * 0.1) * 0.2; // Adding slight noise
-            value = smoothstep(0.0, 1.0, (y - 0.4) / 0.2 + noise);
-        } else {
-            value = 1.0;
-        }
-        
+        // Generate a smooth noise value based on pixel position
+        float noise = (random(fragCoord * 0.05) - 0.5) * 0.1; // Reduced noise intensity
+
+        // Smooth transition from 0.3 to 0.7 with slight noise
+        value = smoothstep(0.3, 0.7, y + noise);
+
         return mix(color, color2, value);
     }
     """.trimIndent()
