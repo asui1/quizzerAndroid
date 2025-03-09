@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
 fun IconButtonWithText(
@@ -92,7 +93,7 @@ fun IconWithTextBody(
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodySmall,
+            style = QuizzerTypographyDefaults.quizzerIconLabel,
             maxLines = 2,
         )
     }

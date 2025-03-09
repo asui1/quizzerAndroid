@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -159,14 +158,14 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
     ) {
         Text(
             text = quizCard.title,
-            style = QuizzerTypographyDefaults.quizTitleMedium,
+            style = QuizzerTypographyDefaults.quizzerIconLabel,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = quizCard.creator,
-            style = QuizzerTypographyDefaults.quizCreatorSmall,
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

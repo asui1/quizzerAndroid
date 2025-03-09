@@ -32,6 +32,7 @@ import com.asu1.custombuttons.TextDivider
 import com.asu1.quizzer.util.GoogleCredentialManager
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 
@@ -100,7 +101,7 @@ private fun LoginBody(
             text = {
                 Text(
                     text = stringResource(R.string.login),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = QuizzerTypographyDefaults.quizzerUI,
                 )
             }
         )
@@ -119,11 +120,11 @@ private fun LoginBody(
             text = {
                 Text(
                     text = stringResource(R.string.register),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = QuizzerTypographyDefaults.quizzerUI,
                 )
             }
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Image(
             painter = painterResource(id = R.drawable.android_neutral_rd_na), // Replace with your drawable resource
             contentDescription = "Continue with Google",

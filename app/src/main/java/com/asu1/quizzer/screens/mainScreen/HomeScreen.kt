@@ -1,7 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,14 +45,15 @@ import com.asu1.utils.LanguageSetter.isKo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.asu1.resources.QuizzerTypographyDefaults
 
 val tabTitles = persistentListOf(
     R.string.main,
-//    R.string.lck,
-//    R.string.coding,
-//    R.string.health,
-//    R.string.entertainment,
-//    R.string.history
+    R.string.lck,
+    R.string.coding,
+    R.string.health,
+    R.string.entertainment,
+    R.string.history
 )
 
 @Composable
@@ -122,8 +121,7 @@ fun HomeScreen(
                     Text(
                         text = remember{if(isKo) changeTagToText(item.tag) else item.tag},
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 2.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = QuizzerTypographyDefaults.quizzerQuizCardListTitle,
                     )
                     if (index == 0) {
                         HorizontalQuizCardItemLarge(quizCards = item.quizCards,
@@ -182,14 +180,17 @@ fun PrivacyPolicyRow(
         TextButton(onClick = {
             moveToPrivacyPolicy()
         }) {
-            Text(stringResource(R.string.privacy_policy))
+            Text(
+                stringResource(R.string.privacy_policy),
+                style = QuizzerTypographyDefaults.quizzerUI,
+            )
         }
         Text(
             text = buildString {
                 append(stringResource(R.string.contact))
                 append(": whwkd122@gmail.com")
             },
-            style = MaterialTheme.typography.bodySmall,
+            style = QuizzerTypographyDefaults.quizzerUI,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(start = 16.dp)
                 .clickable {

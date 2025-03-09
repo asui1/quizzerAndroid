@@ -19,6 +19,7 @@ import com.asu1.quizzer.screens.mainScreen.UserProfilePic
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,7 +36,7 @@ fun MainActivityTopbar(
         body = {
             Text(
                 "Quizzer",
-                style = MaterialTheme.typography.headlineSmall
+                style = QuizzerTypographyDefaults.quizzerTopBarTitle
             )
         },
         actions = {

@@ -47,13 +47,22 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.asu1.quizzer.composables.TagSetter
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.keyboardAsState
 import com.asu1.quizzer.viewModels.RegisterViewModel
+import com.asu1.quizzer.viewModels.RegisterViewModelActions
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 const val registerSteps = 3
@@ -69,7 +78,10 @@ fun RegisterScreen(
     val registerStep by registerViewModel.registerStep.observeAsState(0)
     val nickname by registerViewModel.nickname.observeAsState()
     val isError by registerViewModel.isError.observeAsState()
-    val tags by registerViewModel.tags.observeAsState(emptySet())
+    val tags by registerViewModel.tags.map { it.toPersistentSet()}
+        .collectAsStateWithLifecycle(
+            persistentSetOf()
+        )
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { registerSteps-1 },
@@ -80,8 +92,7 @@ fun RegisterScreen(
     )
 
     LaunchedEffect(Unit){
-        registerViewModel.setEmail(email)
-        registerViewModel.setPhotoUri(profileUri)
+        registerViewModel.registerViewModelActions(RegisterViewModelActions.IdInit(email, profileUri))
     }
 
     LaunchedEffect(registerStep) {
@@ -118,7 +129,7 @@ fun RegisterScreen(
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             Text(
                 text = stringResource(R.string.register),
-                style = MaterialTheme.typography.titleMedium,
+                style = QuizzerTypographyDefaults.quizzerQuizCardListTitle,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             LinearProgressIndicator(
@@ -139,24 +150,12 @@ fun RegisterScreen(
 
                     1 -> EnterRegisterInputData(
                         nickname = nickname ?: "",
-                        onProceed = {
-                            registerViewModel.setNickName(it)
+                        registerViewModelAction = {action ->
+                            registerViewModel.registerViewModelActions(action)
                         },
                         isError = isError == true,
-                        undoError = {
-                            registerViewModel.undoError()
-                        },
                         tags = tags,
-                        toggleTag = {
-                            registerViewModel.toggleTag(it)
-                        },
-                        register = {
-                            registerViewModel.register()
-                        },
-                        registerStep = registerStep,
-                        onBackPressed = {
-                            registerViewModel.moveBack()
-                        }
+                        registerStep = registerStep
                     )
                 }
             }
@@ -168,7 +167,6 @@ fun RegisterScreen(
 fun UsageAgreement(
     onProceed: () -> Unit = {},
 ) {
-    // Usage Agreement UI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -180,11 +178,12 @@ fun UsageAgreement(
         ) {
             Text(
                 text = stringResource(R.string.privacy_policy),
-                style = MaterialTheme.typography.headlineMedium
+                style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = stringResource(R.string.privacy_policy_body)
+                text = stringResource(R.string.privacy_policy_body),
+                style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
             )
             Spacer(modifier = Modifier.padding(32.dp))
         }
@@ -197,7 +196,10 @@ fun UsageAgreement(
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            Text(text = stringResource(R.string.agree))
+            Text(
+                text = stringResource(R.string.agree),
+                style = QuizzerTypographyDefaults.quizzerIconLabel
+            )
         }
     }
 }
@@ -214,14 +216,10 @@ fun UsageAgreementPreview() {
 @Composable
 fun EnterRegisterInputData(
     nickname : String = "",
-    onProceed: (String) -> Unit = {_ -> },
+    registerViewModelAction: (RegisterViewModelActions) -> Unit = {},
     isError : Boolean = false,
-    undoError: () -> Unit = {},
     registerStep: Int = 1,
-    tags: Set<String> = emptySet(),
-    toggleTag: (String) -> Unit = {},
-    onBackPressed: () -> Unit = {},
-    register: () -> Unit = {},
+    tags: PersistentSet<String> = persistentSetOf<String>(),
 ) {
     // Nickname Input UI
     val focusRequester = remember("Nickname") { FocusRequester() }
@@ -235,7 +233,7 @@ fun EnterRegisterInputData(
             if(stacks.intValue == 0){
                 keyboardController?.hide()
             }
-            onBackPressed()
+            registerViewModelAction(RegisterViewModelActions.MoveBack)
         }
         else{
             stacks.intValue++
@@ -260,8 +258,12 @@ fun EnterRegisterInputData(
                 ) {
                     TagSetting(
                         tags = tags,
-                        toggleTag = toggleTag,
-                        register = register,
+                        toggleTag = {tag ->
+                            registerViewModelAction(RegisterViewModelActions.ToggleTag(tag))
+                        },
+                        register = {
+                            registerViewModelAction(RegisterViewModelActions.Register)
+                        },
                         modifier = Modifier.fillMaxWidth().wrapContentHeight()
                     )
                 }
@@ -274,7 +276,7 @@ fun EnterRegisterInputData(
                     onValueChange = { textfieldvalue ->
                         if (textfieldvalue.text.length <= 12) {
                             localNickname = textfieldvalue
-                            undoError()
+                            registerViewModelAction(RegisterViewModelActions.UndoError)
                         }
                     },
                     isError = isError,
@@ -294,7 +296,8 @@ fun EnterRegisterInputData(
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            if (localNickname.text.length <= 12) onProceed(localNickname.text)
+                            if (localNickname.text.length <= 12)
+                                registerViewModelAction(RegisterViewModelActions.SetNickName(localNickname.text))
                         }
                     ),
                     supportingText = {
@@ -357,7 +360,10 @@ fun TagSetting(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.register))
+            Text(
+                text = stringResource(R.string.register),
+                style = QuizzerTypographyDefaults.quizzerIconLabel
+            )
         }
     }
     LaunchedEffect(Unit) {

@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcardmodel.QuizCard
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.coroutines.launch
 
@@ -44,6 +45,7 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
     quizList: List<T>,
     deleteQuiz: (String) -> Unit = {},
     content: @Composable (T, Int) -> Unit,
+    emptyStringResource: Int = R.string.no_quizzes_found
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var deleteUuid by remember { mutableStateOf("") }
@@ -78,8 +80,8 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
         if (quizList.isEmpty()) {
             item {
                 Text(
-                    stringResource(R.string.no_quizzes_found),
-                    style = MaterialTheme.typography.bodyMedium,
+                    stringResource(emptyStringResource),
+                    style = QuizzerTypographyDefaults.quizzerBodyMedium,
                 )
             }
         } else {

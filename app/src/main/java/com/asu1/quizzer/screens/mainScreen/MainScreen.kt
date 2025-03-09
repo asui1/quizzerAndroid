@@ -250,8 +250,9 @@ fun MainScreen(
                                 )
                             }
                         }
-                        UserSettings(
-                            settingItems = remember(isLoggedIn){listOfNotNull(
+                        UserSettingsScreen(
+                            settingItems =
+                                remember(isLoggedIn){listOfNotNull(
                                 Pair(R.string.my_quizzes, {navigateTo(Route.LoadUserQuiz)}),
                                 Pair(R.string.my_activities, {navigateTo(Route.MyActivities)}),
                                 Pair(R.string.notification, {navigateTo(Route.Notifications)}),

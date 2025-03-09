@@ -24,14 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.pageindicator.HorizontalPageIndicator
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
 fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -55,7 +56,7 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
                 .fillMaxWidth()
                 .wrapContentHeight(),
         ) { page ->
-            QuizCardLarge(quizCards[page], onClick)
+            QuizCardLarge(quizCard = quizCards[page], onClick = onClick)
         }
         HorizontalPageIndicator(
             pageCount = quizCards.size,
@@ -67,10 +68,19 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
 }
 
 @Composable
-fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: Modifier = Modifier) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = remember{configuration.screenWidthDp.dp}
-    val screenHeight = remember{configuration.screenHeightDp.dp}
+fun QuizCardLarge(
+    modifier: Modifier = Modifier,
+    quizCard: QuizCard,
+    onClick: (String) -> Unit = {},
+) {
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }
+    }
     val minSize = minOf(screenWidth, screenHeight).times(0.55f)
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -97,16 +107,15 @@ fun QuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, modifier: 
             ) {
                 Text(
                     text = quizCard.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.creator,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Light,
                     maxLines = 1,
                 )
                 Spacer(modifier = Modifier.weight(2f))

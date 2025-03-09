@@ -22,14 +22,14 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class QuizLoadViewModel: ViewModel() {
-    private val _quizList = MutableStateFlow<MutableList<QuizLayoutSerializer>?>(null)
-    val quizList: StateFlow<MutableList<QuizLayoutSerializer>?> = _quizList.asStateFlow()
+    private val _quizList = MutableStateFlow<List<QuizLayoutSerializer>?>(null)
+    val quizList: StateFlow<List<QuizLayoutSerializer>?> = _quizList.asStateFlow()
 
     private val _loadComplete = MutableLiveData(ViewModelState.IDLE)
     val loadComplete: MutableLiveData<ViewModelState> get() = _loadComplete
 
-    private val _myQuizList = MutableStateFlow<MutableList<com.asu1.quizcardmodel.QuizCard>?>(null)
-    val myQuizList: StateFlow<MutableList<com.asu1.quizcardmodel.QuizCard>?> = _myQuizList.asStateFlow()
+    private val _myQuizList = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>?>(null)
+    val myQuizList: StateFlow<List<com.asu1.quizcardmodel.QuizCard>?> = _myQuizList.asStateFlow()
 
     fun reset(){
         _quizList.value = null

@@ -1,8 +1,5 @@
 package com.asu1.quizcard
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
@@ -15,11 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.resources.QuizzerTypographyDefaults
 
-fun loadImageAsByteArray(context: Context, resId: Int): Bitmap {
-    val bitmap = BitmapFactory.decodeResource(context.resources, resId)
-    return bitmap
-}
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagsView(tags: List<String>, modifier: Modifier = Modifier, maxLines: Int = 2) {
@@ -28,10 +20,10 @@ fun TagsView(tags: List<String>, modifier: Modifier = Modifier, maxLines: Int = 
         maxLines = maxLines,
     ) {
         tags.forEach { tag ->
-            Text(text = tag,
+            Text(text = "#$tag",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(end = 4.dp),
-                style = QuizzerTypographyDefaults.quizTags,
+                style = QuizzerTypographyDefaults.quizzerQuizCardTags,
                 overflow = TextOverflow.Ellipsis,
             )
         }

@@ -2,7 +2,10 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/gothic_a1_bold</item>
+        <item>@font/gothic_a1_extrabold</item>
         <item>@font/gothic_a1_light</item>
         <item>@font/gothic_a1_medium</item>
+        <item>@font/gothic_a1_regular</item>
+        <item>@font/gothic_a1_semibold</item>
     </array>
 </resources>

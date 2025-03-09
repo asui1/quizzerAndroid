@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.asu1.quizzer.composables.CustomSnackbarHost
 import com.asu1.quizzer.screens.mainScreen.InitializationScreen
-import com.asu1.quizzer.screens.mainScreen.LoadMyQuiz
+import com.asu1.quizzer.screens.mainScreen.LoadMyQuizScreen
 import com.asu1.quizzer.screens.mainScreen.LoginScreen
 import com.asu1.quizzer.screens.mainScreen.MainScreen
 import com.asu1.quizzer.screens.mainScreen.MyActivitiesScreen
@@ -506,7 +506,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
-                                LoadMyQuiz(
+                                LoadMyQuizScreen(
                                     navController = navController,
                                     quizLoadViewModel = quizLoadViewModel,
                                     email = userViewModel.userData.value?.email ?: ""

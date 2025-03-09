@@ -4,7 +4,9 @@ import com.asu1.baseinterfaces.Identifiable
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID
+import androidx.compose.runtime.Immutable
 
+@Immutable
 @Serializable(with = KQuizCardDeserializer::class)
 data class QuizCard(
     @SerializedName("id")

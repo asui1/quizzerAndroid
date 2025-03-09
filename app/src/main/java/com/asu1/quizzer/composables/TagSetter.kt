@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.resources.R
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -56,7 +57,7 @@ fun TagSetter(
     ) {
         Text(
             text = stringResource(R.string.select_tags_that_interest_you),
-            style = MaterialTheme.typography.titleMedium,
+            style = QuizzerTypographyDefaults.quizzerTitleMedium,
         )
         FlowRow(
             modifier = Modifier
@@ -79,7 +80,10 @@ fun TagSetter(
                                 contentColor = MaterialTheme.colorScheme.primary
                             ),
                         ) {
-                            Text(text = tag)
+                            Text(
+                                text = tag,
+                                style = QuizzerTypographyDefaults.quizzerQuizCardTags,
+                            )
                         }
                     }
                 }

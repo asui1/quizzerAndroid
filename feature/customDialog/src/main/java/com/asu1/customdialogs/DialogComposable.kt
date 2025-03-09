@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
 fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
@@ -21,18 +22,25 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
     val context = LocalContext.current
     AlertDialog(
         onDismissRequest = onCancel,
-        title = { Text(text = stringResource(title),
-            style = MaterialTheme.typography.headlineSmall,
+        title = { Text(
+            text = stringResource(title),
+            style = QuizzerTypographyDefaults.quizzerTopBarTitle,
         ) },
-        text = { Text(
-            stringResource(message),
-            style  = MaterialTheme.typography.bodyMedium) },
+        text = {
+            Text(
+                stringResource(message),
+                style  = QuizzerTypographyDefaults.quizzerBodyMedium,
+            )
+        },
         confirmButton = {
             Button(
                 onClick = { onContinue(context) },
                 modifier = Modifier.width(width * 1.5f),
             ) {
-                Text(stringResource(onContinueText))
+                Text(
+                    stringResource(onContinueText),
+                    style  = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+                )
             }
         },
         dismissButton ={
@@ -45,6 +53,7 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
             ) {
                 Text(
                     stringResource(onCancelText),
+                    style  = QuizzerTypographyDefaults.quizzerQuizCardDescription,
                     color = MaterialTheme.colorScheme.error,
                 )
             }

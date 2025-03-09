@@ -9,9 +9,13 @@ fun generateInAppropriateWordVariants(input: String): List<String>{
     val noSpaces = input.replace(" ", "")
 
     val normalized = noSpaces.map { normalizationMap[it] ?: it }.joinToString("")
-    val onlyLetters = noSpaces.filter { it.isLetter() || it == '\n' }
+    val onlyLetters = noSpaces.filter { isKoreanLetter(it) || it == '\n' }
 
     return listOf(noSpaces, normalized, onlyLetters)
+}
+
+fun isKoreanLetter(c: Char): Boolean {
+    return c.isLetter() || c in '\u3131'..'\u3163' // Includes Jamo (ㄱ-ㅣ)
 }
 
 val normalizationMap = mapOf(

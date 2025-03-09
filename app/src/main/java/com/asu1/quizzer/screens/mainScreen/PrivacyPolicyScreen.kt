@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.util.Route
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @Composable
@@ -42,7 +43,10 @@ fun PrivacyPolicy(navController: NavController) {
                     }
                 },
                 body = {
-                    Text(text = stringResource(R.string.privacy_policy))
+                    Text(
+                        text = stringResource(R.string.privacy_policy),
+                        style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+                    )
                 },
             )
         },

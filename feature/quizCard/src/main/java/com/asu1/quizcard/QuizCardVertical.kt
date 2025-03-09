@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,14 +40,20 @@ import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = remember{configuration.screenWidthDp.dp}
-    val screenHeight = remember{configuration.screenHeightDp.dp}
-    val minSize = remember{minOf(screenWidth, screenHeight).times(0.45f).coerceAtMost(400.dp)}
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }
+    }
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
+    val minSize = remember{minOf(screenWidth, screenHeight).times(0.40f).coerceAtMost(400.dp)}
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         modifier = Modifier
@@ -98,14 +106,14 @@ fun VerticalQuizCardLargeBody(
             ) {
                 Text(
                     text = quizCard.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.creator,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Light,
                     maxLines = 1,
@@ -119,15 +127,16 @@ fun VerticalQuizCardLargeBody(
                         .padding(horizontal = 4.dp),
                     maxLines = 3,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = buildString {
                         append(stringResource(R.string.solved))
                         append(quizCard.count)
                     },
-                    style = MaterialTheme.typography.bodySmall
+                    style = QuizzerTypographyDefaults.quizzerQuizCardDescription
                 )
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
@@ -136,7 +145,7 @@ fun VerticalQuizCardLargeBody(
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp),
             text = quizCard.description,
-            style = MaterialTheme.typography.bodySmall,
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
             minLines = 1,
             maxLines = 6,
         )

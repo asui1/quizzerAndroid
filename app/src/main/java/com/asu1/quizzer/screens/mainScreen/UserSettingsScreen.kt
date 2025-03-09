@@ -3,7 +3,6 @@ package com.asu1.quizzer.screens.mainScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,21 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
-const val dividedIndex = 2
 @Composable
-fun UserSettings(
+fun UserSettingsScreen(
     userData: UserViewModel.UserData?,
     settingItems: PersistentList<Pair<Int, () -> Unit>>,
     isLoggedIn: Boolean = false,
@@ -83,15 +80,18 @@ fun UserSettings(
                     },
                     iconSIze = 72.dp,
                 )
-                Text(userData?.nickname ?: "Guest", modifier = Modifier.constrainAs(nickname) {
+                Text(
+                    userData?.nickname ?: "Guest",
+                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
+                    modifier = Modifier.constrainAs(nickname) {
                     top.linkTo(icon.top)
                     start.linkTo(icon.end, margin = 8.dp)
                     bottom.linkTo(email.top)
                 })
-                Text(userData?.email ?: "",
-                    fontSize = 9.sp,
+                Text(
+                    userData?.email ?: "",
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     maxLines = 1,
-                    fontWeight = FontWeight.Light,
                     modifier = Modifier.constrainAs(email) {
                     top.linkTo(nickname.bottom)
                     start.linkTo(icon.end, margin = 8.dp)
@@ -123,13 +123,10 @@ fun UserSettings(
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(vertical = 4.dp)
                     .fillMaxWidth()
             ) {
                 settingItems.forEachIndexed { index, item ->
-                    if (index == dividedIndex) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
                     TextButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = item.second,
@@ -141,7 +138,7 @@ fun UserSettings(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .fillMaxWidth(),
-                            style = MaterialTheme.typography.labelMedium
+                            style = QuizzerTypographyDefaults.quizzerUI
                         )
                     }
                 }
@@ -154,7 +151,7 @@ fun UserSettings(
 @Composable
 fun DrawerPreview(){
     com.asu1.resources.QuizzerAndroidTheme {
-        UserSettings(
+        UserSettingsScreen(
             userData = userDataTest,
             settingItems = listOfNotNull(
                 Pair(R.string.my_quizzes, {}),

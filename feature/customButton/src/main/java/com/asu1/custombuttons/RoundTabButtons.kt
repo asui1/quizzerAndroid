@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
 fun RoundTab(
@@ -28,7 +29,7 @@ fun RoundTab(
 ) {
     Text(
         text = title,
-        fontSize = 16.sp,
+        style = QuizzerTypographyDefaults.quizzerRoundTab,
         color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
         overflow = TextOverflow.Ellipsis, // Prevents text from being clipped
         maxLines = 1,

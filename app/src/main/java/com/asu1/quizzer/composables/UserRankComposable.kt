@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.animations.UserRankAnimation
 import com.asu1.quizzer.screens.mainScreen.UriImageButton
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRank
 import java.util.Locale
@@ -45,9 +48,14 @@ fun UserRankComposable(
     userRank: UserRank,
     rank: Int
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val screenHeight = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
+    val screenWidth = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }
+    }
     val minSize = remember(screenWidth){
         minOf(minOf(screenWidth, screenHeight).times(0.2f), 200.dp)
     }
@@ -96,8 +104,7 @@ fun UserRankComposable(
             ) {
                 Text(
                     text = userRank.nickname,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight(700),
+                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -107,7 +114,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.points))
                         append(userRank.orderScore)
                     },
-                    style = MaterialTheme.typography.labelSmall,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -117,7 +124,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.average))
                         append(average)
                     },
-                    style = MaterialTheme.typography.labelSmall,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -127,7 +134,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.solved_quizzes))
                         append(userRank.quizzesSolved)
                     },
-                    style = MaterialTheme.typography.labelSmall,
+                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -138,9 +145,9 @@ fun UserRankComposable(
 
 @Composable
 fun UserRankComposableList(
+    modifier: Modifier = Modifier,
     userRanks: List<UserRank>,
     getMoreUserRanks: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val columnState = rememberLazyListState()
     val shouldLoadMore = remember {

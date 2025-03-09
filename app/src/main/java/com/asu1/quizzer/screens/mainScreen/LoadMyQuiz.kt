@@ -8,7 +8,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -30,34 +29,68 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.QuizCardHorizontal
+import com.asu1.quizcardmodel.QuizCard
+import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.QuizLoadViewModel
+import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.map
 
 @Composable
-fun LoadMyQuiz(
+fun LoadMyQuizScreen(
     navController: NavController,
     quizLoadViewModel: QuizLoadViewModel = viewModel(),
     onLoadQuiz: (Int) -> Unit = {},
     email: String = "",
 ) {
-    val quizList by quizLoadViewModel.myQuizList.collectAsStateWithLifecycle()
-    val quizLoadViewModelState by quizLoadViewModel.loadComplete.observeAsState()
+    val quizList by quizLoadViewModel.myQuizList.map{
+        it?.toPersistentList() ?: persistentListOf()
+    }
+        .collectAsStateWithLifecycle(persistentListOf())
+    val quizLoadViewModelState by quizLoadViewModel.loadComplete.observeAsState(
+        ViewModelState.LOADING
+    )
 
+    LoadMyQuizBody(
+        onMoveHome = {
+            navController.popBackStack(
+                Route.Home,
+                inclusive = false
+            )
+        },
+        quizLoadViewModelState = quizLoadViewModelState,
+        quizList = quizList,
+        deleteQuiz = {deleteUuid ->
+            quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
+        },
+        onLoadQuiz = {index ->
+            onLoadQuiz(index)
+        }
+    )
+
+}
+
+@Composable
+fun LoadMyQuizBody(
+    onMoveHome: () -> Unit = {},
+    quizLoadViewModelState: ViewModelState,
+    quizList: PersistentList<QuizCard>,
+    deleteQuiz: (String) -> Unit = {},
+    onLoadQuiz: (Int) -> Unit = {},
+){
     Scaffold(
         topBar = {
             QuizzerTopBarBase(
                 header = @Composable {
-                    IconButton(onClick = {
-                        navController.popBackStack(
-                            Route.Home,
-                            inclusive = false
-                        )
-                    }
+                    IconButton(onClick = onMoveHome
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -66,7 +99,10 @@ fun LoadMyQuiz(
                     }
                 },
                 body = {
-                    Text(stringResource(R.string.my_quizzes))
+                    Text(
+                        stringResource(R.string.my_quizzes),
+                        style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+                    )
                 },
             )
         }
@@ -96,10 +132,8 @@ fun LoadMyQuiz(
                     }
                     else ->{
                         LazyColumnWithSwipeToDismiss(
-                            quizList = quizList ?: mutableListOf(),
-                            deleteQuiz = {deleteUuid ->
-                                quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
-                            },
+                            quizList = quizList,
+                            deleteQuiz = deleteQuiz,
                             content = { quizCard, index ->
                                 QuizCardHorizontal(
                                     quizCard = quizCard,
@@ -114,21 +148,15 @@ fun LoadMyQuiz(
             }
         }
     }
-
-}
-
-fun getSampleMyQuizLoadViewModel(): QuizLoadViewModel{
-    val quizLoadViewModel = QuizLoadViewModel()
-    quizLoadViewModel.setTest()
-    return quizLoadViewModel
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LoadMyQuizPreview(){
-    val quizLoadViewModel = getSampleMyQuizLoadViewModel()
-    LoadMyQuiz(
-        navController = rememberNavController(),
-        quizLoadViewModel = quizLoadViewModel
-    )
+    QuizzerAndroidTheme {
+        LoadMyQuizBody(
+            quizLoadViewModelState = ViewModelState.IDLE,
+            quizList = sampleQuizCardList.toPersistentList()
+        )
+    }
 }

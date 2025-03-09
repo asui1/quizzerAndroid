@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.contentDescription
@@ -31,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
+import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
 fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
@@ -65,7 +64,6 @@ fun QuizCardItemVertical(
     quizCard: QuizCard,
     onClick: (String) -> Unit = {},
 ) {
-    //TODO: NEED TO CHANGE OTHER CONFIGURATIONS.WIDTH to this format.
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val screenWidth = remember(windowInfo, density) {
@@ -100,7 +98,7 @@ fun QuizCardItemVertical(
                     .fillMaxWidth(),
                 text = quizCard.title,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
+                style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
                 overflow = TextOverflow.Ellipsis,
                 minLines = 2,
                 maxLines = 2,
@@ -111,7 +109,7 @@ fun QuizCardItemVertical(
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = quizCard.creator,
-                style = MaterialTheme.typography.labelSmall,
+                style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
                 fontWeight = FontWeight.Light,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
@@ -61,7 +62,7 @@ fun LoadingAnimation(modifier: Modifier = Modifier, size: Dp = 200.dp, withText:
         }
         Text(
             text = stringResource(withText()),
-            style = MaterialTheme.typography.labelSmall,
+            style = QuizzerTypographyDefaults.quizzerUI,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )

@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,16 +27,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.BASE_URL_API
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserActivity
 import com.asu1.userdatamodels.sampleUserActivityList
-import com.asu1.utils.Logger
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -56,26 +53,26 @@ fun MyActivitiesScreen(
         persistentListOf()
     )
     MyActivitiesBody(
-        navController = navController,
+        moveBackHome = {
+            navController.popBackStack(
+                Route.Home,
+                inclusive = false
+            )
+        },
         userActivities = userActivities,
     )
 }
 
 @Composable
 fun MyActivitiesBody(
-    navController: NavController = rememberNavController(),
+    moveBackHome: () -> Unit = {},
     userActivities: PersistentList<UserActivity> = persistentListOf()
 ){
     Scaffold(
         topBar = {
             QuizzerTopBarBase(
                 header = @Composable {
-                    IconButton(onClick = {
-                        navController.popBackStack(
-                            Route.Home,
-                            inclusive = false
-                        )
-                    }
+                    IconButton(onClick = moveBackHome
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -84,7 +81,10 @@ fun MyActivitiesBody(
                     }
                 },
                 body = {
-                    Text(stringResource(R.string.my_activities))
+                    Text(
+                        stringResource(R.string.my_activities),
+                        style = QuizzerTypographyDefaults.quizzerTopBarTitle
+                    )
                 },
             )
         }

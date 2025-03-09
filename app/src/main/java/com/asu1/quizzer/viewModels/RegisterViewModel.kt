@@ -10,6 +10,9 @@ import com.asu1.appdata.stringFilter.StringFilterRepository
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,8 +27,8 @@ class RegisterViewModel @Inject constructor(
     private val _nickname = MutableLiveData<String?>(null)
     val nickname: MutableLiveData<String?> get() = _nickname
 
-    private val _tags = MutableLiveData<Set<String>>(emptySet())
-    val tags: LiveData<Set<String>> get() = _tags
+    private val _tags = MutableStateFlow<Set<String>>(emptySet())
+    val tags: StateFlow<Set<String>> get() = _tags.asStateFlow()
 
     private val _email = MutableLiveData<String?>(null)
     val email: LiveData<String?> get() = _email
@@ -36,19 +39,27 @@ class RegisterViewModel @Inject constructor(
     private val _isError = MutableLiveData<Boolean>(false)
     val isError: LiveData<Boolean> get() = _isError
 
+    fun registerViewModelActions(action: RegisterViewModelActions){
+        when(action){
+            is RegisterViewModelActions.UndoError -> undoError()
+            is RegisterViewModelActions.MoveBack -> moveBack()
+            is RegisterViewModelActions.AgreeTerms -> agreeTerms()
+            is RegisterViewModelActions.Register -> register()
+            is RegisterViewModelActions.IdInit -> {
+                setId(action.email, action.photoUri)
+            }
+            is RegisterViewModelActions.SetNickName -> setNickName(action.nickName)
+            is RegisterViewModelActions.ToggleTag -> toggleTag(action.tag)
+            else -> {}
+        }
+    }
+
     fun undoError(){
         if(_isError.value == true) _isError.postValue(false)
     }
 
-    // Proceed 0 : 약관 동의
-    // Proceed 1 : 닉네임 입력
-    // Proceed 2 : 태그 설정
-
-    fun setEmail(email: String){
+    fun setId(email: String, photoUri: String){
         _email.postValue(email)
-    }
-
-    fun setPhotoUri(photoUri: String){
         _photoUri.postValue(photoUri)
     }
 
@@ -58,7 +69,6 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun agreeTerms(){
-        Logger.debug("Agree terms")
         _registerStep.value = 1
     }
 
@@ -68,7 +78,6 @@ class RegisterViewModel @Inject constructor(
             _isError.value = true
             return
         }
-
 
         viewModelScope.launch {
             val containsAdminWord = stringFilterRepository.containsAdminWord(nickName)
@@ -133,7 +142,7 @@ class RegisterViewModel @Inject constructor(
         val tags = _tags.value?.toMutableList() ?: mutableListOf()
         if(tags.contains(tag)){
             tags.remove(tag)
-            _tags.postValue(tags.toSet())
+            _tags.value = tags.toSet()
         }
         else{
             viewModelScope.launch {
@@ -144,8 +153,19 @@ class RegisterViewModel @Inject constructor(
                     return@launch
                 }
                 tags.add(tag)
-                _tags.postValue(tags.toSet())
+                _tags.value = tags.toSet()
             }
         }
     }
+}
+
+sealed class RegisterViewModelActions{
+    data object UndoError: RegisterViewModelActions()
+    data object MoveBack: RegisterViewModelActions()
+    data object AgreeTerms: RegisterViewModelActions()
+    data object Register: RegisterViewModelActions()
+    data class IdInit(val email: String, val photoUri: String): RegisterViewModelActions()
+    data class SetNickName(val nickName: String): RegisterViewModelActions()
+    data class ToggleTag(val tag: String): RegisterViewModelActions()
+
 }

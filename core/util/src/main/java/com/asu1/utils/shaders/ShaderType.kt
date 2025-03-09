@@ -9,5 +9,6 @@ enum class ShaderType(val shaderName: Int, val index: Int, val agslShader: Strin
     Brush4(R.string.diagonal, 3, diagonalHalf),
     Brush5(R.string.horizontal, 4, horizontalHalf),
     Brush6(R.string.vertical, 5, verticalhalf),
-    Brush7(R.string.top_down, 6, verticalRepeat);
+    Brush7(R.string.top_down, 6, verticalRepeat)
+    ;
 }
