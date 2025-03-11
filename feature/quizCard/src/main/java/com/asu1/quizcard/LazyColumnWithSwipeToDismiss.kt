@@ -192,7 +192,7 @@ fun LazyColumnSwipeToDismissDialog(
 @Preview(showBackground = true)
 @Composable
 fun LazyColumnSwipeToDismissDialogPreview(){
-    val quizList = listOf(
+    listOf(
         QuizCard(
             id = "1",
             title = "Quiz 1",

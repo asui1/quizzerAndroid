@@ -183,13 +183,8 @@ fun UserRankComposableList(
 @Preview(showBackground = true)
 @Composable
 fun UserRankComposablePreview() {
-    val userRank = com.asu1.userdatamodels.userRankSample
-    val userRanks = mutableListOf<com.asu1.userdatamodels.UserRank>()
-    for (i in 1..20) {
-        userRanks.add(
-            userRank
-        )
-    }
+    val userRanks = List(20) { com.asu1.userdatamodels.userRankSample }
+
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(4.dp),

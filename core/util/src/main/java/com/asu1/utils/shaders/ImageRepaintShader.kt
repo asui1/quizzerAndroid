@@ -1,8 +1,5 @@
 package com.asu1.utils.shaders
 
-import android.graphics.RuntimeShader
-import android.os.Build
-import androidx.annotation.RequiresApi
 import org.intellij.lang.annotations.Language
 
 @Language("AGSL")
