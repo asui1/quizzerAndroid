@@ -26,11 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,7 +102,7 @@ fun UserRankComposable(
             ) {
                 Text(
                     text = userRank.nickname,
-                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
+                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -114,7 +112,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.points))
                         append(userRank.orderScore)
                     },
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -124,7 +122,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.average))
                         append(average)
                     },
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -134,7 +132,7 @@ fun UserRankComposable(
                         append(stringResource(R.string.solved_quizzes))
                         append(userRank.quizzesSolved)
                     },
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

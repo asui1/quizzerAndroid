@@ -1,7 +1,11 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import ToastManager
+import ToastType
 import android.content.Context
 import android.graphics.Bitmap
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -17,15 +21,24 @@ import com.asu1.network.RetrofitInstance
 import com.asu1.network.getErrorMessage
 import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
+import com.asu1.quizzer.screens.quizlayout.randomDynamicColorScheme
+import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import com.asu1.resources.contrastSize
+import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
+import com.asu1.utils.calculateSeedColor
+import com.asu1.utils.toScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,7 +61,22 @@ class QuizCoordinatorViewModel : ViewModel() {
     private lateinit var quizResultViewModel: QuizResultViewModel
     private lateinit var scoreCardViewModel: ScoreCardViewModel
 
-    // Function to set ViewModels from UI
+    private val _titleImageColors = MutableStateFlow<List<Color>>(emptyList())
+
+    fun updateTitleImageColors(image: Bitmap){
+        if(image.width < 3){
+            _titleImageColors.value = emptyList()
+            return
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            val seedColor = calculateSeedColor(image.asImageBitmap())
+            if(seedColor.size < 3){
+                _titleImageColors.value = seedColor + List(3 - seedColor.size) { seedColor[0] }
+            }
+            _titleImageColors.value = seedColor
+        }
+    }
+
     fun setViewModels(
         quizGeneral: QuizGeneralViewModel,
         quizTheme: QuizThemeViewModel,
@@ -63,6 +91,48 @@ class QuizCoordinatorViewModel : ViewModel() {
         this.scoreCardViewModel = scoreCard
 
         initializeStateFlows()
+    }
+
+    fun generateColorScheme(
+        base: GenerateWith,
+        paletteLevel: Int,
+        contrastLevel: Int,
+        isDark: Boolean,
+    ) {
+        viewModelScope.launch {
+            if (contrastLevel in 0 until contrastSize && paletteLevel in 0..paletteSize) {
+                val newColorScheme = when (base) {
+                    GenerateWith.TITLE_IMAGE -> {
+                        if (_titleImageColors.value.isEmpty()) return@launch
+                        if (paletteLevel == paletteSize) {
+                            toScheme(
+                                primary = _titleImageColors.value[0],
+                                secondary = _titleImageColors.value[1],
+                                tertiary = _titleImageColors.value[2],
+                                isLight = !isDark
+                            )
+                        } else {
+                            randomDynamicColorScheme(_titleImageColors.value[0], paletteLevel, contrastLevel, isDark)
+                        }
+                    }
+
+                    GenerateWith.COLOR -> {
+                        val currentScheme = quizThemeViewModel.quizTheme.value.colorScheme
+                        if (paletteLevel == paletteSize) {
+                            toScheme(
+                                primary = currentScheme.primary,
+                                secondary = currentScheme.secondary,
+                                tertiary = currentScheme.tertiary,
+                                isLight = !isDark
+                            )
+                        } else {
+                            randomDynamicColorScheme(currentScheme.primary, paletteLevel, contrastLevel, isDark)
+                        }
+                    }
+                }
+                quizThemeViewModel.updateColorScheme(newColorScheme)
+            }
+        }
     }
 
     private fun initializeStateFlows() {
@@ -105,6 +175,15 @@ class QuizCoordinatorViewModel : ViewModel() {
             }.collect { newState ->
                 _quizUIState.value = newState
             }
+        }
+
+        viewModelScope.launch {
+            quizUIState
+                .map { it.quizGeneralUiState.quizData.image }
+                .distinctUntilChanged()
+                .collectLatest { image ->
+                    updateTitleImageColors(image)
+                }
         }
     }
 
@@ -232,7 +311,7 @@ class QuizCoordinatorViewModel : ViewModel() {
             }
         }
     }
-    suspend fun saveLocal(context: Context) {
+    fun saveLocal(context: Context) {
         _quizViewModelState.value = ViewModelState.LOADING
         val quizJsonData = Json.encodeToString(toJson())
         val fileName = "${quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid}_${quizGeneralViewModel.quizGeneralUiState.value.quizData.creator}_quizSave.json"
@@ -248,7 +327,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
     }
 
-    suspend fun toJson(): QuizLayoutSerializer{
+    fun toJson(): QuizLayoutSerializer{
         val localQuizData = quizDataToJson()
         val scoreCardCopy = scoreCardViewModel.scoreCardState.value.scoreCard.copy(quizUuid = localQuizData.uuid)
         val quizLayoutSerializer = QuizLayoutSerializer(
@@ -322,6 +401,9 @@ class QuizCoordinatorViewModel : ViewModel() {
             is QuizCoordinatorActions.UpdateScoreCard -> scoreCardViewModel.updateScoreCardViewModel(action = action.scoreCardAction)
             is QuizCoordinatorActions.UpdateQuizGeneral -> quizGeneralViewModel.updateQuizGeneralViewModel(action.quizGeneralAction)
             is QuizCoordinatorActions.UpdateQuizTheme -> quizThemeViewModel.updateQuizTheme(action.quizThemeAction)
+            is QuizCoordinatorActions.GenerateColorScheme -> generateColorScheme(
+                action.generateWith, action.palette, action.contrast, action.isDark
+            )
         }
     }
 }
@@ -336,6 +418,7 @@ sealed class QuizCoordinatorActions{
     data class UpdateQuizTheme(val quizThemeAction: QuizThemeActions): QuizCoordinatorActions()
     data object ResetQuizResult: QuizCoordinatorActions()
     data object ResetQuiz: QuizCoordinatorActions()
+    data class GenerateColorScheme(val generateWith: GenerateWith, val palette: Int, val contrast: Int, val isDark: Boolean): QuizCoordinatorActions()
 }
 
 data class QuizCoordinatorState(

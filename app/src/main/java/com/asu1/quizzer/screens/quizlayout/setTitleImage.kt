@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.images.createEmptyBitmap
 
@@ -31,7 +31,7 @@ fun QuizLayoutSetTitleImage(quizTitleImage: Bitmap, onImageChange: (Bitmap?) -> 
     ) {
         Text(
             text = stringResource(R.string.set_quiz_image_80_kb),
-            style = MaterialTheme.typography.titleMedium,
+            style = QuizzerTypographyDefaults.quizzerTitleMediumMedium,
         )
         Spacer(modifier = Modifier.size(16.dp))
         ImageGetter(

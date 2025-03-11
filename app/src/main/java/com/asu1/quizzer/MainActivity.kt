@@ -47,7 +47,7 @@ import com.asu1.quizzer.screens.quiz.QuizChecker
 import com.asu1.quizzer.screens.quiz.QuizSolver
 import com.asu1.quizzer.screens.quiz.ScoringScreen
 import com.asu1.quizzer.screens.quizlayout.DesignScoreCardScreen
-import com.asu1.quizzer.screens.quizlayout.LoadItems
+import com.asu1.quizzer.screens.quizlayout.LoadLocalQuizScreen
 import com.asu1.quizzer.screens.quizlayout.QuizLayoutBuilderScreen
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.enterFadeInTransition
@@ -498,7 +498,7 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
-                                LoadItems(
+                                LoadLocalQuizScreen(
                                     navController = navController,
                                     loadLocalQuizViewModel = loadLocalQuizViewModel,
                                 ) { quizData, quizTheme, scoreCard ->

@@ -74,12 +74,12 @@ fun InquiryBottomSheetContent(
     ) {
         Text(
             stringResource(id = R.string.inquiry),
-            style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+            style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             stringResource(R.string.inquiry_body),
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
         )
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -99,7 +99,7 @@ fun InquiryBottomSheetContent(
                 ) {
                     Text(
                         selectedOption,
-                        style = QuizzerTypographyDefaults.quizzerQuizCardTags
+                        style = QuizzerTypographyDefaults.quizzerBodySmallBold
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -150,7 +150,7 @@ fun InquiryBottomSheetContent(
         ) {
             Text(
                 stringResource(R.string.submit),
-                style = QuizzerTypographyDefaults.quizzerIconLabel,
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
             )
         }
     }

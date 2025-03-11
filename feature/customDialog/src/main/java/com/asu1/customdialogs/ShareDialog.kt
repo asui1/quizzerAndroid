@@ -4,7 +4,6 @@ import ToastManager
 import ToastType
 import android.content.ClipData
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,16 +34,14 @@ import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.resources.BASE_URL
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.generateUniqueId
-import androidx.core.net.toUri
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 const val resultUrlBase = "${BASE_URL}?resultId="
@@ -71,7 +68,7 @@ fun ShareDialog(
     ){
         Text(
             text = stringResource(R.string.share),
-            style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
+            style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp),
@@ -107,7 +104,7 @@ fun ShareDialog(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.copy_quiz_link),
-                style = QuizzerTypographyDefaults.quizzerBodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .fillMaxWidth(),
@@ -139,7 +136,7 @@ fun ShareDialog(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.copy_quiz_result_link),
-                    style = QuizzerTypographyDefaults.quizzerBodyMedium,
+                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .fillMaxWidth(),
@@ -152,9 +149,9 @@ fun ShareDialog(
 
 @Composable
 fun RowWithShares(
+    modifier: Modifier = Modifier,
     shareLink: String = "",
     onDismiss: () -> Unit = { },
-    modifier: Modifier = Modifier,
 ){
     val context = LocalContext.current
     LazyRow(
@@ -183,7 +180,7 @@ fun RowWithShares(
                 text = "X",
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse("https://twitter.com/intent/tweet?url=$shareLink")
+                        data = "https://twitter.com/intent/tweet?url=$shareLink".toUri()
                         setPackage("com.twitter.android")
                     }
                     context.startActivity(intent)

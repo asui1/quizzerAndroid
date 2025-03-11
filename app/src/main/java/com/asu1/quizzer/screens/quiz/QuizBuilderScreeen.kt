@@ -67,6 +67,7 @@ import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.questionTypes
 import kotlinx.coroutines.launch
@@ -182,7 +183,7 @@ fun QuizBuilderScreen(
                         body = {
                             Text(
                                 text = "Quizzer",
-                                style = MaterialTheme.typography.headlineMedium
+                                style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
                             )
                         },
                         actions = {
@@ -295,7 +296,7 @@ fun QuizBuilderScreen(
                     )
                     Text(
                         stringResource(R.string.too_many_big_images_might_not_be_uploaded),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
                     )
                 }
             }
@@ -470,7 +471,10 @@ fun QuizBuilderBottomBar(
                 onPreview()
             }
         ) {
-            Text(stringResource(R.string.preview))
+            Text(
+                stringResource(R.string.preview),
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(

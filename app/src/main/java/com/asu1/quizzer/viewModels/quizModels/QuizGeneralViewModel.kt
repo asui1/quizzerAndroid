@@ -21,6 +21,7 @@ class QuizGeneralViewModel : ViewModel() {
     private val _quizGeneralUIState = MutableStateFlow(QuizGeneralUiState())
     val quizGeneralUiState = _quizGeneralUIState.asStateFlow()
 
+
     fun loadQuizData(quizData: QuizDataSerializer) {
         val bitmap = decodeBase64ToBitmap(quizData.titleImage) ?: createEmptyBitmap()
 

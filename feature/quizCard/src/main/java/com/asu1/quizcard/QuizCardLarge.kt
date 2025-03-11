@@ -107,14 +107,14 @@ fun QuizCardLarge(
             ) {
                 Text(
                     text = quizCard.title,
-                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
+                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.creator,
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )

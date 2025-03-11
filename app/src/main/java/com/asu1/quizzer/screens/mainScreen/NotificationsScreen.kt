@@ -114,7 +114,7 @@ fun NotificationScreenBody(
                 body = {
                     Text(
                         stringResource(R.string.notification),
-                        style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+                        style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
                     )
                 },
             )
@@ -192,7 +192,7 @@ fun NotificationItem(
         val (notificationTitle, notificationTime, proceedIcon) = createRefs()
         Text(
             text = notification.title,
-            style = QuizzerTypographyDefaults.quizzerListItemTitle,
+            style = QuizzerTypographyDefaults.quizzerHeadlineSmallBold,
             maxLines = 1,
             modifier = Modifier.constrainAs(notificationTitle) {
                 top.linkTo(parent.top)
@@ -201,7 +201,7 @@ fun NotificationItem(
         )
         Text(
             text = notification.date,
-            style = QuizzerTypographyDefaults.quizzerListItemSub,
+            style = QuizzerTypographyDefaults.quizzerBodySmallLight,
             modifier = Modifier.constrainAs(notificationTime) {
                 top.linkTo(notificationTitle.bottom, margin = 2.dp)
                 start.linkTo(parent.start)
@@ -234,7 +234,7 @@ fun NotificationDetail(
         )
         Text(
             notification.body,
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
         )
     }
 }

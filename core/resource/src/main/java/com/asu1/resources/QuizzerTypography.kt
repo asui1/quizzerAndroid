@@ -4,82 +4,90 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 
 data class QuizzerTypography(
-    val quizzerTopBarTitle: TextStyle,
-    val quizzerIconLabel: TextStyle,
-    val quizzerQuizCardListTitle: TextStyle,
-    val quizzerQuizCardTitle: TextStyle,
-    val quizzerQuizCardCreator: TextStyle,
-    val quizzerQuizCardTags: TextStyle,
-    val quizzerQuizCardDescription: TextStyle,
-    val quizzerRoundTab: TextStyle,
-    val quizzerUI: TextStyle,
-    val quizzerBodyMedium: TextStyle,
-    val quizzerHeadlineMedium: TextStyle,
-    val quizzerTitleMedium: TextStyle,
-    val quizzerListItemTitle: TextStyle,
-    val quizzerListItemSub: TextStyle,
+    val quizzerHeadlineSmallNormal: TextStyle,
+    val quizzerLabelSmallMedium: TextStyle,
+    val quizzerTitleMediumBold: TextStyle,
+    val quizzerTitleSmallMedium: TextStyle,
+    val quizzerLabelSmallLight: TextStyle,
+    val quizzerBodySmallBold: TextStyle,
+    val quizzerBodySmallNormal: TextStyle,
+    val quizzerBodyMediumBold: TextStyle,
+    val quizzerLabelMediumMedium: TextStyle,
+    val quizzerBodyMediumNormal: TextStyle,
+    val quizzerHeadlineMediumBold: TextStyle,
+    val quizzerTitleMediumMedium: TextStyle,
+    val quizzerHeadlineSmallBold: TextStyle,
+    val quizzerBodySmallLight: TextStyle,
     val quizzerBodySmall: TextStyle,
+    val quizzerHeadlineMedium: TextStyle,
+    val quizzerBodyLarge: TextStyle,
 )
 
 // NOTICE: WHEN THIS IS UPDATED SHOULD UPDATE QUIZZER TYPOGRAPHYPREVIEW AS WELL
 val QuizzerTypographyDefaults = QuizzerTypography(
-    quizzerTopBarTitle = Typography.headlineSmall.copy(
+    quizzerHeadlineSmallNormal = Typography.headlineSmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Normal
     ),
-    quizzerIconLabel = Typography.labelSmall.copy(
+    quizzerLabelSmallMedium = Typography.labelSmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Medium
     ),
-    quizzerQuizCardListTitle = Typography.titleMedium.copy(
+    quizzerTitleMediumBold = Typography.titleMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Bold
     ),
-    quizzerQuizCardTitle = Typography.titleSmall.copy(
+    quizzerTitleSmallMedium = Typography.titleSmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Medium
     ),
-    quizzerQuizCardCreator = Typography.labelSmall.copy(
+    quizzerLabelSmallLight = Typography.labelSmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Light
     ),
-    quizzerQuizCardTags = Typography.bodySmall.copy(
+    quizzerBodySmallBold = Typography.bodySmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Bold
     ),
-    quizzerQuizCardDescription = Typography.bodySmall.copy(
+    quizzerBodySmallNormal = Typography.bodySmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Normal
     ),
-    quizzerRoundTab = Typography.bodyMedium.copy(
+    quizzerBodyMediumBold = Typography.bodyMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Bold
     ),
-    quizzerUI = Typography.labelMedium.copy(
+    quizzerLabelMediumMedium = Typography.labelMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Medium
     ),
-    quizzerBodyMedium = Typography.bodyMedium.copy(
+    quizzerBodyMediumNormal = Typography.bodyMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Normal
     ),
-    quizzerHeadlineMedium = Typography.headlineMedium.copy(
+    quizzerHeadlineMediumBold = Typography.headlineMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Bold
     ),
-    quizzerTitleMedium = Typography.titleMedium.copy(
+    quizzerTitleMediumMedium = Typography.titleMedium.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Medium
     ),
-    quizzerListItemTitle = Typography.headlineSmall.copy(
+    quizzerHeadlineSmallBold = Typography.headlineSmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Bold
     ),
-    quizzerListItemSub = Typography.bodySmall.copy(
+    quizzerBodySmallLight = Typography.bodySmall.copy(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Light
     ),
     quizzerBodySmall = Typography.bodySmall.copy(
+        fontFamily = GothicA1,
+    ),
+    quizzerHeadlineMedium = Typography.headlineMedium.copy(
+        fontFamily = GothicA1,
+    ),
+    quizzerBodyLarge = Typography.bodyLarge.copy(
         fontFamily = GothicA1,
     ),
 )

@@ -218,7 +218,7 @@ private fun SearchScreenSuggestionItem(
         Text(
             suggestion,
             maxLines = 1,
-            style = QuizzerTypographyDefaults.quizzerBodyMedium,
+            style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
         )
     }
 }
@@ -243,14 +243,14 @@ private fun SearchScreenResults(
         searchResult == null -> {
             Text(
                 text = stringResource(R.string.searching),
-                style = QuizzerTypographyDefaults.quizzerBodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 modifier = Modifier.padding(8.dp)
             )
         }
         searchResult.isEmpty() -> {
             Text(
                 text = stringResource(R.string.no_search_result),
-                style = QuizzerTypographyDefaults.quizzerBodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
             )
         }
         else -> {

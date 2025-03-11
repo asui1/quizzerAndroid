@@ -101,7 +101,7 @@ fun LoadMyQuizBody(
                 body = {
                     Text(
                         stringResource(R.string.my_quizzes),
-                        style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+                        style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
                     )
                 },
             )

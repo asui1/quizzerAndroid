@@ -38,10 +38,10 @@ import com.asu1.resources.QuizzerTypographyDefaults
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagSetter(
+    modifier: Modifier = Modifier,
     tags: Set<String>?,
     onClick: (String) -> Unit,
     focusRequester: androidx.compose.ui.focus.FocusRequester = androidx.compose.ui.focus.FocusRequester(),
-    modifier: Modifier = Modifier
 ) {
     var tag by remember { mutableStateOf("") }
 
@@ -57,7 +57,7 @@ fun TagSetter(
     ) {
         Text(
             text = stringResource(R.string.select_tags_that_interest_you),
-            style = QuizzerTypographyDefaults.quizzerTitleMedium,
+            style = QuizzerTypographyDefaults.quizzerTitleMediumMedium,
         )
         FlowRow(
             modifier = Modifier
@@ -82,7 +82,7 @@ fun TagSetter(
                         ) {
                             Text(
                                 text = tag,
-                                style = QuizzerTypographyDefaults.quizzerQuizCardTags,
+                                style = QuizzerTypographyDefaults.quizzerBodySmallBold,
                             )
                         }
                     }

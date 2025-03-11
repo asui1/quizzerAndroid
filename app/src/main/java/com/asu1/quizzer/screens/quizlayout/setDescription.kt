@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,16 +22,17 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 
 @Composable
 fun QuizLayoutSetDescription(
+    modifier: Modifier = Modifier,
     quizDescription: String = "",
     onDescriptionUpdate: (String) -> Unit = {},
     proceed: () -> Unit = {},
     enabled: Boolean = true,
-    modifier: Modifier = Modifier
     ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -44,7 +44,7 @@ fun QuizLayoutSetDescription(
     ) {
         Text(
             text = stringResource(R.string.enter_quiz_description),
-            style = MaterialTheme.typography.titleMedium,
+            style = QuizzerTypographyDefaults.quizzerTitleMediumMedium,
         )
         TextField(
             value = textFieldValue,

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,7 +61,7 @@ fun LoadingAnimation(modifier: Modifier = Modifier, size: Dp = 200.dp, withText:
         }
         Text(
             text = stringResource(withText()),
-            style = QuizzerTypographyDefaults.quizzerUI,
+            style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )

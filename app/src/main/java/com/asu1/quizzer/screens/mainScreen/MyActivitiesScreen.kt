@@ -81,7 +81,7 @@ fun MyActivitiesBody(
                 body = {
                     Text(
                         stringResource(R.string.my_activities),
-                        style = QuizzerTypographyDefaults.quizzerTopBarTitle
+                        style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal
                     )
                 },
             )
@@ -132,7 +132,7 @@ fun UserActivityItem(userActivity: UserActivity) {
                 start.linkTo(quizImage.end, margin = 4.dp)
                 bottom.linkTo(quizSolvedData.top)
             },
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal
         )
         Text(
             StringBuilder()
@@ -145,7 +145,7 @@ fun UserActivityItem(userActivity: UserActivity) {
                 start.linkTo(quizImage.end, margin = 4.dp)
                 bottom.linkTo(parent.bottom)
             },
-            style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+            style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
         )
     }
 }

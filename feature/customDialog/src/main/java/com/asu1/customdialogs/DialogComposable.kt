@@ -24,12 +24,12 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
         onDismissRequest = onCancel,
         title = { Text(
             text = stringResource(title),
-            style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+            style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
         ) },
         text = {
             Text(
                 stringResource(message),
-                style  = QuizzerTypographyDefaults.quizzerBodyMedium,
+                style  = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
             )
         },
         confirmButton = {
@@ -39,7 +39,7 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
             ) {
                 Text(
                     stringResource(onContinueText),
-                    style  = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+                    style  = QuizzerTypographyDefaults.quizzerBodySmallNormal,
                 )
             }
         },
@@ -53,7 +53,7 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
             ) {
                 Text(
                     stringResource(onCancelText),
-                    style  = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+                    style  = QuizzerTypographyDefaults.quizzerBodySmallNormal,
                     color = MaterialTheme.colorScheme.error,
                 )
             }

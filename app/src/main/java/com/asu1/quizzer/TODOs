@@ -10,6 +10,13 @@ Facade pattern, UI state pattern으로 viewmodel 최적화.
 폰트 통일을 위한 QuizzerTypographyDefaults 설정하기.
 -> 설정중.
 
+바꿔야 할 이미지 -> 색 필터를 적용했을때 별로임.
+1. Picnic 너무 색이 많음
+2. 콘서트장. 너무 흑백임
+3. 트로피 너무 흑백임
+
+일단 이렇게 3개 바꾸고 Default 배경 이미지 더 추가하기 ㄱㄱ
+
 AGSL 쉐이더로 이미지 받아서 정해진 2~3개 색으로 재색칠하는거 구현해보자. 이거 괜찮을 듯?
 
 배경 효과 Layout 설정할 수 있는 페이지 추가.

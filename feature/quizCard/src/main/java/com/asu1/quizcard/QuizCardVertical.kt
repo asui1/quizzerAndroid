@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -106,14 +105,14 @@ fun VerticalQuizCardLargeBody(
             ) {
                 Text(
                     text = quizCard.title,
-                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
+                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = quizCard.creator,
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Light,
                     maxLines = 1,
@@ -134,7 +133,7 @@ fun VerticalQuizCardLargeBody(
                         append(stringResource(R.string.solved))
                         append(quizCard.count)
                     },
-                    style = QuizzerTypographyDefaults.quizzerQuizCardDescription
+                    style = QuizzerTypographyDefaults.quizzerBodySmallNormal
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -145,7 +144,7 @@ fun VerticalQuizCardLargeBody(
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp),
             text = quizCard.description,
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
             minLines = 1,
             maxLines = 6,
         )

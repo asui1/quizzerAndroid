@@ -121,7 +121,7 @@ fun ScoreCardBackground(
                 )
             }
         }
-        //TODO: BUILD getDefaultEffects for all EFFECTS.
+
         if(backgroundImageColor.effect != Effect.NONE){
             com.asu1.customeffects.EffectBuilder(
                 color = backgroundImageColor.color2,
@@ -144,7 +144,6 @@ fun ScoreCardBackground(
                 bitmap = bitmap,
                 contentDescription = "ScoreCard Background",
 
-                //TODO: Check whether this Crop fits for existing quizzes.
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
 //                contentScale = ContentScale.FillWidth,

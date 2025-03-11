@@ -53,9 +53,11 @@ import com.asu1.colorpicker.ColorSchemeSheet
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.model.ImageColorBackground
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
 import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.paletteSize
 import com.materialkolor.Contrast
@@ -70,6 +72,7 @@ fun QuizLayoutSetColorScheme(
     isTitleImageSet: Boolean = false,
     backgroundImage: ImageColor = ImageColor( color = Color.White, color2 = Color.White, state = ImageColorState.COLOR),
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit = {}
 ) {
     val context = LocalContext.current
     val colors = listOf(
@@ -105,8 +108,8 @@ fun QuizLayoutSetColorScheme(
                         paletteLevel = level
                     },
                     generateColorScheme = {base, isDark ->
-                        updateQuizTheme(
-                            QuizThemeActions.GenerateColorScheme(
+                        updateQuizCoordinator(
+                            QuizCoordinatorActions.GenerateColorScheme(
                                 generateWith = base,
                                 palette = paletteLevel,
                                 contrast = contrastLevel,
@@ -199,7 +202,8 @@ fun BackgroundRow(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = text, style = MaterialTheme.typography.bodyLarge,
+                        text = text,
+                        style = QuizzerTypographyDefaults.quizzerBodyLarge,
                         modifier = Modifier.width(200.dp),
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -318,7 +322,7 @@ fun LevelSelector(
     ){
         Text(
             text = prefix + items[selectedLevel],
-            style = MaterialTheme.typography.bodyMedium,
+            style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -394,7 +398,7 @@ fun IconButtonWithDisable(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }

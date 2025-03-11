@@ -158,14 +158,14 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
     ) {
         Text(
             text = quizCard.title,
-            style = QuizzerTypographyDefaults.quizzerIconLabel,
+            style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = quizCard.creator,
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

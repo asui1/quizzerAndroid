@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,7 +35,7 @@ fun MainActivityTopbar(
         body = {
             Text(
                 "Quizzer",
-                style = QuizzerTypographyDefaults.quizzerTopBarTitle
+                style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal
             )
         },
         actions = {

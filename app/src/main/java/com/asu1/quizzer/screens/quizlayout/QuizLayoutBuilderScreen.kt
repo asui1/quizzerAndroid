@@ -250,14 +250,17 @@ fun QuizLayoutBuilderScreenBody(
         bottomBar = {
             QuizLayoutBottomBar(
                 step = step,
-                updateStep = {},
+                updateStep = { step ->
+                    updateQuiz(QuizCoordinatorActions.UpdateQuizGeneral(
+                        QuizGeneralActions.UpdateStep(step)
+                    ))
+                },
                 onSaveLocal = onSaveLocal,
                 enabled = canProceed,
                 proceed = proceed,
             )
         }
     ) {paddingValue ->
-
         HorizontalPager(
             state = pagerState,
             userScrollEnabled = false,
@@ -318,6 +321,9 @@ fun QuizLayoutBuilderScreenBody(
                             updateQuiz(QuizCoordinatorActions.UpdateQuizTheme(action))
                         },
                         backgroundImage = quizTheme.backgroundImage,
+                        updateQuizCoordinator = {action ->
+                            updateQuiz(action)
+                        }
                     )
                 }
                 4 -> {
@@ -416,12 +422,12 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
     ) {
         Text(
             stringResource(R.string.terms_of_use),
-            style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
+            style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             stringResource(R.string.quizGenPolicyBody),
-            style = QuizzerTypographyDefaults.quizzerQuizCardDescription
+            style = QuizzerTypographyDefaults.quizzerBodySmallNormal
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextButton(onClick = {onAgree()},
@@ -436,7 +442,7 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
         ) {
             Text(
                 stringResource(R.string.agree),
-                style = QuizzerTypographyDefaults.quizzerIconLabel,
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
             )
         }
     }
@@ -487,7 +493,7 @@ fun StepProgressBar(
             body = @Composable {
                 Text(
                     text = "Quizzer",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = QuizzerTypographyDefaults.quizzerHeadlineMedium
                 )
             },
             actions = @Composable {
@@ -510,7 +516,7 @@ fun StepProgressBar(
                 append(". ")
                 append(stringResource(id = currentStep.stringResourceId))
             },
-            style = MaterialTheme.typography.headlineSmall,
+            style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp),
             maxLines = 1,

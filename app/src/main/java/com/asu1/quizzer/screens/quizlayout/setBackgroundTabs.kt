@@ -28,6 +28,7 @@ import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
 
@@ -60,7 +61,10 @@ fun BackgroundTabs(
                     QuizThemeActions.UpdateBackgroundType(ImageColorState.COLOR)
                 )
             }) {
-                Text(stringResource(R.string.single_color))
+                Text(
+                    stringResource(R.string.single_color),
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
+                )
             }
             Tab(selected = selectedTabIndex == 1, onClick = {
                 updateQuizTheme(
@@ -69,6 +73,7 @@ fun BackgroundTabs(
             }) {
                 Text(
                     stringResource(R.string.gradient),
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
                 )
             }
             Tab(selected = selectedTabIndex == 2, onClick = {
@@ -76,7 +81,10 @@ fun BackgroundTabs(
                     QuizThemeActions.UpdateBackgroundType(ImageColorState.IMAGE)
                 )
             }) {
-                Text(stringResource(R.string.image))
+                Text(
+                    stringResource(R.string.image),
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
+                )
             }
         }
         when (selectedTabIndex) {

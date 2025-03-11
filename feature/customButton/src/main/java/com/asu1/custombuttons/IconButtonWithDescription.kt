@@ -92,7 +92,7 @@ fun IconWithTextBody(
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            style = QuizzerTypographyDefaults.quizzerIconLabel,
+            style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
             maxLines = 2,
         )
     }

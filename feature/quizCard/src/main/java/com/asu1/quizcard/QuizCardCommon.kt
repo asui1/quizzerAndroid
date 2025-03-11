@@ -23,7 +23,7 @@ fun TagsView(tags: List<String>, modifier: Modifier = Modifier, maxLines: Int = 
             Text(text = "#$tag",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(end = 4.dp),
-                style = QuizzerTypographyDefaults.quizzerQuizCardTags,
+                style = QuizzerTypographyDefaults.quizzerBodySmallBold,
                 overflow = TextOverflow.Ellipsis,
             )
         }

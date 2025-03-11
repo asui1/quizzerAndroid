@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @Composable
@@ -41,7 +42,7 @@ fun HorizontalFlipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit
             } else {
                 items[currentIndex].toString()
             },
-            style = MaterialTheme.typography.bodyLarge
+            style = QuizzerTypographyDefaults.quizzerBodyLarge
         )
         IconButton(
             modifier = Modifier.testTag("${key}FlipperNext"),

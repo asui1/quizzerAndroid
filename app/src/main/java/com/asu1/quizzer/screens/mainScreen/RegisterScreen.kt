@@ -58,9 +58,7 @@ import com.asu1.quizzer.viewModels.RegisterViewModelActions
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -129,7 +127,7 @@ fun RegisterScreen(
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             Text(
                 text = stringResource(R.string.register),
-                style = QuizzerTypographyDefaults.quizzerQuizCardListTitle,
+                style = QuizzerTypographyDefaults.quizzerTitleMediumBold,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             LinearProgressIndicator(
@@ -178,12 +176,12 @@ fun UsageAgreement(
         ) {
             Text(
                 text = stringResource(R.string.privacy_policy),
-                style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
+                style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
                 text = stringResource(R.string.privacy_policy_body),
-                style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+                style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
             )
             Spacer(modifier = Modifier.padding(32.dp))
         }
@@ -198,7 +196,7 @@ fun UsageAgreement(
         ) {
             Text(
                 text = stringResource(R.string.agree),
-                style = QuizzerTypographyDefaults.quizzerIconLabel
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium
             )
         }
     }
@@ -362,7 +360,7 @@ fun TagSetting(
         ) {
             Text(
                 text = stringResource(R.string.register),
-                style = QuizzerTypographyDefaults.quizzerIconLabel
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium
             )
         }
     }

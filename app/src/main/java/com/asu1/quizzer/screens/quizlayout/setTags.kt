@@ -13,10 +13,10 @@ import com.asu1.utils.Logger
 
 @Composable
 fun QuizLayoutSetTags(
+    modifier: Modifier = Modifier,
     quizTags: Set<String> = emptySet(),
     onTagUpdate: (String) -> Unit = {},
     enabled: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current

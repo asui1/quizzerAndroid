@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -32,12 +33,13 @@ import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import java.util.Base64
 
 @Composable
-fun LoadItems(
+fun LoadLocalQuizScreen(
     navController: NavController,
     loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel(),
     onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { _, _, _ -> },
@@ -87,12 +89,13 @@ fun LoadItems(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValue)
+                .padding(top = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             if (quizSerializerList == null) {
                 Text(
                     stringResource(R.string.searching_for_quizzes),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 )
                 LoadingAnimation()
             } else {

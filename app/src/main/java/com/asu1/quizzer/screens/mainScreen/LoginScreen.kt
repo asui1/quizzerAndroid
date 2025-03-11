@@ -101,7 +101,7 @@ private fun LoginBody(
             text = {
                 Text(
                     text = stringResource(R.string.login),
-                    style = QuizzerTypographyDefaults.quizzerUI,
+                    style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
                 )
             }
         )
@@ -120,7 +120,7 @@ private fun LoginBody(
             text = {
                 Text(
                     text = stringResource(R.string.register),
-                    style = QuizzerTypographyDefaults.quizzerUI,
+                    style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
                 )
             }
         )

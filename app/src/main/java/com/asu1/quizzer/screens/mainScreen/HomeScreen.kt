@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -121,7 +120,7 @@ fun HomeScreen(
                     Text(
                         text = remember{if(isKo) changeTagToText(item.tag) else item.tag},
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 2.dp),
-                        style = QuizzerTypographyDefaults.quizzerQuizCardListTitle,
+                        style = QuizzerTypographyDefaults.quizzerTitleMediumBold,
                     )
                     if (index == 0) {
                         HorizontalQuizCardItemLarge(quizCards = item.quizCards,
@@ -182,7 +181,7 @@ fun PrivacyPolicyRow(
         }) {
             Text(
                 stringResource(R.string.privacy_policy),
-                style = QuizzerTypographyDefaults.quizzerUI,
+                style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
             )
         }
         Text(
@@ -190,7 +189,7 @@ fun PrivacyPolicyRow(
                 append(stringResource(R.string.contact))
                 append(": whwkd122@gmail.com")
             },
-            style = QuizzerTypographyDefaults.quizzerUI,
+            style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(start = 16.dp)
                 .clickable {

@@ -1,5 +1,6 @@
 package com.asu1.utils
 
+import android.graphics.Bitmap
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -24,6 +25,6 @@ fun ColorScheme.withTertiaryColor(newTertiaryColor: Color): ColorScheme {
 }
 
 fun calculateSeedColor(bitmap: ImageBitmap): List<Color> {
-    val suitableColors = bitmap.themeColors(fallback = Color.Blue)
-    return suitableColors.take(3)
+    val suitableColors = bitmap.themeColors(maxColors = 3, desired = 3, fallback = Color.Black)
+    return suitableColors
 }

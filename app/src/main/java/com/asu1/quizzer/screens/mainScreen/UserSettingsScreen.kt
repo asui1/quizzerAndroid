@@ -82,7 +82,7 @@ fun UserSettingsScreen(
                 )
                 Text(
                     userData?.nickname ?: "Guest",
-                    style = QuizzerTypographyDefaults.quizzerQuizCardTitle,
+                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
                     modifier = Modifier.constrainAs(nickname) {
                     top.linkTo(icon.top)
                     start.linkTo(icon.end, margin = 8.dp)
@@ -90,7 +90,7 @@ fun UserSettingsScreen(
                 })
                 Text(
                     userData?.email ?: "",
-                    style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     maxLines = 1,
                     modifier = Modifier.constrainAs(email) {
                     top.linkTo(nickname.bottom)
@@ -138,7 +138,7 @@ fun UserSettingsScreen(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .fillMaxWidth(),
-                            style = QuizzerTypographyDefaults.quizzerUI
+                            style = QuizzerTypographyDefaults.quizzerLabelMediumMedium
                         )
                     }
                 }
