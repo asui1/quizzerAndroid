@@ -39,9 +39,6 @@ fun QuizLayoutSetTitleImage(quizTitleImage: Bitmap, onImageChange: (Bitmap?) -> 
             onImageUpdate = { image ->
                 onImageChange(image)
             },
-            onImageDelete = {
-                onImageChange(null)
-            },
             width = 200.dp,
             height = 200.dp
         )

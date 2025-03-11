@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.customdialogs.ShareDialog
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCard
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -113,26 +114,6 @@ fun VerticalQuizCardLargeShare(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                 ){
-//                    IconButton(
-//                        onClick = {  }
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.ThumbUp,
-//                            contentDescription = "Recommend Quiz",
-//                            tint = Color.Gray,
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.width(4.dp))
-//                    IconButton(
-//                        onClick = { }
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.Comment,
-//                            contentDescription = "Recommend Quiz",
-//                            tint = Color.Gray,
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.width(4.dp))
                     IconButton(
                         onClick = { showShareBottomSheet = true }
                     ) {
@@ -146,7 +127,8 @@ fun VerticalQuizCardLargeShare(
                         onClick = {onIconClick(quizCard.id) }
                     ) {
                         Text(
-                            stringResource(R.string.get_quiz)
+                            stringResource(R.string.get_quiz),
+                            style = QuizzerTypographyDefaults.quizzerIconLabel
                         )
                     }
                 }

@@ -40,7 +40,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,35 +57,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.serializers.QuizType
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.questionTypes
 import kotlinx.coroutines.launch
 
 @Composable
-fun QuizBuilderScreen(navController: NavController,
-                      quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-                      onMoveToScoringScreen: () -> Unit = {},
-                      scoreCardViewModel: ScoreCardViewModel = viewModel(),
-                      navigateToQuizLoad: () -> Unit = {},
+fun QuizBuilderScreen(
+    navController: NavController,
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    onMoveToScoringScreen: () -> Unit = {},
+    navigateToQuizLoad: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizzes = quizState.quizContentState.quizzes
+    val quizTheme = quizState.quizTheme
     val colorScheme = quizTheme.colorScheme
     var showNewQuizDialog by remember { mutableStateOf(false) }
     var curIndex by remember{ mutableIntStateOf(0) }
     val snapLayoutInfoProvider = rememberLazyListState()
-    val initialIndex by quizLayoutViewModel.initIndex.observeAsState(0)
+    val initialIndex = quizState.quizContentState.quizInitIndex
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
@@ -95,7 +94,7 @@ fun QuizBuilderScreen(navController: NavController,
         quizzes.size + 1
     }
     var isPreview by remember{ mutableStateOf(false) }
-    val textStyleManager by rememberUpdatedState(quizLayoutViewModel.getTextStyleManager())
+    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
 
     LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
@@ -143,30 +142,8 @@ fun QuizBuilderScreen(navController: NavController,
                         visibleQuizzes = quizzes,
                         quizTheme = quizTheme,
                         textStyleManager = textStyleManager,
-                        updateQuiz1 = { index, answerIndex ->
-                            quizLayoutViewModel.updateQuiz1(
-                                index,
-                                answerIndex
-                            )
-                        },
-                        updateQuiz2 = { index, date ->
-                            quizLayoutViewModel.updateQuiz2(
-                                index,
-                                date
-                            )
-                        },
-                        updateQuiz3 = { index, from, to ->
-                            quizLayoutViewModel.updateQuiz3(
-                                index,
-                                from,
-                                to
-                            )
-                        },
-                        updateQuiz4 = { index, items ->
-                            quizLayoutViewModel.updateQuiz4(
-                                index,
-                                items
-                            )
+                        updateQuizCoordinator = { quizCoordinatorAction ->
+                            quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
                         },
                         modifier = Modifier.fillMaxSize(),
                         isPreview = false,
@@ -239,9 +216,8 @@ fun QuizBuilderScreen(navController: NavController,
                         },
                         onLocalSave = {
                             scope.launch {
-                                quizLayoutViewModel.saveLocal(
+                                quizCoordinatorViewModel.saveLocal(
                                     context,
-                                    scoreCardViewModel.scoreCard.value
                                 )
                             }
                         }
@@ -277,14 +253,7 @@ fun QuizBuilderScreen(navController: NavController,
                         visibleQuizzes = quizzes,
                         quizTheme = quizTheme,
                         textStyleManager = textStyleManager,
-                        updateQuiz1 = { index, answerIndex ->
-                        },
-                        updateQuiz2 = { index, date ->
-                        },
-                        updateQuiz3 = { index, from, to ->
-                        },
-                        updateQuiz4 = { index, items ->
-                        },
+                        updateQuizCoordinator = {_ -> },
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
                             .weight(1f)
@@ -304,7 +273,9 @@ fun QuizBuilderScreen(navController: NavController,
                     )
                     QuizEditIconsRow(
                         deleteCurrentQuiz = {
-                            quizLayoutViewModel.removeQuizAt(curIndex)
+                            quizCoordinatorViewModel.updateQuizCoordinator(
+                                QuizCoordinatorActions.RemoveQuizAt(curIndex)
+                            )
                         },
                         curIndex = curIndex,
                         totalQuizzes = quizzes.size,

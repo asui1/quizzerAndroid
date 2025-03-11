@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.quizlayout
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
@@ -9,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +18,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -40,8 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,53 +52,46 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customdialogs.DialogComposable
+import com.asu1.models.quiz.QuizData
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.quizzer.composables.QuizzerTopBarBasePreview
 import com.asu1.quizzer.composables.animations.LoadingAnimation
-import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.keyboardAsState
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizGeneralActions
+import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.LayoutSteps
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
-import com.asu1.utils.Logger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuizLayoutBuilderScreen(navController: NavController,
-                            quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-                            navigateToQuizLoad: () -> Unit = {},
-                            scoreCardViewModel: ScoreCardViewModel = viewModel(),
+fun QuizLayoutBuilderScreen(
+    navController: NavController,
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    navigateToQuizLoad: () -> Unit = {},
 ) {
-    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
-    val policyAgreed by quizLayoutViewModel.policyAgreement.observeAsState(false)
-    val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
-    val step by quizLayoutViewModel.step.observeAsState(LayoutSteps.POLICY)
-    var showExitDialog by remember { mutableStateOf(false) }
-    val canProceed = when(step){
-        LayoutSteps.POLICY -> false
-        LayoutSteps.TITLE -> quizData.title.isNotEmpty()
-        else -> true
-    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizData = quizState.quizGeneralUiState.quizData
+    val quizTheme = quizState.quizTheme
+    val policyAgreed = quizState.quizGeneralUiState.isPolicyAgreed
+    val quizLayoutViewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
+    val step = quizState.quizGeneralUiState.step
+    val keyboardController = LocalSoftwareKeyboardController.current
     val pagerState = rememberPagerState(
         initialPage = step.value,
     ) {
         LayoutSteps.entries.size - 2
     }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val stacks = remember { mutableIntStateOf(0) }
-
     LaunchedEffect(step) {
         when (step) {
             LayoutSteps.POLICY -> pagerState.animateScrollToPage(0)
@@ -116,34 +106,15 @@ fun QuizLayoutBuilderScreen(navController: NavController,
             LayoutSteps.THEME -> pagerState.scrollToPage(3)
             LayoutSteps.TEXTSTYLE -> pagerState.scrollToPage(4)
         }
-
     }
-
     BackHandler {
-        Logger.debug("Back Handler Called Pressed")
         if(step > LayoutSteps.TITLE) {
-            quizLayoutViewModel.updateStep(step - 1)
-        } else {
-            navController.popBackStack(
-                Route.Home,
-                inclusive = false
+            quizCoordinatorViewModel.updateQuizCoordinator(
+                QuizCoordinatorActions.UpdateQuizGeneral(
+                    QuizGeneralActions.UpdateStep(step-1)
+                )
             )
-        }
-    }
-    // RECOGNIZE BACK PRESSED
-
-    fun onBackPressed(){
-        if(pagerState.currentPage != 1){
-            return
-        }
-        if(showExitDialog){
-            return
-        }
-        Logger.debug("Back Pressed Called")
-        if(step > LayoutSteps.TITLE && step < LayoutSteps.IMAGE){
-            quizLayoutViewModel.updateStep(step - 1)
-        }
-        else if(step == LayoutSteps.TITLE){
+        } else {
             navController.popBackStack(
                 Route.Home,
                 inclusive = false
@@ -169,20 +140,6 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                 LoadingAnimation()
             }
             else -> {
-                if (showExitDialog) {
-                    DialogComposable(
-                        title = R.string.warning,
-                        message = R.string.warn_progress_not_saved,
-                        onContinue = {
-                            showExitDialog = false
-                            navController.popBackStack()
-                        },
-                        onContinueText = R.string.proceed,
-                        onCancel = { showExitDialog = false },
-                        onCancelText = R.string.cancel
-                    )
-                }
-
                 if(!policyAgreed) {
                     ModalBottomSheet(
                         onDismissRequest = {
@@ -191,119 +148,194 @@ fun QuizLayoutBuilderScreen(navController: NavController,
                         modifier = Modifier.imePadding()
                     ) {
                         QuizPolicyAgreement(onAgree = {
-                            quizLayoutViewModel.updatePolicyAgreement(true)
+                            quizCoordinatorViewModel.updateQuizCoordinator(
+                                QuizCoordinatorActions.UpdateQuizGeneral(
+                                    QuizGeneralActions.UpdatePolicyAgreement
+                                )
+                            )
                         })
                     }
                 }
 
                 fun proceed() {
                     if(step.value < LayoutSteps.entries.size - 1) {
-                        if(step.value <= LayoutSteps.TAGS.value) {
-                            stacks.intValue++
-                        }
-                        quizLayoutViewModel.updateStep(step + 1)
+                        quizCoordinatorViewModel.updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizGeneral(
+                                QuizGeneralActions.UpdateStep(step+1)
+                            )
+                        )
                     } else {
-                        quizLayoutViewModel.initTextStyleManager()
+                        quizCoordinatorViewModel.updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizGeneral(
+                                QuizGeneralActions.UpdateStep(step-1)
+                            )
+                        )
+                        quizCoordinatorViewModel.updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizTheme(
+                                QuizThemeActions.InitTextStyleManager
+                            )
+                        )
                         navController.navigate(Route.QuizBuilder){
                             launchSingleTop = true
                         }
                     }
                 }
-
-                Scaffold(
-                    topBar = {
-                        StepProgressBar(
-                            totalSteps = LayoutSteps.entries.size,
-                            currentStep = step,
-                            showExitDialog = { showExitDialog = true },
-                            navigateToQuizLoad = { navigateToQuizLoad() }
-                        )
+                QuizLayoutBuilderScreenBody(
+                    step = step,
+                    quizData = quizData,
+                    quizTheme = quizTheme,
+                    navigateToQuizLoad = navigateToQuizLoad,
+                    moveBackToHome = {
+                        navController.popBackStack(Route.Home, inclusive = false)
                     },
-                    bottomBar = {
-                        QuizLayoutBottomBar(step, quizLayoutViewModel, scope, context, scoreCardViewModel, canProceed, proceed = { proceed() })
-                    }
-                ) {paddingValue ->
-
-                    HorizontalPager(
-                        state = pagerState,
-                        userScrollEnabled = false,
-                        verticalAlignment = Alignment.Top,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValue)
-                            .background(MaterialTheme.colorScheme.background)
-                    ){ page ->
-                        when(page){
-                            0 -> {}
-                            1 -> {
-                                val isKeyboardOpen by keyboardAsState()
-                                LaunchedEffect(isKeyboardOpen) {
-                                    Logger.debug("Keyboard is open: $isKeyboardOpen, stacks: ${stacks.intValue}")
-                                    if(!isKeyboardOpen && stacks.intValue > 0){
-                                        stacks.intValue--
-                                        if(stacks.intValue == 0){
-                                            keyboardController?.hide()
-                                        }
-                                            // TODO: THIS BACK PRESSED SHOULD BE TURNED OFF AT AUTOMATED TESTS
-                                    //                                        onBackPressed()
-                                    }
-                                    else{
-                                        stacks.intValue++
-                                    }
-                                    Logger.debug("Keyboard is open end: $isKeyboardOpen, stacks: ${stacks.intValue}")
-                                }
-                                QuizLayoutTitleDescriptionTag(
-                                    quizData = quizData,
-                                    step = step,
-                                    proceed = { proceed() },
-                                    onTagUpdate = { quizLayoutViewModel.updateTag(it) },
-                                    onDescriptionUpdate = { quizLayoutViewModel.setQuizDescription(it) },
-                                    onTitleUpdate = { quizLayoutViewModel.setQuizTitle(it) },
-                                )
-                            }
-                            2 -> {
-                                QuizLayoutSetTitleImage(
-                                    quizTitleImage = quizData.image,
-                                    onImageChange = { quizLayoutViewModel.setQuizImage(it) }
-                                )
-                            }
-                            3 -> {
-                                // Set Color Setting
-                                QuizLayoutSetColorScheme(
-                                    colorScheme = quizTheme.colorScheme,
-                                    isTitleImageSet = quizData.image.width > 2,
-                                    onColorUpdate = {name, color -> quizLayoutViewModel.setColorScheme(name, color) },
-                                    backgroundImage = quizTheme.backgroundImage,
-                                    onBackgroundColorUpdate = { quizLayoutViewModel.updateBackgroundColor(it) },
-                                    onGradientColorUpdate = { quizLayoutViewModel.updateGradientColor(it) },
-                                    onImageUpdate = { quizLayoutViewModel.updateBackgroundImage(it) },
-                                    onImageColorStateUpdate = { quizLayoutViewModel.updateImageColorState(it) },
-                                    generateColorScheme = {base, paletteLevel, contrastLevel, isDark ->
-                                        quizLayoutViewModel.generateColorScheme(
-                                            base = base,
-                                            paletteLevel = paletteLevel,
-                                            contrastLevel = contrastLevel,
-                                            isDark = isDark
-                                        )
-                                    },
-                                    onGradientTypeUpdate = {
-                                        quizLayoutViewModel.updateGradientType(it)
-                                    }
-                                )
-                            }
-                            4 -> {
-                                QuizLayoutSetTextStyle(
-                                    questionStyle = quizTheme.questionTextStyle,
-                                    bodyStyle = quizTheme.bodyTextStyle,
-                                    answerStyle = quizTheme.answerTextStyle,
-                                    updateStyle = { targetSelector, index, isIncrease ->
-                                        quizLayoutViewModel.updateTextStyle(targetSelector, index, isIncrease)
-                                    },
-                                    colorScheme = quizTheme.colorScheme,
-                                )
-                            }
+                    proceed = {proceed()},
+                    onSaveLocal = {
+                        scope.launch {
+                            quizCoordinatorViewModel.saveLocal(context)
                         }
+                    },
+                    pagerState = pagerState,
+                    updateQuiz = { action ->
+                        quizCoordinatorViewModel.updateQuizCoordinator(action)
                     }
+                )
+            }
+        }
+    }
+}
+
+//TODO: MAKE QUIZLAYOUTBUILDER BODY
+@Composable
+fun QuizLayoutBuilderScreenBody(
+    step: LayoutSteps,
+    quizData: QuizData,
+    quizTheme: QuizTheme,
+    navigateToQuizLoad: () -> Unit = {},
+    moveBackToHome: () -> Unit = {},
+    proceed: () -> Unit = {},
+    onSaveLocal: () -> Unit = {},
+    pagerState: PagerState,
+    updateQuiz: (QuizCoordinatorActions) -> Unit = {},
+){
+    var showExitDialog by remember { mutableStateOf(false) }
+    val canProceed = when(step){
+        LayoutSteps.POLICY -> false
+        LayoutSteps.TITLE -> quizData.title.isNotEmpty()
+        else -> true
+    }
+
+    if (showExitDialog) {
+        DialogComposable(
+            title = R.string.warning,
+            message = R.string.warn_progress_not_saved,
+            onContinue = {
+                showExitDialog = false
+                moveBackToHome()
+            },
+            onContinueText = R.string.proceed,
+            onCancel = { showExitDialog = false },
+            onCancelText = R.string.cancel
+        )
+    }
+
+    Scaffold(
+        topBar = {
+            StepProgressBar(
+                totalSteps = LayoutSteps.entries.size,
+                currentStep = step,
+                showExitDialog = { showExitDialog = true },
+                navigateToQuizLoad = navigateToQuizLoad
+            )
+        },
+        bottomBar = {
+            QuizLayoutBottomBar(
+                step = step,
+                updateStep = {},
+                onSaveLocal = onSaveLocal,
+                enabled = canProceed,
+                proceed = proceed,
+            )
+        }
+    ) {paddingValue ->
+
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValue)
+                .background(MaterialTheme.colorScheme.background)
+        ){ page ->
+            when(page){
+                0 -> {}
+                1 -> {
+                    QuizLayoutTitleDescriptionTag(
+                        quizData = quizData,
+                        step = step,
+                        proceed = { proceed() },
+                        onTagUpdate = {
+                            updateQuiz(
+                                QuizCoordinatorActions.UpdateQuizGeneral(
+                                    QuizGeneralActions.ToggleQuizTag(it)
+                                )
+                            )
+                        },
+                        onDescriptionUpdate = {
+                            updateQuiz(
+                                QuizCoordinatorActions.UpdateQuizGeneral(
+                                    QuizGeneralActions.UpdateQuizDescription(it)
+                                )
+                            )
+                        },
+                        onTitleUpdate = {
+                            updateQuiz(
+                                QuizCoordinatorActions.UpdateQuizGeneral(
+                                    QuizGeneralActions.UpdateQuizTitle(it)
+                                )
+                            )
+                        },
+                    )
+                }
+                2 -> {
+                    QuizLayoutSetTitleImage(
+                        quizTitleImage = quizData.image,
+                        onImageChange = {
+                            updateQuiz(
+                                QuizCoordinatorActions.UpdateQuizGeneral(
+                                    QuizGeneralActions.UpdateQuizImage(it)
+                                )
+                            )
+                        },
+                    )
+                }
+                3 -> {
+                    // Set Color Setting
+                    QuizLayoutSetColorScheme(
+                        colorScheme = quizTheme.colorScheme,
+                        isTitleImageSet = quizData.image.width > 2,
+                        updateQuizTheme = { action ->
+                            updateQuiz(QuizCoordinatorActions.UpdateQuizTheme(action))
+                        },
+                        backgroundImage = quizTheme.backgroundImage,
+                    )
+                }
+                4 -> {
+                    QuizLayoutSetTextStyle(
+                        questionStyle = quizTheme.questionTextStyle,
+                        bodyStyle = quizTheme.bodyTextStyle,
+                        answerStyle = quizTheme.answerTextStyle,
+                        updateStyle = { targetSelector, index, isIncrease ->
+                            updateQuiz(
+                                QuizCoordinatorActions.UpdateQuizTheme(
+                                    QuizThemeActions.UpdateTextStyle(
+                                        targetSelector, index, isIncrease
+                                    )
+                                )
+                            )
+                        },
+                        colorScheme = quizTheme.colorScheme,
+                    )
                 }
             }
         }
@@ -313,10 +345,8 @@ fun QuizLayoutBuilderScreen(navController: NavController,
 @Composable
 private fun QuizLayoutBottomBar(
     step: LayoutSteps,
-    quizLayoutViewModel: QuizLayoutViewModel,
-    scope: CoroutineScope,
-    context: Context,
-    scoreCardViewModel: ScoreCardViewModel,
+    updateStep: (LayoutSteps) -> Unit = {},
+    onSaveLocal: () -> Unit = {},
     enabled: Boolean,
     proceed: () -> Unit,
 ) {
@@ -330,7 +360,7 @@ private fun QuizLayoutBottomBar(
         IconButton(
             onClick = {
                 if (step.ordinal > 1) {
-                    quizLayoutViewModel.updateStep(step - 1)
+                    updateStep(step - 1)
                 }
             },
             enabled = step.ordinal > 1,
@@ -342,11 +372,7 @@ private fun QuizLayoutBottomBar(
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
-            onClick = {
-                scope.launch {
-                    quizLayoutViewModel.saveLocal(context, scoreCardViewModel.scoreCard.value)
-                }
-            }
+            onClick = onSaveLocal
         ) {
             Icon(
                 imageVector = Icons.Default.Save,
@@ -375,10 +401,6 @@ fun QuizLayoutBuilderScreenPreview() {
     com.asu1.resources.QuizzerAndroidTheme {
         QuizLayoutBottomBar(
             step = LayoutSteps.TITLE,
-            quizLayoutViewModel = QuizLayoutViewModel(),
-            scope = rememberCoroutineScope(),
-            context = LocalContext.current,
-            scoreCardViewModel = ScoreCardViewModel(),
             enabled = false,
             proceed = {}
         )
@@ -387,15 +409,20 @@ fun QuizLayoutBuilderScreenPreview() {
 
 @Composable
 fun QuizPolicyAgreement(onAgree: () -> Unit) {
-    // Content of the ModalBottomSheet
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
     ) {
-        Text(stringResource(R.string.terms_of_use), style = MaterialTheme.typography.headlineMedium)
+        Text(
+            stringResource(R.string.terms_of_use),
+            style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(stringResource(R.string.quizGenPolicyBody), style = MaterialTheme.typography.bodySmall)
+        Text(
+            stringResource(R.string.quizGenPolicyBody),
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription
+        )
         Spacer(modifier = Modifier.height(16.dp))
         TextButton(onClick = {onAgree()},
             modifier = Modifier
@@ -407,7 +434,10 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         ) {
-            Text(stringResource(R.string.agree))
+            Text(
+                stringResource(R.string.agree),
+                style = QuizzerTypographyDefaults.quizzerIconLabel,
+            )
         }
     }
 }

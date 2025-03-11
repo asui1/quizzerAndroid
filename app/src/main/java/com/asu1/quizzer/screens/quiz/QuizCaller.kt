@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -14,17 +15,25 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
 import com.asu1.models.serializers.QuizType
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz1ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz2ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz3ViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 
 
 @Composable
-fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex:Int, quizType: QuizType, insertIndex: Int, navController: NavHostController) {
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
-    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
+fun QuizCaller(
+    navController: NavHostController,
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    loadIndex:Int,
+    quizType: QuizType,
+    insertIndex: Int,
+) {
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizTheme = quizState.quizTheme
+    val quizzes = quizState.quizContentState.quizzes
 
     val quiz: Quiz<*>? = if (loadIndex != -1 && quizzes.size > loadIndex
     ) {
@@ -36,10 +45,14 @@ fun QuizCaller(quizLayoutViewModel: QuizLayoutViewModel = viewModel(), loadIndex
     fun onSave(newQuiz: Quiz<*>){
         newQuiz.initViewState()
         if(quiz != null){
-            quizLayoutViewModel.updateQuiz(newQuiz, loadIndex)
+            quizCoordinatorViewModel.updateQuizCoordinator(
+                QuizCoordinatorActions.UpdateQuizAt(newQuiz, loadIndex)
+            )
         }
         else{
-            quizLayoutViewModel.addQuiz(newQuiz, insertIndex)
+            quizCoordinatorViewModel.updateQuizCoordinator(
+                QuizCoordinatorActions.AddQuizAt(newQuiz, insertIndex)
+            )
         }
         navController.popBackStack()
     }

@@ -51,7 +51,7 @@ fun OpenCloseColumn(
                         bottomStart = 16.dp,
                     )
                 )
-                .size(width = closeWidth, height = closeWidth*3)
+                .size(width = closeWidth, height = closeWidth*2)
         ) {
             Icon(
                 imageVector = if(isOpen) Icons.AutoMirrored.Filled.ArrowForwardIos else Icons.Default.ArrowBackIosNew,

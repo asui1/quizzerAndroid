@@ -1,8 +1,10 @@
 package com.asu1.quizzer.composables.mainscreen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -37,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizzer.util.constants.userDataTest
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @Composable
@@ -69,42 +72,56 @@ fun InquiryBottomSheetContent(
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
     ) {
-        Text(stringResource(id = R.string.inquiry), style = MaterialTheme.typography.headlineSmall)
-        Text(stringResource(R.string.inquiry_body), style = MaterialTheme.typography.bodySmall)
-        Button(
-            onClick = { expanded = true },
+        Text(
+            stringResource(id = R.string.inquiry),
+            style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
+        Text(
+            stringResource(R.string.inquiry_body),
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
+        )
+        Box(
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+        ){
+            Button(
+                onClick = { expanded = true },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
-                Text(selectedOption)
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = stringResource(R.string.inquiry_dropdown)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        selectedOption,
+                        style = QuizzerTypographyDefaults.quizzerQuizCardTags
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = stringResource(R.string.inquiry_dropdown)
+                    )
+                }
             }
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = { Text(text = option) },
-                    onClick = {
-                        selectedOption = option
-                        expanded = false
-                    },
-                )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = { Text(text = option) },
+                        onClick = {
+                            selectedOption = option
+                            expanded = false
+                        },
+                    )
+                }
             }
         }
         TextField(
@@ -119,6 +136,7 @@ fun InquiryBottomSheetContent(
                 onSendInquiry(email, selectedOption, textFieldValue)
             })
         )
+        Spacer(modifier = Modifier.padding(4.dp))
         TextButton(onClick = {
             onSendInquiry(email, selectedOption, textFieldValue) },
             modifier = Modifier
@@ -130,7 +148,10 @@ fun InquiryBottomSheetContent(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         ) {
-            Text(stringResource(R.string.submit))
+            Text(
+                stringResource(R.string.submit),
+                style = QuizzerTypographyDefaults.quizzerIconLabel,
+            )
         }
     }
 }

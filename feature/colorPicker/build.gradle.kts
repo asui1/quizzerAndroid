@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:util"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -45,4 +46,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    debugImplementation(libs.androidx.compose.ui.ui.tooling)
 }

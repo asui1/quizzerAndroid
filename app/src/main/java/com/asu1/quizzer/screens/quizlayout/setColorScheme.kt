@@ -53,7 +53,9 @@ import androidx.compose.ui.unit.dp
 import com.asu1.colorpicker.ColorSchemeSheet
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.quizzer.model.ImageColorBackground
+import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
@@ -69,14 +71,8 @@ import kotlin.random.Random
 fun QuizLayoutSetColorScheme(
     colorScheme: ColorScheme = lightColorScheme(),
     isTitleImageSet: Boolean = false,
-    onColorUpdate: (String, Color) -> Unit = {_, _ -> },
     backgroundImage: ImageColor = ImageColor( color = Color.White, color2 = Color.White, state = ImageColorState.COLOR),
-    onBackgroundColorUpdate: (Color) -> Unit = { },
-    onGradientColorUpdate: (Color) -> Unit = { },
-    onGradientTypeUpdate: (ShaderType) -> Unit = { },
-    onImageUpdate: (Bitmap?) -> Unit = { },
-    onImageColorStateUpdate: (ImageColorState) -> Unit = { },
-    generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
+    updateQuizTheme: (QuizThemeActions) -> Unit = {},
 ) {
     val context = LocalContext.current
     val colors = listOf(
@@ -111,33 +107,28 @@ fun QuizLayoutSetColorScheme(
                     onPaletteLevelUpdate = { level ->
                         paletteLevel = level
                     },
-                    generateColorScheme = generateColorScheme
+                    generateColorScheme = {base, isDark ->
+                        updateQuizTheme(
+                            QuizThemeActions.GenerateColorScheme(
+                                generateWith = base,
+                                palette = paletteLevel,
+                                contrast = contrastLevel,
+                                isDark = isDark,
+                            )
+                        )
+                    }
                 )
             }
             item{
                 BackgroundRow(
                     text = stringResource(R.string.background),
                     background = backgroundImage,
-                    onBackgroundColorUpdate = {color ->
-                        onBackgroundColorUpdate(color)
-                    },
-                    onGradientColorUpdate = {gradientColor ->
-                        onGradientColorUpdate(gradientColor)
-                    },
-                    onImageUpdate = {image ->
-                        onImageUpdate(image)
-                    },
+                    updateQuizTheme = updateQuizTheme,
                     onOpen = {
                         coroutineScope.launch {
                             listState.animateScrollToItem(1)
                         }
                     },
-                    updateBackgroundType = { imageColorState ->
-                        onImageColorStateUpdate(imageColorState)
-                    },
-                    onGradientTypeUpdate = {shaderType ->
-                        onGradientTypeUpdate(shaderType)
-                    }
                 )
             }
             items(ColorList.size, key = { index -> ColorList[index] }) { index ->
@@ -146,7 +137,9 @@ fun QuizLayoutSetColorScheme(
                         text = colorNames[index],
                         imageColor = colors[index],
                         onColorSelected = { color ->
-                            onColorUpdate(ColorList[index], color)
+                            updateQuizTheme(
+                                QuizThemeActions.UpdateColor(ColorList[index], color)
+                            )
                         },
                         onOpen = {
                             coroutineScope.launch {
@@ -177,11 +170,7 @@ fun BackgroundRow(
     text: String,
     background: ImageColor,
     onOpen: () -> Unit,
-    onBackgroundColorUpdate: (Color) -> Unit,
-    onGradientColorUpdate: (Color) -> Unit,
-    onGradientTypeUpdate: (ShaderType) -> Unit = {},
-    onImageUpdate: (Bitmap?) -> Unit,
-    updateBackgroundType: (ImageColorState) -> Unit = { },
+    updateQuizTheme: (QuizThemeActions) -> Unit = {},
 ) {
     var isOpen by remember { mutableStateOf(false) }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -232,12 +221,8 @@ fun BackgroundRow(
             if (isOpen) {
                 BackgroundTabs(
                     selectedTabIndex = selectedTabIndex,
-                    updateBackgroundType = updateBackgroundType,
+                    updateQuizTheme = updateQuizTheme,
                     background = background,
-                    onBackgroundColorUpdate = onBackgroundColorUpdate,
-                    onGradientColorUpdate = onGradientColorUpdate,
-                    onGradientTypeUpdate = {shaderType -> onGradientTypeUpdate(shaderType) },
-                    onImageUpdate = onImageUpdate,
                     onClose = {
                         isOpen = false
                     }
@@ -264,7 +249,7 @@ fun GenerateColorScheme(
     onContrastLevelUpdate: (Int) -> Unit = {},
     paletteLevel: Int = 2,
     onPaletteLevelUpdate: (Int) -> Unit = {},
-    generateColorScheme: (genWith: GenerateWith, palette:Int, contrast:Int, isDark:Boolean) -> Unit = { _, _, _, _ -> },
+    generateColorScheme: (genWith: GenerateWith, isDark:Boolean) -> Unit = { _, _ -> },
 ){
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
@@ -284,7 +269,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_title_image),
                 onClick = {
-                    generateColorScheme(GenerateWith.TITLE_IMAGE, paletteLevel, contrastLevel, isDark)
+                    generateColorScheme(GenerateWith.TITLE_IMAGE, isDark)
                 },
                 enabled = isTitleImageSet,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithTitleImage"
@@ -293,7 +278,7 @@ fun GenerateColorScheme(
                 imageVector = Icons.Default.Autorenew,
                 text = stringResource(R.string.gen_with_primary_color),
                 onClick = {
-                    generateColorScheme(GenerateWith.COLOR, paletteLevel, contrastLevel, isDark)
+                    generateColorScheme(GenerateWith.COLOR, isDark)
                 },
                 enabled = true,
                 testTag = "QuizLayoutBuilderColorSchemeGenWithPrimaryColor"

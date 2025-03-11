@@ -16,8 +16,8 @@ data class QuizzerTypography(
     val quizzerBodyMedium: TextStyle,
     val quizzerHeadlineMedium: TextStyle,
     val quizzerTitleMedium: TextStyle,
-    val quizzerLabelMedium: TextStyle,
-    val quizzerLabelSmall: TextStyle,
+    val quizzerListItemTitle: TextStyle,
+    val quizzerListItemSub: TextStyle,
     val quizzerBodySmall: TextStyle,
 )
 
@@ -27,9 +27,9 @@ val QuizzerTypographyDefaults = QuizzerTypography(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Normal
     ),
-    quizzerIconLabel = Typography.bodySmall.copy(
+    quizzerIconLabel = Typography.labelSmall.copy(
         fontFamily = GothicA1,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Medium
     ),
     quizzerQuizCardListTitle = Typography.titleMedium.copy(
         fontFamily = GothicA1,
@@ -71,8 +71,14 @@ val QuizzerTypographyDefaults = QuizzerTypography(
         fontFamily = GothicA1,
         fontWeight = FontWeight.Medium
     ),
-    quizzerLabelMedium = TextStyle.Default,
-    quizzerLabelSmall = TextStyle.Default,
+    quizzerListItemTitle = Typography.headlineSmall.copy(
+        fontFamily = GothicA1,
+        fontWeight = FontWeight.Bold
+    ),
+    quizzerListItemSub = Typography.bodySmall.copy(
+        fontFamily = GothicA1,
+        fontWeight = FontWeight.Light
+    ),
     quizzerBodySmall = Typography.bodySmall.copy(
         fontFamily = GothicA1,
     ),

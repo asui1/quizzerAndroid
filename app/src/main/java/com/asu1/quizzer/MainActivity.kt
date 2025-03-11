@@ -56,11 +56,16 @@ import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
 import com.asu1.quizzer.viewModels.InitializationViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.QuizLoadViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
+import com.asu1.quizzer.viewModels.quizModels.LoadMyQuizViewModel
+import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizContentViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizResultViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizThemeViewModel
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -81,14 +86,19 @@ class MainActivity : ComponentActivity() {
 
     // CAN BE INITIALIZED LATER
     private val searchViewModel: SearchViewModel by viewModels()
-    private val quizLayoutViewModel: QuizLayoutViewModel by viewModels()
+    private val quizCoordinatorViewModel: QuizCoordinatorViewModel by viewModels()
+    private val quizGeneralViewModel: QuizGeneralViewModel by viewModels()
+    private val quizContentViewModel: QuizContentViewModel by viewModels()
+    private val quizThemeViewModel: QuizThemeViewModel by viewModels()
+    private val quizResultViewModel: QuizResultViewModel by viewModels()
     private val scoreCardViewModel: ScoreCardViewModel by viewModels()
-    private val quizLoadViewModel: QuizLoadViewModel by viewModels()
-    private lateinit var navController: NavHostController
+    private val loadMyQuizViewModel: LoadMyQuizViewModel by viewModels()
+    private val loadLocalQuizViewModel: LoadLocalQuizViewModel by viewModels()
+    private val initializationViewModel: InitializationViewModel by viewModels()
 
+    private lateinit var navController: NavHostController
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var updateLauncher: ActivityResultLauncher<IntentSenderRequest>
-    private val initializationViewModel: InitializationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,9 +142,13 @@ class MainActivity : ComponentActivity() {
         }
         handleIntent(intent)
 
-        lifecycleScope.launch {
-            quizLayoutViewModel.initialize()
-        }
+        quizCoordinatorViewModel.setViewModels(
+            quizGeneral = quizGeneralViewModel,
+            quizTheme = quizThemeViewModel,
+            quizContent = quizContentViewModel,
+            quizResult = quizResultViewModel,
+            scoreCard = scoreCardViewModel,
+        )
 
         setContent {
             val context = LocalContext.current
@@ -187,7 +201,7 @@ class MainActivity : ComponentActivity() {
 
                         fun getQuizResult(resultId: String = "") {
                             if (resultId.isEmpty()) return
-                            quizLayoutViewModel.loadQuizResult(resultId, scoreCardViewModel)
+                            quizCoordinatorViewModel.loadQuizResult(resultId)
                             navController.navigate(
                                 Route.ScoringScreen
                             ) {
@@ -198,7 +212,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         fun loadQuiz(quizId: String, doPop: Boolean = false) {
-                            quizLayoutViewModel.loadQuiz(quizId, scoreCardViewModel)
+                            quizCoordinatorViewModel.loadQuiz(quizId)
                             navController.navigate(Route.QuizSolver()) {
                                 if (doPop) popUpTo(Route.Home) { inclusive = false }
                                 launchSingleTop = true
@@ -230,14 +244,13 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                 }
                             } else {
-                                quizLayoutViewModel.resetQuizLayout()
-                                quizLayoutViewModel.initQuizLayout(
+                                quizGeneralViewModel.resetQuizGeneral()
+                                quizGeneralViewModel.initQuizGeneral(
                                     userViewModel.userData.value?.email,
-                                    colorScheme
                                 )
                                 scope.launch {
                                     scoreCardViewModel.resetScoreCard()
-                                    quizLoadViewModel.reset()
+                                    loadMyQuizViewModel.reset()
                                 }
                                 navController.navigate(
                                     Route.CreateQuizLayout
@@ -248,7 +261,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         fun navigateToLoadUserQuiz(){
-                            quizLoadViewModel.loadUserQuiz(
+                            loadMyQuizViewModel.loadUserQuiz(
                                 userViewModel.userData.value?.email ?: ""
                             )
                             navController.navigate(
@@ -276,7 +289,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
-                                quizLayoutViewModel.resetQuizLayout()
+                                quizGeneralViewModel.resetQuizGeneral()
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
@@ -363,9 +376,10 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitToRightTransition(),
                             ) {
                                 QuizLayoutBuilderScreen(
-                                    navController, quizLayoutViewModel,
+                                    navController = navController,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(
+                                        loadLocalQuizViewModel.loadLocalQuiz(
                                             context = context,
                                             email = userViewModel.userData.value?.email
                                                 ?: "GUEST"
@@ -376,7 +390,6 @@ class MainActivity : ComponentActivity() {
                                             launchSingleTop = true
                                         }
                                     },
-                                    scoreCardViewModel = scoreCardViewModel,
                                 )
                             }
                             composable<Route.QuizBuilder>(
@@ -385,11 +398,12 @@ class MainActivity : ComponentActivity() {
                                 popEnterTransition = enterFadeInTransition(),
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
-                                QuizBuilderScreen(navController, quizLayoutViewModel,
+                                QuizBuilderScreen(navController,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     onMoveToScoringScreen = {
                                         scoreCardViewModel.updateScoreCard(
-                                            quizLayoutViewModel.quizData.value,
-                                            quizLayoutViewModel.quizTheme.value.colorScheme
+                                            quizGeneralViewModel.quizGeneralUiState.value.quizData,
+                                            quizThemeViewModel.quizTheme.value.colorScheme
                                         )
                                         navController.navigate(
                                             Route.DesignScoreCard
@@ -397,9 +411,8 @@ class MainActivity : ComponentActivity() {
                                             launchSingleTop = true
                                         }
                                     },
-                                    scoreCardViewModel = scoreCardViewModel,
                                     navigateToQuizLoad = {
-                                        quizLoadViewModel.loadLocalQuiz(
+                                        loadLocalQuizViewModel.loadLocalQuiz(
                                             context = context,
                                             email = userViewModel.userData.value?.email
                                                 ?: "GUEST"
@@ -425,11 +438,11 @@ class MainActivity : ComponentActivity() {
                                 val insertIndex =
                                     backStackEntry.toRoute<Route.QuizCaller>().insertIndex
                                 QuizCaller(
-                                    quizLayoutViewModel,
-                                    loadIndex,
-                                    quizType,
-                                    insertIndex,
-                                    navController
+                                    navController = navController,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
+                                    loadIndex = loadIndex,
+                                    quizType = quizType,
+                                    insertIndex = insertIndex,
                                 )
                             }
                             composable<Route.QuizSolver>(
@@ -440,18 +453,16 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 QuizSolver(
                                     navController = navController,
-                                    quizLayoutViewModel = quizLayoutViewModel,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     navigateToScoreCard = {
-                                        val creatingQuiz =
-                                            hasVisitedRoute(navController, Route.QuizBuilder)
-                                        if (creatingQuiz) {
+                                        if (hasVisitedRoute(navController, Route.QuizBuilder)) {
                                             ToastManager.showToast(
                                                 R.string.can_not_proceed_when_creating_quiz,
                                                 ToastType.INFO
                                             )
                                             return@QuizSolver
                                         }
-                                        quizLayoutViewModel.gradeQuiz(
+                                        quizCoordinatorViewModel.gradeQuiz(
                                             userViewModel.userData.value?.email ?: "GUEST"
                                         ) {
                                             navController.navigate(
@@ -471,15 +482,14 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 DesignScoreCardScreen(
-                                    navController,
-                                    quizLayoutViewModel,
-                                    scoreCardViewModel,
+                                    navController = navController,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     onUpload = {
                                         navController.popBackStack(
                                             Route.Home,
                                             inclusive = false
                                         )
-                                        quizLoadViewModel.reset()
+                                        loadMyQuizViewModel.reset()
                                         scoreCardViewModel.resetScoreCard()
                                     })
                             }
@@ -491,13 +501,15 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 LoadItems(
                                     navController = navController,
-                                    quizLoadViewModel = quizLoadViewModel
+                                    loadLocalQuizViewModel = loadLocalQuizViewModel,
                                 ) { quizData, quizTheme, scoreCard ->
-                                    quizLayoutViewModel.loadQuizData(
-                                        quizData, quizTheme
+                                    quizCoordinatorViewModel.loadQuiz(
+                                        quizData = quizData,
+                                        quizTheme = quizTheme,
+                                        scoreCard = scoreCard,
                                     )
-                                    scoreCardViewModel.loadScoreCard(scoreCard)
-                                    quizLoadViewModel.loadComplete()
+
+                                    loadMyQuizViewModel.loadComplete()
                                 }
                             }
                             composable<Route.LoadUserQuiz>(
@@ -508,7 +520,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 LoadMyQuizScreen(
                                     navController = navController,
-                                    quizLoadViewModel = quizLoadViewModel,
+                                    loadMyQuizViewModel = loadMyQuizViewModel,
                                     email = userViewModel.userData.value?.email ?: ""
                                 )
                             }
@@ -541,7 +553,7 @@ class MainActivity : ComponentActivity() {
                                 popExitTransition = exitFadeOutTransition(),
                             ) {
                                 QuizChecker(
-                                    quizLayoutViewModel = quizLayoutViewModel
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                 )
                             }
                             composable<Route.ScoringScreen>(
@@ -552,8 +564,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 ScoringScreen(
                                     navController = navController,
-                                    quizLayoutViewModel = quizLayoutViewModel,
-                                    scoreCardViewModel = scoreCardViewModel,
+                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     email = userViewModel.userData.value?.email ?: "GUEST",
                                     loadQuiz = { quizId ->
                                         loadQuiz(quizId, doPop = true)

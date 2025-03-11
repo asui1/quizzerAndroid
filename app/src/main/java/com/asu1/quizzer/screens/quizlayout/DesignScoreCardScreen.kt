@@ -20,14 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
@@ -47,11 +44,11 @@ import com.asu1.quizzer.composables.animations.UploadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 
 val colorNames: List<Int> = listOf(R.string.background_newline,
     R.string.effect, R.string.gradient)
@@ -59,11 +56,11 @@ val colorNames: List<Int> = listOf(R.string.background_newline,
 @Composable
 fun DesignScoreCardScreen(
     navController: NavController,
-    quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-    scoreCardViewModel: ScoreCardViewModel = viewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
     onUpload: () -> Unit = { }
 ) {
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
+    val quizUIState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val scoreCardState = quizUIState.scoreCardState
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val screenHeight = remember(windowInfo, density) {
@@ -72,7 +69,7 @@ fun DesignScoreCardScreen(
     val screenWidth = remember(windowInfo, density) {
         with(density) { windowInfo.containerSize.width.toDp() }.coerceAtMost(screenHeight * 0.6f)
     }
-    val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
+    val quizLayoutViewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
     var expanded by remember {mutableStateOf(true)}
     var immerseMode by remember { mutableStateOf(false) }
     val localActivity = LocalActivity.current
@@ -85,7 +82,7 @@ fun DesignScoreCardScreen(
     }
 
     MaterialTheme(
-        colorScheme = scoreCard.colorScheme
+        colorScheme = scoreCardState.scoreCard.colorScheme
     ) {
         if(ViewModelState.UPLOADING == quizLayoutViewModelState){
             Dialog(
@@ -116,11 +113,11 @@ fun DesignScoreCardScreen(
                 }
         ) {
             DesignScoreCardBody(
-                scoreCard,
+                scoreCardState.scoreCard,
                 immerseMode,
                 onUpload = {
                     scope.launch {
-                        quizLayoutViewModel.tryUpload(navController, scoreCard, onUpload)
+                        quizCoordinatorViewModel.tryUpload(navController, onUpload)
                     }
                 },
             )
@@ -128,14 +125,18 @@ fun DesignScoreCardScreen(
                 isOpen = expanded,
                 onToggleOpen = { expanded = !expanded },
                 height = screenHeight,
+                openWidth = 80.dp,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
             ){
                 DesignScoreCardTools(
-                    scoreCardViewModel,
-                    scoreCard,
-                    screenWidth,
-                    screenHeight
+                    updateQuizCoordinate = {action ->
+                        quizCoordinatorViewModel.updateQuizCoordinator(action = action)
+                    },
+                    removeBackground = scoreCardState.removeOverLayImageBackground,
+                    scoreCard = scoreCardState.scoreCard,
+                    screenWidth = screenWidth,
+                    screenHeight = screenHeight,
                 )
             }
         }

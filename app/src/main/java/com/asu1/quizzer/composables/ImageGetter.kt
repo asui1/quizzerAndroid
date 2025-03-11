@@ -52,10 +52,9 @@ import kotlinx.coroutines.launch
 fun ImageGetter(
     modifier: Modifier = Modifier,
     image: Bitmap,
-    onImageUpdate: (Bitmap) -> Unit,
-    onImageDelete: () -> Unit,
+    onImageUpdate: (Bitmap?) -> Unit,
     width: Dp? = null, height: Dp? = null,
-    topbar: @Composable (Modifier) -> Unit = {}
+    topBar: @Composable (Modifier) -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -94,7 +93,7 @@ fun ImageGetter(
                 Column(
                     modifier = modifier.width(localWidth)
                 ){
-                    topbar(Modifier.fillMaxWidth())
+                    topBar(Modifier.fillMaxWidth())
                     Box(
                         modifier = Modifier
                             .width(localWidth)
@@ -131,7 +130,7 @@ fun ImageGetter(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .clickable {
-                                        onImageDelete()
+                                        onImageUpdate(null)
                                     }
                                     .padding(top = 4.dp, end = 4.dp)
                             )
@@ -150,7 +149,7 @@ fun ImageGetter(
 fun ImageGetterPreview() {
     com.asu1.resources.QuizzerAndroidTheme {
         ImageGetter(
-            topbar = {modifier ->
+            topBar = { modifier ->
                 Row(
                     modifier = modifier.fillMaxWidth()
                 ){
@@ -158,8 +157,7 @@ fun ImageGetterPreview() {
                 }
             },
             image = createEmptyBitmap(),
-            onImageUpdate = {},
-            onImageDelete = {}
+            onImageUpdate = {}
         )
     }
 

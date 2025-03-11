@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.resources.BASE_URL
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.generateUniqueId
 
@@ -63,7 +64,7 @@ fun ShareDialog(
     ){
         Text(
             text = stringResource(R.string.share),
-            style = MaterialTheme.typography.headlineMedium,
+            style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp),
@@ -96,7 +97,7 @@ fun ShareDialog(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.copy_quiz_link),
-                style = MaterialTheme.typography.bodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMedium,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .fillMaxWidth(),
@@ -125,7 +126,7 @@ fun ShareDialog(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.copy_quiz_result_link),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = QuizzerTypographyDefaults.quizzerBodyMedium,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .fillMaxWidth(),

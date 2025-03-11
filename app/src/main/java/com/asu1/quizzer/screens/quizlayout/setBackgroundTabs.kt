@@ -1,6 +1,5 @@
 package com.asu1.quizzer.screens.quizlayout
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,18 +27,15 @@ import com.asu1.colorpicker.ColorPicker
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun BackgroundTabs(
     selectedTabIndex: Int,
-    updateBackgroundType: (ImageColorState) -> Unit,
     background: ImageColor,
-    onBackgroundColorUpdate: (Color) -> Unit,
-    onGradientColorUpdate: (Color) -> Unit,
-    onGradientTypeUpdate: (ShaderType) -> Unit = {},
-    onImageUpdate: (Bitmap?) -> Unit,
+    updateQuizTheme: (QuizThemeActions) -> Unit = {},
     onClose: () -> Unit,
 ) {
     var showGradientDropdown by remember { mutableStateOf(false) }
@@ -61,19 +56,25 @@ fun BackgroundTabs(
             }
         ) {
             Tab(selected = selectedTabIndex == 0, onClick = {
-                updateBackgroundType(ImageColorState.COLOR)
+                updateQuizTheme(
+                    QuizThemeActions.UpdateBackgroundType(ImageColorState.COLOR)
+                )
             }) {
                 Text(stringResource(R.string.single_color))
             }
             Tab(selected = selectedTabIndex == 1, onClick = {
-                updateBackgroundType(ImageColorState.GRADIENT)
+                updateQuizTheme(
+                    QuizThemeActions.UpdateBackgroundType(ImageColorState.GRADIENT)
+                )
             }) {
                 Text(
                     stringResource(R.string.gradient),
                 )
             }
             Tab(selected = selectedTabIndex == 2, onClick = {
-                updateBackgroundType(ImageColorState.IMAGE)
+                updateQuizTheme(
+                    QuizThemeActions.UpdateBackgroundType(ImageColorState.IMAGE)
+                )
             }) {
                 Text(stringResource(R.string.image))
             }
@@ -84,7 +85,9 @@ fun BackgroundTabs(
                 ColorPicker(
                     initialColor = background.color,
                     onColorSelected = { color ->
-                        onBackgroundColorUpdate(color)
+                        updateQuizTheme(
+                            QuizThemeActions.UpdateBackgroundColor(color)
+                        )
                     },
                     onClose = {
                         onClose()
@@ -106,7 +109,9 @@ fun BackgroundTabs(
                             showDropdownMenu = showGradientDropdown,
                             labelText = stringResource(R.string.gradient),
                             onClick = { index ->
-                                onGradientTypeUpdate(ShaderType.entries[index])
+                                updateQuizTheme(
+                                    QuizThemeActions.UpdateGradientType(ShaderType.entries[index])
+                                )
                                 showGradientDropdown = false
                             },
                             onChangeDropDown = { showGradientDropdown = it },
@@ -124,7 +129,9 @@ fun BackgroundTabs(
                         ColorPicker(
                             initialColor = background.color,
                             onColorSelected = { color ->
-                                onBackgroundColorUpdate(color)
+                                updateQuizTheme(
+                                    QuizThemeActions.UpdateBackgroundColor(color)
+                                )
                             },
                             onClose = {
                                 keyboardController?.hide()
@@ -134,7 +141,9 @@ fun BackgroundTabs(
                         ColorPicker(
                             initialColor = background.colorGradient,
                             onColorSelected = { color ->
-                                onGradientColorUpdate(color)
+                                updateQuizTheme(
+                                    QuizThemeActions.UpdateGradientColor(color)
+                                )
                             },
                             onClose = {
                                 keyboardController?.hide()
@@ -151,10 +160,9 @@ fun BackgroundTabs(
                 ImageGetter(
                     image = background.imageData,
                     onImageUpdate = { bitmap ->
-                        onImageUpdate(bitmap)
-                    },
-                    onImageDelete = {
-                        onImageUpdate(null)
+                        updateQuizTheme(
+                            QuizThemeActions.UpdateBackgroundImage(bitmap)
+                        )
                     },
                 )
             }

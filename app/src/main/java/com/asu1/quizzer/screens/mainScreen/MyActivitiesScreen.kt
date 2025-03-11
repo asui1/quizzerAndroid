@@ -90,7 +90,7 @@ fun MyActivitiesBody(
         }
     ) {paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues).padding(8.dp)
+            modifier = Modifier.padding(paddingValues).padding(8.dp).padding(top = 16.dp)
         ){
             userActivities.forEach { userActivity ->
                 UserActivityItem(userActivity)
@@ -108,12 +108,11 @@ fun UserActivityItem(userActivity: UserActivity) {
         String.format(Locale.US, "%.1f", userActivity.score)
     }
     val imageUrl = "${BASE_URL_API}images/${userActivity.quizId}.png"
-    //NAME IMAGE SCORE DATE
     ConstraintLayout() {
         val (quizTitle, quizImage, quizSolvedData) = createRefs()
         GlideImage(
             imageModel = {imageUrl},
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(60.dp)
                 .constrainAs(quizImage){
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
@@ -135,7 +134,7 @@ fun UserActivityItem(userActivity: UserActivity) {
                 start.linkTo(quizImage.end, margin = 4.dp)
                 bottom.linkTo(quizSolvedData.top)
             },
-            style = MaterialTheme.typography.bodySmall
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription
         )
         Text(
             StringBuilder()
@@ -148,8 +147,7 @@ fun UserActivityItem(userActivity: UserActivity) {
                 start.linkTo(quizImage.end, margin = 4.dp)
                 bottom.linkTo(parent.bottom)
             },
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Light
+            style = QuizzerTypographyDefaults.quizzerQuizCardCreator,
         )
     }
 }

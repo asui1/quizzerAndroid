@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,8 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
@@ -53,8 +52,8 @@ import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 
@@ -62,23 +61,22 @@ import com.asu1.resources.ViewModelState
 @Composable
 fun ScoringScreen(
     navController: NavController,
-    quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
-    scoreCardViewModel: ScoreCardViewModel = viewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
     email: String = "GUEST",
     loadQuiz: (String) -> Unit = {},
 ) {
-    val quiz by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
-    val quizResult by quizLayoutViewModel.quizResult.collectAsStateWithLifecycle()
-    val scoreCard by scoreCardViewModel.scoreCard.collectAsStateWithLifecycle()
-    val quizLayoutViewModelState by quizLayoutViewModel.viewModelState.observeAsState()
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizzes = quizState.quizContentState.quizzes
+    val quizResult = quizState.quizResult
+    val scoreCard = quizState.scoreCardState.scoreCard
+    val quizViewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
     var showShareBottomSheet by remember{ mutableStateOf(false) }
     var immerseMode by remember { mutableStateOf(false) }
     val localActivity = LocalActivity.current
     var movingToQuizChecker = false
 
-    LaunchedEffect(quizLayoutViewModelState){
-        if(quizLayoutViewModelState == ViewModelState.ERROR){
-            quizLayoutViewModel.resetViewModelState()
+    LaunchedEffect(quizViewModelState){
+        if(quizViewModelState == ViewModelState.ERROR){
             navController.popBackStack(Route.Home, inclusive = false)
         }
     }
@@ -87,14 +85,15 @@ fun ScoringScreen(
         onDispose {
             localActivity?.disableImmersiveMode()
             if(!movingToQuizChecker){
-                scoreCardViewModel.resetScoreCard()
-                quizLayoutViewModel.resetQuizResult()
+                quizCoordinatorViewModel.updateQuizCoordinator(
+                    QuizCoordinatorActions.ResetQuizResult
+                )
             }
         }
     }
 
     AnimatedContent(
-        targetState = quizLayoutViewModelState,
+        targetState = quizViewModelState,
         transitionSpec = {
             fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
         },
@@ -152,8 +151,9 @@ fun ScoringScreen(
                                     scoreCard,
                                     loadQuiz,
                                     onClickMoveHome = {
-                                        quizLayoutViewModel.resetQuizLayout()
-                                        scoreCardViewModel.resetScoreCard()
+                                        quizCoordinatorViewModel.updateQuizCoordinator(
+                                            QuizCoordinatorActions.ResetQuiz
+                                        )
                                         navController.navigate(Route.Home) {
                                             launchSingleTop = true
                                             popUpTo(Route.Home) {
@@ -162,7 +162,7 @@ fun ScoringScreen(
                                         }
                                     },
                                     showShareBottomSheet = { showShareBottomSheet = true },
-                                    isResultView = quiz.isEmpty(),
+                                    isResultView = quizzes.isEmpty(),
                                     navigateToQuizChecker = {
                                         movingToQuizChecker = true
                                         navController.navigate(Route.QuizChecker){

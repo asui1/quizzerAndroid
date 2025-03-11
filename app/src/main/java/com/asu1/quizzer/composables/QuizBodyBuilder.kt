@@ -101,7 +101,6 @@ fun QuizBodyBuilder(
                 ImageGetter(
                     image = bodyState.bodyImage,
                     onImageUpdate = onImageSelected,
-                    onImageDelete = { onImageSelected(null) },
                 )
             }
             is BodyType.YOUTUBE -> {

@@ -1,8 +1,9 @@
 package com.asu1.utils.images
 
 import android.graphics.Bitmap
+import androidx.core.graphics.createBitmap
 
 fun createEmptyBitmap(): Bitmap {
-    return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+    return createBitmap(1, 1)
 }
 

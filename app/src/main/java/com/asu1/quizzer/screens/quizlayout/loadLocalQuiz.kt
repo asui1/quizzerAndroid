@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
@@ -32,7 +31,7 @@ import com.asu1.quizcard.QuizCardHorizontal
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.viewModels.QuizLoadViewModel
+import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import java.util.Base64
@@ -40,10 +39,10 @@ import java.util.Base64
 @Composable
 fun LoadItems(
     navController: NavController,
-    quizLoadViewModel: QuizLoadViewModel = viewModel(),
+    loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel(),
     onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { _, _, _ -> },
 ) {
-    val quizSerializerList by quizLoadViewModel.quizList.collectAsStateWithLifecycle()
+    val quizSerializerList by loadLocalQuizViewModel.localQuizList.collectAsStateWithLifecycle()
     val quizList = remember(quizSerializerList?.size ?: 0){quizSerializerList?.map{
         com.asu1.quizcardmodel.QuizCard(
             id = it.quizData.uuid,
@@ -54,13 +53,13 @@ fun LoadItems(
             count = 0,
         )
     } ?: emptyList()}
-    val loadComplete by quizLoadViewModel.loadComplete.observeAsState()
+    val loadComplete by loadLocalQuizViewModel.loadLocalQuizViewModelState.observeAsState()
     val context = LocalContext.current
 
     LaunchedEffect(loadComplete) {
         if (loadComplete == ViewModelState.SUCCESS) {
             navController.popBackStack()
-            quizLoadViewModel.reset()
+            loadLocalQuizViewModel.reset()
         }
     }
 
@@ -100,7 +99,7 @@ fun LoadItems(
                 LazyColumnWithSwipeToDismiss(
                     quizList = quizList,
                     deleteQuiz = { deleteUuid ->
-                        quizLoadViewModel.deleteLocalQuiz(context, deleteUuid)
+                        loadLocalQuizViewModel.deleteLocalQuiz(context, deleteUuid)
                     },
                     content = {quizCard, index ->
                         QuizCardHorizontal(
@@ -122,18 +121,7 @@ fun LoadItems(
 }
 
 
-fun getSampleQuizLoadViewModel(): QuizLoadViewModel{
-    val quizLoadViewModel = QuizLoadViewModel()
-    quizLoadViewModel.setTest()
-    return quizLoadViewModel
-}
-
 @Preview(showBackground = true)
 @Composable
 fun LoadItemsPreview(){
-    val quizLoadViewModel = getSampleQuizLoadViewModel()
-    LoadItems(
-        navController = rememberNavController(),
-        quizLoadViewModel = quizLoadViewModel
-    )
 }

@@ -87,7 +87,7 @@ fun IconWithTextBody(
             if (enabled) onClick()
         }
             .wrapContentHeight()
-            .width(iconSize * 1.9f)
+            .width(iconSize * 2.5f)
     ) {
         icon()
         Text(
@@ -105,7 +105,7 @@ fun IconButtonWithTextPreview() {
     QuizzerAndroidTheme {
         IconButtonWithText(
             imageVector = Icons.Default.Add,
-            text = "Add",
+            text = "그라데이션",
             onClick = { },
         )
     }

@@ -38,7 +38,8 @@ dependencies {
     implementation(project(":feature:customDialog"))
     implementation(project(":core:util"))
     implementation(project(":core:resource"))
-
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.androidx.runtime.android)
     implementation(libs.foundation.layout)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)

@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -41,40 +42,32 @@ import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
-import java.time.LocalDate
 
 @Composable
 fun QuizSolver(
     modifier: Modifier = Modifier,
     navController: NavController,
-    quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
     navigateToScoreCard: () -> Unit = {},
 ) {
-    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
-    val visibleQuizzes by quizLayoutViewModel.visibleQuizzes.collectAsStateWithLifecycle()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
-    val quizData by quizLayoutViewModel.quizData.collectAsStateWithLifecycle()
-    val viewModelState by quizLayoutViewModel.viewModelState.observeAsState()
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizzes = quizState.quizContentState.quizzes
+    val quizTheme = quizState.quizTheme
+    val quizData = quizState.quizGeneralUiState.quizData
+    val viewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
     val colorScheme = quizTheme.colorScheme
     val view = LocalView.current
     val pagerState = rememberPagerState(
         initialPage = 0,
     ){
-        visibleQuizzes.size + 1
+        quizzes.size + 1
     }
-    val textStyleManager by rememberUpdatedState(quizLayoutViewModel.getTextStyleManager())
-
-    LaunchedEffect(Unit){
-        quizLayoutViewModel.resetVisibleQuizzes()
-        quizLayoutViewModel.loadMoreQuizzes()
-    }
-
-    LaunchedEffect(quizzes.size){
-        quizLayoutViewModel.loadMoreQuizzes()
-    }
+    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
 
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
@@ -87,15 +80,6 @@ fun QuizSolver(
             view = view,
             color = colorScheme.primaryContainer
         )
-    }
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }
-            .collect{page ->
-                if(page == visibleQuizzes.size-1 && visibleQuizzes.size < quizzes.size){
-                    quizLayoutViewModel.loadMoreQuizzes()
-                }
-            }
     }
 
     MaterialTheme(
@@ -112,7 +96,7 @@ fun QuizSolver(
                     modifier = Modifier.fillMaxSize()
                 )
                 AnimatedContent(
-                    targetState = visibleQuizzes.isEmpty(),
+                    targetState = quizzes.isEmpty(),
                     modifier = Modifier.fillMaxSize(),
                     label = "Animation for Loading Quiz Solver",
                 ) { isEmpty ->
@@ -122,33 +106,11 @@ fun QuizSolver(
                         QuizViewerPager(
                             pagerState = pagerState,
                             quizSize = quizzes.size,
-                            visibleQuizzes = visibleQuizzes,
+                            visibleQuizzes = quizzes,
                             quizTheme = quizTheme,
                             textStyleManager = textStyleManager,
-                            updateQuiz1 = { index, answerIndex ->
-                                quizLayoutViewModel.updateQuiz1(
-                                    index,
-                                    answerIndex
-                                )
-                            },
-                            updateQuiz2 = { index, date ->
-                                quizLayoutViewModel.updateQuiz2(
-                                    index,
-                                    date
-                                )
-                            },
-                            updateQuiz3 = { index, from, to ->
-                                quizLayoutViewModel.updateQuiz3(
-                                    index,
-                                    from,
-                                    to
-                                )
-                            },
-                            updateQuiz4 = { index, items ->
-                                quizLayoutViewModel.updateQuiz4(
-                                    index,
-                                    items
-                                )
+                            updateQuizCoordinator = { action ->
+                                quizCoordinatorViewModel.updateQuizCoordinator(action = action)
                             },
                             modifier = Modifier.fillMaxSize(),
                             isPreview = false,
@@ -175,10 +137,7 @@ fun QuizViewerPager(
     visibleQuizzes: List<Quiz<*>>,
     quizTheme: QuizTheme = QuizTheme(),
     textStyleManager: TextStyleManager,
-    updateQuiz1: (page: Int, index: Int) -> Unit,
-    updateQuiz2: (page: Int, date: LocalDate) -> Unit,
-    updateQuiz3: (page: Int, first: Int, second: Int) -> Unit,
-    updateQuiz4: (page: Int, items: List<Int?>) -> Unit,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
     isPreview: Boolean = false,
 ) {
@@ -197,12 +156,11 @@ fun QuizViewerPager(
                     quiz = visibleQuizzes[page],
                     quizTheme = quizTheme,
                     updateQuiz = {quizUserUpdate ->
-                        when(quizUserUpdate){
-                            is QuizUserUpdates.Quiz1Update -> updateQuiz1(page, quizUserUpdate.index)
-                            is QuizUserUpdates.Quiz2Update -> updateQuiz2(page, quizUserUpdate.date)
-                            is QuizUserUpdates.Quiz3Update -> updateQuiz3(page, quizUserUpdate.first, quizUserUpdate.second)
-                            is QuizUserUpdates.Quiz4Update -> updateQuiz4(page, quizUserUpdate.items)
-                        }
+                        updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizAnswer(
+                                page, quizUserUpdate
+                            )
+                        )
                     },
                     quizStyleManager = textStyleManager,
                     isPreview = isPreview
@@ -261,13 +219,6 @@ fun QuizSubmit(
 @Preview(showBackground = true)
 @Composable
 fun QuizSolverPreview() {
-    val quizLayoutViewModel: QuizLayoutViewModel = viewModel()
-    quizLayoutViewModel.addQuiz(sampleQuiz1, null)
-    quizLayoutViewModel.addQuiz(sampleQuiz2, null)
-    QuizSolver(
-        navController = rememberNavController(),
-        quizLayoutViewModel = quizLayoutViewModel,
-    )
 }
 
 @Preview(showBackground = true)

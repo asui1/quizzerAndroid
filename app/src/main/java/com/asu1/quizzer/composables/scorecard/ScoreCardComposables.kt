@@ -72,6 +72,9 @@ fun ScoreCardBackground(
     val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
         backgroundImageColor.backgroundBase.resourceId
     }
+    val colorFilter = remember(backgroundImageColor.color){
+        ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Hue)
+    }
 
     Box(
         modifier = modifier
@@ -86,7 +89,7 @@ fun ScoreCardBackground(
                 }
                 Image(
                     bitmap = bitmap,
-                    colorFilter = ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Color),
+                    colorFilter = colorFilter,
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -103,7 +106,7 @@ fun ScoreCardBackground(
             ImageColorState.BASEIMAGE -> {
                 Image(
                     painter = painterResource(id = baseBackgroundResourceId),
-                    colorFilter = ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Hue),
+                    colorFilter = colorFilter,
                     contentDescription = "ScoreCard Background",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

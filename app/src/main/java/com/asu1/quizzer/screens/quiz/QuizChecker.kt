@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
@@ -32,16 +33,18 @@ import com.asu1.models.sampleQuiz1
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R
 
 @Composable
 fun QuizChecker(
-    quizLayoutViewModel: QuizLayoutViewModel = viewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
 ){
-    val quizzes by quizLayoutViewModel.quizzes.collectAsStateWithLifecycle()
-    val quizTheme by quizLayoutViewModel.quizTheme.collectAsStateWithLifecycle()
+    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
+    val quizzes = quizState.quizContentState.quizzes
+    val quizTheme = quizState.quizTheme
     val colorScheme = quizTheme.colorScheme
     val view = LocalView.current
     val pagerState = rememberPagerState(
@@ -49,7 +52,8 @@ fun QuizChecker(
     ){
         quizzes.size
     }
-    val textStyleManager by rememberUpdatedState(quizLayoutViewModel.getTextStyleManager())
+    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
+
     LaunchedEffect(colorScheme.primaryContainer) {
         setTopBarColor(
             view = view,

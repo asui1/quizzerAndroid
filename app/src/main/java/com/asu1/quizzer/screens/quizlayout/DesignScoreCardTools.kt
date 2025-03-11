@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,15 +37,15 @@ import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.ImageGetter
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModelActions
-import com.asu1.quizzer.viewModels.createSampleScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
+import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModelActions
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun DesignScoreCardTools(
-    scoreCardViewModel: ScoreCardViewModel,
+    updateQuizCoordinate: (QuizCoordinatorActions) -> Unit = {},
+    removeBackground: Boolean = false,
     scoreCard: ScoreCard,
     screenWidth: Dp,
     screenHeight: Dp,
@@ -57,9 +56,8 @@ fun DesignScoreCardTools(
     var showTextColorPicker by remember { mutableStateOf(false) }
     var showBackgroundImagePicker by remember { mutableStateOf(false) }
     var showOverlayImagePicker by remember { mutableStateOf(false) }
-    var colorChange by remember{ mutableIntStateOf(0) }
+    var colorIndex by remember{ mutableIntStateOf(0) }
     var showEffectsDialog by remember {mutableStateOf(false)}
-    val removeBackground by scoreCardViewModel.removeBackground.observeAsState(false)
 
     if(showScoreCardColorPicker){
         Dialog(
@@ -69,16 +67,20 @@ fun DesignScoreCardTools(
             properties = DialogProperties(dismissOnBackPress = true)
         ) {
             TextColorPickerModalSheet(
-                initialColor = when(colorChange) {
+                initialColor = when(colorIndex) {
                     1 -> scoreCard.background.color2
                     2 -> scoreCard.background.colorGradient
                     else -> scoreCard.background.color
                 },
                 onColorSelected = { color ->
-                    scoreCardViewModel.updateColor(color, colorChange)
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateColor(color, colorIndex)
+                        )
+                    )
                 },
                 text = stringResource(
-                    when(colorChange) {
+                    when(colorIndex) {
                         1 -> R.string.select_color2
                         2 -> R.string.select_color3
                         else -> R.string.select_color1
@@ -98,15 +100,24 @@ fun DesignScoreCardTools(
         ){
             ImageGetter(
                 image = scoreCard.background.overlayImage,
-                onImageUpdate = {scoreCardViewModel.updateOverLayImage(it)},
-                onImageDelete = {scoreCardViewModel.updateOverLayImage(null)},
-                topbar = {
+                onImageUpdate = {bitmap ->
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateOverlayImage(bitmap)
+                        )
+                    )
+                },
+                topBar = {
                     LabeledSwitch(
                         label = stringResource(R.string.remove_background),
                         checked = removeBackground,
-                        onCheckedChange = { scoreCardViewModel.updateScoreCardViewModel(
-                            ScoreCardViewModelActions.UpdateRemoveBackground(it)
-                        ) }
+                        onCheckedChange = { checked ->
+                            updateQuizCoordinate(
+                                QuizCoordinatorActions.UpdateScoreCard(
+                                    ScoreCardViewModelActions.UpdateRemoveBackground(checked)
+                                )
+                            )
+                        }
                     )
                 },
                 modifier = Modifier
@@ -127,7 +138,11 @@ fun DesignScoreCardTools(
             TextColorPickerModalSheet(
                 initialColor = scoreCard.textColor,
                 onColorSelected = { color ->
-                    scoreCardViewModel.updateTextColor(color)
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateTextColor(color)
+                        )
+                    )
                 },
                 text = stringResource(R.string.select_text_color),
                 onClose = {
@@ -145,11 +160,19 @@ fun DesignScoreCardTools(
             ImagePickerWithBaseImages(
                 modifier = Modifier,
                 onBaseImageSelected = { baseImage ->
-                    scoreCardViewModel.updateBackgroundBase(baseImage)
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateBackgroundImageBase(baseImage)
+                        )
+                    )
                     showBackgroundImagePicker = false
                 },
-                onImageSelected = {byteArray ->
-                    scoreCardViewModel.updateBackgroundImage(byteArray)
+                onImageSelected = {bitmap ->
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateBackgroundImage(bitmap)
+                        )
+                    )
                     showBackgroundImagePicker = false
                 },
                 imageColorState = scoreCard.background.state,
@@ -209,7 +232,11 @@ fun DesignScoreCardTools(
                     labelText = stringResource(R.string.effects),
                     onClick = { dropdownIndex ->
                         showEffectDropdown = false
-                        scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
+                        updateQuizCoordinate(
+                            QuizCoordinatorActions.UpdateScoreCard(
+                                ScoreCardViewModelActions.UpdateEffect(Effect.entries[dropdownIndex])
+                            )
+                        )
                     },
                     onChangeDialog= { showEffectsDialog = it },
                     inputItems = remember { Effect.entries.map { it.stringId } },
@@ -219,28 +246,17 @@ fun DesignScoreCardTools(
                     iconSize = iconSize,
                     currentSelection = scoreCard.background.effect.ordinal
                 )
-//                com.asu1.customdropdown.FastCreateDropDown(
-//                    showDropdownMenu = showEffectDropdown,
-//                    labelText = stringResource(R.string.effects),
-//                    onClick = { dropdownIndex ->
-//                        showEffectDropdown = false
-//                        scoreCardViewModel.updateEffect(Effect.entries[dropdownIndex])
-//                    },
-//                    onChangeDropDown = { showEffectDropdown = it },
-//                    inputItems = remember { Effect.entries.map { it.stringId } },
-//                    imageVector = Icons.Filled.Animation,
-//                    modifier = Modifier.width(iconSize * 1.7f),
-//                    testTag = "DesignScoreCardAnimationButton",
-//                    iconSize = iconSize,
-//                    currentSelection = scoreCard.background.effect.ordinal
-//                )
             } else if (colorName == R.string.gradient) {
                 com.asu1.customdropdown.FastCreateDropDown(
                     showDropdownMenu = showGradientDropdown,
                     labelText = stringResource(R.string.gradient),
                     onClick = { dropdownIndex ->
                         showGradientDropdown = false
-                        scoreCardViewModel.updateShaderType(ShaderType.entries[dropdownIndex])
+                        updateQuizCoordinate(
+                            QuizCoordinatorActions.UpdateScoreCard(
+                                ScoreCardViewModelActions.UpdateShaderType(ShaderType.entries[dropdownIndex])
+                            )
+                        )
                     },
                     onChangeDropDown = { showGradientDropdown = it },
                     inputItems = remember { ShaderType.entries.map { it.shaderName } },
@@ -255,7 +271,7 @@ fun DesignScoreCardTools(
                 imageVector = Icons.Default.ColorLens,
                 text = stringResource(colorName),
                 onClick = {
-                    colorChange = index
+                    colorIndex = index
                     showScoreCardColorPicker = true
                 },
                 description = "Set Color For ScoreCard",
@@ -271,10 +287,9 @@ fun DesignScoreCardTools(
 fun DesignScoreCardToolsPreview() {
     val scoreCard = sampleScoreCard
     DesignScoreCardTools(
-        scoreCardViewModel = createSampleScoreCardViewModel(),
         scoreCard = scoreCard,
-        screenWidth = 400.dp,
-        screenHeight = 800.dp,
+        screenHeight = 600.dp,
+        screenWidth = 80.dp
     )
 }
 

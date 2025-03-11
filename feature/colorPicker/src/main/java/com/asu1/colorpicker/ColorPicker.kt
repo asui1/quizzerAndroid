@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -26,12 +25,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
-import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
+import com.asu1.utils.Logger
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -53,12 +52,18 @@ fun ColorPicker(
         rgbValue = initialColor.toRgbHex()
     }
 
-    // Listen for color changes using snapshotFlow to debounce updates
+    // Listen for color changes using controller.getColorFlow()
     LaunchedEffect(controller) {
-        snapshotFlow { localColor }
-            .debounce(100) // Reduces unnecessary recompositions
-            .collect { color ->
-                onColorSelected(color) // Update ViewModel smoothly
+        controller.getColorFlow(100)
+            .collect { colorEnvelope ->
+                val selectedColor = colorEnvelope.color.copy(alpha = 1.0f)
+
+                // Update localColor to reflect brightness changes
+                localColor = selectedColor
+                rgbValue = selectedColor.toRgbHex()
+
+                // Notify parent with the updated color
+                onColorSelected(selectedColor)
             }
     }
 
@@ -75,9 +80,6 @@ fun ColorPicker(
                 .fillMaxWidth()
                 .aspectRatio(1f),
             controller = controller,
-            onColorChanged = { colorEnvelope: ColorEnvelope ->
-                localColor = colorEnvelope.color // Update only when necessary
-            }
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -102,10 +104,11 @@ fun ColorPicker(
                 }
                 if (newValue.length == 6) {
                     val color = try {
-                        Color(android.graphics.Color.parseColor("#$newValue"))
+                        Color("#$newValue".toColorInt())
                     } catch (e: IllegalArgumentException) {
                         initialColor
                     }
+                    controller.selectByColor(color, true)
                     localColor = color
                 }
             },
@@ -121,7 +124,6 @@ fun ColorPicker(
         )
     }
 }
-
 
 // Function to convert Color to HEX without Alpha
 fun Color.toRgbHex(): String {

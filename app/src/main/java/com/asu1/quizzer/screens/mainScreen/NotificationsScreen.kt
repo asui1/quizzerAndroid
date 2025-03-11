@@ -45,6 +45,7 @@ import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.NotificationViewModel
 import com.asu1.quizzer.viewModels.NotificationViewModelEvent
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -114,7 +115,10 @@ fun NotificationScreenBody(
                     }
                 },
                 body = {
-                    Text(stringResource(R.string.notification))
+                    Text(
+                        stringResource(R.string.notification),
+                        style = QuizzerTypographyDefaults.quizzerTopBarTitle,
+                    )
                 },
             )
         },
@@ -122,7 +126,7 @@ fun NotificationScreenBody(
         AnimatedContent(
             targetState = currentNotificationDetail==null, // true if no detail
             label = "Notification Detail Transition",
-            modifier = Modifier.padding(paddingValues).padding(8.dp),
+            modifier = Modifier.padding(paddingValues).padding(8.dp).padding(top = 16.dp),
             transitionSpec = {
                 (slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth }, // Enter from the right
@@ -191,7 +195,7 @@ fun NotificationItem(
         val (notificationTitle, notificationTime, proceedIcon) = createRefs()
         Text(
             text = notification.title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = QuizzerTypographyDefaults.quizzerListItemTitle,
             maxLines = 1,
             modifier = Modifier.constrainAs(notificationTitle) {
                 top.linkTo(parent.top)
@@ -200,8 +204,7 @@ fun NotificationItem(
         )
         Text(
             text = notification.date,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Light,
+            style = QuizzerTypographyDefaults.quizzerListItemSub,
             modifier = Modifier.constrainAs(notificationTime) {
                 top.linkTo(notificationTitle.bottom, margin = 2.dp)
                 start.linkTo(parent.start)
@@ -234,7 +237,7 @@ fun NotificationDetail(
         )
         Text(
             notification.body,
-            style = MaterialTheme.typography.bodySmall,
+            style = QuizzerTypographyDefaults.quizzerQuizCardDescription,
         )
     }
 }

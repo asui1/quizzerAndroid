@@ -28,8 +28,8 @@ fun QuizzerTypographyPreview() {
         "quizzerUIMedium" to QuizzerTypographyDefaults.quizzerBodyMedium,
         "quizzerUISmall" to QuizzerTypographyDefaults.quizzerHeadlineMedium,
         "quizzerLabelLarge" to QuizzerTypographyDefaults.quizzerTitleMedium,
-        "quizzerLabelMedium" to QuizzerTypographyDefaults.quizzerLabelMedium,
-        "quizzerLabelSmall" to QuizzerTypographyDefaults.quizzerLabelSmall,
+        "quizzerLabelMedium" to QuizzerTypographyDefaults.quizzerListItemTitle,
+        "quizzerLabelSmall" to QuizzerTypographyDefaults.quizzerListItemSub,
         "quizzerBodySmall" to QuizzerTypographyDefaults.quizzerBodySmall,
     )
     QuizzerAndroidTheme {

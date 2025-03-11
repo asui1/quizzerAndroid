@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -55,7 +57,9 @@ fun QuizCardHorizontalVerticalShare(quizCard: QuizCard, onLoadQuiz: (String) -> 
 }
 
 @Composable
-fun QuizCardHorizontalVerticalShareList(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
+fun QuizCardHorizontalVerticalShareList(
+    quizCards: PersistentList<QuizCard>,
+    onClick: (String) -> Unit = {}) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,6 +82,6 @@ fun QuizCardHorizontalVerticalShareList(quizCards: List<QuizCard>, onClick: (Str
 @Preview(showBackground = true)
 @Composable
 fun QuizCardHorizontalVerticalShareListPreview() {
-    val quizCards = sampleQuizCardList
+    val quizCards = sampleQuizCardList.toPersistentList()
     QuizCardHorizontalVerticalShareList(quizCards = quizCards)
 }

@@ -23,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
@@ -34,7 +34,7 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.composables.QuizzerTopBarBase
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.viewModels.QuizLoadViewModel
+import com.asu1.quizzer.viewModels.quizModels.LoadMyQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -47,15 +47,15 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun LoadMyQuizScreen(
     navController: NavController,
-    quizLoadViewModel: QuizLoadViewModel = viewModel(),
+    loadMyQuizViewModel: LoadMyQuizViewModel = viewModel(),
     onLoadQuiz: (Int) -> Unit = {},
     email: String = "",
 ) {
-    val quizList by quizLoadViewModel.myQuizList.map{
+    val quizList by loadMyQuizViewModel.myQuizList.map{
         it?.toPersistentList() ?: persistentListOf()
     }
         .collectAsStateWithLifecycle(persistentListOf())
-    val quizLoadViewModelState by quizLoadViewModel.loadComplete.observeAsState(
+    val quizLoadViewModelState by loadMyQuizViewModel.loadMyQuizViewModelState.observeAsState(
         ViewModelState.LOADING
     )
 
@@ -69,7 +69,7 @@ fun LoadMyQuizScreen(
         quizLoadViewModelState = quizLoadViewModelState,
         quizList = quizList,
         deleteQuiz = {deleteUuid ->
-            quizLoadViewModel.deleteMyQuiz(deleteUuid, email)
+            loadMyQuizViewModel.deleteMyQuiz(deleteUuid, email)
         },
         onLoadQuiz = {index ->
             onLoadQuiz(index)
@@ -111,6 +111,7 @@ fun LoadMyQuizBody(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValue)
+                .padding(top = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             AnimatedContent(

@@ -59,7 +59,6 @@ fun ImagePickerWithBaseImages(
                 ImageGetter(
                     image = currentImage,
                     onImageUpdate = onImageSelected,
-                    onImageDelete = {onImageSelected(null)},
                     modifier = Modifier
                         .aspectRatio(0.6f)
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp,

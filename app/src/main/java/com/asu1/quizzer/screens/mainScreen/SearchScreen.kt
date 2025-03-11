@@ -51,29 +51,66 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.quizcard.QuizCardHorizontalVerticalShareList
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.Logger
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun  SearchScreen(navController: NavHostController,
                   searchViewModel: SearchViewModel = viewModel(),
                   onQuizClick: (quizId: String) -> Unit = {}) {
+    val searchText by searchViewModel.searchText.collectAsStateWithLifecycle()
+    val searchResult by searchViewModel.searchResult
+        .map { it?.toPersistentList() ?: null }
+        .collectAsStateWithLifecycle(null)
+    val searchSuggestions by searchViewModel.searchSuggestions.collectAsStateWithLifecycle()
+
+
+    SearchScreenBody(
+        onMoveBackHome = {
+            navController.popBackStack(
+                Route.Home,
+                inclusive = false
+            )
+        },
+        searchText = searchText,
+        onSearchTextChange = { searchText ->
+            searchViewModel.setSearchText(searchText)
+        },
+        search = {searchText ->
+            searchViewModel.search(searchText)
+        },
+        searchSuggestions = searchSuggestions,
+        searchResult = searchResult,
+        onQuizClick = onQuizClick,
+    )
+}
+
+@Composable
+fun SearchScreenBody(
+    onMoveBackHome: () -> Unit = {},
+    searchText: String,
+    onSearchTextChange: (String) -> Unit = {},
+    search: (String) -> Unit = {},
+    searchSuggestions: List<String>,
+    searchResult: PersistentList<QuizCard>?,
+    onQuizClick: (String) -> Unit = {},
+){
     val focusManager = LocalFocusManager.current
     var isFocused by remember {mutableStateOf(false)}
-    val searchText by searchViewModel.searchText.collectAsStateWithLifecycle()
-    val searchResult by searchViewModel.searchResult.collectAsStateWithLifecycle()
-    val searchSuggestions by searchViewModel.searchSuggestions.collectAsStateWithLifecycle()
     val focusRequester = remember{ FocusRequester() }
 
     fun onBackPressed() {
-        searchViewModel.setSearchText("")
+        onSearchTextChange("")
         focusRequester.requestFocus()
     }
 
@@ -91,25 +128,26 @@ fun  SearchScreen(navController: NavHostController,
 
     fun search(text: String){
         focusManager.clearFocus()
-        searchViewModel.search(text)
+        search(text)
     }
 
     Scaffold(
         topBar = {
             SearchTopBar(
-                navController = navController,
+                onMoveBackHome = onMoveBackHome,
                 searchText = searchText,
                 onSearchTextChanged = {text ->
-                    searchViewModel.setSearchText(text)
+                    onSearchTextChange(text)
                 },
                 search = {
                     search(it)
                 },
+                onFocusChange = {focusChange ->
+                    isFocused = focusChange
+                },
                 focusManager = focusManager,
-                onTextFieldFocused = { isFocused = true },
-                onTextFieldUnfocused = { isFocused = false },
                 onBackPressed = { onBackPressed() },
-                focusRequester = focusRequester
+                focusRequester = focusRequester,
             )
         },
         content = { paddingValues ->
@@ -142,7 +180,6 @@ fun  SearchScreen(navController: NavHostController,
         }
     )
 }
-
 
 @Composable
 private fun SearchScreenSuggestions(
@@ -182,7 +219,7 @@ private fun SearchScreenSuggestionItem(
         Text(
             suggestion,
             maxLines = 1,
-            style = MaterialTheme.typography.bodyMedium
+            style = QuizzerTypographyDefaults.quizzerBodyMedium,
         )
     }
 }
@@ -200,21 +237,21 @@ private fun SearchScreenSuggestionsPreview(){
 
 @Composable
 private fun SearchScreenResults(
-    searchResult: List<QuizCard>?,
+    searchResult: PersistentList<QuizCard>?,
     onQuizClick: (quizId: String) -> Unit
 ) {
     when {
         searchResult == null -> {
             Text(
                 text = stringResource(R.string.searching),
-                style = MaterialTheme.typography.bodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
         }
         searchResult.isEmpty() -> {
             Text(
                 text = stringResource(R.string.no_search_result),
-                style = MaterialTheme.typography.bodyMedium,
+                style = QuizzerTypographyDefaults.quizzerBodyMedium,
             )
         }
         else -> {
@@ -234,7 +271,7 @@ fun PreviewSearchScreenBody(){
     val quizCards = sampleQuizCardList
     QuizzerAndroidTheme {
         SearchScreenResults(
-            searchResult = quizCards,
+            searchResult = quizCards.toPersistentList(),
             onQuizClick = {}
         )
     }
@@ -245,13 +282,10 @@ fun PreviewSearchScreenBody(){
 fun PreviewSearchScreenTopBar(){
     QuizzerAndroidTheme {
         SearchTopBar(
-            navController = rememberNavController(),
             searchText = "",
             onSearchTextChanged = {},
             search = {},
             focusManager = LocalFocusManager.current,
-            onTextFieldFocused = {},
-            onTextFieldUnfocused = {},
             focusRequester = remember{ FocusRequester() }
         )
     }
@@ -260,13 +294,12 @@ fun PreviewSearchScreenTopBar(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
-    navController: NavHostController,
+    onMoveBackHome: () -> Unit = {},
     searchText: String,
     onSearchTextChanged: (String) -> Unit,
     search: (searchText: String) -> Unit,
     focusManager: FocusManager,
-    onTextFieldFocused: () -> Unit,
-    onTextFieldUnfocused: () -> Unit,
+    onFocusChange: (Boolean) -> Unit = {},
     onBackPressed: () -> Unit = {},
     focusRequester: FocusRequester,
 ) {
@@ -284,9 +317,9 @@ fun SearchTopBar(
                         .focusRequester(focusRequester)
                         .onFocusChanged { focusState ->
                             if (focusState.isFocused) {
-                                onTextFieldFocused()
+                                onFocusChange(true)
                             } else {
-                                onTextFieldUnfocused()
+                                onFocusChange(false)
                             }
                         },
                     placeholder = { Text(text = stringResource(R.string.search) )},
@@ -325,10 +358,9 @@ fun SearchTopBar(
                 modifier = Modifier.fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = { navController.popBackStack(
-                    Route.Home,
-                    inclusive = false
-                ) }) {
+                IconButton(
+                    onClick = onMoveBackHome
+                ) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }

@@ -12,8 +12,8 @@ import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
 import com.asu1.quizzer.quizCreateUtils.datacreation.t1geng20250201
-import com.asu1.quizzer.viewModels.QuizLayoutViewModel
-import com.asu1.quizzer.viewModels.ScoreCardViewModel
+import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
+import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
@@ -119,9 +119,9 @@ class MyComposeTest {
         //SET IMAGE
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.waitFor(500)
-        val quizLayoutViewModel = ViewModelProvider(activity)[QuizLayoutViewModel::class.java]
+        val quizGeneralViewModel = ViewModelProvider(activity)[QuizGeneralViewModel::class.java]
         testUtils.setImage(context, instContext.packageName, testQuizData.titleImage, onImagePicked = { image ->
-            quizLayoutViewModel.setQuizImage(image)
+            quizGeneralViewModel.updateQuizImage(image)
         }, width = 200.dp, height = 200.dp)
         onIdle()
         testUtils.waitFor(100)
@@ -175,7 +175,6 @@ class MyComposeTest {
                         instContext.packageName,
                         testQuizData.bodyImages[i],
                         onImagePicked = { image ->
-                            quizLayoutViewModel.setQuizBodyImage(image)
                         })
                 }
             }
