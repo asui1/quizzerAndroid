@@ -93,7 +93,7 @@ class MyComposeTest {
 
         //LOGIN
         val userViewModel = ViewModelProvider(activity)[UserViewModel::class.java]
-        userViewModel.login("whwkd122@gmail.com")
+        userViewModel.login("whwkd122@gmail.com", "")
         onIdle()
         testUtils.waitFor(1500)
         testUtils.clickOnTag("MainScreenCreateQuiz")

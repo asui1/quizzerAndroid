@@ -116,16 +116,6 @@ class ScoreCardViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateBackgroundState(imageColorState: ImageColorState) {
-        _scoreCardState.update { currentState ->
-            currentState.copy(
-                scoreCard = currentState.scoreCard.copy(
-                    background = currentState.scoreCard.background.copy(state = imageColorState)
-                )
-            )
-        }
-    }
-
     fun updateShaderType(shaderType: ShaderType) {
         _scoreCardState.update { currentState ->
             currentState.copy(

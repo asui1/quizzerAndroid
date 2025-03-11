@@ -19,9 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -30,21 +28,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.sampleQuiz1
-import com.asu1.models.sampleQuiz2
 import com.asu1.quizzer.composables.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.model.QuizUserUpdates
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
-import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 

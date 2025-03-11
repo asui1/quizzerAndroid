@@ -28,6 +28,7 @@ import androidx.compose.ui.window.Dialog
 import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun ImagePickerWithBaseImages(
@@ -98,7 +99,7 @@ fun ImagePickerWithBaseImagesPreview() {
             onDismissRequest = { },
         ) {
             ImagePickerWithBaseImages(
-                currentImage = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
+                currentImage = createEmptyBitmap(),
                 onBaseImageSelected = {},
                 onImageSelected = {},
                 imageColorState = ImageColorState.BASEIMAGE,

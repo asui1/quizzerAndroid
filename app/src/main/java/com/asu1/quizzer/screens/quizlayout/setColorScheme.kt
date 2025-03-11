@@ -1,7 +1,6 @@
 package com.asu1.quizzer.screens.quizlayout
 
 import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -53,14 +52,12 @@ import androidx.compose.ui.unit.dp
 import com.asu1.colorpicker.ColorSchemeSheet
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.models.quiz.QuizTheme
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
 import com.asu1.resources.paletteSize
-import com.asu1.utils.shaders.ShaderType
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme

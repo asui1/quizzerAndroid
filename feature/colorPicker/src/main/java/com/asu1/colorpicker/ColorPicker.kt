@@ -30,7 +30,6 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.FlowPreview
-import com.asu1.utils.Logger
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -105,7 +104,7 @@ fun ColorPicker(
                 if (newValue.length == 6) {
                     val color = try {
                         Color("#$newValue".toColorInt())
-                    } catch (e: IllegalArgumentException) {
+                    } catch (_: IllegalArgumentException) {
                         initialColor
                     }
                     controller.selectByColor(color, true)

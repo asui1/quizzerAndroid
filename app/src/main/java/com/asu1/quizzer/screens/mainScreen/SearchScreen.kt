@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -70,7 +69,7 @@ fun  SearchScreen(navController: NavHostController,
                   onQuizClick: (quizId: String) -> Unit = {}) {
     val searchText by searchViewModel.searchText.collectAsStateWithLifecycle()
     val searchResult by searchViewModel.searchResult
-        .map { it?.toPersistentList() ?: null }
+        .map { it?.toPersistentList() }
         .collectAsStateWithLifecycle(null)
     val searchSuggestions by searchViewModel.searchSuggestions.collectAsStateWithLifecycle()
 
@@ -126,7 +125,7 @@ fun SearchScreenBody(
         }
     }
 
-    fun search(text: String){
+    fun clearFocusAndSearch(text: String){
         focusManager.clearFocus()
         search(text)
     }
@@ -140,7 +139,7 @@ fun SearchScreenBody(
                     onSearchTextChange(text)
                 },
                 search = {
-                    search(it)
+                    clearFocusAndSearch(it)
                 },
                 onFocusChange = {focusChange ->
                     isFocused = focusChange
@@ -164,7 +163,7 @@ fun SearchScreenBody(
                         SearchScreenSuggestions(
                             suggestions = searchSuggestions,
                             onSuggestionClick = {suggestion ->
-                                search(suggestion)
+                                clearFocusAndSearch(suggestion)
                             }
                         )
                     }

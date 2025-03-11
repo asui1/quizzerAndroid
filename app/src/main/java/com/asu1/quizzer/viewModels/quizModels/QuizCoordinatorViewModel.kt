@@ -259,7 +259,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         return quizLayoutSerializer
     }
 
-    suspend fun quizDataToJson(): QuizDataSerializer{
+    fun quizDataToJson(): QuizDataSerializer{
         val quizData = quizGeneralViewModel.quizGeneralUiState.value.quizData
         val stream = ByteArrayOutputStream()
         quizData.image.compress(Bitmap.CompressFormat.PNG, 100, stream)

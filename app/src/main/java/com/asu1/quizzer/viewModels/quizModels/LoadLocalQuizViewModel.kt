@@ -1,5 +1,7 @@
 package com.asu1.quizzer.viewModels.quizModels
 
+import ToastManager
+import ToastType
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.collections.remove
 
 class LoadLocalQuizViewModel: ViewModel() {
     private val _localQuizList = MutableStateFlow<List<QuizLayoutSerializer>?>(null)
@@ -26,10 +27,6 @@ class LoadLocalQuizViewModel: ViewModel() {
     fun reset(){
         _loadLocalQuizViewModelState.postValue(ViewModelState.IDLE)
         _localQuizList.value = null
-    }
-
-    fun loadComplete(){
-        _loadLocalQuizViewModelState.postValue(ViewModelState.SUCCESS)
     }
 
     fun deleteLocalQuiz(context: Context, uuid: String){

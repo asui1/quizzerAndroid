@@ -2,6 +2,7 @@ package com.asu1.customdialogs
 
 import ToastManager
 import ToastType
+import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.border
@@ -26,10 +27,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -40,6 +43,9 @@ import com.asu1.resources.BASE_URL
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.generateUniqueId
+import androidx.core.net.toUri
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 const val resultUrlBase = "${BASE_URL}?resultId="
 const val quizUrlBase = "${BASE_URL}?quizId="
@@ -53,7 +59,8 @@ fun ShareDialog(
     val quizUrl = remember(quizId){ quizUrlBase + quizId}
     val resultUrl = remember(quizId){ resultUrlBase + generateUniqueId(quizId, userName) }
     val shareLink = if(userName == "Guest") quizUrl else resultUrl
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val clipboard: Clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -82,7 +89,10 @@ fun ShareDialog(
                 .fillMaxWidth()
                 .padding(top = 8.dp)
                 .clickable {
-                    clipboardManager.setText(AnnotatedString(resultUrl))
+                    scope.launch {
+                        val clip = ClipData.newPlainText(resultUrl, resultUrl)
+                        clipboard.setClipEntry(ClipEntry(clip))
+                    }
                     ToastManager.showToast(
                         message = R.string.link_copied_to_clipboard,
                         type = ToastType.SUCCESS,
@@ -111,7 +121,10 @@ fun ShareDialog(
                     .fillMaxWidth()
                     .padding(top = 8.dp)
                     .clickable {
-                        clipboardManager.setText(AnnotatedString(resultUrl))
+                        scope.launch {
+                            val clip = ClipData.newPlainText(resultUrl, resultUrl)
+                            clipboard.setClipEntry(ClipEntry(clip))
+                        }
                         ToastManager.showToast(
                             message = R.string.link_copied_to_clipboard,
                             type = ToastType.SUCCESS,
@@ -154,7 +167,7 @@ fun RowWithShares(
                 text = "Facebook",
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse("https://www.facebook.com/sharer/sharer.php?u=$shareLink")
+                        data = "https://www.facebook.com/sharer/sharer.php?u=$shareLink".toUri()
                         setPackage("com.facebook.katana")
                     }
                     context.startActivity(intent)

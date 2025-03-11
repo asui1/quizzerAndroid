@@ -190,7 +190,6 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.padding(it).fillMaxSize()
                     ) {
-                        val colorScheme = MaterialTheme.colorScheme
                         fun hasVisitedRoute(
                             navController: NavController,
                             route: Route

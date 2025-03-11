@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.serializers.BodyType
 import com.asu1.resources.R
+import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun QuizBodyBuilder(
@@ -53,7 +54,7 @@ fun QuizBodyBuilder(
                 showBodyDialog = false
             },
             onImageSelected = {
-                updateBody(BodyType.IMAGE(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)))
+                updateBody(BodyType.IMAGE(createEmptyBitmap()))
                 showBodyDialog = false
             },
             onYoutubeSelected = {

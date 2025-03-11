@@ -33,7 +33,6 @@ import com.asu1.models.sampleQuiz1
 import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.model.TextStyleManager
 import com.asu1.quizzer.util.setTopBarColor
-import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.quizzer.viewModels.quizModels.Quiz4ViewModel
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R

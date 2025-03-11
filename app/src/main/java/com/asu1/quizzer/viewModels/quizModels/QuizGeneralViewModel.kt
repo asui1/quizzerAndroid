@@ -9,16 +9,13 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.resources.LayoutSteps
 import com.asu1.resources.R
-import com.asu1.resources.ViewModelState
+import com.asu1.utils.Logger
 import com.asu1.utils.images.createEmptyBitmap
 import com.github.f4b6a3.uuid.UuidCreator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Base64
-import com.asu1.utils.Logger
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import java.util.Base64
 
 class QuizGeneralViewModel : ViewModel() {
     private val _quizGeneralUIState = MutableStateFlow(QuizGeneralUiState())
@@ -113,12 +110,6 @@ class QuizGeneralViewModel : ViewModel() {
                 if (!add(tag)) remove(tag)
             }
             currentState.copy(quizData = currentState.quizData.copy(tags = updatedTags))
-        }
-    }
-
-    fun updateCreator(creator: String) {
-        _quizGeneralUIState.update {
-            it.copy(quizData = it.quizData.copy(creator = creator))
         }
     }
 
