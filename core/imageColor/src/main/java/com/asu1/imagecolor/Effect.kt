@@ -6,7 +6,9 @@ import com.asu1.resources.R
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Effect(val stringId: Int, val resourceUrl: String, val blendmode: BlendModeCompat, val contentScale: ContentScale, val defaultEffectGraphicsInfos: List<EffectGraphicsInfo>){
+enum class Effect(val stringId: Int, val resourceUrl: String,
+                  val blendmode: BlendModeCompat,
+                  val contentScale: ContentScale, val defaultEffectGraphicsInfos: List<EffectGraphicsInfo>){
     NONE(R.string.none, "", BlendModeCompat.COLOR,
         ContentScale.Fit,
         listOf()

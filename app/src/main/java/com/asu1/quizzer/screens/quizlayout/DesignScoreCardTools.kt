@@ -4,6 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -14,7 +17,12 @@ import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material.icons.filled.ImageSearch
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +41,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.asu1.custombuttons.LabeledSwitch
 import com.asu1.imagecolor.Effect
+import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quizzer.composables.ImageGetter
@@ -88,7 +98,34 @@ fun DesignScoreCardTools(
                 ),
                 onClose = {
                     showScoreCardColorPicker = false
-                }
+                },
+                toggleBlendMode = {
+                    if(colorIndex == 0){
+                        ToggleTextWithSwitch(
+                            textA = stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId),
+                            textB = stringResource(ImageBlendMode.BLENDHUE.stringResourceId),
+                            isBSelected = scoreCard.background.imageBlendMode == ImageBlendMode.BLENDHUE,
+                            onClick = { it ->
+                                updateQuizCoordinate(
+                                    QuizCoordinatorActions.UpdateScoreCard(
+                                        ScoreCardViewModelActions.ChangeBlendMode
+                                    )
+                                )
+                            }
+                        )
+                    }
+                },
+                resetToTransparent = {
+                    ResetToTransparentButton(
+                        onReset = {
+                            updateQuizCoordinate(
+                                QuizCoordinatorActions.UpdateScoreCard(
+                                    ScoreCardViewModelActions.UpdateColor(Color.Transparent, colorIndex)
+                                )
+                            )
+                        },
+                    )
+                },
             )
         }
     }
@@ -125,7 +162,11 @@ fun DesignScoreCardTools(
                         MaterialTheme.colorScheme.surfaceContainerHigh,
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .border(2.dp, MaterialTheme.colorScheme.onSurface, shape = RoundedCornerShape(8.dp))
+                    .border(
+                        2.dp,
+                        MaterialTheme.colorScheme.onSurface,
+                        shape = RoundedCornerShape(8.dp)
+                    )
             )
         }
     }
@@ -280,6 +321,83 @@ fun DesignScoreCardTools(
             )
         }
     }
+}
+
+@Composable
+private fun ResetToTransparentButton(
+    modifier: Modifier = Modifier,
+    onReset: () -> Unit,
+) {
+    TextButton(
+        onClick = onReset,
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.reset_color_transparent),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Reset"
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ResetToTransparentButtonPreview() {
+    ResetToTransparentButton(onReset = {
+        // Your reset logic goes here.
+    })
+}
+
+
+@Composable
+fun ToggleTextWithSwitch(
+    textA: String,
+    textB: String,
+    isBSelected: Boolean,
+    onClick: (Boolean) -> Unit = {},
+) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // A switch to toggle the state.
+        Text(
+            text = textA,
+            style = MaterialTheme.typography.titleSmall
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Switch(
+            checked = isBSelected,
+            onCheckedChange = { onClick(it) }
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = textB,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ToggleTextWithSwitchPreview() {
+    ToggleTextWithSwitch(
+        textA = "COLOR",
+        textB = "HUE",
+        isBSelected = true,
+        
+    )
 }
 
 @Preview(showBackground = true)

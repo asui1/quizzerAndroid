@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
@@ -46,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,6 +61,7 @@ import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import java.util.Locale
 
@@ -72,8 +73,11 @@ fun ScoreCardBackground(
     val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
         backgroundImageColor.backgroundBase.resourceId
     }
-    val colorFilter = remember(backgroundImageColor.color){
-        ColorFilter.tint(backgroundImageColor.color, blendMode = BlendMode.Hue)
+
+    //TODO: PROVIDE METHOD FOR SWITCHING BLENDMODE.COLOR and BLENDMODE.HUE.
+    //ALSO, MAKE BUTTON AND TOOLTIP TO LET USER SET FILTER TO TRANSPARENT.
+    val colorFilter = remember(backgroundImageColor.color, backgroundImageColor.imageBlendMode){
+        ColorFilter.tint(backgroundImageColor.color, blendMode = backgroundImageColor.imageBlendMode.blendMode)
     }
 
     Box(
@@ -164,6 +168,7 @@ fun ScoreCardComposable(
     scoreCard: ScoreCard,
     quizResult: QuizResult = sampleResult,
     pagerInit: Int = 0,
+    quizQuestions: PersistentList<String> = persistentListOf<String>(),
 ){
     val pagerState = rememberPagerState(
         initialPage = pagerInit,
@@ -255,6 +260,7 @@ fun ScoreCardComposable(
                                 textColor = scoreCard.textColor,
                                 errorColor = redded,
                                 correctColor = greened,
+                                questions = quizQuestions,
                             )
                         }
                         2 -> {
@@ -335,7 +341,7 @@ fun ScoreCardComposablePreview() {
     val scoreCard = sampleScoreCard
     ScoreCardComposable(
         scoreCard = scoreCard,
-        pagerInit = 2,
+        pagerInit = 1,
     )
 }
 
@@ -345,35 +351,64 @@ fun AnswerCorrection(
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
-){
+    questions: PersistentList<String> = persistentListOf<String>()
+) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(1),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .padding(16.dp)
             .wrapContentSize()
     ) {
-        items(correction.size) { index ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Box(modifier = Modifier.width(35.dp)) {
+        items(correction.size, key = { index -> index }) { index ->
+            if (questions.isNotEmpty() && index < questions.size) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Text(
-                        text = "${index + 1} : ",
+                        text = "${index + 1} :",
+                        color = textColor,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = questions[index],
                         color = textColor,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = if (correction[index]) "O" else "X",
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (correction[index]) correctColor else errorColor,
+                        maxLines = 1
                     )
                 }
-                Text(
-                    text = if (correction[index]) "O" else "X",
-                    fontWeight = FontWeight.ExtraBold,
-                    color = if (correction[index]) correctColor else errorColor
-                )
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(start = 75.dp)
+                ) {
+                    Box(modifier = Modifier.width(35.dp)) {
+                        Text(
+                            text = "${index + 1} :",
+                            color = textColor,
+                            maxLines = 1
+                        )
+                    }
+                    Text(
+                        text = if (correction[index]) "O" else "X",
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (correction[index]) correctColor else errorColor,
+                        maxLines = 1
+                    )
+                }
             }
         }
     }
-
 }
 
 @Composable

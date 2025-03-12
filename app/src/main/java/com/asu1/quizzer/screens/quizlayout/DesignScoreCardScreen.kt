@@ -49,6 +49,8 @@ import com.asu1.resources.ViewModelState
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 val colorNames: List<Int> = listOf(R.string.background_newline,
     R.string.effect, R.string.gradient)
@@ -74,6 +76,7 @@ fun DesignScoreCardScreen(
     var immerseMode by remember { mutableStateOf(false) }
     val localActivity = LocalActivity.current
     val scope = rememberCoroutineScope()
+    val quizQuestions = remember(Unit){quizCoordinatorViewModel.getQuestions()}
 
     DisposableEffect(Unit) {
         onDispose {
@@ -120,6 +123,7 @@ fun DesignScoreCardScreen(
                         quizCoordinatorViewModel.tryUpload(navController, onUpload)
                     }
                 },
+                questions = quizQuestions,
             )
             OpenCloseColumn(
                 isOpen = expanded,
@@ -150,6 +154,7 @@ private fun DesignScoreCardBody(
     scoreCard: ScoreCard,
     immerseMode: Boolean,
     onUpload: () -> Unit = { },
+    questions: PersistentList<String> = persistentListOf()
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,7 +167,8 @@ private fun DesignScoreCardBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .animateContentSize()
+                .animateContentSize(),
+            quizQuestions = questions,
         )
         if (!immerseMode) {
             Spacer(modifier = Modifier.height(8.dp))

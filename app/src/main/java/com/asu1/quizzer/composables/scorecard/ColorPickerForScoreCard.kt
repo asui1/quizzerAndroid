@@ -22,7 +22,9 @@ fun TextColorPickerModalSheet(
     initialColor: Color,
     onColorSelected: (Color) -> Unit,
     text: String = "",
-    onClose: () -> Unit = {}
+    onClose: () -> Unit = {},
+    toggleBlendMode: @Composable () -> Unit = {},
+    resetToTransparent: @Composable () -> Unit = {},
 ){
     Column(
         modifier = Modifier
@@ -37,6 +39,8 @@ fun TextColorPickerModalSheet(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(8.dp))
+        toggleBlendMode()
+        resetToTransparent()
         com.asu1.colorpicker.ColorPicker(
             initialColor = initialColor,
             onColorSelected = { color ->
@@ -55,5 +59,7 @@ fun TextColorPickerModalSheetPreview() {
         initialColor = Color.Black,
         onColorSelected = { },
         text = "Select Text Color",
+        toggleBlendMode = {},
+        resetToTransparent = {},
     )
 }

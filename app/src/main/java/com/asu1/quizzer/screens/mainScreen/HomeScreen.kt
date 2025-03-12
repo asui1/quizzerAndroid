@@ -2,9 +2,7 @@ package com.asu1.quizzer.screens.mainScreen
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,23 +26,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.custombuttons.RoundTab
+import androidx.core.net.toUri
 import com.asu1.quizcard.HorizontalQuizCardItemLarge
 import com.asu1.quizcard.HorizontalQuizCardItemVertical
 import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.quizcardmodel.sampleQuizCardsWithTagList
+import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter.isKo
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
-import com.asu1.resources.QuizzerTypographyDefaults
 
 val tabTitles = persistentListOf(
     R.string.main,
@@ -83,27 +79,28 @@ fun HomeScreen(
     }
 
     Column(modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onSizeChanged { rowWidth = it.width } // Capture total Row width
-        ) {
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(scrollState),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                tabTitles.forEachIndexed { index, title ->
-                    RoundTab(
-                        title = stringResource(title),
-                        isSelected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
-                        }
-                    )
-                }
-            }
-        }
+        //TODO: CONTENTS NEEDED FOR EACH TABS
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .onSizeChanged { rowWidth = it.width } // Capture total Row width
+//        ) {
+//            Row(
+//                modifier = Modifier
+//                    .horizontalScroll(scrollState),
+//                horizontalArrangement = Arrangement.spacedBy(4.dp)
+//            ) {
+//                tabTitles.forEachIndexed { index, title ->
+//                    RoundTab(
+//                        title = stringResource(title),
+//                        isSelected = pagerState.currentPage == index,
+//                        onClick = {
+//                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
+//                        }
+//                    )
+//                }
+//            }
+//        }
         // Swipeable Pages
         HorizontalPager(
             state = pagerState,

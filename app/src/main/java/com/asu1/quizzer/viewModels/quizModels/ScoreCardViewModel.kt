@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.Effect
+import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.scorecard.ScoreCard
@@ -200,6 +201,29 @@ class ScoreCardViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
+    fun toggleBlendMode() {
+        _scoreCardState.update { currentState ->
+            val currentBlendMode = currentState.scoreCard.background.imageBlendMode
+            // Toggle between BlendMode.Color and BlendMode.Hue.
+            val newBlendMode = if (currentBlendMode == ImageBlendMode.BLENDHUE) {
+                Logger.debug("Change to blend color")
+                ImageBlendMode.BLENDCOLOR
+            } else {
+                Logger.debug("Change to blend hue")
+                ImageBlendMode.BLENDHUE
+            }
+
+            // Return a new state with the updated blend mode.
+            currentState.copy(
+                scoreCard = currentState.scoreCard.copy(
+                    background = currentState.scoreCard.background.copy(
+                        imageBlendMode = newBlendMode
+                    )
+                )
+            )
+        }
+    }
+
     fun updateScoreCardViewModel(action: ScoreCardViewModelActions){
         when(action){
             is ScoreCardViewModelActions.UpdateColor -> updateColor(action.color, action.colorIndex)
@@ -210,6 +234,7 @@ class ScoreCardViewModel @Inject constructor() : ViewModel() {
             is ScoreCardViewModelActions.UpdateBackgroundImage -> updateBackgroundImage(action.bitmap)
             is ScoreCardViewModelActions.UpdateEffect -> updateEffect(action.effect)
             is ScoreCardViewModelActions.UpdateShaderType -> updateShaderType(action.shaderType)
+            is ScoreCardViewModelActions.ChangeBlendMode -> toggleBlendMode()
         }
     }
 }
@@ -223,6 +248,7 @@ sealed class ScoreCardViewModelActions{
     data class UpdateBackgroundImage(val bitmap: Bitmap?): ScoreCardViewModelActions()
     data class UpdateEffect(val effect: Effect): ScoreCardViewModelActions()
     data class UpdateShaderType(val shaderType: ShaderType): ScoreCardViewModelActions()
+    data object ChangeBlendMode: ScoreCardViewModelActions()
 }
 
 data class ScoreCardState(

@@ -30,6 +30,8 @@ import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
 import com.asu1.utils.calculateSeedColor
 import com.asu1.utils.toScheme
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -62,6 +64,12 @@ class QuizCoordinatorViewModel : ViewModel() {
     private lateinit var scoreCardViewModel: ScoreCardViewModel
 
     private val _titleImageColors = MutableStateFlow<List<Color>>(emptyList())
+
+    fun getQuestions(): PersistentList<String>{
+        return quizContentViewModel.quizContentState.value.quizzes.map {
+            it.question
+        }.toPersistentList()
+    }
 
     fun updateTitleImageColors(image: Bitmap){
         if(image.width < 3){

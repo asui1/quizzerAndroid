@@ -34,6 +34,7 @@
     <string name="set_text_setting">Text Setting</string>
     <string name="warning">Warning</string>
     <string name="warn_progress_not_saved">Your state will not be saved.\nDo you want to proceed?</string>
+    <string name="reset_color_transparent">Reset to Transparent</string>
     <string name="proceed">Proceed</string>
     <string name="cancel">Cancel</string>
     <string name="delete_save">Delete Save</string>
@@ -67,6 +68,8 @@
     <string name="solved">"Solved: "</string>
     <string name="save">Save</string>
     <string name="background">Background</string>
+    <string name="blend_color">Blend Color</string>
+    <string name="blend_hue">Shift Hue</string>
     <string name="you_are_top">"You are top "</string>
     <string name="select_tags_that_interest_you">Select tags that interest you</string>
     <string name="enter_tag">Enter Tag</string>

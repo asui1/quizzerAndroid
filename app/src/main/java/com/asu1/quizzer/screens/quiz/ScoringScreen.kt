@@ -74,6 +74,7 @@ fun ScoringScreen(
     var immerseMode by remember { mutableStateOf(false) }
     val localActivity = LocalActivity.current
     var movingToQuizChecker = false
+    val quizQuestions = remember(Unit){quizCoordinatorViewModel.getQuestions()}
 
     LaunchedEffect(quizViewModelState){
         if(quizViewModelState == ViewModelState.ERROR){
@@ -143,7 +144,8 @@ fun ScoringScreen(
                             ScoreCardComposable(
                                 scoreCard = scoreCard,
                                 quizResult = quizResult!!,
-                                modifier = Modifier.fillMaxWidth().weight(1f)
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                quizQuestions = quizQuestions,
                             )
                             if(!immerseMode){
                                 Spacer(modifier = Modifier.height(8.dp))

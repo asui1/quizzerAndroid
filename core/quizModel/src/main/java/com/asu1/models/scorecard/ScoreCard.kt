@@ -23,7 +23,7 @@ data class ScoreCard (
         color2 = Color.Transparent,
         colorGradient = Color.Transparent,
         state = ImageColorState.COLOR,
-        backgroundBase = BackgroundBase.SKY,
+        backgroundBase = BackgroundBase.SKY_WARM,
         effect = Effect.SNOWFLAKES,
         shaderType = ShaderType.Brush1
     ),
@@ -57,7 +57,7 @@ val sampleScoreCard = ScoreCard(
         color2 = Color.Black,
         colorGradient = Color.White,
         state = ImageColorState.COLOR,
-        backgroundBase = BackgroundBase.SKY,
+        backgroundBase = BackgroundBase.SKY_WARM,
         effect = Effect.SNOWFLAKES,
         shaderType = ShaderType.Brush1
     ),

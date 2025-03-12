@@ -36,6 +36,7 @@
     <string name="set_text_setting">텍스트 설정</string>
     <string name="warning">주의</string>
     <string name="warn_progress_not_saved">저장되지 않은 내용은 사라집니다.\n계속하시겠습니까?</string>
+    <string name="reset_color_transparent">투명하게 리셋</string>
     <string name="proceed">진행</string>
     <string name="cancel">취소</string>
     <string name="delete_save">삭제</string>
@@ -68,6 +69,8 @@
     <string name="solved">"조회수: "</string>
     <string name="save">저장</string>
     <string name="background">배경</string>
+    <string name="blend_color">색상 혼합</string>
+    <string name="blend_hue">색조 전환</string>
     <string name="you_are_top">"상위 "</string>
     <string name="select_tags_that_interest_you">좋아하는 태그를 입력하세요</string>
     <string name="enter_tag">태그 입력</string>

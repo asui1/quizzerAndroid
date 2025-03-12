@@ -123,12 +123,12 @@ class MainActivity : ComponentActivity() {
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     // This example applies an immediate update. To apply a flexible update
                     // instead, pass in AppUpdateType.FLEXIBLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
                 ) {
                     appUpdateManager.startUpdateFlowForResult(
                         appUpdateInfo,
                         updateLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
                     )
                     // Request the update.
                 }else{

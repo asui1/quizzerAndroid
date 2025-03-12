@@ -36,7 +36,7 @@ fun ImagePickerWithBaseImages(
     onBaseImageSelected: (BackgroundBase) -> Unit = {},
     onImageSelected: (Bitmap?) -> Unit = {},
     imageColorState: ImageColorState = ImageColorState.BASEIMAGE,
-    currentSelection: BackgroundBase = BackgroundBase.SKY,
+    currentSelection: BackgroundBase = BackgroundBase.SKY_WARM,
     currentImage: Bitmap,
     width: Dp = 200.dp,
     height: Dp = 200.dp,
@@ -103,7 +103,7 @@ fun ImagePickerWithBaseImagesPreview() {
                 onBaseImageSelected = {},
                 onImageSelected = {},
                 imageColorState = ImageColorState.BASEIMAGE,
-                currentSelection = BackgroundBase.SKY,
+                currentSelection = BackgroundBase.SKY_WARM,
                 width = 200.dp,
                 height = 200.dp
             )
