@@ -36,6 +36,7 @@ import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import kotlinx.collections.immutable.toPersistentList
 import java.util.Base64
 
 @Composable
@@ -100,8 +101,8 @@ fun LoadLocalQuizScreen(
                 LoadingAnimation()
             } else {
                 LazyColumnWithSwipeToDismiss(
-                    quizList = quizList,
-                    deleteQuiz = { deleteUuid ->
+                    inputList = quizList.toPersistentList(),
+                    deleteItemWithId = { deleteUuid ->
                         loadLocalQuizViewModel.deleteLocalQuiz(context, deleteUuid)
                     },
                     content = {quizCard, index ->

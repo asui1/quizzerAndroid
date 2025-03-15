@@ -67,11 +67,11 @@ import kotlinx.coroutines.flow.map
 fun  SearchScreen(navController: NavHostController,
                   searchViewModel: SearchViewModel = viewModel(),
                   onQuizClick: (quizId: String) -> Unit = {}) {
-    val searchText by searchViewModel.searchText.collectAsStateWithLifecycle()
+    val searchText by searchViewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResult by searchViewModel.searchResult
         .map { it?.toPersistentList() }
         .collectAsStateWithLifecycle(null)
-    val searchSuggestions by searchViewModel.searchSuggestions.collectAsStateWithLifecycle()
+    val searchSuggestions by searchViewModel.filteredSearchSuggestions.collectAsStateWithLifecycle()
 
 
     SearchScreenBody(

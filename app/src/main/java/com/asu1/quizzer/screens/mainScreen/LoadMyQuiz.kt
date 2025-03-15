@@ -133,8 +133,8 @@ fun LoadMyQuizBody(
                     }
                     else ->{
                         LazyColumnWithSwipeToDismiss(
-                            quizList = quizList,
-                            deleteQuiz = deleteQuiz,
+                            inputList = quizList.toPersistentList(),
+                            deleteItemWithId = deleteQuiz,
                             content = { quizCard, index ->
                                 QuizCardHorizontal(
                                     quizCard = quizCard,
@@ -153,7 +153,7 @@ fun LoadMyQuizBody(
 
 @Preview(showBackground = true)
 @Composable
-fun LoadMyQuizPreview(){
+fun LoadMyQuizListPreview(){
     QuizzerAndroidTheme {
         LoadMyQuizBody(
             quizLoadViewModelState = ViewModelState.IDLE,

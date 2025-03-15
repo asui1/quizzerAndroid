@@ -1,6 +1,6 @@
 package com.asu1.customdialogs
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.content.ClipData
 import android.content.Intent
@@ -90,7 +90,7 @@ fun ShareDialog(
                         val clip = ClipData.newPlainText(resultUrl, resultUrl)
                         clipboard.setClipEntry(ClipEntry(clip))
                     }
-                    ToastManager.showToast(
+                    SnackBarManager.showSnackBar(
                         message = R.string.link_copied_to_clipboard,
                         type = ToastType.SUCCESS,
                     )
@@ -122,7 +122,7 @@ fun ShareDialog(
                             val clip = ClipData.newPlainText(resultUrl, resultUrl)
                             clipboard.setClipEntry(ClipEntry(clip))
                         }
-                        ToastManager.showToast(
+                        SnackBarManager.showSnackBar(
                             message = R.string.link_copied_to_clipboard,
                             type = ToastType.SUCCESS,
                         )

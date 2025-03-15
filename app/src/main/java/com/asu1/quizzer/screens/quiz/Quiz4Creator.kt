@@ -178,16 +178,19 @@ fun Quiz4Creator(
                                                 startOffset = Offset(0f, 0f)
                                                 endOffset = Offset(0f, 0f)
                                             },
-                                        ) { change, dragAmount ->
-                                            change.consume()
-                                            if (initOffset == null) {
-                                                initOffset = change.position
+                                            onDrag = { change, dragAmount ->
+                                                change.consume()
+                                                if (initOffset == null) {
+                                                    initOffset = change.position
+                                                }
+                                                initOffset?.let { start ->
+                                                    endOffset = Offset(
+                                                        x = startOffset.x + change.position.x - start.x,
+                                                        y = startOffset.y + change.position.y - start.y
+                                                    )
+                                                }
                                             }
-                                            endOffset = Offset(
-                                                x = startOffset.x + change.position.x - initOffset!!.x,
-                                                y = startOffset.y + change.position.y - initOffset!!.y
-                                            )
-                                        }
+                                        )
                                     },
                                     boxPosition = boxPosition,
                                     dotSize = dotSizeDp,
@@ -199,7 +202,7 @@ fun Quiz4Creator(
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         IconButton(
-                            modifier = Modifier.testTag("QuizCreatorAddAnswerButton"),
+                            modifier = Modifier.testTag("QuizCreatorAddAnswerLeftButton"),
                             onClick = {
                                 quiz.onQuiz4Update(Quiz4ViewModelStates.AddLeft)
                             }
@@ -259,7 +262,7 @@ fun Quiz4Creator(
                         }
                         IconButton(
                             modifier = Modifier
-                                .testTag("QuizCreatorAddAnswerButton"),
+                                .testTag("QuizCreatorAddAnswerRightButton"),
                             onClick = {
                                 quiz.onQuiz4Update(Quiz4ViewModelStates.AddRight)
                             }
@@ -313,10 +316,7 @@ fun DraggableDot(
             }
             .onGloballyPositioned { coordinates ->
                 val globalOffset = coordinates.positionInRoot()
-                val relativeOffset = Offset(
-                    globalOffset.x - boxPosition.x + moveOffset,
-                    globalOffset.y - boxPosition.y + moveOffset
-                )
+                val relativeOffset = globalOffset - boxPosition + Offset(moveOffset, moveOffset)
                 setOffset(relativeOffset)
             }
             .testTag(key)
@@ -331,16 +331,19 @@ fun DrawLines(
     color: Color = MaterialTheme.colorScheme.primary
 ) {
     Canvas(modifier = Modifier.fillMaxSize()) {
-        for(i in connections.indices) {
-            if(connections[i] == null || leftDots[i] == null || rightDots[connections[i]!!] == null) continue
-            else{
-                drawLine(
-                    color = color,
-                    start = leftDots[i]!!, // Center of left dot
-                    end = rightDots[connections[i]!!]!!, // Center of right dot
-                    strokeWidth = 4f
-                )
-            }
+        for (i in connections.indices) {
+            val start = leftDots[i]
+            val endIndex = connections[i]
+            val end = endIndex?.let { rightDots[it] }
+
+            if(start == null || end == null) continue
+
+            drawLine(
+                color = color,
+                start = start,
+                end = end,
+                strokeWidth = 4f
+            )
         }
     }
 }

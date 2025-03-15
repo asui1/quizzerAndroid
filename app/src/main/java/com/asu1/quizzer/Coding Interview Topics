@@ -1,0 +1,118 @@
+🚀 General Coding Interviews
+
+1. Data Structures
+    Arrays and Strings
+    Linked Lists
+    Stacks and Queues
+    Hash Tables
+    Trees and Graphs
+    Heaps and Priority Queues
+
+2. Algorithms
+    Sorting and Searching
+    Recursion and Backtracking
+    Dynamic Programming
+    Greedy Algorithms
+    Divide and Conquer
+    Two Pointers Technique
+    Sliding Window Technique
+
+3. Complexity Analysis
+    Time and Space Complexity
+    Big O, Big Ω, and Big Θ notation
+    Algorithmic Trade-offs and Optimization
+
+4. System Design Fundamentals
+    Basic System Design Concepts
+    Scalability and Performance
+    Database Concepts (SQL vs NoSQL)
+
+5. Language Fundamentals
+    Object-Oriented Programming (OOP) concepts
+    Language-specific details (Java/Kotlin)
+    Common Coding Patterns (MVC, MVVM)
+
+📱 Android Coding Interviews
+
+1. Android Fundamentals
+    Activity and Fragment Lifecycle
+    Intents and Intent Filters
+    Context and Resources Management
+    View vs. ViewGroup
+
+2. UI & UX
+    RecyclerView and Adapters
+    ConstraintLayout and UI Optimization
+    Custom Views and Canvas Drawing
+    Animations and Transitions
+
+3. Data Persistence
+    SQLite & Room Database
+    SharedPreferences and DataStore
+    File Storage and Management
+
+4. Networking & Web Services
+    Retrofit and REST API Integration
+    JSON Parsing and Serialization
+    Handling Network State and Errors
+
+5. Concurrency and Background Work
+    AsyncTask (Legacy) & Coroutines
+    WorkManager and JobScheduler
+    Threading and Synchronization Basics
+
+6. Android Architecture Components
+    ViewModel and LiveData
+    Navigation Component
+    Lifecycle-Aware Components
+
+7. Dependency Injection
+    Dagger & Hilt Basics
+    Service Locator Patterns (Koin)
+    DI Best Practices in Android Apps
+
+8. Testing and Debugging
+    Unit Testing with JUnit & Mockito
+    Instrumentation Tests with Espresso
+    Debugging Techniques & Profiling
+
+🏛️ Clean Architecture and Design Patterns
+
+1. Clean Architecture Fundamentals
+    Principles and Goals of Clean Architecture
+    Layers and Boundaries (Presentation, Domain, Data)
+    Dependency Rule and Inversion of Control
+    Use Cases and Interactors
+    Entities and Data Models
+
+2. SOLID Principles
+    Single Responsibility Principle (SRP)
+    Open-Closed Principle (OCP)
+    Liskov Substitution Principle (LSP)
+    Interface Segregation Principle (ISP)
+    Dependency Inversion Principle (DIP)
+
+3. Android-specific Architectural Patterns
+    MVVM (Model-View-ViewModel)
+    MVI (Model-View-Intent)
+    MVP (Model-View-Presenter)
+    Comparing Architectural Patterns (MVVM vs. MVP vs. MVI)
+
+4. Creational Design Patterns
+    Singleton
+    Factory Method & Abstract Factory
+    Builder
+    Dependency Injection Pattern (Dagger, Hilt, Koin)
+
+5. Structural Design Patterns
+    Adapter
+    Decorator
+    Facade
+    Composite
+
+6. Behavioral Design Patterns
+    Observer & Publish-Subscribe
+    Strategy
+    Command
+    Chain of Responsibility
+

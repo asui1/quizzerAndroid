@@ -28,61 +28,78 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.baseinterfaces.HasUniqueId
 import com.asu1.customdialogs.DialogComposable
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
 @Composable
-fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
-    quizList: List<T>,
-    deleteQuiz: (String) -> Unit = {},
+fun getOrPutDismiss(
+    uuid: String,
+    dismissStates: MutableMap<String, SwipeToDismissBoxState>,
+    onDismiss: (String) -> Unit
+): SwipeToDismissBoxState {
+    return dismissStates.getOrPut(uuid) {
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { state ->
+                if (state == SwipeToDismissBoxValue.EndToStart) {
+                    onDismiss(uuid)
+                }
+                true
+            }
+        )
+    }
+}
+
+
+@Composable
+fun <T : HasUniqueId> LazyColumnWithSwipeToDismiss(
+    modifier: Modifier = Modifier,
+    stringResourceWhenEmpty: Int = R.string.no_quizzes_found,
+    inputList: PersistentList<T>,
+    deleteItemWithId: (String) -> Unit = {},
     content: @Composable (T, Int) -> Unit,
-    emptyStringResource: Int = R.string.no_quizzes_found
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var deleteUuid by remember { mutableStateOf("") }
     val dismissStates = remember { mutableStateMapOf<String, SwipeToDismissBoxState>() }
     val scope = rememberCoroutineScope()
-    val visibleItems = remember { mutableStateMapOf<String, Boolean>().apply {
-        quizList.forEach { put(it.id, true) }
-    } }
-
-    @Composable
-    fun getOrPutDismiss(uuid: String): SwipeToDismissBoxState {
-        return dismissStates.getOrPut(uuid) {
-            rememberSwipeToDismissBoxState(
-                confirmValueChange = {
-                    if (it == SwipeToDismissBoxValue.EndToStart) {
-                        deleteUuid = uuid
-                        showDialog = true
-                    }
-                    true
-                }
-            )
+    val visibleItems = remember(inputList) {
+        mutableStateMapOf<String, Boolean>().apply {
+            inputList.forEach { put(it.id, true) }
         }
     }
 
     LazyColumn(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        if (quizList.isEmpty()) {
+        if (inputList.isEmpty()) {
             item {
                 Text(
-                    stringResource(emptyStringResource),
+                    stringResource(stringResourceWhenEmpty),
                     style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 )
             }
         } else {
-            items(quizList.size, key = {index -> quizList[index].id}) { index ->
-                val quizCard = quizList[index]
-                val currentDismissState = getOrPutDismiss(quizCard.id)
-                val isVisible = visibleItems[quizCard.id] ?: true
+            items(inputList.size, key = { index -> inputList[index].id}) { index ->
+                val inputItem = inputList[index]
+                val currentDismissState = getOrPutDismiss(
+                    uuid = inputItem.id,
+                    dismissStates = dismissStates,
+                    onDismiss = {id ->
+                        deleteUuid = id
+                        showDialog = true
+                    },
+                )
+                val isVisible = visibleItems[inputItem.id] != false
 
                 AnimatedVisibility(
                     visible = isVisible,
@@ -106,7 +123,7 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
                         enableDismissFromStartToEnd = false,
                         modifier = Modifier.padding(vertical = 2.dp),
                         content = {
-                            content(quizCard, index)
+                            content(inputItem, index)
                         }
                     )
                 }
@@ -120,7 +137,8 @@ fun <T : com.asu1.baseinterfaces.Identifiable> LazyColumnWithSwipeToDismiss(
                 val uuid = deleteUuid
                 visibleItems[uuid] = false
                 scope.launch {
-                    deleteQuiz(deleteUuid)
+                    deleteItemWithId(deleteUuid)
+                    dismissStates.remove(uuid)
                 }
             },
             resetDismiss = { uuid ->
@@ -155,7 +173,7 @@ fun LazyColumnWithSwipeToDismissPreview() {
         ),
     )
     LazyColumnWithSwipeToDismiss(
-        quizList = quizList,
+        inputList = quizList.toPersistentList(),
         content = { quizCard, index ->
             QuizCardHorizontal(quizCard = quizCard)
         }

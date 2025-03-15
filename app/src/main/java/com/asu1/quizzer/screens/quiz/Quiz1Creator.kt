@@ -55,6 +55,7 @@ fun Quiz1Creator(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("Quiz1CreatorLazyColumn")
         ) {
             item {
                 QuestionTextFieldWithPoints(

@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.content.Context
 import android.graphics.Bitmap
@@ -69,6 +69,14 @@ class QuizCoordinatorViewModel : ViewModel() {
         return quizContentViewModel.quizContentState.value.quizzes.map {
             it.question
         }.toPersistentList()
+    }
+
+    fun resetQuizData(email: String?){
+        quizGeneralViewModel.resetQuizGeneral(email)
+        quizThemeViewModel.resetQuizTheme()
+        quizContentViewModel.reset()
+        quizResultViewModel.resetQuizResult()
+        scoreCardViewModel.resetScoreCard()
     }
 
     fun updateTitleImageColors(image: Bitmap){
@@ -276,7 +284,7 @@ class QuizCoordinatorViewModel : ViewModel() {
             } catch (e: Exception){
                 _quizViewModelState.update { ViewModelState.ERROR }
                 Logger.debug("Quiz Data Process Fail: $e")
-                ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_load_quiz, ToastType.ERROR)
             }
         }
     }
@@ -298,7 +306,7 @@ class QuizCoordinatorViewModel : ViewModel() {
                 val response = RetrofitInstance.api.addQuiz(jsonQuizData)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        ToastManager.showToast(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
+                        SnackBarManager.showSnackBar(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
                         onUpload()
                         _quizViewModelState.value = ViewModelState.IDLE
                     } else {
@@ -309,13 +317,13 @@ class QuizCoordinatorViewModel : ViewModel() {
                             )
                         }
                         Logger.debug("Failed to upload quiz from server $errorMessage")
-                        ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
+                        SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
                     }
                 }
             } catch (e: Exception) {
                 Logger.debug("Failed to upload quiz exception ${e.message}")
                 _quizViewModelState.value = ViewModelState.IDLE
-                ToastManager.showToast(R.string.failed_to_upload_quiz, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
             }
         }
     }
@@ -323,16 +331,17 @@ class QuizCoordinatorViewModel : ViewModel() {
         _quizViewModelState.value = ViewModelState.LOADING
         val quizJsonData = Json.encodeToString(toJson())
         val fileName = "${quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid}_${quizGeneralViewModel.quizGeneralUiState.value.quizData.creator}_quizSave.json"
+        Logger.debug("Save File: $fileName")
         val file = File(context.filesDir, fileName)
         file.writeText(quizJsonData)
         _quizViewModelState.value = ViewModelState.IDLE
-        ToastManager.showToast(R.string.save_success, ToastType.SUCCESS)
+        SnackBarManager.showSnackBar(R.string.save_success, ToastType.SUCCESS)
     }
 
     private fun handleFailure(message: String) {
         Logger.debug(message)
         _quizViewModelState.update{ ViewModelState.ERROR }
-        ToastManager.showToast(R.string.failed_to_load_quiz, ToastType.ERROR)
+        SnackBarManager.showSnackBar(R.string.failed_to_load_quiz, ToastType.ERROR)
     }
 
     fun toJson(): QuizLayoutSerializer{
@@ -384,7 +393,7 @@ class QuizCoordinatorViewModel : ViewModel() {
                 quizResultViewModel.updateQuizResult(quizResult)
 
             } catch (e: Exception) {
-                ToastManager.showToast(R.string.failed_to_grade_quiz, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
                 Logger.debug("Quiz result response was unsuccessful or null, $e")
             }
         }
@@ -402,7 +411,7 @@ class QuizCoordinatorViewModel : ViewModel() {
                 quizResultViewModel.resetQuizResult()
             }
             is QuizCoordinatorActions.ResetQuiz -> {
-                quizGeneralViewModel.resetQuizGeneral()
+                quizGeneralViewModel.resetQuizGeneral("2")
                 quizThemeViewModel.resetQuizTheme()
                 scoreCardViewModel.resetScoreCard()
             }
@@ -417,13 +426,13 @@ class QuizCoordinatorViewModel : ViewModel() {
 }
 
 sealed class QuizCoordinatorActions{
+    data class UpdateQuizGeneral(val quizGeneralAction: QuizGeneralActions): QuizCoordinatorActions()
+    data class UpdateQuizTheme(val quizThemeAction: QuizThemeActions): QuizCoordinatorActions()
+    data class UpdateScoreCard(val scoreCardAction: ScoreCardViewModelActions) : QuizCoordinatorActions()
     data class UpdateQuizAnswer(val index: Int, val update: QuizUserUpdates) : QuizCoordinatorActions()
     data class RemoveQuizAt(val index: Int) : QuizCoordinatorActions()
     data class UpdateQuizAt(val quiz: Quiz<*>, val index: Int) : QuizCoordinatorActions()
     data class AddQuizAt(val quiz: Quiz<*>, val index: Int) : QuizCoordinatorActions()
-    data class UpdateQuizGeneral(val quizGeneralAction: QuizGeneralActions): QuizCoordinatorActions()
-    data class UpdateScoreCard(val scoreCardAction: ScoreCardViewModelActions) : QuizCoordinatorActions()
-    data class UpdateQuizTheme(val quizThemeAction: QuizThemeActions): QuizCoordinatorActions()
     data object ResetQuizResult: QuizCoordinatorActions()
     data object ResetQuiz: QuizCoordinatorActions()
     data class GenerateColorScheme(val generateWith: GenerateWith, val palette: Int, val contrast: Int, val isDark: Boolean): QuizCoordinatorActions()

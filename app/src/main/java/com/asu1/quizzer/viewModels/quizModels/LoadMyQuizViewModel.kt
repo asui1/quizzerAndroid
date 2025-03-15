@@ -41,12 +41,12 @@ class LoadMyQuizViewModel: ViewModel() {
                 }
                 else{
                     Logger.debug("loadUserQuiz Failure")
-                    ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
                 Logger.debug("loadUserQuizFailed ${e.message}")
-                ToastManager.showToast(R.string.search_failed, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
             }
         }
     }
@@ -65,10 +65,10 @@ class LoadMyQuizViewModel: ViewModel() {
                 val updatedList = _myQuizList.value?.toMutableList()
                 updatedList?.remove(quiz)
                 _myQuizList.value = updatedList
-                ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
+                SnackBarManager.showSnackBar(R.string.delete_successful, ToastType.SUCCESS)
             }
             else{
-                ToastManager.showToast(R.string.delete_failed, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.delete_failed, ToastType.ERROR)
             }
         }
     }

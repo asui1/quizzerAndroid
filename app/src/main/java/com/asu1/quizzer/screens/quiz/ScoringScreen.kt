@@ -1,6 +1,6 @@
 package com.asu1.quizzer.screens.quiz
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
@@ -201,7 +201,7 @@ private fun ScoringScreenBottomRow(
                     if (scoreCard.quizUuid != null) {
                         loadQuiz(scoreCard.quizUuid!!)
                     } else {
-                        ToastManager.showToast(
+                        SnackBarManager.showSnackBar(
                             message = R.string.can_not_load_quiz,
                             type = ToastType.ERROR,
                         )

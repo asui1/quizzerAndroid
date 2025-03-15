@@ -1,6 +1,6 @@
 package com.asu1.quizcardmodel
 
-import com.asu1.baseinterfaces.Identifiable
+import com.asu1.baseinterfaces.HasUniqueId
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID
@@ -23,7 +23,7 @@ data class QuizCard(
     val count: Int,
     @SerializedName("description")
     val description: String = ""
-) : Identifiable {
+) : HasUniqueId {
     constructor(
         title: String,
         creator: String,

@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.net.TrafficStats
 import androidx.lifecycle.ViewModel
@@ -20,14 +20,14 @@ class InquiryViewModel : ViewModel() {
                 val userRequest = UserRequest(email, subject, body)
                 val response = RetrofitInstance.api.userRequest(userRequest)
                 if(response.isSuccessful){
-                    ToastManager.showToast(R.string.inquiry_sent_successfully, ToastType.SUCCESS)
+                    SnackBarManager.showSnackBar(R.string.inquiry_sent_successfully, ToastType.SUCCESS)
                 }
                 else{
-                    ToastManager.showToast(R.string.failed_to_send_inquiry, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.failed_to_send_inquiry, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
-                ToastManager.showToast(R.string.failed_to_send_inquiry, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_send_inquiry, ToastType.ERROR)
             }finally {
                 TrafficStats.clearThreadStatsTag()
             }

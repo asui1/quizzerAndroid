@@ -1,6 +1,9 @@
 package com.asu1.quizzer
 
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
@@ -11,10 +14,10 @@ import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
-import com.asu1.quizzer.quizCreateUtils.datacreation.t1geng20250201
+import com.asu1.quizzer.quizCreateUtils.codingQuestions.solidPrinciplesQuizDataKorean
+import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModel
-import com.asu1.quizzer.viewModels.UserViewModel
 import org.junit.Rule
 import org.junit.Test
 
@@ -83,7 +86,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = t1geng20250201
+        val testQuizData = solidPrinciplesQuizDataKorean
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout
@@ -193,7 +196,11 @@ class MyComposeTest {
 
         testUtils.clickOnTag("DesignScoreCardSetBackgroundImageButton")
         testUtils.waitFor(100)
-        testUtils.clickOnTag("DesignScoreCardBaseImage${testQuizData.backgroundImageIndex}", checkFocus = true)
+        composeTestRule
+            .onNodeWithTag("BaseImagePickerLazyVerticalGrid")
+            .performScrollToNode(hasTestTag("DesignScoreCardBaseImage${testQuizData.backgroundImageIndex}"))
+        onIdle()
+        testUtils.clickOnTag("DesignScoreCardBaseImage${testQuizData.backgroundImageIndex}", checkFocus = true, useUnmergedTree = true)
 
         //SET COLOR FILTER FOR BACKGROUND BASE IMAGE
         testUtils.waitUntilTag("DesignScoreCardSetColorButton0")

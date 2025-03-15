@@ -95,7 +95,7 @@
     <string name="vertical">세로로 가르기</string>
     <string name="top_down">위 아래로 감싸기</string>
     <string name="sign_in">로그인</string>
-    <string name="press_back_again_to_exit">나가려면 다시 뒤로가기를 눌러주세요</string>
+    <string name="press_back_again_to_exit">\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.</string>
     <string name="enter_your_nickname">닉네임을 입력하세요</string>
     <string name="duplicate_nickname">중복된 닉네임입니다.</string>
     <string name="nickname">닉네임</string>

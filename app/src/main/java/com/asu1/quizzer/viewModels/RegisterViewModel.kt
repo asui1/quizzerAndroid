@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -74,7 +74,7 @@ class RegisterViewModel @Inject constructor(
 
     fun setNickName(nickName: String){
         if(nickName.isEmpty()){
-            ToastManager.showToast(R.string.please_enter_a_nickname, ToastType.ERROR)
+            SnackBarManager.showSnackBar(R.string.please_enter_a_nickname, ToastType.ERROR)
             _isError.value = true
             return
         }
@@ -92,7 +92,7 @@ class RegisterViewModel @Inject constructor(
                     else -> R.string.can_not_use_this_nickname // Fallback (should not happen)
                 }
 
-                ToastManager.showToast(messageRes, ToastType.ERROR)
+                SnackBarManager.showSnackBar(messageRes, ToastType.ERROR)
                 return@launch
             }
 
@@ -106,7 +106,7 @@ class RegisterViewModel @Inject constructor(
             }
             else {
                 _isError.postValue(true)
-                ToastManager.showToast(R.string.can_not_use_this_nickname, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_use_this_nickname, ToastType.ERROR)
             }
         }
     }
@@ -126,15 +126,15 @@ class RegisterViewModel @Inject constructor(
             )
             if(response.isSuccessful){
                 if(response.code() == 201){
-                    ToastManager.showToast(R.string.registered_successfully, ToastType.SUCCESS)
+                    SnackBarManager.showSnackBar(R.string.registered_successfully, ToastType.SUCCESS)
                     _registerStep.postValue(3)
                 }
                 else{
-                    ToastManager.showToast(R.string.failed_to_register, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.failed_to_register, ToastType.ERROR)
                 }
             }
             else{
-                ToastManager.showToast(R.string.failed_to_register, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_register, ToastType.ERROR)
             }
         }
     }
@@ -149,7 +149,7 @@ class RegisterViewModel @Inject constructor(
                 val containsInappropriateWord = stringFilterRepository.containsInappropriateWord(tag)
                 if (containsInappropriateWord) {
                     _isError.postValue(true)
-                    ToastManager.showToast(R.string.contains_inappropriate_word, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.contains_inappropriate_word, ToastType.ERROR)
                     return@launch
                 }
                 tags.add(tag)

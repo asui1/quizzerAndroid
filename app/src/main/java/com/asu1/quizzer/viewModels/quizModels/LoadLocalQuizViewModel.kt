@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
@@ -10,10 +10,12 @@ import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.models.serializers.json
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import com.asu1.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -28,6 +30,9 @@ class LoadLocalQuizViewModel: ViewModel() {
         _loadLocalQuizViewModelState.postValue(ViewModelState.IDLE)
         _localQuizList.value = null
     }
+    fun loadComplete(){
+        _loadLocalQuizViewModelState.postValue(ViewModelState.SUCCESS)
+    }
 
     fun deleteLocalQuiz(context: Context, uuid: String){
         if(_localQuizList.value == null) return
@@ -40,7 +45,7 @@ class LoadLocalQuizViewModel: ViewModel() {
                 file.delete()
                 val updatedList = _localQuizList.value?.toMutableList()
                 updatedList?.remove(quiz)
-                ToastManager.showToast(R.string.delete_successful, ToastType.SUCCESS)
+                SnackBarManager.showSnackBar(R.string.delete_successful, ToastType.SUCCESS)
                 _localQuizList.value = updatedList
             }
         }
@@ -51,6 +56,7 @@ class LoadLocalQuizViewModel: ViewModel() {
             val directory = context.filesDir
             if (directory.exists() && directory.isDirectory) {
                 val files = directory.listFiles { _, name ->
+                    Logger.debug("Files EXIST: $name")
                     name.endsWith("${email}_quizSave.json") }
                 val loadedQuizzes = mutableListOf<QuizLayoutSerializer>()
                 files?.forEach { file ->
@@ -60,7 +66,13 @@ class LoadLocalQuizViewModel: ViewModel() {
                         loadedQuizzes.add(quiz)
                     }
                 }
-                _localQuizList.value = loadedQuizzes
+                if (files != null) {
+                    Logger.debug("FOUND: ${files.size}")
+                }
+                Logger.debug("FOUND: ${loadedQuizzes.size}")
+                _localQuizList.update {
+                    loadedQuizzes
+                }
             }
         }
     }

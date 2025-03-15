@@ -24,6 +24,12 @@ object Logger {
         }
     }
 
+    fun error(tag1: String, input: Any){
+        if (isDebug) {
+            Logger.getLogger(tag + tag1).warning(input.toString())
+        }
+    }
+
     fun printBackStack(navController: NavController) {
         if (isDebug) {
             try {

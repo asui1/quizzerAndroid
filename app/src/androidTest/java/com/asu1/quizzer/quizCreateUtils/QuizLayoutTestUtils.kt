@@ -7,12 +7,16 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
@@ -27,15 +31,29 @@ import kotlinx.coroutines.runBlocking
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
-    fun addQuizInit(quiz: TestQuiz, quizType: Int, clickAddAnswerNTimes: Int = 0){
+    fun addQuizInit(quiz: TestQuiz, quizType: Int, clickAddAnswerNTimes: Int = 0, clickAddRightAnswerNTimes: Int = 0){
         clickOnTag("QuizBuilderScreenAddQuizIconButton")
         clickOnTag("QuizBuilderScreenNewQuizDialogImage${quizType}", true)
         waitFor(200)
+        if(quiz is TestQuiz4) addAnswer(clickAddAnswerNTimes, clickAddRightAnswerNTimes)
+        else addAnswer(clickAddAnswerNTimes)
+        inputTextOnTag("QuizQuestionTextField", quiz.question, checkFocus = true)
+        replaceTextOnTag("QuizPointTextField", quiz.point.toString(), checkFocus = true)
+    }
+
+    fun addAnswer(clickAddAnswerNTimes: Int){
         for(i in 0 until clickAddAnswerNTimes){
             clickOnTag("QuizCreatorAddAnswerButton", checkFocus = true)
         }
-        inputTextOnTag("QuizQuestionTextField", quiz.question, checkFocus = true)
-        replaceTextOnTag("QuizPointTextField", quiz.point.toString(), checkFocus = true)
+    }
+
+    fun addAnswer(clickAddAnswerLeftNTimes: Int, clickAddAnswerRightNTimes: Int){
+        for(i in 0 until clickAddAnswerLeftNTimes){
+            clickOnTag("QuizCreatorAddAnswerLeftButton", checkFocus = true)
+        }
+        for(i in 0 until clickAddAnswerRightNTimes){
+            clickOnTag("QuizCreatorAddAnswerRightButton", checkFocus = true)
+        }
     }
 
     fun addQuizBody(quiz: TestQuiz, youtubeLink: String = ""){
@@ -62,6 +80,11 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         val counts = quiz.answers.size - 5
         addQuizInit(quiz, 0, counts)
         addQuizBody(quiz, youtubeLink)
+        composeTestRule
+            .onNodeWithTag("Quiz1CreatorLazyColumn")
+            .performScrollToNode(hasTestTag("QuizAnswerTextField0Checkbox"))
+        onIdle()
+        waitFor(100)
         for(i in 0 until quiz.answers.size){
             if(quiz.ans[i]){
                 clickOnTag("QuizAnswerTextField${i}Checkbox", checkFocus = true)
@@ -101,8 +124,9 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun addQuiz4(quiz: TestQuiz4, youtubeLink: String = ""){
-        val counts = quiz.answers.size - 4
-        addQuizInit(quiz, 3, counts)
+        val leftCounts = quiz.answers.size - 4
+        val rightCounts = quiz.connectionAnswers.size - 4
+        addQuizInit(quiz, 3, leftCounts, rightCounts)
         addQuizBody(quiz, youtubeLink)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
@@ -190,55 +214,35 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun clickOnTag(tag: String, checkFocus: Boolean = false, useUnmergedTree: Boolean = false) {
-        onIdle()
-        if(checkFocus) {
-            composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performScrollTo()
-            onIdle()
-            waitFor(50)
+        interactWithNode(tag, checkFocus, useUnmergedTree) {
+            performClick()
         }
-        composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree).performClick()
-        onIdle()
-        waitFor(50)
     }
 
     fun inputTextOnTag(tag: String, text: String, withIme: Boolean = false, checkFocus: Boolean = false) {
-        onIdle()
-        if(checkFocus) {
-            composeTestRule.onNodeWithTag(tag).performScrollTo()
-            onIdle()
-            waitFor(50)
-        }
-        composeTestRule.onNodeWithTag(tag).performTextInput(text)
-        onIdle()
-        waitFor(200)
-        if(withIme) {
-            onIdle()
-            composeTestRule.onNodeWithTag(tag).performImeAction()
-            onIdle()
-            waitFor(200)
+        interactWithNode(tag, checkFocus) {
+            performTextInput(text)
+            if (withIme) performImeAction()
         }
     }
 
     fun replaceTextOnTag(tag: String, newText: String, withIme: Boolean = false, checkFocus: Boolean = false) {
-        onIdle()
-        if(checkFocus) {
-            composeTestRule.onNodeWithTag(tag).performScrollTo()
-            onIdle()
-            waitFor(50)
+        interactWithNode(tag, checkFocus) {
+            performTextClearance()
+            performTextInput(newText)
+            if (withIme) performImeAction()
         }
+    }
+
+    private fun interactWithNode(tag: String, checkFocus: Boolean = false, useUnmergedTree: Boolean = false, action: SemanticsNodeInteraction.() -> Unit) {
         onIdle()
-        composeTestRule.onNodeWithTag(tag).performTextClearance()
-        onIdle()
-        waitFor(50)
-        composeTestRule.onNodeWithTag(tag).performTextInput(newText)
-        onIdle()
-        waitFor(50)
-        if(withIme) {
+        val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree)
+        if (checkFocus && !node.isDisplayed()) {
+            node.performScrollTo()
             onIdle()
-            composeTestRule.onNodeWithTag(tag).performImeAction()
-            onIdle()
-            waitFor(50)
         }
+        node.action()
+        onIdle()
     }
 
     fun enterTextsOnTag(tag: String, texts: List<String>, withIme: Boolean, checkFocus: Boolean = false) {

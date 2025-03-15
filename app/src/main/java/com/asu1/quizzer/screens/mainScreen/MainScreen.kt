@@ -1,6 +1,6 @@
 package com.asu1.quizzer.screens.mainScreen
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -114,7 +114,7 @@ fun MainScreen(
             return@BackHandler
         }
         val currentTime = System.currentTimeMillis()
-        ToastManager.showToast(R.string.press_back_again_to_exit, ToastType.INFO)
+        SnackBarManager.showSnackBar(R.string.press_back_again_to_exit, ToastType.INFO)
         if (currentTime - backPressedTime < 3000) {
             (context as? Activity)?.finish()
         } else {

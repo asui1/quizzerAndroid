@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -74,8 +74,11 @@ class QuizGeneralViewModel : ViewModel() {
         }
     }
 
-    fun resetQuizGeneral() {
-        _quizGeneralUIState.value = QuizGeneralUiState()
+    fun resetQuizGeneral(email: String? = "GUEST") {
+        Logger.debug("Set Email to : $email")
+        _quizGeneralUIState.update{
+            QuizGeneralUiState().copy(quizData = QuizData(creator = email ?: "GUEST"))
+        }
     }
 
     fun updateQuizTitle(title: String) {
@@ -91,7 +94,7 @@ class QuizGeneralViewModel : ViewModel() {
             }
 
             if (image.width * image.height > 320000) { // 80000 * 4
-                ToastManager.showToast(R.string.image_size_too_large, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.image_size_too_large, ToastType.ERROR)
                 return@update currentState
             }
 

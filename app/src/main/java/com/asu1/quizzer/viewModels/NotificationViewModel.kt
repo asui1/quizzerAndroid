@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
+import SnackBarManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -54,7 +54,7 @@ class NotificationViewModel @Inject constructor(
             getNotificationUseCase(page).onSuccess {
                 _notificationList.value = it
             }.onFailure {
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }
@@ -68,7 +68,7 @@ class NotificationViewModel @Inject constructor(
                 _currentNotificationDetail.postValue(notification)
             }.onFailure {
                 Logger.debug("Error in GetNotificationDetailUseCase: $it")
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }
@@ -78,7 +78,7 @@ class NotificationViewModel @Inject constructor(
             getNotificationPageNumberUseCase().onSuccess {
                 _notificationPages.postValue(it)
             }.onFailure {
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }

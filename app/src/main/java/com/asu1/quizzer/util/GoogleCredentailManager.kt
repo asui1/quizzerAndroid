@@ -51,7 +51,7 @@ class GoogleCredentialManager(
                 Logger.debug("Received credential: $result")
                 handleSignIn(result) { email, profileUri -> login(email, profileUri) }
             } catch (e: GetCredentialException) {
-                ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
                 Log.e("Quizzer", "Error getting credential", e)
             }
         }
@@ -70,14 +70,14 @@ class GoogleCredentialManager(
                 val email =
                     googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
                 if (email == null) {
-                    ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
 
                     return@launch
                 }
                 val profileUri = googleIdTokenCredential.profilePictureUri
                 register(email, profileUri.toString())
             } catch (e: GetCredentialException) {
-                ToastManager.showToast(R.string.failed_login, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
                 Log.e("Quizzer", "Error getting credential", e)
             }
         }

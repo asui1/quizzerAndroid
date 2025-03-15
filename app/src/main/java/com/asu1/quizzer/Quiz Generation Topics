@@ -1,0 +1,27 @@
+val tabTitles = persistentListOf(
+    R.string.main,
+    R.string.lck,
+    R.string.coding,
+    R.string.health,
+    R.string.entertainment,
+    R.string.history
+)
+1. LOL
+ -> Make 1 or 2 Quizzes Every week based on LCK/MSI/WORLDS Statistics.
+
+2. Coding(coding interview)
+ -> Make Questions for General/Android Coding Interviews
+
+3. Health
+ -> Make Questions for Actions in Gym / Foods that we eat.
+
+4. Entertainment
+ -> Make Questions for OTTs, Dramas, Movies, Singers, etc ... (Based on statistics)
+
+5. History
+ -> Will make questions based on 수능 한국사/동아시아사/세계사.
+
+1. Needs cycle that can produce items regularly
+
+3~5 Needs cycle that can built items automatically.
+

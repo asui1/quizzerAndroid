@@ -27,6 +27,12 @@ class QuizContentViewModel @Inject constructor() : ViewModel() {
     private val _quizContentState = MutableStateFlow<QuizContentState>(QuizContentState())
     val quizContentState = _quizContentState.asStateFlow()
 
+    fun reset(){
+        _quizContentState.update {
+            QuizContentState()
+        }
+    }
+
     fun loadQuizContents(quizzes: List<QuizJson>){
         _quizContentState.update { currentState ->
             currentState.copy(
@@ -47,13 +53,13 @@ class QuizContentViewModel @Inject constructor() : ViewModel() {
     fun validateQuiz(): Boolean {
         val quizzes = _quizContentState.value.quizzes
         if(quizzes.isEmpty()) {
-            ToastManager.showToast(R.string.quiz_cannot_be_empty, ToastType.ERROR)
+            SnackBarManager.showSnackBar(R.string.quiz_cannot_be_empty, ToastType.ERROR)
             return false
         }
         val invalidQuiz = quizzes.firstOrNull { it.validateQuiz() != QuizError.NO_ERROR }
         return if (invalidQuiz != null) {
             val errorStatus = invalidQuiz.validateQuiz()
-            ToastManager.showToast(errorStatus.messageId, ToastType.ERROR)
+            SnackBarManager.showSnackBar(errorStatus.messageId, ToastType.ERROR)
             updateQuizInitIndex(quizzes.indexOf(invalidQuiz))
             false
         } else {

@@ -1,6 +1,6 @@
 package com.asu1.quizzer
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import android.content.Intent
 import android.net.Uri
@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
@@ -75,6 +75,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -142,6 +143,7 @@ class MainActivity : ComponentActivity() {
         }
         handleIntent(intent)
 
+
         quizCoordinatorViewModel.setViewModels(
             quizGeneral = quizGeneralViewModel,
             quizTheme = quizThemeViewModel,
@@ -153,25 +155,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val snackbarHostState = remember { SnackbarHostState() }
-            val scope = rememberCoroutineScope()
 
             // Observe ToastManager for Toast messages
             LaunchedEffect(Unit) {
-                ToastManager.toastMessage.observe(this@MainActivity) { message ->
+                SnackBarManager.snackBarMessage.collectLatest { message ->
                     message?.let {
-                        val prefix = when (it.second) {
-                            ToastType.SUCCESS -> "S"
-                            ToastType.ERROR -> "E"
-                            ToastType.INFO -> "I"
-                        }
+                        val prefix = it.second.prefix
                         snackbarHostState.currentSnackbarData?.dismiss()
-                        lifecycleScope.launch {
-                            snackbarHostState.showSnackbar(buildString {
-                                append(prefix)
-                                append(context.getString(it.first))
-                            },)
-                            ToastManager.toastShown()
-                        }
+                        snackbarHostState.showSnackbar(
+                            message = "$prefix${context.getString(it.first)}",
+                            duration = SnackbarDuration.Short
+                        )
+                        SnackBarManager.snackBarShown()
                     }
                 }
             }
@@ -233,7 +228,7 @@ class MainActivity : ComponentActivity() {
 
                         fun navigateToCreateQuizLayout(){
                             if (userViewModel.userData.value?.email == null) {
-                                ToastManager.showToast(
+                                SnackBarManager.showSnackBar(
                                     R.string.please_login_first,
                                     ToastType.INFO
                                 )
@@ -243,14 +238,8 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                 }
                             } else {
-                                quizGeneralViewModel.resetQuizGeneral()
-                                quizGeneralViewModel.initQuizGeneral(
-                                    userViewModel.userData.value?.email,
-                                )
-                                scope.launch {
-                                    scoreCardViewModel.resetScoreCard()
-                                    loadMyQuizViewModel.reset()
-                                }
+                                quizCoordinatorViewModel.resetQuizData(userViewModel.userData.value?.email)
+                                loadLocalQuizViewModel.reset()
                                 navController.navigate(
                                     Route.CreateQuizLayout
                                 ) {
@@ -288,7 +277,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.Home> {
-                                quizGeneralViewModel.resetQuizGeneral()
                                 MainScreen(
                                     navController,
                                     quizCardMainViewModel = quizCardMainViewModel,
@@ -455,7 +443,7 @@ class MainActivity : ComponentActivity() {
                                     quizCoordinatorViewModel = quizCoordinatorViewModel,
                                     navigateToScoreCard = {
                                         if (hasVisitedRoute(navController, Route.QuizBuilder)) {
-                                            ToastManager.showToast(
+                                            SnackBarManager.showSnackBar(
                                                 R.string.can_not_proceed_when_creating_quiz,
                                                 ToastType.INFO
                                             )
@@ -507,8 +495,7 @@ class MainActivity : ComponentActivity() {
                                         quizTheme = quizTheme,
                                         scoreCard = scoreCard,
                                     )
-
-                                    loadMyQuizViewModel.loadComplete()
+                                    loadLocalQuizViewModel.loadComplete()
                                 }
                             }
                             composable<Route.LoadUserQuiz>(

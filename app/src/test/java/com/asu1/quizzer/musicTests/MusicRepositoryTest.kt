@@ -12,8 +12,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
@@ -103,26 +105,31 @@ class MusicRepositoryTest {
     @Test
     fun insertMusicWithMoods_whenSomeMoodDuplicates_shouldInsertNonDuplicates() =  runTest {
         val dupMoods = musicAllInOne.moods.take(2)
+        val uniqueMoods = musicAllInOne.moods.distinct() // 중복 제거된 Mood 리스트
+
         `when`(musicDao.isMusicExists(musicAllInOne.music.title)).thenReturn(false)
-        musicAllInOne.moods.forEach { mood ->
-            if(dupMoods.contains(mood)){
-                `when`(musicDao.isMoodExists(mood)).thenReturn(true)
-            } else {
-                `when`(musicDao.isMoodExists(mood)).thenReturn(false)
-            }
-            `when`(musicDao.isMusicMoodCrossRefExists(musicAllInOne.music.title, mood)).thenReturn(false)
+
+        `when`(musicDao.isMusicExists(musicAllInOne.music.title)).thenReturn(false)
+        `when`(musicDao.isMoodExists(anyString())).thenAnswer { invocation ->
+            val mood = invocation.arguments[0] as String
+            mood in dupMoods
         }
+        `when`(musicDao.isMusicMoodCrossRefExists(anyString(), anyString())).thenReturn(false)
 
         repository.insertMusicWithMoods(musicAllInOne)
 
-        verify(musicDao).insertMusic(musicAllInOne.music)
-        musicAllInOne.moods.distinct().forEach { mood ->
-            if(dupMoods.contains(mood)){
+        verify(musicDao, times(1)).insertMusic(musicAllInOne.music)
+
+        uniqueMoods.forEach { mood ->
+            if (mood in dupMoods) {
                 verify(musicDao, never()).insertMood(Mood(mood))
-            } else{
-                verify(musicDao).insertMood(Mood(mood))
+            } else {
+                verify(musicDao, times(1)).insertMood(Mood(mood))
             }
-            verify(musicDao).insertMusicMoodCrossRef(MusicMoodCrossRef(musicAllInOne.music.title, mood))
+        }
+
+        uniqueMoods.forEach { mood ->
+            verify(musicDao, times(1)).insertMusicMoodCrossRef(MusicMoodCrossRef(musicAllInOne.music.title, mood))
         }
     }
 

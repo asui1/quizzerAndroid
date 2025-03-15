@@ -32,7 +32,7 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         ),
     ),
     MOON(R.string.moon, moon,
-        BlendModeCompat.COLOR,
+        BlendModeCompat.MODULATE,
         ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(

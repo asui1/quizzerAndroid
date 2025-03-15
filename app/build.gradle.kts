@@ -38,8 +38,8 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 65
-        versionName = "1.0.7"
+        versionCode = 66
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -167,7 +167,7 @@ dependencies {
     implementation(project(":core:util"))
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
-
+    implementation(libs.compose.code.editor)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -260,7 +260,6 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.moshi.kotlin)
     testImplementation(libs.converter.moshi)
-    testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.androidx.core.testing)
@@ -271,7 +270,6 @@ dependencies {
     testImplementation(libs.androidx.media3.session)
     testImplementation(libs.exoplayer.test)
     testImplementation(libs.androidx.legacy.support.v4)
-    testImplementation(libs.robolectric.v4103)
     testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.mockk)

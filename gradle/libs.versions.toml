@@ -7,6 +7,7 @@ app-update-ktx = "2.1.0"
 coil-compose = "2.5.0"
 colorpicker-compose = "1.1.2"
 compose-bom = "2025.01.01"
+compose-code-editor = "3.1.1"
 compose-version = "2.6.0"
 converter-gson = "2.9.0"
 core = "12.1.1"
@@ -21,7 +22,6 @@ firebase-bom = "33.9.0"
 foundation-layout = "1.8.0-beta02"
 googleid = "1.1.1"
 fragment-ktx = "1.8.6"
-guava = "32.0.1-jre"
 hilt-navigation-compose = "1.2.0"
 java-dotenv = "5.2.2"
 junit = "4.13.2"
@@ -56,6 +56,7 @@ play-services-auth = "21.3.0"
 reorderable = "2.4.2"
 retrofit = "2.9.0"
 retrofit2-kotlinx-serialization-converter = "0.8.0"
+richtext-ui = "1.0.0-alpha02"
 robolectric = "4.10.3"
 robolectric-version = "4.10.3"
 room = "2.6.1"
@@ -130,6 +131,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose = { module = "com.kizitonwose.calendar:compose", version.ref = "compose-version" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-code-editor = { module = "com.github.qawaz:compose-code-editor", version.ref = "compose-code-editor" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converter-gson" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converter-gson" }
 core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
@@ -143,6 +145,7 @@ firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundation-layout" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
+halilibo-xlibrary-artifact_z = { module = "com.halilibo.compose-richtext:<LIBRARY-ARTIFACT>", version.ref = "richtext-ui" }
 java-dotenv = { module = "io.github.cdimascio:java-dotenv", version.ref = "java-dotenv" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -180,6 +183,7 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2-kotlinx-serialization-converter" }
+richtext-ui-material3 = { module = "com.halilibo.compose-richtext:richtext-ui-material3", version.ref = "richtext-ui" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 robolectric-v4103 = { module = "org.robolectric:robolectric", version.ref = "robolectric-version" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

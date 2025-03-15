@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -109,11 +109,11 @@ class QuizCardMainViewModel : ViewModel() {
                     _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
                 } else {
                     Logger.debug("Failed to get user ranks")
-                    ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
                 }
             } catch (e: Exception) {
                 Logger.debug("Failed to get user ranks", e)
-                ToastManager.showToast(R.string.failed_to_get_user_ranks, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
             }
         }
     }

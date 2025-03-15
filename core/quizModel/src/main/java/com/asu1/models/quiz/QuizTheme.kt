@@ -26,7 +26,7 @@ data class QuizTheme(
         colorGradient = Color.White,
         state = ImageColorState.COLOR
     ),
-    override var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 2),
+    override var questionTextStyle: List<Int> = listOf(0, 0, 1, 0, 0),
     override var bodyTextStyle: List<Int> = listOf(0, 0, 2, 1, 0),
     override var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
     @Serializable(with = ColorSchemeSerializer::class) override var colorScheme: ColorScheme = com.asu1.resources.LightColorScheme,

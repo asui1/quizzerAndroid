@@ -1,5 +1,5 @@
 package com.asu1.baseinterfaces
 
-interface Identifiable{
+interface HasUniqueId{
     val id: String
 }

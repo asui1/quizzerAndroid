@@ -106,7 +106,7 @@ fun Quiz4Viewer(
                         quizState.answers.forEachIndexed { index, answer ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                             ) {
                                 quizStyleManager.GetTextComposable(TextStyles.ANSWER,
                                     quizState.answers[index],
@@ -177,7 +177,7 @@ fun Quiz4Viewer(
                         quizState.connectionAnswers.forEachIndexed{index, answer ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                             ) {
                                 DraggableDot(
                                     setOffset = { offset ->

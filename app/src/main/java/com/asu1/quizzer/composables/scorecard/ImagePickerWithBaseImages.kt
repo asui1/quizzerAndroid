@@ -52,6 +52,7 @@ fun ImagePickerWithBaseImages(
             columns = GridCells.Fixed(3),
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("BaseImagePickerLazyVerticalGrid")
         ) {
             item(
                 key = currentImage

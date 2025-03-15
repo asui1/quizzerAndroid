@@ -1,6 +1,6 @@
 package com.asu1.quizzer.viewModels
 
-import ToastManager
+import SnackBarManager
 import ToastType
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -58,7 +58,7 @@ class UserViewModel @Inject constructor(
             }
             catch (e: Exception){
                 Logger.debug("Init login failed ${e.message}")
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }
@@ -70,7 +70,7 @@ class UserViewModel @Inject constructor(
                 if(userInfo != null){
                     _isUserLoggedIn.postValue(true)
                     _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
-                    ToastManager.showToast(R.string.logged_in, ToastType.SUCCESS)
+                    SnackBarManager.showSnackBar(R.string.logged_in, ToastType.SUCCESS)
                 }
                 else{
                     throw Exception("Login failed")
@@ -78,7 +78,7 @@ class UserViewModel @Inject constructor(
             }
             catch (e: Exception){
                 Logger.debug("Login failed ${e.message}")
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }
@@ -92,7 +92,7 @@ class UserViewModel @Inject constructor(
                 _userActivities.value = it
             }.onFailure {
                 Logger.debug("Get user activities failed ${it.message}")
-                ToastManager.showToast(R.string.can_not_access_server, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
             }
         }
     }
@@ -102,16 +102,16 @@ class UserViewModel @Inject constructor(
             try {
                 val response = RetrofitInstance.api.deleteUser(email)
                 if(response.isSuccessful){
-                    ToastManager.showToast(R.string.user_delete_successed, ToastType.SUCCESS)
+                    SnackBarManager.showSnackBar(R.string.user_delete_successed, ToastType.SUCCESS)
                     logOut()
                 }
                 else{
-                    ToastManager.showToast(R.string.failed_to_delete_user, ToastType.ERROR)
+                    SnackBarManager.showSnackBar(R.string.failed_to_delete_user, ToastType.ERROR)
                 }
             }
             catch (e: Exception){
                 Logger.debug("Delete user failed ${e.message}")
-                ToastManager.showToast(R.string.failed_to_delete_user, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_to_delete_user, ToastType.ERROR)
             }
         }
     }
@@ -123,7 +123,7 @@ class UserViewModel @Inject constructor(
                 if(userInfo != null){
                     _isUserLoggedIn.postValue(false)
                     _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage, ImmutableSet.copyOf(userInfo.tags ?: emptySet())))
-                    ToastManager.showToast(R.string.logged_out, ToastType.SUCCESS)
+                    SnackBarManager.showSnackBar(R.string.logged_out, ToastType.SUCCESS)
                 }
                 else{
                     throw Exception("Logout failed")
@@ -131,7 +131,7 @@ class UserViewModel @Inject constructor(
             }
             catch (e: Exception){
                 Logger.debug("Logout failed ${e.message}")
-                ToastManager.showToast(R.string.failed_request, ToastType.ERROR)
+                SnackBarManager.showSnackBar(R.string.failed_request, ToastType.ERROR)
             }
         }
     }

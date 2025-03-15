@@ -166,11 +166,6 @@ fun QuizLayoutBuilderScreen(
                         )
                     } else {
                         quizCoordinatorViewModel.updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizGeneral(
-                                QuizGeneralActions.UpdateStep(step-1)
-                            )
-                        )
-                        quizCoordinatorViewModel.updateQuizCoordinator(
                             QuizCoordinatorActions.UpdateQuizTheme(
                                 QuizThemeActions.InitTextStyleManager
                             )
