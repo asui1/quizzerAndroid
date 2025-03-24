@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.quizzer.composables.animations.UserRankAnimation
+import com.asu1.customComposable.animations.UserRankAnimation
 import com.asu1.quizzer.screens.mainScreen.UriImageButton
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R

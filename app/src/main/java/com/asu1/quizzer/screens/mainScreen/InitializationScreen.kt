@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.viewModels.InitializationViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.InitializationState

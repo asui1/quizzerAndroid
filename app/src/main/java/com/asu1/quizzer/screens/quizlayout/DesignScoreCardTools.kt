@@ -39,16 +39,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.asu1.custombuttons.LabeledSwitch
+import com.asu1.customComposable.Switch.LabeledSwitch
+import com.asu1.customComposable.button.IconButtonWithText
+import com.asu1.customComposable.dialog.FastCreateDialog
+import com.asu1.customComposable.dropdown.FastCreateDropDown
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.customComposable.imageGetter.ImageGetter
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModelActions
 import com.asu1.quizzer.composables.scorecard.ImagePickerWithBaseImages
 import com.asu1.quizzer.composables.scorecard.TextColorPickerModalSheet
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModelActions
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
 
@@ -236,7 +239,7 @@ fun DesignScoreCardTools(
             .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
     ) {
         val iconSize = 32.dp
-        com.asu1.custombuttons.IconButtonWithText(
+        IconButtonWithText(
             imageVector = Icons.Default.FormatColorText,
             text = stringResource(R.string.text_color),
             onClick = {
@@ -246,7 +249,7 @@ fun DesignScoreCardTools(
             modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
             iconSize = iconSize,
         )
-        com.asu1.custombuttons.IconButtonWithText(
+        IconButtonWithText(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.image_on_top),
             onClick = {
@@ -256,7 +259,7 @@ fun DesignScoreCardTools(
             modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
             iconSize = iconSize,
         )
-        com.asu1.custombuttons.IconButtonWithText(
+        IconButtonWithText(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.background_newline),
             onClick = {
@@ -268,8 +271,8 @@ fun DesignScoreCardTools(
         )
         colorNames.forEachIndexed { index, colorName ->
             if (colorName == R.string.effect) {
-                com.asu1.customdropdown.FastCreateDialog(
-                    showDialog= showEffectsDialog,
+                FastCreateDialog(
+                    showDialog = showEffectsDialog,
                     labelText = stringResource(R.string.effects),
                     onClick = { dropdownIndex ->
                         showEffectDropdown = false
@@ -279,7 +282,7 @@ fun DesignScoreCardTools(
                             )
                         )
                     },
-                    onChangeDialog= { showEffectsDialog = it },
+                    onChangeDialog = { showEffectsDialog = it },
                     inputItems = remember { Effect.entries.map { it.stringId } },
                     modifier = Modifier.width(iconSize * 1.7f),
                     imageVector = Icons.Filled.Animation,
@@ -288,7 +291,7 @@ fun DesignScoreCardTools(
                     currentSelection = scoreCard.background.effect.ordinal
                 )
             } else if (colorName == R.string.gradient) {
-                com.asu1.customdropdown.FastCreateDropDown(
+                FastCreateDropDown(
                     showDropdownMenu = showGradientDropdown,
                     labelText = stringResource(R.string.gradient),
                     onClick = { dropdownIndex ->
@@ -308,7 +311,7 @@ fun DesignScoreCardTools(
                     currentSelection = scoreCard.background.shaderType.index
                 )
             }
-            com.asu1.custombuttons.IconButtonWithText(
+            IconButtonWithText(
                 imageVector = Icons.Default.ColorLens,
                 text = stringResource(colorName),
                 onClick = {

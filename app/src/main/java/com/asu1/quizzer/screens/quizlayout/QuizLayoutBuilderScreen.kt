@@ -55,11 +55,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.asu1.customdialogs.DialogComposable
+import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel

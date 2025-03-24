@@ -29,7 +29,7 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.QuizCardHorizontal
-import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.composables.base.RowWithAppIconAndName
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel

@@ -5,7 +5,12 @@
       <module name="quizzerAndroid.core.UserActivity" target="21" />
       <module name="quizzerAndroid.core.userDataModel" target="21" />
       <module name="quizzerAndroid.domain.toastManager" target="21" />
+      <module name="quizzerAndroid.feature.customDialog" target="21" />
+      <module name="quizzerAndroid.feature.customDropdown" target="21" />
+      <module name="quizzerAndroid.feature.customEffects" target="21" />
+      <module name="quizzerAndroid.feature.customFlipper" target="21" />
       <module name="quizzerAndroid.feature.pagerIndicator" target="21" />
+      <module name="quizzerAndroid.feature.quizLayout" target="21" />
       <module name="quizzerAndroid.models" target="21" />
     </bytecodeTargetLevel>
   </component>

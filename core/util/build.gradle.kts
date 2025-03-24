@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation(project(":core:resource"))
 
+    implementation(libs.calendar.compose)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -48,6 +49,8 @@ dependencies {
     implementation(libs.androidx.datastore.core)
     implementation(libs.mlkit.segmentation.selfie)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.activity.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

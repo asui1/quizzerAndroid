@@ -24,9 +24,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.asu1.colorpicker.ColorPicker
+import com.asu1.customComposable.dropdown.FastCreateDropDown
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.customComposable.imageGetter.ImageGetter
 import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -113,7 +114,7 @@ fun BackgroundTabs(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
                     ){
-                        com.asu1.customdropdown.FastCreateDropDown(
+                        FastCreateDropDown(
                             showDropdownMenu = showGradientDropdown,
                             labelText = stringResource(R.string.gradient),
                             onClick = { index ->

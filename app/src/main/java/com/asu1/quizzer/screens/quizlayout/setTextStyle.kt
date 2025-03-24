@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.customComposable.flipper.HorizontalFlipper
 import com.asu1.quizzer.composables.GetTextStyle
 import com.asu1.resources.R
 import com.asu1.resources.borders
@@ -142,7 +143,7 @@ fun TextStyleRowOpener(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    com.asu1.flipper.HorizontalFlipper(
+                    HorizontalFlipper(
                         items = fonts,
                         currentIndex = textStyle[0],
                         onNext = {
@@ -153,7 +154,7 @@ fun TextStyleRowOpener(
                         },
                         key = key + "Font"
                     )
-                    com.asu1.flipper.HorizontalFlipper(
+                    HorizontalFlipper(
                         items = colors,
                         currentIndex = textStyle[1],
                         onNext = {
@@ -164,7 +165,7 @@ fun TextStyleRowOpener(
                         },
                         key = key + "Color"
                     )
-                    com.asu1.flipper.HorizontalFlipper(
+                    HorizontalFlipper(
                         items = borders,
                         currentIndex = textStyle[2],
                         onNext = {
@@ -175,7 +176,7 @@ fun TextStyleRowOpener(
                         },
                         key = key + "Border"
                     )
-                    com.asu1.flipper.HorizontalFlipper(
+                    HorizontalFlipper(
                         items = outlines,
                         currentIndex = textStyle[4],
                         onNext = {

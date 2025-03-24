@@ -2,9 +2,13 @@ package com.asu1.utils
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.Contrast
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamicColorScheme
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.from
 import com.materialkolor.palettes.TonalPalette
+import kotlin.random.Random
 
 //USED BODY FROM materialkolor
 fun tonalPalette(color: Color): Map<Int, Color> {
@@ -66,3 +70,11 @@ fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary
     )
 }
 
+fun randomDynamicColorScheme(seedColor: Color, paletteLevel: Int = 2, contrastLevel: Int = 2, isDark: Boolean): ColorScheme {
+    val style = PaletteStyle.entries[paletteLevel]
+    val contrast = Contrast.entries[contrastLevel].value
+    return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
+        style = style,
+        contrastLevel = contrast,
+    )
+}

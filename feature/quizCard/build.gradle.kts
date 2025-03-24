@@ -35,9 +35,11 @@ android {
 
 dependencies {
     implementation(project(":core:quizCardModel"))
-    implementation(project(":feature:customDialog"))
     implementation(project(":core:util"))
     implementation(project(":core:resource"))
+
+    implementation(project(":feature:customComposable"))
+
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.runtime.android)
     implementation(libs.foundation.layout)

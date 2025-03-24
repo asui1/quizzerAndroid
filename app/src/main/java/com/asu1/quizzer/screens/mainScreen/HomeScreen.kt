@@ -104,6 +104,7 @@ fun HomeScreen(
         // Swipeable Pages
         HorizontalPager(
             state = pagerState,
+            userScrollEnabled = false,
             modifier = Modifier.weight(1f)
         ) { page ->
             LazyColumn(

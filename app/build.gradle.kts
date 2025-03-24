@@ -38,8 +38,8 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 68
-        versionName = "1.0.10"
+        versionCode = 69
+        versionName = "1.0.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -131,40 +131,37 @@ android {
 
 
 dependencies {
-    implementation(project(":feature:quizCard"))
-    //Module management
     implementation(project(":core:quizCardModel"))
-    implementation(project(":feature:customButton"))
     implementation(project(":core:resource"))
     implementation(project(":core:BaseInterfaces"))
-    implementation(project(":feature:toastManager"))
-    implementation(project(":feature:customDialog"))
-    implementation(project(":feature:pageIndicator"))
-    implementation(project(":feature:colorPicker"))
     implementation(project(":core:imageColor"))
     implementation(project(":core:quizModel"))
-    implementation(project(":feature:customFlipper"))
-    implementation(project(":feature:customFlipper"))
-    implementation(project(":feature:customDropdown"))
-    implementation(project(":repository:network"))
-    implementation(project(":domain:userDataUseCase"))
     implementation(project(":core:userDataModels"))
-    implementation(project(":feature:permissionRequest"))
-    implementation(project(":feature:customEffects"))
-    implementation(project(":feature:customEffects"))
     implementation(project(":core:appDataModels"))
+    implementation(project(":core:quizModel"))
+    implementation(project(":core:util"))
+
+    implementation(project(":domain:userDataUseCase"))
     implementation(project(":domain:appDataUseCase"))
+
+    implementation(project(":repository:appData"))
+    implementation(project(":repository:network"))
+
+    implementation(project(":feature:quizCard"))
+    implementation(project(":feature:quiz"))
+    implementation(project(":feature:customComposable"))
+    implementation(project(":feature:toastManager"))
+    implementation(project(":feature:pageIndicator"))
+    implementation(project(":feature:colorPicker"))
+    implementation(project(":feature:permissionRequest"))
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:musicUi"))
     testImplementation(project(":feature:musicUi"))
     androidTestImplementation(project(":feature:musicUi"))
-    implementation(project(":repository:appData"))
 
-    implementation(project(":core:quizModel"))
     testImplementation(project(":core:quizModel"))
     androidTestImplementation(project(":core:quizModel"))
-    implementation(project(":core:util"))
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
     implementation(libs.room.runtime)
@@ -214,8 +211,8 @@ dependencies {
     implementation(libs.material.kolor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.core)
-    implementation(libs.compose)
+    implementation(libs.youtubeplayer.core)
+    implementation(libs.calendar.compose)
     implementation(libs.reorderable)
     implementation(libs.lottie.compose)
     implementation(libs.dotlottie.android)

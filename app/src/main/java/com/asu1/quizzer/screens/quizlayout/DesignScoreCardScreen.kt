@@ -39,8 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.quizzer.composables.animations.OpenCloseColumn
-import com.asu1.quizzer.composables.animations.UploadingAnimation
+import com.asu1.customComposable.animations.OpenCloseColumn
+import com.asu1.customComposable.animations.UploadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
@@ -48,7 +48,8 @@ import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -58,7 +59,7 @@ val colorNames: List<Int> = listOf(R.string.background_newline,
 @Composable
 fun DesignScoreCardScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     onUpload: () -> Unit = { }
 ) {
     val quizUIState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()

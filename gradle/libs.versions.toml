@@ -129,12 +129,12 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
-compose = { module = "com.kizitonwose.calendar:compose", version.ref = "compose-version" }
+calendar-compose = { module = "com.kizitonwose.calendar:compose", version.ref = "compose-version" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-code-editor = { module = "com.github.qawaz:compose-code-editor", version.ref = "compose-code-editor" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converter-gson" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converter-gson" }
-core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
+youtubeplayer-core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }

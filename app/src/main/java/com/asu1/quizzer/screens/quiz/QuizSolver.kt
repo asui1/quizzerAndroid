@@ -31,10 +31,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.model.TextStyleManager
-import com.asu1.quizzer.util.setTopBarColor
+import com.asu1.models.TextStyleManager
+import com.asu1.utils.setTopBarColor
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
 import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R

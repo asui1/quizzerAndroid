@@ -45,7 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.asu1.customdialogs.DialogComposable
+import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.quizcard.VerticalQuizCardLargeColumn
 import com.asu1.quizzer.composables.UserRankComposableList
 import com.asu1.quizzer.composables.mainscreen.InquiryBottomSheetContent
@@ -53,7 +53,7 @@ import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
 import com.asu1.quizzer.composables.mainscreen.SignoutBottomSheetContent
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.util.setTopBarColor
+import com.asu1.utils.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel

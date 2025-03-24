@@ -51,6 +51,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.asu1.customComposable.effects.EffectBuilder
+import com.asu1.customComposable.effects.GradientBrush
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
@@ -115,7 +117,7 @@ fun ScoreCardBackground(
                 )
             }
             ImageColorState.GRADIENT -> {
-                com.asu1.customeffects.GradientBrush(
+                GradientBrush(
                     color = backgroundImageColor.color,
                     color2 = backgroundImageColor.colorGradient,
                     shaderType = backgroundImageColor.shaderType,
@@ -125,15 +127,15 @@ fun ScoreCardBackground(
         }
 
         if(backgroundImageColor.effect != Effect.NONE){
-            com.asu1.customeffects.EffectBuilder(
+            EffectBuilder(
                 color = backgroundImageColor.color2,
                 resourceUrl = backgroundImageColor.effect.resourceUrl,
                 blendModeCompat = backgroundImageColor.effect.blendmode,
                 contentScale = backgroundImageColor.effect.contentScale,
                 effectGraphicsInfos =
-                backgroundImageColor.effectGraphics.ifEmpty {
-                    backgroundImageColor.effect.defaultEffectGraphicsInfos
-                },
+                    backgroundImageColor.effectGraphics.ifEmpty {
+                        backgroundImageColor.effect.defaultEffectGraphicsInfos
+                    },
             )
         }
         if(backgroundImageColor.overlayImage.width > 1){

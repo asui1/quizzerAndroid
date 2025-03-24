@@ -27,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.quizzer.composables.ImageGetter
+import com.asu1.customComposable.imageGetter.ImageGetter
+import com.asu1.resources.LightPrimary
 import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
@@ -64,7 +65,7 @@ fun ImagePickerWithBaseImages(
                     modifier = Modifier
                         .aspectRatio(0.6f)
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
-                            com.asu1.resources.LightPrimary
+                            LightPrimary
                         )) else Modifier)
                 )
             }

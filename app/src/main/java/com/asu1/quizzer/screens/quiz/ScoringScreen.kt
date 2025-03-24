@@ -45,9 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.asu1.customComposable.dialog.ShareDialog
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.quizzer.composables.animations.LoadingAnimation
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.disableImmersiveMode
@@ -115,7 +116,7 @@ fun ScoringScreen(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 modifier = Modifier.imePadding()
                             ) {
-                                com.asu1.customdialogs.ShareDialog(
+                                ShareDialog(
                                     quizId = scoreCard.quizUuid ?: "",
                                     userName = email,
                                     onDismiss = {

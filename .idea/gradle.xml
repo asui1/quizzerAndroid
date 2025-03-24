@@ -29,15 +29,13 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/SearchSuggestion" />
             <option value="$PROJECT_DIR$/feature/colorPicker" />
-            <option value="$PROJECT_DIR$/feature/customButton" />
-            <option value="$PROJECT_DIR$/feature/customDialog" />
-            <option value="$PROJECT_DIR$/feature/customDropdown" />
-            <option value="$PROJECT_DIR$/feature/customEffects" />
-            <option value="$PROJECT_DIR$/feature/customFlipper" />
+            <option value="$PROJECT_DIR$/feature/customComposable" />
             <option value="$PROJECT_DIR$/feature/musicUi" />
             <option value="$PROJECT_DIR$/feature/pageIndicator" />
             <option value="$PROJECT_DIR$/feature/permissionRequest" />
+            <option value="$PROJECT_DIR$/feature/quiz" />
             <option value="$PROJECT_DIR$/feature/quizCard" />
+            <option value="$PROJECT_DIR$/feature/quizCommon" />
             <option value="$PROJECT_DIR$/feature/toastManager" />
             <option value="$PROJECT_DIR$/macrobenchmark" />
             <option value="$PROJECT_DIR$/microbenchmark" />
@@ -47,7 +45,6 @@
             <option value="$PROJECT_DIR$/repository/userData" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
