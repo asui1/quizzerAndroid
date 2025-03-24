@@ -1,7 +1,6 @@
 package com.asu1.utils.images
 
 import android.graphics.Bitmap
-import androidx.core.graphics.applyCanvas
 import android.graphics.Color
 import com.google.mlkit.vision.segmentation.SegmentationMask
 

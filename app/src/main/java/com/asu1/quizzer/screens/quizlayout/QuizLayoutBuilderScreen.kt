@@ -52,19 +52,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
-import com.asu1.quizzer.viewModels.quizModels.QuizGeneralActions
-import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
 import com.asu1.resources.LayoutSteps
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -75,7 +75,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun QuizLayoutBuilderScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     navigateToQuizLoad: () -> Unit = {},
 ) {
     val context = LocalContext.current

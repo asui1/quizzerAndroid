@@ -26,25 +26,26 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.customComposable.animations.LoadingAnimation
-import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.models.TextStyleManager
-import com.asu1.utils.setTopBarColor
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
+import com.asu1.quiz.ui.ImageColorBackground
+import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.viewer.QuizViewer
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import com.asu1.utils.setTopBarColor
 
 @Composable
 fun QuizSolver(
     modifier: Modifier = Modifier,
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     navigateToScoreCard: () -> Unit = {},
 ) {
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()

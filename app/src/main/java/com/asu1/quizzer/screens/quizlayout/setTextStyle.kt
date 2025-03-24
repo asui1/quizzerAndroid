@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.flipper.HorizontalFlipper
-import com.asu1.quizzer.composables.GetTextStyle
+import com.asu1.quiz.ui.GetTextStyle
 import com.asu1.resources.R
 import com.asu1.resources.borders
 import com.asu1.resources.colors

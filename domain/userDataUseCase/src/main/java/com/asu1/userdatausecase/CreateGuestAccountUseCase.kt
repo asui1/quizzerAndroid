@@ -2,10 +2,10 @@ package com.asu1.userdatausecase
 
 import com.asu1.resources.UserLoginInfo
 import com.asu1.userdata.UserRepository
+import com.asu1.utils.Logger
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.asu1.utils.Logger
 
 class CreateGuestAccountUseCase @Inject constructor(
     private val userRepository: UserRepository

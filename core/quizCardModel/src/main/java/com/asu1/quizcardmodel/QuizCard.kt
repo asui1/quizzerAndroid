@@ -1,10 +1,10 @@
 package com.asu1.quizcardmodel
 
+import androidx.compose.runtime.Immutable
 import com.asu1.baseinterfaces.HasUniqueId
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID
-import androidx.compose.runtime.Immutable
 
 @Immutable
 @Serializable(with = KQuizCardDeserializer::class)

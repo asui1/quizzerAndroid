@@ -8,13 +8,7 @@ import com.asu1.appdatamodels.Notification
 import com.asu1.network.RetrofitInstance
 import com.asu1.utils.LanguageSetter
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 

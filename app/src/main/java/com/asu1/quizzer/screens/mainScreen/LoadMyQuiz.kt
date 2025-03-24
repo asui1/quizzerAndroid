@@ -27,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizcard.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.viewModels.quizModels.LoadMyQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme

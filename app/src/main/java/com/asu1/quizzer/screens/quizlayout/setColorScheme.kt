@@ -52,9 +52,9 @@ import androidx.compose.ui.unit.dp
 import com.asu1.colorpicker.ColorSchemeSheet
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.quizzer.model.ImageColorBackground
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
+import com.asu1.quiz.ui.ImageColorBackground
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.ColorList
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.QuizzerTypographyDefaults
@@ -62,9 +62,7 @@ import com.asu1.resources.R
 import com.asu1.resources.paletteSize
 import com.materialkolor.Contrast
 import com.materialkolor.PaletteStyle
-import com.materialkolor.dynamicColorScheme
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Composable
 fun QuizLayoutSetColorScheme(

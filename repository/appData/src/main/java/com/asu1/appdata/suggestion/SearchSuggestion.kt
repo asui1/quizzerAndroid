@@ -1,6 +1,9 @@
 package com.asu1.appdata.suggestion
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Fts4
+import androidx.room.PrimaryKey
 
 @Fts4
 @Entity(tableName = "search_suggestions")

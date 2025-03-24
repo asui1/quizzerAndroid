@@ -25,10 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.asu1.colorpicker.ColorPicker
 import com.asu1.customComposable.dropdown.FastCreateDropDown
+import com.asu1.customComposable.imageGetter.ImageGetter
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.customComposable.imageGetter.ImageGetter
-import com.asu1.quizzer.viewModels.quizModels.QuizThemeActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType

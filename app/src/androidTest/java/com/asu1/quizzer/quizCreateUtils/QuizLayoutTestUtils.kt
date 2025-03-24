@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.test.espresso.Espresso.onIdle
 import com.asu1.models.serializers.BodyType
-import com.asu1.utils.uriToByteArray
 import com.asu1.utils.Logger
+import com.asu1.utils.uriToByteArray
 import kotlinx.coroutines.runBlocking
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {

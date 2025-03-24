@@ -57,16 +57,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.serializers.QuizType
+import com.asu1.quiz.ui.ImageColorBackground
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizzer.composables.QuizzerTopBarBase
-import com.asu1.quizzer.model.ImageColorBackground
 import com.asu1.quizzer.util.Route
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.questionTypes
@@ -75,7 +75,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun QuizBuilderScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     onMoveToScoringScreen: () -> Unit = {},
     navigateToQuizLoad: () -> Unit = {},
 ) {

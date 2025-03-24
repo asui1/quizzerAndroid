@@ -1,7 +1,6 @@
 package com.asu1.utils.images
 
 import android.graphics.Bitmap
-import com.asu1.utils.Logger
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions

@@ -26,7 +26,6 @@ import com.asu1.models.sampleQuiz3
 import com.asu1.quiz.ui.TextStyleManager
 import com.asu1.quiz.viewer.BuildBody
 import com.asu1.resources.TextStyles
-import kotlin.text.replace
 
 @Composable
 fun Quiz3Checker(

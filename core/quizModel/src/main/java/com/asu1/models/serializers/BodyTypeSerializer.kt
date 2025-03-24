@@ -2,6 +2,9 @@ package com.asu1.models.serializers
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Base64
+import com.asu1.utils.Logger
+import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -9,16 +12,13 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import android.util.Base64
-import com.asu1.utils.Logger
-import com.asu1.utils.images.createEmptyBitmap
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import java.io.ByteArrayOutputStream
 
 object BodyTypeSerializer : KSerializer<BodyType> {

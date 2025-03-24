@@ -62,10 +62,10 @@ import com.asu1.quizzer.util.exitFadeOutTransition
 import com.asu1.quizzer.util.exitToRightTransition
 import com.asu1.quizzer.viewModels.InitializationViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
-import com.asu1.quizzer.viewModels.quizModels.LoadMyQuizViewModel
 import com.asu1.quizzer.viewModels.SearchViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.quizzer.viewModels.quizModels.LoadLocalQuizViewModel
+import com.asu1.quizzer.viewModels.quizModels.LoadMyQuizViewModel
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager

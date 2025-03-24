@@ -53,13 +53,13 @@ import com.asu1.quizzer.composables.mainscreen.MainActivityBottomBar
 import com.asu1.quizzer.composables.mainscreen.MainActivityTopbar
 import com.asu1.quizzer.composables.mainscreen.SignoutBottomSheetContent
 import com.asu1.quizzer.util.Route
-import com.asu1.utils.setTopBarColor
 import com.asu1.quizzer.viewModels.InquiryViewModel
 import com.asu1.quizzer.viewModels.QuizCardMainViewModel
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
+import com.asu1.utils.setTopBarColor
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

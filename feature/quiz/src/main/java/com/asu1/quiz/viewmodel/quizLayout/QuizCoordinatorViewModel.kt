@@ -49,9 +49,6 @@ import kotlinx.serialization.json.Json
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Base64
-import kotlin.collections.map
-import kotlin.collections.plus
-import kotlin.compareTo
 
 class QuizCoordinatorViewModel : ViewModel() {
     private var _quizViewModelState = MutableStateFlow(ViewModelState.IDLE)

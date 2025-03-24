@@ -2,8 +2,8 @@ package com.asu1.appdatausecase
 
 import com.asu1.appdata.AppDataRepository
 import com.asu1.appdatamodels.Notification
-import javax.inject.Inject
 import com.asu1.utils.Logger
+import javax.inject.Inject
 
 class GetNotificationUseCase @Inject constructor(
     private val appDataRepository: AppDataRepository

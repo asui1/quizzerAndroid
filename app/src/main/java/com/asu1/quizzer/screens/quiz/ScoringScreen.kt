@@ -42,19 +42,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.dialog.ShareDialog
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
-import com.asu1.customComposable.animations.LoadingAnimation
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizzer.composables.scorecard.ScoreCardComposable
 import com.asu1.quizzer.util.Route
 import com.asu1.quizzer.util.disableImmersiveMode
 import com.asu1.quizzer.util.enableImmersiveMode
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorActions
-import com.asu1.quizzer.viewModels.quizModels.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 
@@ -62,7 +62,7 @@ import com.asu1.resources.ViewModelState
 @Composable
 fun ScoringScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(),
+    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     email: String = "GUEST",
     loadQuiz: (String) -> Unit = {},
 ) {

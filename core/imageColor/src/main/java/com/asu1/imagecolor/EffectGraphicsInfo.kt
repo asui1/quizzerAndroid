@@ -2,7 +2,6 @@ package com.asu1.imagecolor
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.serialization.Serializable
 
