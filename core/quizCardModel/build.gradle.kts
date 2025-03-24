@@ -43,8 +43,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(project(":core:resource"))
-    implementation(project(":core:BaseInterfaces"))
-    implementation(project(":core:BaseInterfaces"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

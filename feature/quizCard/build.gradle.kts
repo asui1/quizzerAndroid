@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -37,8 +38,11 @@ dependencies {
     implementation(project(":core:quizCardModel"))
     implementation(project(":core:util"))
     implementation(project(":core:resource"))
+    implementation(project(":core:quizModel"))
+    implementation(project(":repository:network"))
 
     implementation(project(":feature:customComposable"))
+    implementation(project(":feature:activityNavigation"))
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.runtime.android)
@@ -54,10 +58,16 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.landscapist.glide)
     implementation(libs.accompanist.flowlayout)
-    implementation(project(":feature:pageIndicator"))
-    implementation(project(":core:BaseInterfaces"))
-    implementation(project(":core:BaseInterfaces"))
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation (libs.retrofit)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.compose.ui.ui.tooling)

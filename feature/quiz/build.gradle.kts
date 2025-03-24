@@ -39,11 +39,12 @@ dependencies {
     implementation(project(":core:resource"))
     implementation(project(":core:util"))
     implementation(project(":core:imageColor"))
+    implementation(project(":core:quizCardModel"))
 
     implementation(project(":repository:network"))
 
     implementation(project(":feature:customComposable"))
-    implementation(project(":feature:toastManager"))
+    implementation(project(":feature:activityNavigation"))
 
     implementation(libs.core.ktx)
     implementation(libs.uuid.creator)
@@ -68,6 +69,7 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.material.kolor)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

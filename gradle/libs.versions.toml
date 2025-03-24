@@ -42,6 +42,7 @@ logging-interceptor = "4.11.0"
 lottie-compose = "6.0.0"
 material = "1.7.7"
 material-kolor = "1.7.0"
+compose-material3 = "1.4.0-alpha10"
 material-version = "1.12.0"
 media3-effect = "1.5.1"
 mockito-core = "4.5.1"
@@ -166,7 +167,7 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 material = { module = "com.google.android.material:material", version.ref = "material-version" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "material-kolor" }
-material3 = { module = "androidx.compose.material3:material3" }
+material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 mlkit-segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version.ref = "segmentation-selfie-version" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 mockito-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
@@ -215,14 +216,11 @@ androidx-animation-android = { group = "androidx.compose.animation", name = "ani
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundation-android" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3-android" }
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "ui-tooling-preview-android" }
-androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundation-layout-android" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "ui-text-android" }
 androidx-compose-ui-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
 ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtime-android" }
-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundation-layout-android-version" }
 androidx-animation-core-android = { group = "androidx.compose.animation", name = "animation-core-android", version.ref = "animation-core-android" }
-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundation-android-version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

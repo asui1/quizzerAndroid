@@ -3,8 +3,8 @@ package com.asu1.quizzer.service
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.asu1.quizzer.util.musics.MediaStateEvents
-import com.asu1.quizzer.util.musics.MusicStates
+import com.asu1.quizzer.musics.MediaStateEvents
+import com.asu1.quizzer.musics.MusicStates
 import com.asu1.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi

@@ -1,7 +1,7 @@
 package com.asu1.quizcardmodel
 
 import androidx.compose.runtime.Immutable
-import com.asu1.baseinterfaces.HasUniqueId
+import com.asu1.quizcardmodel.HasUniqueId
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID

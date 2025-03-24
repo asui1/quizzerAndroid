@@ -1,7 +1,7 @@
 package com.asu1.quizzer.musicTests
 
-import com.asu1.quizzer.util.musics.floatToTime
-import com.asu1.quizzer.util.musics.msToTime
+import com.asu1.quizzer.musics.floatToTime
+import com.asu1.quizzer.musics.msToTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
