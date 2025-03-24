@@ -1,6 +1,5 @@
 package com.asu1.quizzer.viewModels.quizModels
 
-import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.serializers.BodyType
@@ -38,27 +37,13 @@ abstract class BaseQuizViewModel<T : Quiz<T>>(initialQuiz: T) : ViewModel() {
     abstract fun addAnswer()
     abstract fun viewerInit()
     fun updateBodyState(bodyType: BodyType){
-        val currentQuiz = _quizState.value
-        _quizState.value = currentQuiz.cloneQuiz(bodyType = bodyType)
-    }
-    fun updateBodyText(bodyText: String) {
-        val currentQuiz = _quizState.value
-        _quizState.value = currentQuiz.cloneQuiz(bodyType = BodyType.TEXT(bodyText = bodyText))
-    }
-
-    fun updateBodyImage(image: Bitmap?) {
-        val currentQuiz = _quizState.value
-        _quizState.value = if (image == null) {
-            currentQuiz.cloneQuiz(bodyType = BodyType.IMAGE())
-        } else {
-            currentQuiz.cloneQuiz(bodyType = BodyType.IMAGE(bodyImage = image))
+        _quizState.update { currentState ->
+            currentState.cloneQuiz(
+                bodyType = bodyType
+            )
         }
     }
 
-    fun updateBodyYoutube(youtubeId: String, startTime: Int) {
-        val currentQuiz = _quizState.value
-        _quizState.value = currentQuiz.cloneQuiz(bodyType = BodyType.YOUTUBE(youtubeId, startTime))
-    }
     fun setPoint(point: Int) {
         val currentQuiz = _quizState.value
         _quizState.value = currentQuiz.cloneQuiz(point = point)

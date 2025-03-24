@@ -75,11 +75,6 @@ fun Quiz3Creator(
                 QuizBodyBuilder(
                     bodyState = quiz3State.bodyType,
                     updateBody = { quiz.updateBodyState(it) },
-                    onBodyTextChange = { quiz.updateBodyText(it) },
-                    onImageSelected = { quiz.updateBodyImage(it) },
-                    onYoutubeUpdate = { id, time ->
-                        quiz.updateBodyYoutube(id, time)
-                    },
                 )
             }
             item{

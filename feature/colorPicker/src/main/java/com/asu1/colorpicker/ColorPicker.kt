@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import com.asu1.utils.Logger
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
@@ -60,7 +61,7 @@ fun ColorPicker(
                 // Update localColor to reflect brightness changes
                 localColor = selectedColor
                 rgbValue = selectedColor.toRgbHex()
-
+                Logger.debug("Update Color to $selectedColor")
                 // Notify parent with the updated color
                 onColorSelected(selectedColor)
             }
@@ -107,6 +108,7 @@ fun ColorPicker(
                     } catch (_: IllegalArgumentException) {
                         initialColor
                     }
+                    onColorSelected(color)
                     controller.selectByColor(color, true)
                     localColor = color
                 }

@@ -105,11 +105,6 @@ fun Quiz4Creator(
                 QuizBodyBuilder(
                     bodyState = quizState.bodyType,
                     updateBody = { quiz.updateBodyState(it) },
-                    onBodyTextChange = { quiz.updateBodyText(it) },
-                    onImageSelected = { quiz.updateBodyImage(it) },
-                    onYoutubeUpdate = { id, time ->
-                        quiz.updateBodyYoutube(id, time)
-                    },
                 )
             }
             item{

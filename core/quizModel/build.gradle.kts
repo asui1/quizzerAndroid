@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.material.icons.extended)
 
     testImplementation(libs.junit)
 

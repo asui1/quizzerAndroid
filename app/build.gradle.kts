@@ -38,8 +38,8 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 66
-        versionName = "1.0.8"
+        versionCode = 68
+        versionName = "1.0.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -167,8 +167,6 @@ dependencies {
     implementation(project(":core:util"))
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
-    implementation(libs.compose.code.editor)
-
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.animation.graphics.android)

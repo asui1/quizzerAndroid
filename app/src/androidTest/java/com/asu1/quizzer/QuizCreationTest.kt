@@ -14,7 +14,7 @@ import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
-import com.asu1.quizzer.quizCreateUtils.codingQuestions.solidPrinciplesQuizDataKorean
+import com.asu1.quizzer.quizCreateUtils.codingQuestions.pythonUtilityQuizDataKo
 import com.asu1.quizzer.viewModels.UserViewModel
 import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
 import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModel
@@ -86,7 +86,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizData = solidPrinciplesQuizDataKorean
+        val testQuizData = pythonUtilityQuizDataKo
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout
@@ -135,9 +135,8 @@ class MyComposeTest {
         val colorInt = testQuizData.colorInt
         val primaryColor = if(testQuizData.primaryColor == "") primaryColors[colorInt] else testQuizData.primaryColor
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextFieldPrimaryColor", primaryColor, true)
-        testUtils.waitFor(100)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
-        testUtils.waitFor(500)
+        testUtils.waitFor(1000)
 
         // NEED TESTING FROM HERE
         //Set TextStyles

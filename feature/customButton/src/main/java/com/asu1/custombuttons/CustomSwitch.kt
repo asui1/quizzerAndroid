@@ -43,7 +43,7 @@ fun LabeledSwitchPreview() {
         LabeledSwitch(
             label = "Dark Mode",
             checked = true,
-            onCheckedChange = { /*TODO*/ }
+            onCheckedChange = {  }
         )
     }
 }

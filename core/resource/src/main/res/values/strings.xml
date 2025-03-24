@@ -142,7 +142,7 @@
     <string name="answer">Answer</string>
     <string name="body">Body</string>
     <string name="enter_quiz_title">Enter Quiz Title</string>
-    <string name="set_quiz_image_80_kb">Quiz Image (80 kb)</string>
+    <string name="set_quiz_image_80_kb">Quiz Image</string>
     <string name="inquiry_sent_successfully">Inquiry sent successfully</string>
     <string name="failed_to_send_inquiry">Failed to send inquiry</string>
     <string name="failed_to_load_quiz_result">Failed to load quiz result</string>
@@ -187,6 +187,7 @@
     <string name="flowers">Flowers</string>
     <string name="text">Text</string>
     <string name="youtube">Youtube</string>
+    <string name="code">Code</string>
     <string name="share">Share</string>
     <string name="can_not_load_quiz">Can not load quiz</string>
     <string name="can_not_get_answer_check">Can not get quiz answers</string>

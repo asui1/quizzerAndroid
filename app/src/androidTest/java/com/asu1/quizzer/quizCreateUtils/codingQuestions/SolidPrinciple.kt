@@ -17,7 +17,7 @@ val solidPrinciplesQuiz = listOf(
             "Dependency Inversion Principle"
         ),
         ans = mutableListOf(false, false, true, false, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 open class Rectangle(var width: Int, var height: Int) {
     open fun setWidth(w: Int) {
         width = w
@@ -50,7 +50,7 @@ class Square(size: Int) : Rectangle(size, size) {
             "Dependency Inversion Principle"
         ),
         ans = mutableListOf(true, false, false, false, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 class UserManager {
     fun createUser(name: String) {
         // logic to create user
@@ -81,7 +81,7 @@ class UserManager {
             "Dependency Inversion Principle"
         ),
         ans = mutableListOf(false, true, false, false, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 class PaymentProcessor {
     fun processCreditCard(amount: Double) {
         // ...
@@ -105,7 +105,7 @@ class PaymentProcessor {
             "Dependency Inversion Principle"
         ),
         ans = mutableListOf(false, false, false, false, true),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 class MySQLDatabase {
     fun saveData(data: String) {
         // ...
@@ -135,7 +135,7 @@ class ReportGenerator {
             "Dependency Inversion Principle"
         ),
         ans = mutableListOf(false, false, false, true, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 interface MultiDevice {
     fun print(document: String)
     fun scan(document: String)
@@ -178,9 +178,32 @@ val solidPrinciplesQuizKorean = listOf(
             "인터페이스 분리 원칙",
             "의존성 역전 원칙"
         ),
+        ans = mutableListOf(false, true, false, false, false),
+        bodyType = BodyType.CODE("""
+class PaymentProcessor {
+    fun processCreditCard(amount: Double) {
+        // ...
+    }
+    fun processPaypal(amount: Double) {
+        // ...
+    }
+    // 새로운 결제 방식을 추가할 때마다 이 클래스를 수정해야 합니다.
+}
+""")
+    ),
+    TestQuiz1(
+        point = 5,
+        question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
+        answers = mutableListOf(
+            "단일 책임 원칙",
+            "개방-폐쇄 원칙",
+            "리스코프 치환 원칙",
+            "인터페이스 분리 원칙",
+            "의존성 역전 원칙"
+        ),
         ans = mutableListOf(true, false, false, false, false),
-        bodyType = BodyType.TEXT(
-            """```kotlin
+        bodyType = BodyType.CODE(
+            """
 class UserManager {
     fun createUser(name: String) {
         // logic to create user
@@ -193,33 +216,8 @@ class UserManager {
     fun logAction(action: String) {
         // logging code
     }
-}```""")
+}""")
     ),
-
-    TestQuiz1(
-        point = 5,
-        question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
-        answers = mutableListOf(
-            "단일 책임 원칙",
-            "개방-폐쇄 원칙",
-            "리스코프 치환 원칙",
-            "인터페이스 분리 원칙",
-            "의존성 역전 원칙"
-        ),
-        ans = mutableListOf(false, true, false, false, false),
-        bodyType = BodyType.TEXT("""
-class PaymentProcessor {
-    fun processCreditCard(amount: Double) {
-        // ...
-    }
-    fun processPaypal(amount: Double) {
-        // ...
-    }
-    // 새로운 결제 방식을 추가할 때마다 이 클래스를 수정해야 합니다.
-}
-""")
-    ),
-
     TestQuiz1(
         point = 5,
         question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
@@ -231,7 +229,7 @@ class PaymentProcessor {
             "의존성 역전 원칙"
         ),
         ans = mutableListOf(false, false, true, false, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 open class Rectangle(var width: Int, var height: Int) {
     open fun setWidth(w: Int) {
         width = w
@@ -253,7 +251,34 @@ class Square(size: Int) : Rectangle(size, size) {
 }
 """)
     ),
+    TestQuiz1(
+        point = 5,
+        question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
+        answers = mutableListOf(
+            "단일 책임 원칙",
+            "개방-폐쇄 원칙",
+            "리스코프 치환 원칙",
+            "인터페이스 분리 원칙",
+            "의존성 역전 원칙"
+        ),
+        ans = mutableListOf(false, false, false, false, true),
+        bodyType = BodyType.CODE("""
+class MySQLDatabase {
+    fun saveData(data: String) {
+        // ...
+    }
+}
 
+class ReportGenerator {
+    private val database = MySQLDatabase()
+
+    fun generateReport(data: String) {
+        // 일부 로직
+        database.saveData(data)
+    }
+}
+""")
+    ),
     TestQuiz1(
         point = 5,
         question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
@@ -265,7 +290,7 @@ class Square(size: Int) : Rectangle(size, size) {
             "의존성 역전 원칙"
         ),
         ans = mutableListOf(false, false, false, true, false),
-        bodyType = BodyType.TEXT("""
+        bodyType = BodyType.CODE("""
 interface MultiDevice {
     fun print(document: String)
     fun scan(document: String)
@@ -286,37 +311,8 @@ class SimplePrinter : MultiDevice {
 """)
     ),
 
-    TestQuiz1(
-        point = 5,
-        question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
-        answers = mutableListOf(
-            "단일 책임 원칙",
-            "개방-폐쇄 원칙",
-            "리스코프 치환 원칙",
-            "인터페이스 분리 원칙",
-            "의존성 역전 원칙"
-        ),
-        ans = mutableListOf(false, false, false, false, true),
-        bodyType = BodyType.TEXT("""
-class MySQLDatabase {
-    fun saveData(data: String) {
-        // ...
-    }
-}
 
-class ReportGenerator {
-    private val database = MySQLDatabase()
-
-    fun generateReport(data: String) {
-        // 일부 로직
-        database.saveData(data)
-    }
-}
-
-// 이 클래스는 특정 데이터베이스 구현체에 직접 의존하고 있습니다.
-""")
     )
-)
 
 val solidPrinciplesQuizDataKorean = codingTheme.copy(
     quizzes = solidPrinciplesQuizKorean,

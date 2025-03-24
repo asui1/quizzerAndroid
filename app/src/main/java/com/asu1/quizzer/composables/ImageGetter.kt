@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 fun ImageGetter(
     modifier: Modifier = Modifier,
     image: Bitmap,
-    onImageUpdate: (Bitmap?) -> Unit,
+    onImageUpdate: (Bitmap) -> Unit,
     width: Dp? = null, height: Dp? = null,
     topBar: @Composable (Modifier) -> Unit = {}
 ) {
@@ -130,7 +130,7 @@ fun ImageGetter(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .clickable {
-                                        onImageUpdate(null)
+                                        onImageUpdate(createEmptyBitmap())
                                     }
                                     .padding(top = 4.dp, end = 4.dp)
                             )

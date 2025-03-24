@@ -62,15 +62,21 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
         when(quiz.bodyType.value){
             1 -> {
-                clickOnTag("BodyTypeDialogTextButton")
+                clickOnTag("BodyTypeDialogTEXTButton")
                 onIdle()
                 waitFor(100)
                 inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyType as BodyType.TEXT).bodyText)
             }
             3 -> {
-                clickOnTag("BodyTypeDialogYoutubeButton")
+                clickOnTag("BodyTypeDialogYOUTUBEButton")
                 inputTextOnTag("QuizCreatorBodyYoutubeLinkTextField", youtubeLink, withIme = true)
                 onIdle()
+            }
+            4 -> {
+                clickOnTag("BodyTypeDialogCODEButton")
+                onIdle()
+                waitFor(100)
+                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyType as BodyType.CODE).code)
             }
         }
     }
@@ -229,8 +235,18 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun replaceTextOnTag(tag: String, newText: String, withIme: Boolean = false, checkFocus: Boolean = false) {
         interactWithNode(tag, checkFocus) {
             performTextClearance()
+            onIdle()
+            waitFor(500)
             performTextInput(newText)
-            if (withIme) performImeAction()
+            onIdle()
+            waitFor(500)
+            // Introduce a small delay before performing the IME action
+            if (withIme) {
+                onIdle()
+                waitFor(500)
+                performImeAction()
+                onIdle()
+            }
         }
     }
 

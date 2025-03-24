@@ -93,7 +93,7 @@ class QuizGeneralViewModel : ViewModel() {
                 return@update currentState.copy(quizData = currentState.quizData.copy(image = createEmptyBitmap()))
             }
 
-            if (image.width * image.height > 320000) { // 80000 * 4
+            if (image.byteCount > 1024 * 400) { // 80000 * 4
                 SnackBarManager.showSnackBar(R.string.image_size_too_large, ToastType.ERROR)
                 return@update currentState
             }

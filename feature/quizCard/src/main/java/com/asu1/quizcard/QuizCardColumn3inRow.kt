@@ -100,7 +100,6 @@ fun QuizCardItemVertical(
                 textAlign = TextAlign.Center,
                 style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
                 overflow = TextOverflow.Ellipsis,
-                minLines = 2,
                 maxLines = 2,
             )
             Text(

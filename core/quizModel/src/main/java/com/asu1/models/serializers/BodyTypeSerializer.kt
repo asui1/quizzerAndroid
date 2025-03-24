@@ -48,6 +48,12 @@ object BodyTypeSerializer : KSerializer<BodyType> {
                     "youtubeStartTime" to JsonPrimitive(value.youtubeStartTime)
                 )
             )
+            is BodyType.CODE -> JsonObject(
+                mapOf(
+                    "type" to JsonPrimitive("CODE"),
+                    "code" to JsonPrimitive(value.code)
+                )
+            )
         }
         encoder.encodeString(json.toString())
     }
@@ -100,6 +106,7 @@ object BodyTypeSerializer : KSerializer<BodyType> {
                     json["youtubeId"]?.jsonPrimitive?.content ?: "",
                     json["youtubeStartTime"]?.jsonPrimitive?.int ?: 0
                 )
+                "CODE" -> BodyType.CODE(json["code"]?.jsonPrimitive?.content ?: "")
                 "com.asu1.quizzer.model.BodyType.NONE" -> BodyType.NONE
                 else -> throw IllegalArgumentException("Unknown BodyType: $type")
             }

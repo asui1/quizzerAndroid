@@ -1,6 +1,14 @@
 package com.asu1.models.serializers
 
 import android.graphics.Bitmap
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.asu1.resources.R
 import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.serialization.Serializable
 
@@ -31,6 +39,31 @@ sealed class BodyType(val value: Int) {
 
     data class YOUTUBE(val youtubeId: String, val youtubeStartTime: Int) : BodyType(value = 3)
 
+    data class CODE(val code: String) : BodyType(value = 4)
+
+    companion object {
+        // Provides a list of BodyType objects for iteration
+        val values: List<BodyType> = listOf(
+            TEXT(""), IMAGE(), YOUTUBE("", 0), CODE("")
+        )
+    }
+    val icon: ImageVector
+        get() = when (this) {
+            is NONE -> Icons.Default.Block
+            is TEXT -> Icons.Default.TextFields
+            is IMAGE -> Icons.Default.Image
+            is YOUTUBE -> Icons.Default.VideoLibrary
+            is CODE -> Icons.Default.Code
+        }
+    // Mapping labels to each BodyType
+    val labelRes: Int
+        get() = when (this) {
+            is NONE -> R.string.none
+            is TEXT -> R.string.body_text
+            is IMAGE -> R.string.add_image
+            is YOUTUBE -> R.string.youtube
+            is CODE -> R.string.code
+        }
     fun validate() : BodyType {
         return when(this){
             is TEXT -> {
@@ -49,6 +82,13 @@ sealed class BodyType(val value: Int) {
             }
             is YOUTUBE -> {
                 if(this.youtubeId.isEmpty()){
+                    NONE
+                }else{
+                    this
+                }
+            }
+            is CODE ->{
+                if(this.code.isEmpty()){
                     NONE
                 }else{
                     this

@@ -54,7 +54,7 @@ fun Quiz3Checker(
             Spacer(modifier = Modifier.height(8.dp))
             quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
-        items(quiz.answers.size-1){it ->
+        items(quiz.answers.size-1, key = {it}){it ->
             val newIndex = it + 1
             val item = quiz.shuffledAnswers[newIndex].replace(Regex("Q!Z2\\d+$"), "")
             Column(
@@ -74,7 +74,7 @@ fun Quiz3Checker(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 AnswerShower(
-                    isCorrect = quiz.answers[newIndex] == quiz.shuffledAnswers[newIndex],
+                    isCorrect = quiz.answers[newIndex] == item,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

@@ -74,8 +74,6 @@ fun ScoreCardBackground(
         backgroundImageColor.backgroundBase.resourceId
     }
 
-    //TODO: PROVIDE METHOD FOR SWITCHING BLENDMODE.COLOR and BLENDMODE.HUE.
-    //ALSO, MAKE BUTTON AND TOOLTIP TO LET USER SET FILTER TO TRANSPARENT.
     val colorFilter = remember(backgroundImageColor.color, backgroundImageColor.imageBlendMode){
         ColorFilter.tint(backgroundImageColor.color, blendMode = backgroundImageColor.imageBlendMode.blendMode)
     }

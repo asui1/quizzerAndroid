@@ -1,6 +1,5 @@
 package com.asu1.quizzer.composables
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,11 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.RemoveCircleOutline
-import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,35 +32,25 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.asu1.custombuttons.IconButtonWithText
 import com.asu1.models.serializers.BodyType
 import com.asu1.resources.R
-import com.asu1.utils.images.createEmptyBitmap
+import com.asu1.utils.Logger
 
 @Composable
 fun QuizBodyBuilder(
     bodyState: BodyType,
     updateBody: (BodyType) -> Unit,
-    onBodyTextChange: (String) -> Unit,
-    onImageSelected: (Bitmap?) -> Unit,
-    onYoutubeUpdate: (String, Int) -> Unit,
 ){
     var showBodyDialog by remember { mutableStateOf(false) }
 
     if (showBodyDialog) {
         BodyTypeDialog(
             onDismissRequest = { showBodyDialog = false },
-            onTextSelected = {
-                updateBody(BodyType.TEXT(""))
+            onBodyTypeSelected = {bodyState ->
+                updateBody(bodyState)
                 showBodyDialog = false
             },
-            onImageSelected = {
-                updateBody(BodyType.IMAGE(createEmptyBitmap()))
-                showBodyDialog = false
-            },
-            onYoutubeSelected = {
-                updateBody(BodyType.YOUTUBE("", 0))
-                showBodyDialog = false
-            }
         )
     }
 
@@ -93,7 +83,9 @@ fun QuizBodyBuilder(
                         .testTag("QuizCreatorBodyTextField"),
                     value = bodyState.bodyText,
                     onValueChange = {it ->
-                        onBodyTextChange(it)
+                        updateBody(
+                            BodyType.TEXT(it)
+                        )
                     },
                     label = { Text(stringResource(R.string.body_text)) }
                 )
@@ -101,17 +93,39 @@ fun QuizBodyBuilder(
             is BodyType.IMAGE -> {
                 ImageGetter(
                     image = bodyState.bodyImage,
-                    onImageUpdate = onImageSelected,
+                    onImageUpdate = { bitmap ->
+                        updateBody(
+                            BodyType.IMAGE(bitmap)
+                        )
+                    },
                 )
             }
             is BodyType.YOUTUBE -> {
                 YoutubeLinkInput(
                     youtubeId = bodyState.youtubeId,
                     startTime = bodyState.youtubeStartTime,
-                    onYoutubeUpdate = onYoutubeUpdate
+                    onYoutubeUpdate = { youtubeId, startTime ->
+                        updateBody(
+                            BodyType.YOUTUBE(youtubeId, startTime)
+                        )
+                    }
                 )
             }
-            else -> {
+            is BodyType.CODE -> {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("QuizCreatorBodyTextField"),
+                    value = bodyState.code,
+                    onValueChange = {it ->
+                        updateBody(
+                            BodyType.CODE(it)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.code)) }
+                )
+            }
+            is BodyType.NONE -> {
                 TextButton(
                     modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
                     onClick = {showBodyDialog = true},
@@ -119,8 +133,9 @@ fun QuizBodyBuilder(
                     Text(stringResource(R.string.add_body))
                 }
             }
-
-
+            else ->{
+                Logger.debug("QUIZBODYBUILDER", "NOT IMPLEMENTED BODY TYPE UI")
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -134,9 +149,6 @@ fun BodyPreviews() {
             QuizBodyBuilder(
                 bodyState = BodyType.TEXT(""),
                 updateBody = {},
-                onBodyTextChange = {},
-                onImageSelected = {},
-                onYoutubeUpdate = { _, _ -> }
             )
             Spacer(
                 modifier = Modifier
@@ -146,9 +158,6 @@ fun BodyPreviews() {
             QuizBodyBuilder(
                 bodyState = BodyType.IMAGE(),
                 updateBody = {},
-                onBodyTextChange = {},
-                onImageSelected = {},
-                onYoutubeUpdate = { _, _ -> }
             )
             Spacer(
                 modifier = Modifier
@@ -158,9 +167,6 @@ fun BodyPreviews() {
             QuizBodyBuilder(
                 bodyState = BodyType.YOUTUBE("", 0),
                 updateBody = {},
-                onBodyTextChange = {},
-                onImageSelected = {},
-                onYoutubeUpdate = { _, _ -> }
             )
         }
 
@@ -170,45 +176,28 @@ fun BodyPreviews() {
 @Composable
 fun BodyTypeDialog(
     onDismissRequest: () -> Unit,
-    onTextSelected: () -> Unit,
-    onImageSelected: () -> Unit,
-    onYoutubeSelected: () -> Unit
+    onBodyTypeSelected: (BodyType) -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(stringResource(R.string.select_body_type)) },
         text = {
-            Row(
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3), // Ensures 3 items per row
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                state = rememberLazyGridState(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                IconButton(
-                    modifier = Modifier.testTag("BodyTypeDialogTextButton"),
-                    onClick = onTextSelected
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.TextFields, // Replace with appropriate icon
-                        contentDescription = stringResource(R.string.body_text)
-                    )
-                }
-                IconButton(
-                    modifier = Modifier.testTag("BodyTypeDialogImageButton"),
-                    onClick = onImageSelected
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Image, // Replace with appropriate icon
-                        contentDescription = stringResource(R.string.add_image)
-                    )
-                }
-                IconButton(
-                    modifier = Modifier.testTag("BodyTypeDialogYoutubeButton"),
-                    onClick = onYoutubeSelected
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.VideoLibrary,
-                        contentDescription = "Youtube"
+                items(BodyType.values) { bodyType ->
+                    IconButtonWithText(
+                        imageVector = bodyType.icon,
+                        text = stringResource(bodyType.labelRes),
+                        onClick = { onBodyTypeSelected(bodyType) },
+                        modifier = Modifier.testTag("BodyTypeDialog${bodyType::class.simpleName}Button"),
+                        description = stringResource(bodyType.labelRes),
                     )
                 }
             }
@@ -217,15 +206,14 @@ fun BodyTypeDialog(
         dismissButton = {}
     )
 }
+
 @Preview(showBackground = true)
 @Composable
 fun BodyDialogPreview() {
     com.asu1.resources.QuizzerAndroidTheme {
         BodyTypeDialog(
             onDismissRequest = {},
-            onTextSelected = {},
-            onImageSelected = {},
-            onYoutubeSelected = {}
+            onBodyTypeSelected = {},
         )
     }
 }
