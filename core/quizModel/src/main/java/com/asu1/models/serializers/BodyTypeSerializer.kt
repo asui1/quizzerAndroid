@@ -111,6 +111,7 @@ object BodyTypeSerializer : KSerializer<BodyType> {
                 else -> throw IllegalArgumentException("Unknown BodyType: $type")
             }
         } catch (e: Exception) {
+            Logger.debug("Body Type deserialization failed : $e")
             return BodyType.NONE
         }
     }

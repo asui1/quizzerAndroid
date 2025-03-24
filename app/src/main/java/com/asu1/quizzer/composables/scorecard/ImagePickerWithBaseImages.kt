@@ -84,7 +84,7 @@ fun ImagePickerWithBaseImages(
                         .clickable { onBaseImageSelected(item) }
                         .testTag("DesignScoreCardBaseImage$index")
                         .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
-                            com.asu1.resources.LightPrimary
+                            LightPrimary
                         )) else Modifier)
                 )
             }

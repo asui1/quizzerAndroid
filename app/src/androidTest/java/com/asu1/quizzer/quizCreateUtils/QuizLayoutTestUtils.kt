@@ -42,16 +42,16 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun addAnswer(clickAddAnswerNTimes: Int){
-        for(i in 0 until clickAddAnswerNTimes){
+        repeat(clickAddAnswerNTimes) {
             clickOnTag("QuizCreatorAddAnswerButton", checkFocus = true)
         }
     }
 
     fun addAnswer(clickAddAnswerLeftNTimes: Int, clickAddAnswerRightNTimes: Int){
-        for(i in 0 until clickAddAnswerLeftNTimes){
+        repeat(clickAddAnswerLeftNTimes) {
             clickOnTag("QuizCreatorAddAnswerLeftButton", checkFocus = true)
         }
-        for(i in 0 until clickAddAnswerRightNTimes){
+        repeat(clickAddAnswerRightNTimes) {
             clickOnTag("QuizCreatorAddAnswerRightButton", checkFocus = true)
         }
     }
@@ -198,13 +198,13 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun setTextStyle(textStyle: List<Int>, targetTag: String){
-        for(i in 0 until textStyle[0]){
+        repeat(textStyle[0]) {
             clickOnTag(targetTag + "FontFlipperNext", checkFocus = true)
         }
-        for(i in 0 until textStyle[1]){
+        repeat(textStyle[1]) {
             clickOnTag(targetTag + "ColorFlipperNext", checkFocus = true)
         }
-        for(i in 0 until textStyle[2]){
+        repeat(textStyle[2]) {
             clickOnTag(targetTag + "BorderFlipperNext", checkFocus = true)
         }
     }

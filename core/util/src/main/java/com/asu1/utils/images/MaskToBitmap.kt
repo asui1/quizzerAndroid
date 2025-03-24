@@ -3,11 +3,14 @@ package com.asu1.utils.images
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.google.mlkit.vision.segmentation.SegmentationMask
+import androidx.core.graphics.set
+import androidx.core.graphics.get
+import androidx.core.graphics.createBitmap
 
 fun applyMaskToBitmap(original: Bitmap, mask: SegmentationMask): Bitmap {
     val width = original.width
     val height = original.height
-    val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val output = createBitmap(width, height)
 
     // The mask’s buffer may be smaller than the original image.
     // You might need to scale it or map its values appropriately.
@@ -25,10 +28,10 @@ fun applyMaskToBitmap(original: Bitmap, mask: SegmentationMask): Bitmap {
             val maskValue = maskPixels[index]
             if (maskValue < 0.5f) {
                 // Pixel is likely background—make it transparent.
-                output.setPixel(x, y, Color.TRANSPARENT)
+                output[x, y] = Color.TRANSPARENT
             } else {
                 // Pixel is part of the foreground—copy it.
-                output.setPixel(x, y, original.getPixel(x, y))
+                output[x, y] = original[x, y]
             }
         }
     }

@@ -56,12 +56,6 @@ class QuizGeneralViewModel : ViewModel() {
         }
     }
 
-    fun initQuizGeneral(email: String?) {
-        _quizGeneralUIState.update {
-            it.copy(quizData = QuizData(creator = email ?: "GUEST"))
-        }
-    }
-
     fun updatePolicyAgreement(agreement: Boolean) {
         _quizGeneralUIState.update {
             it.copy(isPolicyAgreed = agreement, step = LayoutSteps.TITLE)

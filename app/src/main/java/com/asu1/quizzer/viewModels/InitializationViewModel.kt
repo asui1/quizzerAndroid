@@ -10,15 +10,11 @@ class InitializationViewModel() : ViewModel() {
     private val _initializationState = MutableLiveData(InitializationState.CHECKING_FOR_UPDATES)
     val initializationState: LiveData<InitializationState> get() = _initializationState
 
-    private val _isUpdateAvailable = MutableLiveData<Boolean>()
-    val isUpdateAvailable: LiveData<Boolean> get() = _isUpdateAvailable
-
     fun updateInitializationState(step: InitializationState) {
         _initializationState.postValue(step)
     }
 
     fun noUpdateAvailable(){
         _initializationState.postValue(InitializationState.GETTING_USER_DATA)
-        _isUpdateAvailable.postValue(false)
     }
 }

@@ -33,7 +33,6 @@ fun Quiz3Checker(
     quizStyleManager: TextStyleManager,
 ) {
     val result = remember{quiz.gradeQuiz()}
-    val view = LocalView.current
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
