@@ -16,8 +16,6 @@ import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.asu1.appdata.music.MusicAllInOne
-import com.asu1.quizzer.service.MusicServiceHandler
-import com.asu1.quizzer.service.QuizzerMusicPlayerService
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -29,8 +27,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.collections.contains
-import kotlin.to
 
 //TODO: MUSIC STATE SHOULD BE BASED ON SERVICE Escpecially on Init.(Current Init overrides service even if it is running.)
 @OptIn(SavedStateHandleSaveableApi::class)

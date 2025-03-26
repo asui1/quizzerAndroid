@@ -34,9 +34,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:appDataModels"))
 
     implementation(libs.hilt.android)
-    implementation(project(":core:appDataModels"))
     ksp(libs.hilt.compiler)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.activityNavigation.Route
-import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.BASE_URL_API
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R

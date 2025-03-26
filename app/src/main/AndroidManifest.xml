@@ -19,7 +19,7 @@
             tools:targetApi="33">
         <profileable android:shell="true" />
         <service
-                android:name=".service.QuizzerFirebaseMessagingService"
+                android:name=".QuizzerFirebaseMessagingService"
                 android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

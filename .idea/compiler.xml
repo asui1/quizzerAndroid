@@ -16,6 +16,7 @@
       <module name="quizzerAndroid.feature.quizCommon" target="21" />
       <module name="quizzerAndroid.feature.quizLayout" target="21" />
       <module name="quizzerAndroid.models" target="21" />
+      <module name="quizzerAndroid.repository.quizData" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -55,7 +55,7 @@ class QuizCardMainViewModel : ViewModel() {
             if (start < end) {
                 _visibleQuizTrends.update {
                     it.toMutableList().apply {
-                        kotlin.collections.MutableList.addAll(_quizTrends.value.subList(start, end))
+                        this.addAll(_quizTrends.value.subList(start, end))
                     }
                 }
             }
@@ -69,7 +69,7 @@ class QuizCardMainViewModel : ViewModel() {
             if (start < end) {
                 _visibleUserRanks.update {
                     it.toMutableList().apply {
-                        kotlin.collections.MutableList.addAll(_userRanks.value.subList(start, end))
+                        this.addAll(_userRanks.value.subList(start, end))
                     }
                 }
             }
@@ -103,7 +103,7 @@ class QuizCardMainViewModel : ViewModel() {
         _visibleUserRanks.value = emptyList()
         viewModelScope.launch {
             try {
-                val response = com.asu1.network.RetrofitInstance.api.getUserRanks()
+                val response = RetrofitInstance.api.getUserRanks()
                 if (response.isSuccessful && response.body() != null) {
                     _userRanks.value = response.body()!!.searchResult
                     _visibleUserRanks.value = response.body()!!.searchResult.take(trendPageCount)
@@ -129,6 +129,7 @@ class QuizCardMainViewModel : ViewModel() {
                     _quizTrends.value = response.body()!!.searchResult
                     _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
                 } else {
+                    throw IllegalStateException("Failed to fetch trends: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 Logger.debug("Failed to fetch quiz trends", e)
@@ -139,10 +140,6 @@ class QuizCardMainViewModel : ViewModel() {
     override fun onCleared() {
         disposables.clear()
         super.onCleared()
-    }
-
-    fun resetQuizCards(){
-        _quizCards.value = emptyList()
     }
 
     fun resetQuizTrends(){

@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.asu1.quizzer.util.musics.userDataTest
-import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.mainpage.viewModels.sampleUserData
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
@@ -152,7 +152,7 @@ fun UserSettingsScreen(
 fun DrawerPreview(){
     com.asu1.resources.QuizzerAndroidTheme {
         UserSettingsScreen(
-            userData = userDataTest,
+            userData = sampleUserData,
             settingItems = listOfNotNull(
                 Pair(R.string.my_quizzes, {}),
                 Pair(R.string.my_activities, {}),

@@ -29,9 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.asu1.customComposable.text.TextDivider
-import com.asu1.quizzer.util.GoogleCredentialManager
 import com.asu1.activityNavigation.Route
-import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.mainpage.composables.GoogleCredentialManager
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 

@@ -40,6 +40,7 @@
             <option value="$PROJECT_DIR$/repository" />
             <option value="$PROJECT_DIR$/repository/appData" />
             <option value="$PROJECT_DIR$/repository/network" />
+            <option value="$PROJECT_DIR$/repository/quizData" />
             <option value="$PROJECT_DIR$/repository/userData" />
           </set>
         </option>

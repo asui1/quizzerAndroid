@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.asu1.toastmanager"
+    namespace = "com.asu1.quizdata"
     compileSdk = 35
 
     defaultConfig {
@@ -35,24 +33,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:quizModel"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.animation.graphics.android)
-    implementation(libs.foundation.layout)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.material3)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.compose.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.ui.tooling)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.navigation.compose)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

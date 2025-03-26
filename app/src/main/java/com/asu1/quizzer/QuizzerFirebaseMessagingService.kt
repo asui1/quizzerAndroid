@@ -1,4 +1,4 @@
-package com.asu1.quizzer.service
+package com.asu1.quizzer
 
 import com.asu1.utils.Logger
 import com.google.firebase.messaging.FirebaseMessagingService

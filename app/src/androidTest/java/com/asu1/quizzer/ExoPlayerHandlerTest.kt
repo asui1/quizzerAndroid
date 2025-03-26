@@ -7,7 +7,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.test.core.app.ApplicationProvider
-import com.asu1.quizzer.service.MusicServiceHandler
+import com.asu1.quizzer.musics.MusicServiceHandler
 import com.asu1.quizzer.musics.sampleMusicList
 import com.asu1.quizzer.musics.MediaStateEvents
 import com.asu1.quizzer.musics.MusicStates

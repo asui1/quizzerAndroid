@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.services)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.ksp)
 }
@@ -41,12 +40,18 @@ dependencies {
     implementation(project(":core:resource"))
     implementation(project(":core:util"))
     implementation(project(":core:appDataModels"))
+    implementation(project(":core:userDataModels"))
+    implementation(project(":core:quizCardModel"))
 
     implementation(project(":repository:network"))
+    implementation(project(":repository:appData"))
+
+    implementation(project(":domain:appDataUseCase"))
+    implementation(project(":domain:userDataUseCase"))
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
-    implementation(project(":domain:appDataUseCase"))
+    implementation(project(":feature:quizCard"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -72,6 +77,14 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.constraint.layout)
+    implementation(libs.kotlinx.serialization.json)
+    implementation (libs.retrofit)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.coil.compose)
+    implementation(libs.landscapist.glide)
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
+    implementation(libs.kotlinx.coroutines.rx3)
 
     testImplementation(libs.junit)
 

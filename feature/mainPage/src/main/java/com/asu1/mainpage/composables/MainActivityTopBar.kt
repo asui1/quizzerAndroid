@@ -14,10 +14,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.quizzer.screens.mainScreen.UserProfilePic
 import com.asu1.activityNavigation.Route
-import com.asu1.quizzer.util.musics.userDataTest
-import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.mainpage.screens.UserProfilePic
+import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.mainpage.viewModels.sampleUserData
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainActivityTopbar(
     navController: NavController,
-    onTopbarProfileClick: () -> Unit = {},
+    onTopBarProfileClick: () -> Unit = {},
     userData: UserViewModel.UserData?,
     resetHome: () -> Unit = {}
 ) {
@@ -47,7 +47,7 @@ fun MainActivityTopbar(
             }
             UserProfilePic(userData, onClick = {
                 scope.launch {
-                    onTopbarProfileClick()
+                    onTopBarProfileClick()
                 }
             })
         }
@@ -60,7 +60,7 @@ fun MainActivityTopbarPreview(){
     QuizzerAndroidTheme {
         MainActivityTopbar(
             navController = rememberNavController(),
-            userData = userDataTest,
+            userData = sampleUserData,
         )
     }
 }

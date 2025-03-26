@@ -154,6 +154,9 @@ dependencies {
     implementation(project(":feature:musicUi"))
     testImplementation(project(":feature:musicUi"))
     androidTestImplementation(project(":feature:musicUi"))
+    implementation(project(":feature:mainPage"))
+    implementation(project(":feature:splashPage"))
+    implementation(project(":feature:search"))
 
     testImplementation(project(":core:quizModel"))
     androidTestImplementation(project(":core:quizModel"))
@@ -177,7 +180,6 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
-    implementation(libs.coil.compose)
     implementation(libs.accompanist.flowlayout)
     implementation(libs.uuid.creator)
     implementation(libs.compose.ui)

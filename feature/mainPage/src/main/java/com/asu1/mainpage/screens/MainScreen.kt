@@ -47,18 +47,25 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.quizcard.cardBase.VerticalQuizCardLargeColumn
-import com.asu1.quizzer.composables.UserRankComposableList
-import com.asu1.quizzer.composables.InquiryBottomSheetContent
-import com.asu1.quizzer.composables.MainActivityBottomBar
-import com.asu1.quizzer.composables.MainActivityTopbar
-import com.asu1.quizzer.composables.SignoutBottomSheetContent
 import com.asu1.activityNavigation.Route
-import com.asu1.quizzer.viewModels.InquiryViewModel
-import com.asu1.quizzer.viewModels.QuizCardMainViewModel
-import com.asu1.quizzer.viewModels.UserViewModel
+import com.asu1.mainpage.composables.InquiryBottomSheetContent
+import com.asu1.mainpage.composables.MainActivityBottomBar
+import com.asu1.mainpage.composables.MainActivityTopbar
+import com.asu1.mainpage.composables.SignoutBottomSheetContent
+import com.asu1.mainpage.composables.UserRankComposableList
+import com.asu1.mainpage.viewModels.InquiryViewModel
+import com.asu1.mainpage.viewModels.QuizCardMainViewModel
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
+import com.asu1.resources.UserBackground2
+import com.asu1.resources.UserBackground3
+import com.asu1.resources.UserBackground4
+import com.asu1.resources.UserBackground5
+import com.asu1.resources.UserBackground6
+import com.asu1.resources.UserBackground7
+import com.asu1.resources.UserBackground8
 import com.asu1.utils.setTopBarColor
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -155,17 +162,17 @@ fun MainScreen(
         topBar = {
             MainActivityTopbar(
                 navController,
-                onTopbarProfileClick = {
-                    if(isLoggedIn){
+                onTopBarProfileClick = {
+                    if (isLoggedIn) {
                         updateSelectedTab(3)
-                    }else{
-                        navController.navigate(Route.Login){
+                    } else {
+                        navController.navigate(Route.Login) {
                             launchSingleTop = true
                         }
                     }
                 },
-                userData,
-                resetHome = moveHome
+                userData = userData,
+                resetHome = moveHome,
             )
         },
         bottomBar = {
@@ -296,13 +303,13 @@ fun UriImageButton(modifier: Modifier = Modifier, urlToImage: String?, nickname:
     val backgroundColor = remember{
         when(randomInt){
             0 -> UserBackground1
-            1 -> com.asu1.resources.UserBackground2
-            2 -> com.asu1.resources.UserBackground3
-            3 -> com.asu1.resources.UserBackground4
-            4 -> com.asu1.resources.UserBackground5
-            5 -> com.asu1.resources.UserBackground6
-            6 -> com.asu1.resources.UserBackground7
-            7 -> com.asu1.resources.UserBackground8
+            1 -> UserBackground2
+            2 -> UserBackground3
+            3 -> UserBackground4
+            4 -> UserBackground5
+            5 -> UserBackground6
+            6 -> UserBackground7
+            7 -> UserBackground8
             else -> UserBackground1
         }
     }

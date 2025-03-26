@@ -192,7 +192,7 @@ fun PrivacyPolicyRow(
             modifier = Modifier.padding(start = 16.dp)
                 .clickable {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        Intent.setData = "mailto:whwkd122@gmail.com?subject=[Quizzer] ".toUri()
+                        setData("mailto:whwkd122@gmail.com?subject=[Quizzer] ".toUri())
                     }
                     context.startActivity(intent)
                 },

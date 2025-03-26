@@ -52,9 +52,9 @@ import androidx.navigation.NavHostController
 import com.asu1.customComposable.textField.TagSetter
 import com.asu1.customComposable.topBar.RowWithAppIconAndName
 import com.asu1.activityNavigation.Route
-import com.asu1.quizzer.util.keyboardAsState
-import com.asu1.quizzer.viewModels.RegisterViewModel
-import com.asu1.quizzer.viewModels.RegisterViewModelActions
+import com.asu1.customComposable.uiUtil.keyboardAsState
+import com.asu1.mainpage.viewModels.RegisterViewModel
+import com.asu1.mainpage.viewModels.RegisterViewModelActions
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentSet
