@@ -17,7 +17,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +32,6 @@ import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.ui.TextStyleManager
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.resources.R
 import com.asu1.utils.setTopBarColor
 
 @Composable
@@ -105,14 +103,6 @@ fun QuizCheckerPager(
                 quiz = quizzes[page],
                 quizTheme = quizTheme,
                 quizStyleManager = textStyleManager,
-            )
-            Text(
-                text = buildString {
-                    append(quizzes[page].point)
-                    append(stringResource(R.string.pt))
-                },
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.align(Alignment.TopEnd).padding(2.dp)
             )
             Text(
                 text = "${page + 1}/${quizzes.size}",

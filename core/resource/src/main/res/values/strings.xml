@@ -71,7 +71,7 @@
     <string name="blend_color">Blend Color</string>
     <string name="blend_hue">Shift Hue</string>
     <string name="you_are_top">"You are top "</string>
-    <string name="select_tags_that_interest_you">Select tags that interest you</string>
+    <string name="select_tags">Enter tags</string>
     <string name="enter_tag">Enter Tag</string>
     <string name="points">"Points: "</string>
     <string name="average">"Average: "</string>

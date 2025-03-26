@@ -375,11 +375,11 @@ class QuizCoordinatorViewModel : ViewModel() {
         return quizDataSerializer
     }
     fun gradeQuiz(email: String, onDone: () -> Unit) {
-        val (percentageScore, corrections) = quizContentViewModel.gradeQuiz()
+        val (correctCount, corrections) = quizContentViewModel.gradeQuiz()
         val result = SendQuizResult(
             email = email,
             quizUuid = quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid!!,
-            score = percentageScore,
+            correctProb = correctCount,
             correction = corrections,
         )
 

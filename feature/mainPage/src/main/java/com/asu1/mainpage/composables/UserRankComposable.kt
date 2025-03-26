@@ -38,8 +38,6 @@ import com.asu1.mainpage.screens.UriImageButton
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRank
-import java.util.Locale
-import kotlin.math.round
 
 @Composable
 fun UserRankComposable(
@@ -65,9 +63,6 @@ fun UserRankComposable(
         1 -> MaterialTheme.colorScheme.surfaceContainerHigh
         else -> Color.Transparent
     }
-    val average = remember(userRank.totalScore, userRank.quizzesSolved){String.format(Locale.US, "%.1f", round(
-        userRank.totalScore / userRank.quizzesSolved * 10
-    ) / 10)}
     Card(
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         modifier = Modifier
@@ -115,17 +110,7 @@ fun UserRankComposable(
                 Text(
                     text = buildString {
                         append(stringResource(R.string.points))
-                        append(userRank.orderScore)
-                    },
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = buildString {
-                        append(stringResource(R.string.average))
-                        append(average)
+                        append("${userRank.orderScore} / ${userRank.totalScore}")
                     },
                     style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
                     maxLines = 1,

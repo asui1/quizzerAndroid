@@ -13,9 +13,8 @@ data class Quiz3(
     override val layoutType: QuizType = QuizType.QUIZ3,
     override var answers: List<String> = listOf("", "", "", "", ""),
     override var question: String = "",
-    override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz<Quiz3>(answers, question, point, bodyType) {
+): Quiz<Quiz3>(answers, question) {
     fun swap(index1: Int, index2: Int){
         shuffledAnswers = shuffledAnswers.toMutableList().apply {
             val temp = get(index1)
@@ -27,7 +26,6 @@ data class Quiz3(
     override fun cloneQuiz(
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
         uuid: String
@@ -35,7 +33,6 @@ data class Quiz3(
         return this.copy(
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -45,7 +42,6 @@ data class Quiz3(
         shuffledAnswers: List<String>,
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
     ): Quiz3 {
@@ -53,7 +49,6 @@ data class Quiz3(
             shuffledAnswers = shuffledAnswers.toMutableList(),
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -88,7 +83,6 @@ data class Quiz3(
                 maxAnswerSelection = 1,
                 answers = answers,
                 ans = listOf(),
-                points = point,
                 question = question,
                 bodyValue = Json.encodeToString(bodyType),
             )
@@ -104,7 +98,6 @@ data class Quiz3(
         answers = body.answers.toMutableList()
         question = body.question
         bodyType = Json.decodeFromString(body.bodyValue)
-        point = body.points
 
         initViewState()
     }

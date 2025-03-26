@@ -43,9 +43,4 @@ abstract class BaseQuizViewModel<T : Quiz<T>>(initialQuiz: T) : ViewModel() {
             )
         }
     }
-
-    fun setPoint(point: Int) {
-        val currentQuiz = _quizState.value
-        _quizState.value = currentQuiz.cloneQuiz(point = point)
-    }
 }

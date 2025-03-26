@@ -38,7 +38,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         if(quiz is TestQuiz4) addAnswer(clickAddAnswerNTimes, clickAddRightAnswerNTimes)
         else addAnswer(clickAddAnswerNTimes)
         inputTextOnTag("QuizQuestionTextField", quiz.question, checkFocus = true)
-        replaceTextOnTag("QuizPointTextField", quiz.point.toString(), checkFocus = true)
     }
 
     fun addAnswer(clickAddAnswerNTimes: Int){

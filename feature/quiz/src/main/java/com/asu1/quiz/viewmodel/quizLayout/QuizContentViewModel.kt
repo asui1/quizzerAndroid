@@ -155,26 +155,18 @@ class QuizContentViewModel: ViewModel() {
         }
     }
 
-    fun gradeQuiz(): Pair<Float, List<Boolean>> {
+    fun gradeQuiz(): Pair<Int, List<Boolean>> {
         val quizzes = _quizContentState.value.quizzes
-        if (quizzes.isEmpty()) return Pair(0f, emptyList())
-
-        var totalScore = 0f
-        var currentScore = 0f
+        if (quizzes.isEmpty()) return Pair(0, emptyList())
+        var currentScore = 0
 
         val corrections = mutableListOf<Boolean>()
         quizzes.forEach { quiz ->
-            totalScore += quiz.point
             val correct = quiz.gradeQuiz()
-            if (correct) currentScore += quiz.point
+            if (correct) currentScore += 1
             corrections.add(correct)
         }
-
-        val percentageScore = (currentScore / totalScore * 100f).also {
-            Logger.debug("Quiz graded: $it%")
-        }
-
-        return Pair(percentageScore, corrections)
+        return Pair(currentScore, corrections)
     }
 
 

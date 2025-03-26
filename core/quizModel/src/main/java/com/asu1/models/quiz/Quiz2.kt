@@ -17,8 +17,7 @@ data class Quiz2(
     override val layoutType: QuizType = QuizType.QUIZ2,
     override var answers: List<String> = listOf(),
     override var question: String = "",
-    override var point: Int = 5,
-): Quiz<Quiz2>(answers, question, point) {
+): Quiz<Quiz2>(answers, question) {
     fun toggleUserAnswer(date: LocalDate){
         userAnswerDate = userAnswerDate.toMutableSet().apply{
             if(contains(date)){
@@ -32,7 +31,6 @@ data class Quiz2(
     override fun cloneQuiz(
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
         uuid: String
@@ -40,7 +38,6 @@ data class Quiz2(
         return this.copy(
             answers = answers,
             question = question,
-            point = point,
             layoutType = layoutType,
         )
     }
@@ -53,7 +50,6 @@ data class Quiz2(
         userAnswerDate: MutableSet<LocalDate>,
         answers: List<String>,
         question: String,
-        point: Int,
     ): Quiz2 {
         return this.copy(
             maxAnswerSelection = maxAnswerSelection,
@@ -63,7 +59,6 @@ data class Quiz2(
             userAnswerDate = userAnswerDate.toMutableSet(),
             answers = answers,
             question = question,
-            point = point,
         )
     }
 
@@ -89,7 +84,6 @@ data class Quiz2(
                 maxAnswerSelection = maxAnswerSelection,
                 answers = answers,
                 ans = listOf(),
-                points = point,
                 question = question
             )
         )
@@ -106,7 +100,6 @@ data class Quiz2(
         maxAnswerSelection = body.maxAnswerSelection
         answers = body.answers.toMutableList()
         question = body.question
-        point = body.points
         initViewState()
     }
     override fun gradeQuiz(): Boolean {

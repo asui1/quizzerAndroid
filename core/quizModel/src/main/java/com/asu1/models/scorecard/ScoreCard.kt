@@ -17,7 +17,6 @@ data class ScoreCard (
     var quizUuid: String? = null,
     var title: String = "",
     var solver: String = "Nickname",
-    var score: Float = 100f,
     var background: ImageColor = ImageColor(
         color = Color.Transparent,
         color2 = Color.Transparent,
@@ -37,7 +36,6 @@ data class ScoreCard (
 
         if (title != other.title) return false
         if (solver != other.solver) return false
-        if (score != other.score) return false
         if(background != other.background) return false
         if (imageStateval != other.imageStateval) return false
         if (colorScheme != other.colorScheme) return false
@@ -51,7 +49,6 @@ data class ScoreCard (
 val sampleScoreCard = ScoreCard(
     title = "Sample Quiz",
     solver = "John Doe",
-    score = 80f,
     background = ImageColor(
         color = Color.White,
         color2 = Color.Black,

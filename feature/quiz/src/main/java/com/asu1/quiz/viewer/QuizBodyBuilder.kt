@@ -25,6 +25,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 @Composable
 fun BuildBody(
     quizBody: BodyType,
@@ -70,8 +71,9 @@ fun BuildBody(
                 )
             }
         }
+        is BodyType.NONE ->{       }
         else -> {
-            Logger.debug("Quiz Body Builder", "NOT IMPLEMENTED UI FOR BODY TYPE")
+            Logger.debug("Quiz Body Builder", "NOT IMPLEMENTED UI FOR BODY TYPE, ${quizBody.value}")
         }
     }
 }

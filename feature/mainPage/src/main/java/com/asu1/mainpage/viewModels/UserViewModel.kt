@@ -18,6 +18,7 @@ import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +49,8 @@ class UserViewModel @Inject constructor(
                 val userInfo = initLoginUseCase(LanguageSetter.isKo)
                 if(userInfo != null){
                     _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags as PersistentSet<String>))
+                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
+                    ))
                     if(userInfo.email.contains("@gmail")){
                         _isUserLoggedIn.postValue(true)
                     }
@@ -72,7 +74,7 @@ class UserViewModel @Inject constructor(
                 if(userInfo != null){
                     _isUserLoggedIn.postValue(true)
                     _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags as PersistentSet<String>
+                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
                     ))
                     SnackBarManager.showSnackBar(R.string.logged_in, ToastType.SUCCESS)
                 }

@@ -8,16 +8,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.serializers.BodyType
+import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
+import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils
 import com.asu1.quizzer.quizCreateUtils.TestQuiz1
 import com.asu1.quizzer.quizCreateUtils.TestQuiz2
 import com.asu1.quizzer.quizCreateUtils.TestQuiz3
 import com.asu1.quizzer.quizCreateUtils.TestQuiz4
 import com.asu1.quizzer.quizCreateUtils.codingQuestions.pythonUtilityQuizDataKo
-import com.asu1.quizzer.viewModels.UserViewModel
-import com.asu1.quizzer.viewModels.quizModels.QuizGeneralViewModel
-import com.asu1.quizzer.viewModels.quizModels.ScoreCardViewModel
 import org.junit.Rule
 import org.junit.Test
 

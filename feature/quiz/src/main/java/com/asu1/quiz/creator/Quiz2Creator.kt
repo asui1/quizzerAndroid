@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -92,11 +91,6 @@ fun Quiz2Creator(
                 QuestionTextFieldWithPoints(
                     question = quiz2State.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
-                    point = quiz2State.point,
-                    onPointChange = { quiz.setPoint(it) },
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    },
                     focusManager = focusManager,
                 )
             }

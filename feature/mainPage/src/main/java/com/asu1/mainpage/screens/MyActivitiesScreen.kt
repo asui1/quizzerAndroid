@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -25,8 +24,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.activityNavigation.Route
+import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.BASE_URL_API
 import com.asu1.resources.QuizzerTypographyDefaults
@@ -38,7 +37,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.map
-import java.util.Locale
 
 @Composable
 fun MyActivitiesScreen(
@@ -102,9 +100,6 @@ fun MyActivitiesBody(
 
 @Composable
 fun UserActivityItem(userActivity: UserActivity) {
-    val formattedScore = remember(userActivity.score) {
-        String.format(Locale.US, "%.1f", userActivity.score)
-    }
     val imageUrl = "${BASE_URL_API}images/${userActivity.quizId}.png"
     ConstraintLayout() {
         val (quizTitle, quizImage, quizSolvedData) = createRefs()
@@ -137,8 +132,8 @@ fun UserActivityItem(userActivity: UserActivity) {
         Text(
             StringBuilder()
                 .append(userActivity.solvedDate)
-                .append("  /  ")
-                .append(formattedScore)
+                .append("  -  ")
+                .append("${userActivity.correctCount} / ${userActivity.totalCount}")
                 .toString(),
             modifier = Modifier.constrainAs(quizSolvedData){
                 top.linkTo(quizTitle.bottom)

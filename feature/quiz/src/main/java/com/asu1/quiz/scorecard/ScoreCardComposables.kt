@@ -267,8 +267,8 @@ fun ScoreCardComposable(
                         2 -> {
                             PointDistribution(
                                 distribution = quizResult.distribution,
+                                currentDistribution = quizResult.correction.count{it},
                                 percent = quizResult.percent,
-                                score = quizResult.score,
                                 textColor = scoreCard.textColor,
                                 errorColor = redded,
                                 correctColor = greened,
@@ -278,7 +278,11 @@ fun ScoreCardComposable(
 
                         }
                         else -> {
-                            Score(scoreCard.textColor, quizResult.score)
+                            Score(
+                                scoreCardTextColor = scoreCard.textColor,
+                                correctQuestions = quizResult.correction.count{it},
+                                totalQuestions = quizResult.correction.size,
+                            )
                         }
                     }
                 }
@@ -299,11 +303,15 @@ fun ScoreCardComposable(
 }
 
 @Composable
-private fun Score(scoreCardTextColor: Color, score: Float) {
+private fun Score(
+    scoreCardTextColor: Color,
+    correctQuestions: Int,
+    totalQuestions: Int,
+) {
     val animatedScore = remember { Animatable(0f) }
-    LaunchedEffect(score) {
+    LaunchedEffect(correctQuestions) {
         animatedScore.animateTo(
-            targetValue = score,
+            targetValue = correctQuestions.toFloat(),
             animationSpec = tween(durationMillis = 2000)
         )
     }
@@ -325,7 +333,7 @@ private fun Score(scoreCardTextColor: Color, score: Float) {
                 .zIndex(2f),
         )
         Text(
-            text = String.format(Locale.US, "%.1f", animatedScore.value),
+            text = "${animatedScore.value.toInt()} / $totalQuestions",
             color = scoreCardTextColor,
             fontSize = 75.sp,
             fontFamily = NotoSans,
@@ -342,7 +350,7 @@ fun ScoreCardComposablePreview() {
     val scoreCard = sampleScoreCard
     ScoreCardComposable(
         scoreCard = scoreCard,
-        pagerInit = 1,
+        pagerInit = 2,
     )
 }
 
@@ -415,8 +423,8 @@ fun AnswerCorrection(
 @Composable
 fun PointDistribution(
     distribution: PersistentList<Int>,
+    currentDistribution: Int,
     percent: Float,
-    score: Float,
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
@@ -442,7 +450,7 @@ fun PointDistribution(
                 .padding(16.dp)
         ) {
             distribution.forEachIndexed { index, value ->
-                val isSelected = (index * 5).toFloat() <= score && score < ((index + 1) * 5).toFloat()
+                val isSelected = index == currentDistribution
                 val color = if (isSelected) correctColor else errorColor
                 Box(
                     modifier = Modifier

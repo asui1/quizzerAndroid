@@ -6,14 +6,15 @@ import kotlinx.serialization.Serializable
 data class UserActivity(
     val quizId: String,
     val quizTitle: String,
-    val score: Float,
+    val correctCount: Int,
+    val totalCount: Int,
     val solvedDate: String
 )
-
 val sampleUserActivity = UserActivity(
     quizId = "quizId",
     quizTitle = "quizName",
-    score = 0.0f,
+    correctCount = 3,
+    totalCount = 5,
     solvedDate = "solvedDate"
 )
 

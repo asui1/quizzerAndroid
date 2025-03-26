@@ -99,8 +99,7 @@ sealed class QuizJson {
                 answers = body.answers.toMutableList(),
                 ans = body.ans.toMutableList(),
                 shuffleAnswers = body.shuffleAnswers,
-                bodyType = manualDeserializer(body.bodyValue),
-                point = body.points
+                bodyType = manualDeserializer(body.bodyValue)
             )
             quiz.initViewState()
             return quiz
@@ -115,7 +114,6 @@ sealed class QuizJson {
         val ans: List<Boolean>,
         val question: String,
         val bodyValue: String,
-        val points: Int = 10,
     )
 
     @Serializable
@@ -137,7 +135,6 @@ sealed class QuizJson {
                 yearRange = body.yearRange,
                 centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1]),
                 answerDate = body.answerDate.map{it -> LocalDate.of(it[0], it[1], it[2])}.toMutableSet(),
-                point = body.points,
             )
             quiz.initViewState()
             return quiz
@@ -152,7 +149,6 @@ sealed class QuizJson {
         val maxAnswerSelection: Int,
         val answers: List<String>,
         val ans: List<Boolean>,
-        val points: Int,
         val question: String
     )
 
@@ -172,7 +168,6 @@ sealed class QuizJson {
                 question = body.question,
                 answers = body.answers.toMutableList(),
                 bodyType = manualDeserializer(body.bodyValue),
-                point = body.points,
             )
             quiz.initViewState()
             return quiz
@@ -187,7 +182,6 @@ sealed class QuizJson {
         val ans: List<Boolean>,
         val question: String,
         val bodyValue: String,
-        val points: Int = 10,
     )
 
     @Serializable
@@ -217,7 +211,6 @@ sealed class QuizJson {
                 userConnectionIndex = mutableListOf<Int?>().apply {
                     body.answers.forEach { _ -> add(null) }
                 },
-                point = body.points
             )
             quiz.initViewState()
             return quiz
@@ -234,7 +227,6 @@ sealed class QuizJson {
         val ans: List<Boolean>,
         val question: String,
         val bodyValue: String,
-        val points: Int = 10,
     )
 }
 

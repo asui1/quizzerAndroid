@@ -159,14 +159,6 @@ fun QuizViewerPager(
                     isPreview = isPreview
                 )
                 Text(
-                    text = buildString {
-                        append(visibleQuizzes[page].point)
-                        append(stringResource(R.string.pt))
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.align(Alignment.TopEnd).padding(2.dp)
-                )
-                Text(
                     text = "${page + 1}/${quizSize}",
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.align(Alignment.BottomEnd).padding(2.dp)

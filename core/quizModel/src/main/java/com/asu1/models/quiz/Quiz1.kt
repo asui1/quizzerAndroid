@@ -16,9 +16,8 @@ data class Quiz1(
     override val layoutType: QuizType = QuizType.QUIZ1,
     override var answers: List<String> = listOf("", "", "", "", ""),
     override var question: String = "",
-    override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz<Quiz1>(answers, question, point, bodyType) {
+): Quiz<Quiz1>(answers, question) {
     fun toggleUserAnswerAt(index: Int){
         userAns[index] = !userAns[index]
     }
@@ -26,7 +25,6 @@ data class Quiz1(
     override fun cloneQuiz(
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
         uuid: String
@@ -34,7 +32,6 @@ data class Quiz1(
         return this.copy(
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -47,7 +44,6 @@ data class Quiz1(
         shuffledAnswers: List<String>,
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
     ): Quiz1 {
@@ -58,7 +54,6 @@ data class Quiz1(
             shuffledAnswers = shuffledAnswers.toMutableList(),
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -96,7 +91,6 @@ data class Quiz1(
                 answers = answers,
                 ans = ans,
                 question = question,
-                points = point,
             )
         )
     }

@@ -57,7 +57,7 @@ fun TagSetter(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.select_tags_that_interest_you),
+            text = stringResource(R.string.select_tags),
             style = QuizzerTypographyDefaults.quizzerTitleMediumMedium,
         )
         FlowRow(

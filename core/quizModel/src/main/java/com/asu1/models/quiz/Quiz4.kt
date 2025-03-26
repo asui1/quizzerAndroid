@@ -19,9 +19,8 @@ data class Quiz4(
     override val layoutType: QuizType = QuizType.QUIZ4,
     override var answers: List<String> = listOf("", "", "", ""),
     override var question: String = "",
-    override var point: Int = 5,
     override var bodyType: BodyType = BodyType.NONE
-): Quiz<Quiz4>(answers, question, point, bodyType) {
+): Quiz<Quiz4>(answers, question) {
     fun addAnswer(){
         answers = answers.toMutableList().apply {
             add("")
@@ -98,7 +97,6 @@ data class Quiz4(
     override fun cloneQuiz(
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
         uuid: String
@@ -106,7 +104,6 @@ data class Quiz4(
         return this.copy(
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -120,7 +117,6 @@ data class Quiz4(
         userConnectionIndex: List<Int?>,
         answers: List<String>,
         question: String,
-        point: Int,
         bodyType: BodyType,
         layoutType: QuizType,
     ): Quiz4 {
@@ -132,7 +128,6 @@ data class Quiz4(
             userConnectionIndex = userConnectionIndex.toMutableList(),
             answers = answers,
             question = question,
-            point = point,
             bodyType = bodyType,
             layoutType = layoutType,
         )
@@ -165,7 +160,6 @@ data class Quiz4(
                 maxAnswerSelection = 1,
                 answers = answers,
                 ans = listOf(),
-                points = point,
                 question = question,
                 bodyValue = Json.encodeToString(bodyType),
             )
@@ -182,7 +176,6 @@ data class Quiz4(
         answers = body.answers.toMutableList()
         question = body.question
         bodyType = Json.decodeFromString(body.bodyValue)
-        point = body.points
 
         initViewState()
     }

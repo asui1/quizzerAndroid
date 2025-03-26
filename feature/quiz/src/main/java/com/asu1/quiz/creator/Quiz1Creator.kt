@@ -54,11 +54,6 @@ fun Quiz1Creator(
                 QuestionTextFieldWithPoints(
                     question = quiz1State.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
-                    point = quiz1State.point,
-                    onPointChange = { quiz.setPoint(it) },
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    },
                     focusManager = focusManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
