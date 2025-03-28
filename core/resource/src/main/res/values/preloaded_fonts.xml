@@ -7,5 +7,6 @@
         <item>@font/gothic_a1_medium</item>
         <item>@font/gothic_a1_regular</item>
         <item>@font/gothic_a1_semibold</item>
+        <item>@font/roboto_black</item>
     </array>
 </resources>

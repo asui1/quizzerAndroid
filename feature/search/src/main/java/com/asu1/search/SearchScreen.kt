@@ -3,11 +3,9 @@ package com.asu1.search
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,10 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.asu1.activityNavigation.Route
 import com.asu1.quizcard.cardBase.QuizCardHorizontalVerticalShareList
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
-import com.asu1.activityNavigation.Route
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -303,74 +301,60 @@ fun SearchTopBar(
 ) {
     TopAppBar(
         title = {
-            Box(
-                modifier = Modifier.fillMaxHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                TextField(
-                    value = searchText,
-                    shape = RoundedCornerShape(40.dp),
-                    onValueChange = onSearchTextChanged,
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .onFocusChanged { focusState ->
-                            if (focusState.isFocused) {
-                                onFocusChange(true)
-                            } else {
-                                onFocusChange(false)
-                            }
-                        },
-                    placeholder = { Text(text = stringResource(R.string.search) )},
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Search
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            Logger.debug("SearchScreen", "Search: ${searchText}")
-                            search(searchText)
-                            focusManager.clearFocus()
-                        }
-                    ),
-                    trailingIcon = {
-                        if (searchText.isNotEmpty()) {
-                            IconButton(onClick = {
-                                onBackPressed()
-                            }) {
-                                Icon(
-                                    Icons.Default.RemoveCircleOutline,
-                                    contentDescription = "Clear"
-                                )
-                            }
+            TextField(
+                value = searchText,
+                shape = RoundedCornerShape(40.dp),
+                onValueChange = onSearchTextChanged,
+                singleLine = true,
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            onFocusChange(true)
+                        } else {
+                            onFocusChange(false)
                         }
                     },
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
+                placeholder = { Text(text = stringResource(R.string.search) )},
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        Logger.debug("SearchScreen", "Search: $searchText")
+                        search(searchText)
+                        focusManager.clearFocus()
+                    }
+                ),
+                trailingIcon = {
+                    if (searchText.isNotEmpty()) {
+                        IconButton(onClick = {
+                            onBackPressed()
+                        }) {
+                            Icon(
+                                Icons.Default.RemoveCircleOutline,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
                 )
-            }
+            )
         },
         navigationIcon = {
-            Box(
-                modifier = Modifier.fillMaxHeight(),
-                contentAlignment = Alignment.Center
+            IconButton(
+                onClick = onMoveBackHome
             ) {
-                IconButton(
-                    onClick = onMoveBackHome
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         },
         actions = {
-            Box(
-                modifier = Modifier.fillMaxHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                IconButton(onClick = { search(searchText) }) {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
-                }
+            IconButton(onClick = { search(searchText) }) {
+                Icon(Icons.Default.Search, contentDescription = "Search")
             }
         }
     )

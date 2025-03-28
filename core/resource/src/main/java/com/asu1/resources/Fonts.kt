@@ -11,6 +11,9 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs,
 )
 
+val robotoBlack = FontFamily(
+    androidx.compose.ui.text.font.Font(R.font.roboto_black, FontWeight.Black)
+)
 val GothicA1 = FontFamily(
     androidx.compose.ui.text.font.Font(resId = R.font.gothic_a1_bold, weight = FontWeight.Bold),
     androidx.compose.ui.text.font.Font(resId = R.font.gothic_a1_medium, weight = FontWeight.Medium),

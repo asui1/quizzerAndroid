@@ -63,6 +63,7 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
+import com.asu1.resources.robotoBlack
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -227,21 +228,27 @@ fun ScoreCardComposable(
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
-            Text(
-                text = scoreCard.title,
-                color = scoreCard.textColor,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Text(
-                text = quizResult.nickname,
-                color = scoreCard.textColor,
-                fontWeight = FontWeight.Light,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.align(Alignment.End)
-            )
+            cardItemWithSemiTransparentBackground(
+                modifier = Modifier,
+                textColor = scoreCard.textColor
+            ) {
+                Text(
+                    text = scoreCard.title,
+                    color = scoreCard.textColor,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = robotoBlack,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Text(
+                    text = quizResult.nickname,
+                    color = scoreCard.textColor,
+                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
             HorizontalPager(
                 state = pagerState,
                 key = {it},
@@ -249,40 +256,40 @@ fun ScoreCardComposable(
                     .fillMaxSize()
                     .background(color = Color.Transparent)
             ){ page ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    when(page) {
-                        1 -> {
-                            AnswerCorrection(
-                                correction = quizResult.correction,
-                                textColor = scoreCard.textColor,
-                                errorColor = redded,
-                                correctColor = greened,
-                                questions = quizQuestions,
-                            )
-                        }
-                        2 -> {
-                            PointDistribution(
-                                distribution = quizResult.distribution,
-                                currentDistribution = quizResult.correction.count{it},
-                                percent = quizResult.percent,
-                                textColor = scoreCard.textColor,
-                                errorColor = redded,
-                                correctColor = greened,
-                            )
-                        }
-                        3 -> {
-
-                        }
-                        else -> {
-                            Score(
-                                scoreCardTextColor = scoreCard.textColor,
-                                correctQuestions = quizResult.correction.count{it},
-                                totalQuestions = quizResult.correction.size,
-                            )
+                if(page < 3) {
+                    cardItemWithSemiTransparentBackground(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = 8.dp),
+                        textColor = scoreCard.textColor
+                    ) {
+                        when (page) {
+                            1 -> {
+                                AnswerCorrection(
+                                    correction = quizResult.correction,
+                                    textColor = scoreCard.textColor,
+                                    errorColor = redded,
+                                    correctColor = greened,
+                                    questions = quizQuestions,
+                                )
+                            }
+                            2 -> {
+                                PointDistribution(
+                                    distribution = quizResult.distribution,
+                                    currentDistribution = quizResult.correction.count { it },
+                                    percent = quizResult.percent,
+                                    textColor = scoreCard.textColor,
+                                    errorColor = redded,
+                                    correctColor = greened,
+                                )
+                            }
+                            else -> {
+                                Score(
+                                    scoreCardTextColor = scoreCard.textColor,
+                                    correctQuestions = quizResult.correction.count { it },
+                                    totalQuestions = quizResult.correction.size,
+                                )
+                            }
                         }
                     }
                 }
@@ -466,7 +473,7 @@ fun PointDistribution(
                 .fillMaxWidth()
                 .padding(horizontal = 6.dp)
         ){
-            for(i in listOf("0", "50", "100")){
+            for(i in listOf("0", (distribution.size-1).toString())){
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier

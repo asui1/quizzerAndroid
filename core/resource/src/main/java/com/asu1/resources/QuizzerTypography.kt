@@ -23,6 +23,8 @@ data class QuizzerTypography(
     val quizzerBodyLarge: TextStyle,
 )
 
+
+
 // NOTICE: WHEN THIS IS UPDATED SHOULD UPDATE QUIZZER TYPOGRAPHYPREVIEW AS WELL
 val QuizzerTypographyDefaults = QuizzerTypography(
     quizzerHeadlineSmallNormal = Typography.headlineSmall.copy(
