@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -276,11 +275,10 @@ fun ScoreCardComposable(
                             2 -> {
                                 PointDistribution(
                                     distribution = quizResult.distribution,
-                                    currentDistribution = quizResult.correction.count { it },
                                     percent = quizResult.percent,
                                     textColor = scoreCard.textColor,
-                                    errorColor = redded,
-                                    correctColor = greened,
+                                    selectedIndex = quizResult.correction.count { it },
+                                    selectedColor = greened,
                                 )
                             }
                             else -> {
@@ -430,64 +428,27 @@ fun AnswerCorrection(
 @Composable
 fun PointDistribution(
     distribution: PersistentList<Int>,
-    currentDistribution: Int,
     percent: Float,
     textColor: Color,
-    errorColor: Color,
-    correctColor: Color,
+    selectedIndex: Int,
+    selectedColor: Color,
     height: Dp = 200.dp
 ){
-    val maxItem = distribution.maxOrNull() ?: 1
     val formattedPercent = String.format(Locale.US, "%.1f", percent)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.wrapContentSize()
-    ){
-        Text(buildString {
-            append(stringResource(R.string.you_are_top))
-            append("${formattedPercent}%!")
-        }, color = textColor, style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            distribution.forEachIndexed { index, value ->
-                val isSelected = index == currentDistribution
-                val color = if (isSelected) correctColor else errorColor
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(height * value / maxItem + 20.dp)
-                        .background(color)
-                )
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 6.dp)
-        ){
-            for(i in listOf("0", (distribution.size-1).toString())){
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .width(30.dp)
-                ) {
-                    Text(
-                        text = i,
-                        color = textColor,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        }
-    }
+    GraphDrawer(
+        modifier = Modifier.height(height).fillMaxWidth(),
+        header = {
+            Text(buildString {
+                append(stringResource(R.string.you_are_top))
+                append("${formattedPercent}%!")
+            }, color = textColor, style = MaterialTheme.typography.headlineSmall)
+        },
+        distribution = distribution,
+        textColor = textColor,
+        selectedColor = selectedColor,
+        selectedIndex = selectedIndex,
+    )
 }
 
 fun rotateHue(color: Color, degrees: Float): Color {

@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.material.kolor)
+    implementation (libs.compose.charts)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

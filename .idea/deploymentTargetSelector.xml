@@ -27,10 +27,10 @@
       <SelectionState runConfigName="testQuizCreateUpload()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RichTextForCodePreview">
+      <SelectionState runConfigName="InitializationScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="InitializationScreenPreview">
+      <SelectionState runConfigName="GraphDrawerPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
