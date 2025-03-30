@@ -7,14 +7,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Effect(val stringId: Int, val resourceUrl: String,
-                  val blendmode: BlendModeCompat,
-                  val contentScale: ContentScale, val defaultEffectGraphicsInfos: List<EffectGraphicsInfo>){
+                  val blendMode: BlendModeCompat,
+                  val defaultEffectGraphicsInfos: List<EffectGraphicsInfo>){
     NONE(R.string.none, "", BlendModeCompat.COLOR,
-        ContentScale.Fit,
         listOf()
     ),
     FIREWORKS(R.string.firework, fireworks,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -23,7 +22,7 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         )
     ),
     FIREWORKS2(R.string.fireworks2, fireworks2,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -33,18 +32,17 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     MOON(R.string.moon, moon,
         BlendModeCompat.MODULATE,
-        ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
                 translationY = -0.25f,
-                scaleX = 0.7f,
-                scaleY = 0.7f
+                scaleX = 0.5f,
+                scaleY = 0.5f
             )
         )
     ),
     SHOOTING_STAR(R.string.shooting_star, shootingstar,
-        BlendModeCompat.SRC_ATOP, ContentScale.Fit,
+        BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -59,7 +57,7 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         )
     ),
     SNOWFLAKES(R.string.snow, snowflakes,
-        BlendModeCompat.SRC_ATOP, ContentScale.Crop,
+        BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -69,7 +67,6 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     CLOUDS(R.string.cloud, clouds,
         BlendModeCompat.COLOR,
-        ContentScale.FillWidth,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -79,7 +76,6 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     FLOWERS(R.string.flowers, flowers,
         BlendModeCompat.COLOR,
-        ContentScale.FillHeight,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -88,7 +84,6 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     NOTES(R.string.music_notes, notes,
         BlendModeCompat.COLOR,
-        ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -98,7 +93,6 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     RAIN(R.string.rain, rain,
         BlendModeCompat.MULTIPLY,
-        ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -107,7 +101,7 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         )
     ),
     CHRISTMAS(R.string.christmas, christmas,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -117,24 +111,25 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     CHRISTMASBELL(R.string.christmas_bell,
         christmasbell, BlendModeCompat.COLOR,
-        ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
                 scaleY = 0.5f,
                 scaleX = 0.5f,
-                translationX = 0.25f
+                translationX = 0.25f,
+                translationY = -0.25f,
             ),
             EffectGraphicsInfo(
                 progress = 0f,
                 scaleY = 0.5f,
                 scaleX = -0.5f,
-                translationX = -0.25f
+                translationX = -0.25f,
+                translationY = -0.25f,
             ),
         )
     ),
     BUBBLES(R.string.bubbles, bubbles,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -144,7 +139,7 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         )
     ),
     HEARTS(R.string.hearts, hearts,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -159,7 +154,6 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     WREATH(R.string.wreath,
         wreath, BlendModeCompat.COLOR,
-        ContentScale.Fit,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -169,26 +163,26 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
     ),
     HORIZONTAL_FLOWERS(R.string.horizontal_flowers,
         horizontalFlowers, BlendModeCompat.SRC_ATOP,
-        ContentScale.FillHeight,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
+                translationY = -0.2f,
             )
         )
     ),
     HOURGLASS(R.string.hourglass, hourglass,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
-                scaleY = 0.8f,
-                scaleX = 0.8f,
+                scaleY = 0.6f,
+                scaleX = 0.6f,
                 translationY = -0.2f
             )
         )
     ),
     COMPUTATION(R.string.computation, computation,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -197,13 +191,108 @@ enum class Effect(val stringId: Int, val resourceUrl: String,
         )
     ),
     WINGS(R.string.wings, wings,
-        BlendModeCompat.COLOR, ContentScale.Fit,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.15f
+            )
+        )
+    ),
+    FLOWS(R.string.flows, flows,
+        BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
             )
         )
     ),
+    FIREPILLAR(R.string.fire_pillar, firePillar,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+            )
+        )
+    ),
+    HEARTS2(R.string.hearts2, hearts2,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+            )
+        )
+    ),
+    FLOWERS2(R.string.flowers2, flowers2,
+        BlendModeCompat.SRC_ATOP,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.2f
+            )
+        )
+    ),
+    BUBBLES2(R.string.bubbles2, bubbles2,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+            )
+        )
+    ),
+    TRAIN(R.string.train, train,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+            )
+        )
+    ),
+    BRAINSTORMING(R.string.brainstorming, brainstorming,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.2f
+            )
+        )
+    ),
+    AIRBALLOON(R.string.air_balloon, airBalloon,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.2f
+            )
+        )
+    ),
+    BALLOON(R.string.balloons, balloons,
+        BlendModeCompat.SRC_ATOP,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+            )
+        )
+    ),
+    BUS(R.string.bus, bus,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.2f
+            )
+        )
+    ),
+    TRAVEL(R.string.travel, travel,
+        BlendModeCompat.COLOR,
+        listOf(
+            EffectGraphicsInfo(
+                progress = 0f,
+                translationY = -0.2f
+            )
+        )
+    ),
+
     ;
 }
 

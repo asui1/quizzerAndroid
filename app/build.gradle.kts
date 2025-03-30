@@ -37,8 +37,8 @@ android {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 70
-        versionName = "1.0.12"
+        versionCode = 71
+        versionName = "1.0.13"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -228,6 +228,7 @@ dependencies {
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.androidx.work.runtime.ktx)
 
     implementation(libs.rxjava)
     implementation(libs.rxandroid)

@@ -7,7 +7,6 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -28,7 +27,6 @@ fun EffectBuilder(
     resourceUrl: String,
     color: Color,
     blendModeCompat: BlendModeCompat = BlendModeCompat.COLOR,
-    contentScale: ContentScale = ContentScale.Fit,
     effectGraphicsInfos: List<EffectGraphicsInfo>,
 ) {
     val composition by rememberLottieComposition(
@@ -57,7 +55,6 @@ fun EffectBuilder(
         )
         for(effectGraphicsInfo in effectGraphicsInfos){
             LottieAnimation(
-                contentScale = contentScale,
                 composition = composition,
                 progress = { (progress + effectGraphicsInfo.progress)%1f },
                 dynamicProperties = dynamicProperties,
@@ -76,8 +73,7 @@ fun EffectBuilderPreview() {
     EffectBuilder(
         color = Color.Red,
         resourceUrl = "https://lottie.host/fdcf2044-027a-4199-9762-6b3d214d8b69/duRyaaTkuY.lottie",
-        blendModeCompat = currentItem.blendmode,
-        contentScale = currentItem.contentScale,
+        blendModeCompat = currentItem.blendMode,
         effectGraphicsInfos = listOf(
             EffectGraphicsInfo(
                 progress = 0f,

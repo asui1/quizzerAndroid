@@ -6,19 +6,22 @@ https://quizzer.co.kr/?quizId=688c0185-1b4b-5064-8431-bfc00414f208
 -> "선택된 답" 텍스트 기다리기.
 
 1. title 이미지 기반으로 색/텍스트 테마 생성. 이후 상세 설정 / 바로 퀴즈 생성 이동하도록 수정.
-2. 퀴즈 카드 더 꾸미기.
-3. 퀴즈 제목, 푼 사람 이름은 뒤의 색과 반대되도록 생성.
-정답 상황이랑 정답자 분포표의 경우 배경 박스 추가.
 
-AGSL 쉐이더로 그래프 기반 백그라운드 생성.
-배경 효과 Layout 설정할 수 있는 페이지 추가.
-배경음악 설정 페이지 추가.
+AGSL 쉐이더의 경우:
+Dots / Lines / Curves의 3가지 중 하나를 list형식으로 받고,
+strength를 받아서 이 input들의 distmap 형태의 agsl 쉐이더 생성하기로 하자.
+
+FCM을 이용한 메세징 시스템 관리. -> FCM 등록은 되어있고, 서버 레벨에서 아이디 : FCM token을 어떻게 관리할 것인지 생각해야함.
+
+
+로그인하면 게스트 계정 로컬 정보 초기화 해야함.
+
+배경 효과 Layout 설정할 수 있는 페이지 추가. -> content scale을 fit으로 했으니 graphics layer의 scale, rotation 등을 설정할 수 있게금.
 퀴즈 생성과 따로 퀴즈 테마만 만들수 있도록 수정.
 퀴즈 추천/댓글 만들기.
 Viewer를 위한 Immutable Data class들 만들기.
 
-검색화면 오류, 사용자 액티비티 크기 제한있음 -> 스크롤 가능하게 설정.
-
+배경음악 설정 페이지 추가.
 NCS 음악 저작권 체크용 -> 아마 저작권 관련 탭을 앱+웹에 추가하고 관련 내용들 작성하면 될 듯.
 Song: BAYZY, Sayfro - On and On [NCS Release]
 Music provided by NoCopyrightSounds

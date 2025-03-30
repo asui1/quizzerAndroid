@@ -16,16 +16,22 @@ class QuizzerFirebaseMessagingService: FirebaseMessagingService() {
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
+            Logger.debug(TAG, "Message Notification Body: ${it.title}")
             Logger.debug(TAG, "Message Notification Body: ${it.body}")
         }
     }
 
     override fun onNewToken(token: String) {
         Logger.debug(TAG, "Refreshed token: $token")
+        sendTokenToServer(token)
         // Send the token to your server or save it for later use.
     }
 
     companion object {
         private const val TAG = "MyFirebaseMsgService"
+    }
+
+    private fun sendTokenToServer(token: String){
+        //TODO(서버로 토큰 전송 로직 구현)
     }
 }

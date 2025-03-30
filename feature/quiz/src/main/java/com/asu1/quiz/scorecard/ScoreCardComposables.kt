@@ -131,8 +131,7 @@ fun ScoreCardBackground(
             EffectBuilder(
                 color = backgroundImageColor.color2,
                 resourceUrl = backgroundImageColor.effect.resourceUrl,
-                blendModeCompat = backgroundImageColor.effect.blendmode,
-                contentScale = backgroundImageColor.effect.contentScale,
+                blendModeCompat = backgroundImageColor.effect.blendMode,
                 effectGraphicsInfos =
                     backgroundImageColor.effectGraphics.ifEmpty {
                         backgroundImageColor.effect.defaultEffectGraphicsInfos
@@ -151,10 +150,6 @@ fun ScoreCardBackground(
 
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-//                contentScale = ContentScale.FillWidth,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .align(Alignment.BottomCenter)
             )
         }
     }
