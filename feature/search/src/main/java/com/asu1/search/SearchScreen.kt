@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,11 +19,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -204,18 +208,21 @@ private fun SearchScreenSuggestionItem(
     suggestion: String,
 ){
     Row(
-        modifier = modifier.padding(start = 8.dp, bottom = 16.dp),
+        modifier = modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ){
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = "Search for $suggestion"
+            contentDescription = "Search for $suggestion",
+            modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(24.dp))
         Text(
             suggestion,
             maxLines = 1,
-            style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
+            style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
+            fontSize = 18.sp,
         )
     }
 }
@@ -303,11 +310,13 @@ fun SearchTopBar(
         title = {
             TextField(
                 value = searchText,
-                shape = RoundedCornerShape(40.dp),
+                shape = RoundedCornerShape(20.dp),
                 onValueChange = onSearchTextChanged,
                 singleLine = true,
+                textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
                 modifier = Modifier
                     .focusRequester(focusRequester)
+                    .height(55.dp)
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused) {
                             onFocusChange(true)
@@ -315,7 +324,12 @@ fun SearchTopBar(
                             onFocusChange(false)
                         }
                     },
-                placeholder = { Text(text = stringResource(R.string.search) )},
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.search),
+                        fontSize = 14.sp,
+                    )
+                },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Search
                 ),
@@ -332,7 +346,7 @@ fun SearchTopBar(
                             onBackPressed()
                         }) {
                             Icon(
-                                Icons.Default.RemoveCircleOutline,
+                                Icons.Default.Close,
                                 contentDescription = "Clear"
                             )
                         }

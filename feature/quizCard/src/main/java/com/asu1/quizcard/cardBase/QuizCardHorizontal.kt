@@ -185,7 +185,7 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
                 append(stringResource(R.string.solved))
                 append(quizCard.count)
             },
-            style = QuizzerTypographyDefaults.quizzerBodySmall,
+            style = QuizzerTypographyDefaults.quizzerBodySmallLight,
         )
     }
 }

@@ -139,13 +139,13 @@ fun VerticalQuizCardLargeBody(
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp),
             text = quizCard.description,
-            style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
+            style = QuizzerTypographyDefaults.quizzerBodySmall,
             minLines = 1,
             maxLines = 6,
         )

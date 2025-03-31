@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.ui.tooling)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.material3)
+    implementation(libs.androidx.material3.android)
 
     testImplementation(libs.junit)
 

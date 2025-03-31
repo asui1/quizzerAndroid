@@ -3,6 +3,7 @@ package com.asu1.quizcard.cardBase
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,56 +25,60 @@ import kotlinx.collections.immutable.toPersistentList
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun QuizCardHorizontalVerticalShare(
-    quizCard: QuizCard, onLoadQuiz: (String) -> Unit = {}) {
+    quizCard: QuizCard, onLoadQuiz: (String) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope
+) {
     var showDetails by remember{
         mutableStateOf(false)
     }
 
-    SharedTransitionLayout {
-        AnimatedContent(
-            targetState = showDetails,
-            label = "QuizCard content with or without details"
-        ) {targetState ->
-            if (targetState) {
-                VerticalQuizCardLargeShare(
-                    quizCard = quizCard,
-                    onClick = { showDetails = false },
-                    onIconClick = { onLoadQuiz(quizCard.id) },
-                    animatedVisibilityScope = this@AnimatedContent,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    )
-            } else {
-                QuizCardHorizontal(
-                    quizCard = quizCard,
-                    onClick = { showDetails = true },
-                    onIconClick = { onLoadQuiz(quizCard.id) },
-                    animatedVisibilityScope = this@AnimatedContent,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                )
-            }
+    AnimatedContent(
+        targetState = showDetails,
+        label = "QuizCard content with or without details"
+    ) {targetState ->
+        if (targetState) {
+            VerticalQuizCardLargeShare(
+                quizCard = quizCard,
+                onClick = { showDetails = false },
+                onIconClick = { onLoadQuiz(quizCard.id) },
+                animatedVisibilityScope = this@AnimatedContent,
+                sharedTransitionScope = sharedTransitionScope,
+            )
+        } else {
+            QuizCardHorizontal(
+                quizCard = quizCard,
+                onClick = { showDetails = true },
+                onIconClick = { onLoadQuiz(quizCard.id) },
+                animatedVisibilityScope = this@AnimatedContent,
+                sharedTransitionScope = sharedTransitionScope,
+            )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun QuizCardHorizontalVerticalShareList(
     quizCards: PersistentList<QuizCard>,
     onClick: (String) -> Unit = {}) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-    ) {
-        items(quizCards,
-            key = { quizCard -> quizCard.id }
-        ) { quizCard ->
-            QuizCardHorizontalVerticalShare(
-                quizCard = quizCard,
-                onLoadQuiz = onClick
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
+    SharedTransitionLayout {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+        ) {
+            items(quizCards,
+                key = { quizCard -> quizCard.id }
+            ) { quizCard ->
+                QuizCardHorizontalVerticalShare(
+                    quizCard = quizCard,
+                    onLoadQuiz = onClick,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
         }
     }
 }
