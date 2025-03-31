@@ -23,7 +23,8 @@ import kotlinx.collections.immutable.toPersistentList
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun QuizCardHorizontalVerticalShare(quizCard: QuizCard, onLoadQuiz: (String) -> Unit = {}) {
+fun QuizCardHorizontalVerticalShare(
+    quizCard: QuizCard, onLoadQuiz: (String) -> Unit = {}) {
     var showDetails by remember{
         mutableStateOf(false)
     }

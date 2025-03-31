@@ -48,7 +48,9 @@ fun SignoutBottomSheetContent(
     ) {
         Text(stringResource(id = R.string.sign_out), style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(4.dp))
-        Text("If you sign out, all your activities and records will be deleted. Even if you re-register, data won't be restored", style = MaterialTheme.typography.bodySmall)
+        Text(
+            stringResource(R.string.sign_out_body),
+            style = MaterialTheme.typography.bodySmall)
         Spacer(modifier = Modifier.height(4.dp))
         TextField(
             modifier = Modifier.fillMaxWidth(),

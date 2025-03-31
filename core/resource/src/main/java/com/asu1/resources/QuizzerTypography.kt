@@ -2,6 +2,7 @@ package com.asu1.resources
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 data class QuizzerTypography(
     val quizzerHeadlineSmallNormal: TextStyle,
@@ -37,11 +38,12 @@ val QuizzerTypographyDefaults = QuizzerTypography(
     ),
     quizzerTitleMediumBold = Typography.titleMedium.copy(
         fontFamily = GothicA1,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Bold
     ),
     quizzerTitleSmallMedium = Typography.titleSmall.copy(
         fontFamily = GothicA1,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.SemiBold
     ),
     quizzerLabelSmallLight = Typography.labelSmall.copy(
         fontFamily = GothicA1,
@@ -49,7 +51,7 @@ val QuizzerTypographyDefaults = QuizzerTypography(
     ),
     quizzerBodySmallBold = Typography.bodySmall.copy(
         fontFamily = GothicA1,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.ExtraBold
     ),
     quizzerBodySmallNormal = Typography.bodySmall.copy(
         fontFamily = GothicA1,

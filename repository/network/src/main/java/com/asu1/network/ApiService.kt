@@ -8,6 +8,7 @@ import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList
 import com.asu1.quizcardmodel.Recommendations
+import com.asu1.userdatamodels.FcmToken
 import com.asu1.userdatamodels.UserRankList
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -108,4 +109,8 @@ interface ApiService {
     @UseKotlinxSerialization
     @GET("userActivity")
     suspend fun getUserActivity(@Query("email") email: String): Response<List<com.asu1.userdatamodels.UserActivity>>
+
+    @UseKotlinxSerialization
+    @POST("fcmToken")
+    suspend fun updateFcmToken(@Body fcmToken: FcmToken): Response<Void>
 }

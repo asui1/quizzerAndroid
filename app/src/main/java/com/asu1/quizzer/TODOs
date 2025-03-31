@@ -13,8 +13,9 @@ strength를 받아서 이 input들의 distmap 형태의 agsl 쉐이더 생성하
 
 FCM을 이용한 메세징 시스템 관리. -> FCM 등록은 되어있고, 서버 레벨에서 아이디 : FCM token을 어떻게 관리할 것인지 생각해야함.
 
-
 로그인하면 게스트 계정 로컬 정보 초기화 해야함.
+
+추가적인 앱 junk 감지 및 최적화 필요
 
 배경 효과 Layout 설정할 수 있는 페이지 추가. -> content scale을 fit으로 했으니 graphics layer의 scale, rotation 등을 설정할 수 있게금.
 퀴즈 생성과 따로 퀴즈 테마만 만들수 있도록 수정.

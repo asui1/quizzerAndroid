@@ -31,6 +31,9 @@ interface UserRepository {
     fun getGuestLoginInfo(): Flow<UserLoginInfo?>
     suspend fun clearUserLoginInfo()
     suspend fun getUserActivities(email: String): Result<List<UserActivity>>
+    suspend fun saveFcmToken(token: String)
+    fun getFcmToken(): String
+    suspend fun sendEmailToken(): Result<Unit>
 }
 
 @Module

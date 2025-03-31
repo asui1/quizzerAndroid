@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -36,6 +37,8 @@ android {
 
 dependencies {
     implementation(project(":core:quizModel"))
+    implementation(project(":core:util"))
+    implementation(project(":domain:userDataUseCase"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -52,6 +55,14 @@ dependencies {
     implementation(libs.ui.tooling)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.navigation.compose)
+    implementation(libs.googleid)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -52,7 +52,7 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
     val screenHeight = remember(windowInfo, density) {
         with(density) { windowInfo.containerSize.height.toDp() }
     }
-    val minSize = remember{minOf(screenWidth, screenHeight).times(0.40f).coerceAtMost(400.dp)}
+    val minSize = remember{minOf(screenWidth, screenHeight).times(0.35f).coerceAtMost(300.dp)}
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         modifier = Modifier
@@ -66,8 +66,9 @@ fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, in
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = "${index+1}.",
+                text = "${index+1}",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(end = 8.dp)
             )
             VerticalQuizCardLargeBody(quizCard, minSize){
@@ -133,7 +134,7 @@ fun VerticalQuizCardLargeBody(
                         append(stringResource(R.string.solved))
                         append(quizCard.count)
                     },
-                    style = QuizzerTypographyDefaults.quizzerBodySmallNormal
+                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }

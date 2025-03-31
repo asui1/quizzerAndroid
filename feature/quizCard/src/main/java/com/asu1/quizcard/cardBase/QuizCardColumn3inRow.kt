@@ -32,9 +32,11 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
-fun HorizontalQuizCardItemVertical(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
+fun HorizontalQuizCardItemVertical(
+    modifier: Modifier = Modifier,
+    quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         quizCards.chunked(3).forEach { rowItems ->

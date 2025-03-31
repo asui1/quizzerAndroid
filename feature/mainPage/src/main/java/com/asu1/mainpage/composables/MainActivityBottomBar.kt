@@ -12,6 +12,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,7 +50,7 @@ fun MainActivityBottomBar(
             onClick = { setSelectedTab(0) }
         ) {
             Icon(
-                Icons.Default.Home,
+                imageVector = if (bottomBarSelection == 0) Icons.Filled.Home else Icons.Outlined.Home,
                 tint = if (bottomBarSelection == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 contentDescription = "Home",
                 modifier = Modifier.size(defaultIconSize)
@@ -57,7 +61,7 @@ fun MainActivityBottomBar(
             onClick = { setSelectedTab(1) }
         ) {
             Icon(
-                Icons.AutoMirrored.Filled.TrendingUp,
+                imageVector = if (bottomBarSelection == 1) Icons.AutoMirrored.Filled.TrendingUp else Icons.Outlined.TrendingUp,
                 tint = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 contentDescription = "Trends",
                 modifier = Modifier.size(defaultIconSize)
@@ -73,7 +77,7 @@ fun MainActivityBottomBar(
             Icon(
                 Icons.Default.Add,
                 contentDescription = "Create Quiz",
-                modifier = Modifier.size(defaultIconSize * 1.3f)
+                modifier = Modifier.size(defaultIconSize)
             )
         }
         IconWithTextBody(
@@ -81,7 +85,7 @@ fun MainActivityBottomBar(
             onClick = { setSelectedTab(2) }
         ) {
             Icon(
-                Icons.Default.BarChart,
+                imageVector = if (bottomBarSelection == 2) Icons.Filled.BarChart else Icons.Outlined.BarChart,
                 tint = if (bottomBarSelection == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 contentDescription = "User Statistics",
                 modifier = Modifier.size(defaultIconSize)
@@ -92,7 +96,7 @@ fun MainActivityBottomBar(
             onClick = { setSelectedTab(3) }
         ) {
             Icon(
-                Icons.Default.Settings,
+                imageVector = if (bottomBarSelection == 3) Icons.Filled.Settings else Icons.Outlined.Settings,
                 tint = if (bottomBarSelection == 3) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 contentDescription = "Settings",
                 modifier = Modifier.size(defaultIconSize)

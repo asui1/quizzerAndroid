@@ -60,4 +60,18 @@ object UserDataModule {
     ): LogoutToGuestUseCase {
         return LogoutToGuestUseCase(userRepository, tryGuestLoginUseCase, createGuestAccountUseCase)
     }
+
+    @Provides
+    fun provideSaveFcmTokenUseCase(
+        userRepository: UserRepository,
+    ): SaveFcmTokenUseCase{
+        return SaveFcmTokenUseCase(userRepository)
+    }
+
+    @Provides
+    fun provideUpdateEmailFcmTokenUseCase(
+        userRepository: UserRepository
+    ): UpdateEmailFcmTokenUseCase{
+        return UpdateEmailFcmTokenUseCase(userRepository)
+    }
 }

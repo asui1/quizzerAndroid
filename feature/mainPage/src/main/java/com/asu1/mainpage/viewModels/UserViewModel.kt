@@ -90,7 +90,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun getUserActivities(){
-        if(_userData.value == null || _userActivities.value.isNotEmpty()){
+        if(_userData.value == null){
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
@@ -129,7 +129,7 @@ class UserViewModel @Inject constructor(
                 if(userInfo != null){
                     _isUserLoggedIn.postValue(false)
                     _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags as PersistentSet<String>
+                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
                     ))
                     SnackBarManager.showSnackBar(R.string.logged_out, ToastType.SUCCESS)
                 }

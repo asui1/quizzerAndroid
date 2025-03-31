@@ -12,12 +12,13 @@
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="privacy_policy_body">1. 개인정보의 수집 및 이용 목적\nQuizzer(이하 \"앱\")은 사용자의 개인정보를 중요하게 생각하며, 아래와 같은 목적을 위해 개인정보를 수집 및 이용합니다.\n\n사용자 식별 및 앱 서비스 제공\n사용자와의 의사소통을 위한 이메일 사용\n앱 내부에서의 활동 정보 분석을 통한 서비스 개선\n\n2. 수집하는 개인정보 항목\n앱은 다음과 같은 개인정보를 수집합니다.\n\n이메일 주소: 사용자 식별 및 의사소통을 위해 사용됩니다.\n프로필 이미지: 사용자 식별 및 의사소통을 위해 사용됩니다.\n앱 내부 활동 정보: 앱 사용 패턴 분석 및 서비스 개선을 위해 사용됩니다.\n\n3. 개인정보의 보유 및 이용기간\n수집된 개인정보는 이용목적이 달성되거나 사용자가 삭제를 요청할 때까지 보유 및 이용됩니다. 사용자가 요청할 경우, 수집된 개인정보는 지체 없이 삭제됩니다.\n\n4. 개인정보의 제3자 제공\n앱은 사용자의 사전 동의 없이는 개인정보를 제3자에게 제공하지 않습니다.\n\n5. 개인정보의 안전성 확보 조치\n앱은 사용자의 개인정보를 안전하게 관리하기 위해 다음과 같은 조치를 취하고 있습니다.\n\n개인정보의 암호화\n해킹이나 컴퓨터 바이러스 등에 의한 개인정보 유출을 막기 위한 기술적 대책\n개인정보 접근 권한 제한\n\n6. 개인정보보호책임자\n개인정보와 관련된 문의사항은 아래의 개인정보보호책임자에게 연락해 주시기 바랍니다.\n\n책임자: 조장현\n연락처: whwkd122@gmail.com\n\n7. 개인정보 처리방침의 변경\n개인정보처리방침이 변경될 경우, 변경 사항은 앱 내 공지사항을 통해 고지됩니다.\n\n본 방침은 2024년 8월 4일부터 시행됩니다.</string>
     <string name="contact">문의</string>
-    <string name="notification">\uD83D\uDD14     공지사항</string>
+    <string name="notification">공지사항</string>
     <string name="profile">프로필</string>
-    <string name="inquiry">\u2753     문의</string>
+    <string name="inquiry">문의</string>
     <string name="empty_string"></string>
     <string name="answer">답 ABC</string>
-    <string name="sign_out">\uD83D\uDEAA     회원탈퇴</string>
+    <string name="sign_out">회원탈퇴</string>
+    <string name="sign_out_body"> 탈퇴하실 경우 모든 활동 기록이 삭제됩니다. 만약 이후 다시 가입하시더라도 데이터는 복구되지 않습니다.</string>
     <string name="trying_login">로그인 중 입니다</string>
     <string name="fetching_data">데이터를 가져오는 중 입니다</string>
     <string name="inquiry_body">답변은 이메일로 전달됩니다. 만약 로그인이 안되어 계실 경우, 이메일을 기재해주지 않으시면 답장이 불가능합니다.</string>
@@ -25,6 +26,7 @@
     <string name="logout_confirmation_body">로그아웃 하시겠습니까?</string>
     <string name="logout_confirm">확인</string>
     <string name="logout_cancel">취소</string>
+    <string name="logout">로그아웃</string>
     <string name="quizGenPolicyBody">퀴즈를 만들 때, 만약 퀴즈의 내용이 비속어나 조롱 등 사회적 논란을 일으킬 수 있는 내용이거나, 저작권, 초상권 등의 권리를 침해하는 내용이거나 음란물 등의 내용이 포함되어 있을 경우, 해당 퀴즈는 생성자의 동의 없이 삭제될 수 있습니다.\n또한, 사용자가 생성한 퀴즈로 인해 발생하는 문제는 전적으로 사용자의 책임이며, Quizzer는 이에 대한 책임을 지지 않습니다.\n이에 동의하시면 동의 버튼을 클릭해주세요.</string>
     <string name="agree">동의</string>
     <string name="terms_of_use">이용 약관</string>
@@ -49,8 +51,9 @@
     <string name="inquiry_dropdown">문의 옵션 선택지 열기</string>
     <string name="enter_text">내용을 입력해주세요.</string>
     <string name="submit">제출</string>
-    <string name="my_quizzes">\uD83D\uDCDD     내 퀴즈</string>
+    <string name="my_quizzes">내 퀴즈</string>
     <string name="settings">설정</string>
+    <string name="app_version">앱 버전</string>
     <string name="enter_sign_out">\"회원 탈퇴\"를 입력하세요.</string>
     <string name="move_back_home">홈으로</string>
     <string name="move_back">뒤로가기</string>
@@ -219,7 +222,7 @@
     <string name="failed_request">요청에 실패했습니다… 나중에 다시 시도해주세요.</string>
     <string name="quizzer_music_player">Quizzer 뮤직 플레이어</string>
     <string name="music_player_for_quizzer_this_plays_background_music_of_current_quiz">Music Player for Quizzer. This plays background music of current quiz</string>
-    <string name="my_activities">\uD83D\uDCCA     내 활동</string>
+    <string name="my_activities">내 활동</string>
     <string name="horizontal_flowers">꽃2</string>
     <string name="hourglass">모래시계</string>
     <string name="computation">컴퓨터</string>

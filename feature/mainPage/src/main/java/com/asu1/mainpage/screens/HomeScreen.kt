@@ -121,10 +121,14 @@ fun HomeScreen(
                         style = QuizzerTypographyDefaults.quizzerTitleMediumBold,
                     )
                     if (index == 0) {
-                        HorizontalQuizCardItemLarge(quizCards = item.quizCards,
+                        HorizontalQuizCardItemLarge(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            quizCards = item.quizCards,
                             onClick = { uuid -> loadQuiz(uuid) })
                     } else {
-                        HorizontalQuizCardItemVertical(quizCards = item.quizCards,
+                        HorizontalQuizCardItemVertical(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            quizCards = item.quizCards,
                             onClick = { uuid -> loadQuiz(uuid) })
                     }
                 }

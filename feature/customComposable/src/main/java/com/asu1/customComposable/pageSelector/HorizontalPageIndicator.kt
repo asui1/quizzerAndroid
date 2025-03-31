@@ -70,7 +70,7 @@ fun HorizontalPageIndicator(
                     )
                     .clip(RoundedCornerShape(indicatorCornerRadius))
                     .background(color)
-                    .width(size)
+                    .width(size * 1.5f)
                     .height(size / 2)
             )
         }

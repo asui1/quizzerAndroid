@@ -14,6 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,9 +50,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.asu1.customComposable.dialog.DialogComposable
-import com.asu1.quizcard.cardBase.VerticalQuizCardLargeColumn
 import com.asu1.activityNavigation.Route
+import com.asu1.appdatamodels.SettingItems
+import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.mainpage.composables.InquiryBottomSheetContent
 import com.asu1.mainpage.composables.MainActivityBottomBar
 import com.asu1.mainpage.composables.MainActivityTopbar
@@ -56,6 +61,7 @@ import com.asu1.mainpage.composables.UserRankComposableList
 import com.asu1.mainpage.viewModels.InquiryViewModel
 import com.asu1.mainpage.viewModels.QuizCardMainViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quizcard.cardBase.VerticalQuizCardLargeColumn
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
@@ -67,7 +73,7 @@ import com.asu1.resources.UserBackground6
 import com.asu1.resources.UserBackground7
 import com.asu1.resources.UserBackground8
 import com.asu1.utils.setTopBarColor
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -257,18 +263,37 @@ fun MainScreen(
                                 )
                             }
                         }
+
                         UserSettingsScreen(
                             settingItems =
-                                remember(isLoggedIn){listOfNotNull(
-                                Pair(R.string.my_quizzes, {navigateTo(Route.LoadUserQuiz)}),
-                                Pair(R.string.my_activities, {navigateTo(Route.MyActivities)}),
-                                Pair(R.string.notification, {navigateTo(Route.Notifications)}),
-                                Pair(R.string.inquiry, { showInquiry = true }),
-                                if (isLoggedIn) Pair(R.string.sign_out, { showSignOut = true }) else null
-                            ).toPersistentList()},
+                                remember{
+                                    persistentListOf(
+                                        SettingItems(
+                                            stringResourceId = R.string.my_quizzes,
+                                            vectorIcon = Icons.AutoMirrored.Filled.List,
+                                            onClick = {navigateTo(Route.LoadUserQuiz)}
+                                        ),
+                                        SettingItems(
+                                            stringResourceId = R.string.my_activities,
+                                            vectorIcon = Icons.Default.BarChart,
+                                            onClick = {navigateTo(Route.MyActivities)}
+                                        ),
+                                        SettingItems(
+                                            stringResourceId = R.string.notification,
+                                            vectorIcon = Icons.Default.Notifications,
+                                            onClick = {navigateTo(Route.Notifications)}
+                                        ),
+                                        SettingItems(
+                                            stringResourceId = R.string.inquiry,
+                                            vectorIcon = Icons.AutoMirrored.Filled.HelpOutline,
+                                            onClick = {showInquiry = true}
+                                        ),
+                                    )
+                                },
                             isLoggedIn = isLoggedIn,
                             userData = userData,
-                            logOut = { userViewModel.logOut() }
+                            logOut = { userViewModel.logOut() },
+                            onSignOut = { showSignOut = true },
                         )
                     }
                 }

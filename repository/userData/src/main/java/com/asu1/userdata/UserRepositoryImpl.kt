@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.asu1.network.RetrofitInstance
 import com.asu1.resources.UserLoginInfo
+import com.asu1.userdatamodels.FcmToken
 import com.asu1.userdatamodels.GuestAccount
 import com.asu1.userdatamodels.UserActivity
 import com.asu1.userdatamodels.UserInfo
@@ -13,6 +14,7 @@ import com.asu1.userdatamodels.UserRegister
 import com.asu1.userdatamodels.UserRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
@@ -39,6 +41,8 @@ class UserRepositoryImpl @Inject constructor(
 
     private val userActivityCache = mutableMapOf<String, List<UserActivity>>() // email to activities
     private val dataStore = context.dataStore
+
+    private val fcmToken = stringPreferencesKey("fcmToken")
 
     override suspend fun guestAccount(isKo: Boolean): Response<GuestAccount> {
         return retrofitInstance.api.guestAccount(isKo)
@@ -162,4 +166,45 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveFcmToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[fcmToken] = token
+        }
+    }
+
+    override fun getFcmToken(): String {
+        return dataStore.data.map { preferences ->
+            val token = preferences[fcmToken]
+            token ?: ""
+        }.toString()
+    }
+
+    override suspend fun sendEmailToken(): Result<Unit> {
+        val preferences = dataStore.data.first()
+
+        val guest = preferences[guestEmailKey]
+        val email = preferences[emailKey]
+        val token = preferences[fcmToken]
+
+        if (token == null) {
+            return Result.failure(Exception("No Token Exists"))
+        }
+
+        val userEmail = email ?: guest
+        if (userEmail == null) {
+            return Result.failure(Exception("No User Email Exists"))
+        }
+
+        return try {
+            retrofitInstance.api.updateFcmToken(
+                FcmToken(
+                    userEmail = userEmail,
+                    fcmToken = token
+                )
+            )
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -85,6 +85,8 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
     implementation(libs.kotlinx.coroutines.rx3)
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.androidx.animation.graphics.android)
 
     testImplementation(libs.junit)
 

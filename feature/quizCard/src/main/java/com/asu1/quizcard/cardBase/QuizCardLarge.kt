@@ -35,7 +35,9 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
 
 @Composable
-fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
+fun HorizontalQuizCardItemLarge(
+    modifier: Modifier = Modifier,
+    quizCards: List<QuizCard>, onClick: (String) -> Unit = {}) {
 
     val listState = rememberPagerState(
         initialPage = 0,
@@ -44,7 +46,7 @@ fun HorizontalQuizCardItemLarge(quizCards: List<QuizCard>, onClick: (String) -> 
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ){

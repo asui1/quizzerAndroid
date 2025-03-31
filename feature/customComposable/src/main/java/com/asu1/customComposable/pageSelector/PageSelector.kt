@@ -2,6 +2,11 @@ package com.asu1.customComposable.pageSelector
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.LastPage
+import androidx.compose.material.icons.filled.FirstPage
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -9,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.QuizzerAndroidTheme
 
@@ -37,40 +43,43 @@ fun PageSelector(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-
-        TextButton(
+        IconButton(
+            modifier = Modifier.weight(1f),
             onClick = {
-                moveToPage(currentPage - 1)
+                moveToPage(1)
             },
         ) {
-            Text(
-                text = "<",
-                color = MaterialTheme.colorScheme.onSurface,
+            Icon(
+                imageVector = Icons.Default.FirstPage,
+                contentDescription = "Move to FIrst Notification Page",
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
-
         pagesToDisplay.forEach { page ->
             val isSelected = (page == currentPage)
             TextButton(
+                modifier = Modifier.weight(1f),
                 onClick = {
                     moveToPage(page)
                 }
             ) {
                 Text(
                     text = page.toString(),
+                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Normal,
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
-
-        TextButton(
+        IconButton(
+            modifier = Modifier.weight(1f),
             onClick = {
-                moveToPage(currentPage + 1)
+                moveToPage(totalPages)
             },
         ) {
-            Text(
-                text = ">",
-                color = MaterialTheme.colorScheme.onSurface,
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.LastPage,
+                contentDescription = "Move to Last Notification Page",
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
