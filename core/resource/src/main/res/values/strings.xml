@@ -78,7 +78,7 @@
     <string name="blend_hue">Shift Hue</string>
     <string name="you_are_top">"You are top "</string>
     <string name="select_tags">Enter tags</string>
-    <string name="enter_tag">Enter Tag</string>
+    <string name="enter_tag">Enter Tags</string>
     <string name="points">"Points: "</string>
     <string name="average">"Average: "</string>
     <string name="total_score">"Total Score: "</string>

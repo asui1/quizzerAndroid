@@ -79,7 +79,7 @@
     <string name="blend_hue">색조 전환</string>
     <string name="you_are_top">"상위 "</string>
     <string name="select_tags">태그를 입력하세요</string>
-    <string name="enter_tag">태그 입력</string>
+    <string name="enter_tag">태그를 입력하세요</string>
     <string name="points">"점수: "</string>
     <string name="average">"평균: "</string>
     <string name="total_score">"총점: "</string>

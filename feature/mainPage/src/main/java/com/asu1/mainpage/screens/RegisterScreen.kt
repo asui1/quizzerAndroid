@@ -42,6 +42,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -254,6 +255,7 @@ fun EnterRegisterInputData(
     ) {
         LazyColumn(
             reverseLayout = true,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(16.dp)
                 .weight(1f)
@@ -262,6 +264,9 @@ fun EnterRegisterInputData(
                 AnimatedVisibility(
                     visible = registerStep > 1,
                 ) {
+                    Spacer(
+                        modifier = Modifier.height(32.dp)
+                    )
                     TagSetting(
                         tags = tags,
                         toggleTag = {tag ->
@@ -271,6 +276,9 @@ fun EnterRegisterInputData(
                             registerViewModelAction(RegisterViewModelActions.Register)
                         },
                         modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    )
+                    Spacer(
+                        modifier = Modifier.height(32.dp)
                     )
                 }
             }
@@ -313,9 +321,11 @@ fun EnterRegisterInputData(
                         })
                     }
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.enter_your_nickname),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
@@ -359,6 +369,7 @@ fun TagSetting(
             },
             focusRequester = tagFocusRequester,
         )
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 register()
