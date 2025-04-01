@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,9 +33,9 @@ fun QuizLayoutSetTitleImage(quizTitleImage: Bitmap, onImageChange: (Bitmap?) -> 
     ) {
         Text(
             text = stringResource(R.string.set_quiz_image_80_kb),
-            style = QuizzerTypographyDefaults.quizzerTitleMediumMedium,
+            style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
         )
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         ImageGetter(
             image = quizTitleImage,
             onImageUpdate = { image ->

@@ -60,8 +60,9 @@
     <string name="enter_sign_out">회원 탈퇴</string>
     <string name="move_back_home">홈으로</string>
     <string name="move_back">뒤로가기</string>
-    <string name="previous">이전</string>
+    <string name="back">이전</string>
     <string name="next">다음</string>
+    <string name="temp_save">임시저장</string>
     <string name="add_image">이미지 추가</string>
     <string name="selected_image">이미지 선택</string>
     <string name="delete_image">이미지 삭제</string>
@@ -105,7 +106,7 @@
     <string name="enter_your_nickname">닉네임을 입력하세요</string>
     <string name="duplicate_nickname">중복된 닉네임입니다.</string>
     <string name="nickname">닉네임</string>
-    <string name="length">"글자 수: "</string>
+    <string name="length">"글자 제한: "</string>
     <string name="no_account">계정이 없으신가요?</string>
     <string name="register">회원가입</string>
     <string name="login">로그인</string>
@@ -149,7 +150,7 @@
     <string name="question">질문, ABC</string>
     <string name="body">예제, ABC</string>
     <string name="enter_quiz_title">제목을 입력하세요</string>
-    <string name="set_quiz_image_80_kb">표지</string>
+    <string name="set_quiz_image_80_kb">표지 이미지를\n등록해주세요.</string>
     <string name="inquiry_sent_successfully">문의를 전달했습니다.</string>
     <string name="failed_to_send_inquiry">문의를 보내지 못했습니다.</string>
     <string name="failed_to_load_quiz_result">퀴즈 결과를 불러오지 못했습니다.</string>

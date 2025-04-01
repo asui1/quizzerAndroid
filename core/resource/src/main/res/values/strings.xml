@@ -59,8 +59,9 @@
     <string name="enter_sign_out">Sign Out</string>
     <string name="move_back_home">Move Back Home</string>
     <string name="move_back">Move Back</string>
-    <string name="previous">Previous</string>
+    <string name="back">Back</string>
     <string name="next">Next</string>
+    <string name="temp_save">Temp. Save</string>
     <string name="add_image">Add Image</string>
     <string name="selected_image">Selected Image</string>
     <string name="delete_image">Delete Image</string>
@@ -149,7 +150,7 @@
     <string name="answer">Answer</string>
     <string name="body">Body</string>
     <string name="enter_quiz_title">Enter Quiz Title</string>
-    <string name="set_quiz_image_80_kb">Quiz Image</string>
+    <string name="set_quiz_image_80_kb">Select Quiz Image</string>
     <string name="inquiry_sent_successfully">Inquiry sent successfully</string>
     <string name="failed_to_send_inquiry">Failed to send inquiry</string>
     <string name="failed_to_load_quiz_result">Failed to load quiz result</string>

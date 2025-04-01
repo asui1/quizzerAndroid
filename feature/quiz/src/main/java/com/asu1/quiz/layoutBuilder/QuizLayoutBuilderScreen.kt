@@ -55,7 +55,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
+import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.models.quiz.QuizData
@@ -69,7 +71,7 @@ import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
-import com.asu1.activityNavigation.Route
+import com.asu1.utils.LanguageSetter
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -252,8 +254,8 @@ fun QuizLayoutBuilderScreenBody(
                     ))
                 },
                 onSaveLocal = onSaveLocal,
-                enabled = canProceed,
                 proceed = proceed,
+                moveBackToHome = { moveBackToHome() }
             )
         }
     ) {paddingValue ->
@@ -349,8 +351,8 @@ private fun QuizLayoutBottomBar(
     step: LayoutSteps,
     updateStep: (LayoutSteps) -> Unit = {},
     onSaveLocal: () -> Unit = {},
-    enabled: Boolean,
     proceed: () -> Unit,
+    moveBackToHome: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -359,41 +361,34 @@ private fun QuizLayoutBottomBar(
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        IconButton(
+        IconButtonWithText(
+            imageVector = Icons.Default.ArrowBackIosNew,
+            text = stringResource(R.string.back),
             onClick = {
                 if (step.ordinal > 1) {
                     updateStep(step - 1)
                 }
+                else{
+                    moveBackToHome()
+                }
             },
-            enabled = step.ordinal > 1,
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Move Back"
-            )
-        }
+            description = "Move back"
+        )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = onSaveLocal
-        ) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Save Local."
-            )
-        }
+        IconButtonWithText(
+            imageVector = Icons.Default.Save,
+            text = stringResource(R.string.temp_save),
+            onClick = onSaveLocal,
+            description = "Save Local"
+        )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = {
-                proceed()
-            },
-            enabled = enabled,
-            modifier = Modifier.testTag("QuizLayoutBuilderProceedButton")
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                contentDescription = "Move Forward"
-            )
-        }
+        IconButtonWithText(
+            modifier = Modifier.testTag("QuizLayoutBuilderProceedButton"),
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+            text = stringResource(R.string.next),
+            onClick = proceed,
+            description = "Move Forward"
+        )
     }
 }
 
@@ -403,7 +398,6 @@ fun QuizLayoutBuilderScreenPreview() {
     QuizzerAndroidTheme {
         QuizLayoutBottomBar(
             step = LayoutSteps.TITLE,
-            enabled = false,
             proceed = {}
         )
     }
@@ -411,6 +405,13 @@ fun QuizLayoutBuilderScreenPreview() {
 
 @Composable
 fun QuizPolicyAgreement(onAgree: () -> Unit) {
+    val annotatedString = remember(LanguageSetter.lang) {
+        when (LanguageSetter.lang) {
+            "ko" -> getTermsOfUseKo()
+            else -> getTermsOfUseEn()
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -422,7 +423,7 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            stringResource(R.string.quizGenPolicyBody),
+            annotatedString,
             style = QuizzerTypographyDefaults.quizzerBodySmallNormal
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -432,17 +433,19 @@ fun QuizPolicyAgreement(onAgree: () -> Unit) {
                 .imePadding()
                 .testTag("QuizLayoutBuilderAgreePolicyButton"),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
             Text(
                 stringResource(R.string.agree),
-                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium,
+                style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
             )
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

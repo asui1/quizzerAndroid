@@ -33,7 +33,7 @@ fun HorizontalFlipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit
             modifier = Modifier.testTag("${key}FlipperPrevious"),
             onClick = { onPrevious(currentIndex) }
         ) {
-            Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = stringResource(R.string.previous))
+            Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = stringResource(R.string.back))
         }
         Text(
             text = if (items[currentIndex] is Int) {

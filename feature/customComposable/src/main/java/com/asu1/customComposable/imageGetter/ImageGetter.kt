@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.Icon
@@ -109,9 +110,13 @@ fun ImageGetter(
                     ) {
                         if (image.width <= 1 || image.height <= 1) {
                             Icon(
-                                imageVector = Icons.Default.Photo,
+                                imageVector = Icons.Default.ImageSearch,
                                 contentDescription = stringResource(R.string.add_image),
                                 modifier = Modifier.size(size/2)
+                            )
+                            Text(
+                                stringResource(R.string.add_image),
+                                modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         } else {
                             val imageBitmap = remember(image) {

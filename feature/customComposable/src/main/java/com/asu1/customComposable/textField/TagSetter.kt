@@ -3,6 +3,7 @@ package com.asu1.customComposable.textField
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -81,13 +83,16 @@ fun TagSetter(
                                 onClick(tag)
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // 살짝 강조된 배경
                                 contentColor = MaterialTheme.colorScheme.primary
                             ),
+                            shape = RoundedCornerShape(15), // pill shape
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            modifier = Modifier.padding(4.dp)
                         ) {
                             Text(
                                 text = tag,
-                                style = QuizzerTypographyDefaults.quizzerBodySmallBold,
+                                style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         }

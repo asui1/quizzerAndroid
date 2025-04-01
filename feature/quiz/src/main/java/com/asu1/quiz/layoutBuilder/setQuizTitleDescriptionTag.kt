@@ -36,7 +36,7 @@ fun QuizLayoutTitleDescriptionTag(
     ) {
         LazyColumn(
             reverseLayout = true,
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
+            verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Bottom),
             modifier = Modifier
                 .padding(16.dp)
                 .weight(1f)
