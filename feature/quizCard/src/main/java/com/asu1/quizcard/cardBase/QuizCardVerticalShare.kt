@@ -128,6 +128,7 @@ fun VerticalQuizCardLargeShare(
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = "Share Quiz",
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -138,7 +139,7 @@ fun VerticalQuizCardLargeShare(
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer  // Readable text
                         ),
                         shape =
-                            RoundedCornerShape(20.dp),
+                            RoundedCornerShape(4.dp),
                     ) {
                         Text(
                             stringResource(R.string.get_quiz),

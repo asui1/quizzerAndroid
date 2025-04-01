@@ -121,7 +121,7 @@ fun <T : HasUniqueId> LazyColumnWithSwipeToDismiss(
                             )
                         },
                         enableDismissFromStartToEnd = false,
-                        modifier = Modifier.padding(vertical = 2.dp),
+                        modifier = Modifier.padding(vertical = 4.dp),
                         content = {
                             content(inputItem, index)
                         }

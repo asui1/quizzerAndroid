@@ -131,18 +131,26 @@ fun LoadMyQuizBody(
                         )
                     }
                     else ->{
-                        LazyColumnWithSwipeToDismiss(
-                            inputList = quizList.toPersistentList(),
-                            deleteItemWithId = deleteQuiz,
-                            content = { quizCard, index ->
-                                QuizCardHorizontal(
-                                    quizCard = quizCard,
-                                    onClick = {
-                                        onLoadQuiz(index)
-                                    }
-                                )
-                            }
-                        )
+                        if(quizList.isEmpty()){
+                            Text(
+                                stringResource(R.string.my_quizzes_empty),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        else {
+                            LazyColumnWithSwipeToDismiss(
+                                inputList = quizList.toPersistentList(),
+                                deleteItemWithId = deleteQuiz,
+                                content = { quizCard, index ->
+                                    QuizCardHorizontal(
+                                        quizCard = quizCard,
+                                        onClick = {
+                                            onLoadQuiz(index)
+                                        }
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }

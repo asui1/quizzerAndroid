@@ -99,7 +99,7 @@ fun UserSettingsScreen(
         Text(
             "${stringResource(R.string.app_version)}: $version",
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Light,
         )
 
         if(isLoggedIn) {

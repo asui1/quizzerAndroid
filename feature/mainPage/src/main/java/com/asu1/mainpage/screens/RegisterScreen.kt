@@ -57,6 +57,7 @@ import com.asu1.mainpage.viewModels.RegisterViewModel
 import com.asu1.mainpage.viewModels.RegisterViewModelActions
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
+import com.asu1.utils.LanguageSetter
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentSet
@@ -165,6 +166,13 @@ fun RegisterScreen(
 fun UsageAgreement(
     onProceed: () -> Unit = {},
 ) {
+    val annotatedString = remember(LanguageSetter.lang) {
+        when (LanguageSetter.lang) {
+            "ko" -> annotatedPolicyKo()
+            else -> annotatedPolicyEn()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -180,7 +188,7 @@ fun UsageAgreement(
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = stringResource(R.string.privacy_policy_body),
+                text = annotatedString,
                 style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
             )
             Spacer(modifier = Modifier.padding(32.dp))

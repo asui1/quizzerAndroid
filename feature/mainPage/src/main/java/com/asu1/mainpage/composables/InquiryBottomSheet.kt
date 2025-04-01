@@ -1,5 +1,6 @@
 package com.asu1.mainpage.composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,10 +54,11 @@ fun InquiryBottomSheetContent(
     onSendInquiry: (String, String, String) -> Unit
 ) {
     val email = userData?.email ?: "GUEST"
-    val options = listOf(stringResource(R.string.bug_report),
-        stringResource(R.string.quiz_report), stringResource(R.string.user_request), stringResource(
-            R.string.others
-        )
+    val options = listOf(
+        stringResource(R.string.user_request),
+        stringResource(R.string.bug_report),
+        stringResource(R.string.quiz_report),
+        stringResource(R.string.others),
     )
     var selectedOption by remember { mutableStateOf(options[0]) }
     var textFieldValue by remember { mutableStateOf("") }
@@ -75,12 +79,17 @@ fun InquiryBottomSheetContent(
     ) {
         Text(
             stringResource(id = R.string.inquiry),
-            style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
+            style = QuizzerTypographyDefaults.quizzerHeadlineSmallBold,
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             stringResource(R.string.inquiry_body),
             style = QuizzerTypographyDefaults.quizzerBodySmallNormal,
+        )
+        Spacer(modifier = Modifier.padding(8.dp))
+        Text(
+            stringResource(id = R.string.inquiry_type),
+            style = QuizzerTypographyDefaults.quizzerBodySmallBold,
         )
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -91,7 +100,12 @@ fun InquiryBottomSheetContent(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline
+                ),
+                shape = RoundedCornerShape(4.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +114,8 @@ fun InquiryBottomSheetContent(
                 ) {
                     Text(
                         selectedOption,
-                        style = QuizzerTypographyDefaults.quizzerBodySmallBold
+                        style = QuizzerTypographyDefaults.quizzerBodySmallBold,
+                        fontWeight = FontWeight.ExtraBold,
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -129,7 +144,7 @@ fun InquiryBottomSheetContent(
             modifier = Modifier.fillMaxWidth(),
             value = textFieldValue,
             onValueChange = { textFieldValue = it },
-            label = { Text(stringResource(R.string.enter_text)) },
+            label = { Text(stringResource(R.string.enter_inquiry)) },
             minLines = 1,
             maxLines = 5,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
@@ -145,8 +160,8 @@ fun InquiryBottomSheetContent(
                 .imePadding()
                 .navigationBarsPadding(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             )
         ) {
             Text(

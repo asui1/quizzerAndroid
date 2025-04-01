@@ -34,6 +34,7 @@ import com.asu1.mainpage.composables.GoogleCredentialManager
 import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
+import com.asu1.utils.getAppVersion
 
 
 @Composable
@@ -81,6 +82,8 @@ private fun LoginBody(
     onClickSignIn: () -> Unit = {},
     onClickRegister: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val version = remember { context.getAppVersion() }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,12 +99,13 @@ private fun LoginBody(
             contentScale = ContentScale.FillWidth,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
+        Spacer(modifier = Modifier.height(40.dp))
         TextDivider(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = {
                 Text(
                     text = stringResource(R.string.login),
-                    style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
+                    style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
                 )
             }
         )
@@ -114,13 +118,13 @@ private fun LoginBody(
                     onClickSignIn()
                 },
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
         TextDivider(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = {
                 Text(
-                    text = stringResource(R.string.register),
-                    style = QuizzerTypographyDefaults.quizzerLabelMediumMedium,
+                    text = stringResource(R.string.no_account),
+                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 )
             }
         )
@@ -133,6 +137,11 @@ private fun LoginBody(
                 .clickable {
                     onClickRegister()
                 },
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            version,
+            style = QuizzerTypographyDefaults.quizzerLabelSmallLight
         )
     }
 }

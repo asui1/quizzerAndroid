@@ -25,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -122,8 +123,11 @@ fun QuizCardHorizontal(
     val minSize = remember{minOf(screenWidth, screenHeight).times(0.35f).coerceAtMost(200.dp)}
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
         shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         modifier = modifier
             .height(minSize+2.dp)
             .width(screenWidth)
@@ -159,7 +163,7 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
         Text(
             text = quizCard.title,
             style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(4.dp))
