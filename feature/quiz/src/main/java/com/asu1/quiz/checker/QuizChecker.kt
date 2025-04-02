@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -48,7 +47,6 @@ fun QuizChecker(
     ){
         quizzes.size
     }
-    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
 
     LaunchedEffect(colorScheme.primaryContainer) {
         setTopBarColor(
@@ -74,7 +72,6 @@ fun QuizChecker(
                     pagerState = pagerState,
                     quizzes = quizzes,
                     quizTheme = quizTheme,
-                    textStyleManager = textStyleManager,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -88,7 +85,6 @@ fun QuizCheckerPager(
     pagerState: PagerState,
     quizzes: List<Quiz<*>>,
     quizTheme: QuizTheme = QuizTheme(),
-    textStyleManager: TextStyleManager,
 ) {
     HorizontalPager(
         state = pagerState,
@@ -102,7 +98,7 @@ fun QuizCheckerPager(
             QuizCheckerBody(
                 quiz = quizzes[page],
                 quizTheme = quizTheme,
-                quizStyleManager = textStyleManager,
+                quizStyleManager = TextStyleManager,
             )
             Text(
                 text = "${page + 1}/${quizzes.size}",
@@ -156,7 +152,7 @@ fun QuizCheckerBody(
 @Composable
 fun QuizCheckerPreview(){
     val quizTheme = QuizTheme()
-    val textStyleManager = TextStyleManager()
+    val textStyleManager = TextStyleManager
     Column(){
         QuizCheckerBody(
             quiz = sampleQuiz1,

@@ -62,6 +62,8 @@ import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.quiz.layoutBuilder.quizTextInputs.QuizLayoutTitleDescriptionTag
+import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetColorScheme
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
@@ -216,11 +218,6 @@ fun QuizLayoutBuilderScreenBody(
     updateQuiz: (QuizCoordinatorActions) -> Unit = {},
 ){
     var showExitDialog by remember { mutableStateOf(false) }
-    val canProceed = when(step){
-        LayoutSteps.POLICY -> false
-        LayoutSteps.TITLE -> quizData.title.isNotEmpty()
-        else -> true
-    }
 
     if (showExitDialog) {
         DialogComposable(
@@ -311,7 +308,6 @@ fun QuizLayoutBuilderScreenBody(
                     )
                 }
                 3 -> {
-                    // Set Color Setting
                     QuizLayoutSetColorScheme(
                         colorScheme = quizTheme.colorScheme,
                         isTitleImageSet = quizData.image.width > 2,
@@ -323,6 +319,14 @@ fun QuizLayoutBuilderScreenBody(
                             updateQuiz(action)
                         }
                     )
+                    // Set Color Setting
+//                    QuizLayoutSetQuizTheme(
+//                        quizTheme = quizTheme,
+//                        isTitleImageSet = quizData.image.width > 5,
+//                        updateQuizCoordinator = { action ->
+//                            updateQuiz(action)
+//                        },
+//                    )
                 }
                 4 -> {
                     QuizLayoutSetTextStyle(

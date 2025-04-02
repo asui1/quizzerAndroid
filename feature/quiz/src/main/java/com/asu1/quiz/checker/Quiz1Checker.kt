@@ -45,7 +45,6 @@ fun Quiz1Checker(
         item{
             BuildBody(
                 quizBody = quiz.bodyType,
-                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -81,6 +80,6 @@ fun Quiz1Checker(
 fun PreviewQuiz1Checker(){
     Quiz1Checker(
         quiz = sampleQuiz1,
-        quizStyleManager = TextStyleManager()
+        quizStyleManager = TextStyleManager
     )
 }

@@ -5,6 +5,7 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
 import com.asu1.models.serializers.BodyType
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -44,5 +45,19 @@ val sampleQuiz4 = Quiz4(
     connectionAnswerIndex = mutableListOf(0, 2, 1, 3),
     leftDots = mutableListOf(null, null, null, null),
     rightDots = mutableListOf(null, null, null, null),
+    bodyType = BodyType.CODE("""suspend fun main() {
+    val result = withContext(Dispatchers.Default) {
+        delay(1000)
+        "Completed"
+    }
+    println(result)
+}""")
+)
+
+val sampleQuizList = persistentListOf(
+    sampleQuiz1,
+    sampleQuiz2,
+    sampleQuiz3,
+    sampleQuiz4,
 )
 

@@ -1,4 +1,4 @@
-package com.asu1.quiz.layoutBuilder
+package com.asu1.quiz.layoutBuilder.quizTextInputs
 
 
 import androidx.compose.runtime.Composable

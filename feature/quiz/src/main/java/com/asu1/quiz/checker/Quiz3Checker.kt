@@ -47,7 +47,6 @@ fun Quiz3Checker(
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
                 quizBody = quiz.bodyType,
-                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
             quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
@@ -100,6 +99,6 @@ fun Quiz3Checker(
 fun Quiz3CheckerPreview(){
     Quiz3Checker(
         quiz = sampleQuiz3,
-        quizStyleManager = TextStyleManager()
+        quizStyleManager = TextStyleManager
     )
 }

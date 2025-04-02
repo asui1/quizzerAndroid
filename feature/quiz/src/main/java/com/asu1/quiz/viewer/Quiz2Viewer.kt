@@ -30,7 +30,6 @@ fun Quiz2Viewer(
     quiz: Quiz2,
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (LocalDate) -> Unit = {},
-    quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
 )
 {
@@ -50,7 +49,7 @@ fun Quiz2Viewer(
             .padding(16.dp)
     ){
         item{
-            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+            TextStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
@@ -69,12 +68,12 @@ fun Quiz2Viewer(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER,
+            TextStyleManager.GetTextComposable(TextStyles.ANSWER,
                 stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(userAnswers.size){
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER, buildString {
+            TextStyleManager.GetTextComposable(TextStyles.ANSWER, buildString {
                 append("${it + 1}. ")
                 append(userAnswers[it])
             }, modifier = Modifier.fillMaxWidth())
@@ -94,6 +93,5 @@ fun Quiz2ViewerPreview(){
         quiz = sampleQuiz2,
         quizTheme = QuizTheme(),
         onUserInput = { },
-        quizStyleManager = TextStyleManager()
     )
 }

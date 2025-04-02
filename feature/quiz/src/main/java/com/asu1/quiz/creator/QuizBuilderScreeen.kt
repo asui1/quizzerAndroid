@@ -44,7 +44,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -61,15 +60,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.asu1.activityNavigation.Route
+import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.models.serializers.QuizType
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
-import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.activityNavigation.Route
 import com.asu1.quiz.viewer.QuizSubmit
 import com.asu1.quiz.viewer.QuizViewerPager
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.questionTypes
@@ -98,7 +97,6 @@ fun QuizBuilderScreen(
         quizzes.size + 1
     }
     var isPreview by remember{ mutableStateOf(false) }
-    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
 
     LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
@@ -145,7 +143,6 @@ fun QuizBuilderScreen(
                         quizSize = quizzes.size,
                         visibleQuizzes = quizzes,
                         quizTheme = quizTheme,
-                        textStyleManager = textStyleManager,
                         updateQuizCoordinator = { quizCoordinatorAction ->
                             quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
                         },
@@ -256,7 +253,6 @@ fun QuizBuilderScreen(
                         quizSize = quizzes.size,
                         visibleQuizzes = quizzes,
                         quizTheme = quizTheme,
-                        textStyleManager = textStyleManager,
                         updateQuizCoordinator = {_ -> },
                         modifier = Modifier
                             .fillMaxWidth(0.8f)

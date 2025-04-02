@@ -1,6 +1,7 @@
 package com.asu1.quiz.ui
 
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -18,61 +19,68 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.asu1.resources.LightColorScheme
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.getFontFamily
 
 @Composable
-fun GetTextStyle(text: String, modifier: Modifier = Modifier, textStyle: com.asu1.quiz.ui.TextStyle, textAlign: TextAlign = TextAlign.Start) {
-    when (textStyle.contourStyle) {
+fun GetTextStyle(text: String,
+                 modifier: Modifier = Modifier,
+                 myTextStyle: com.asu1.quiz.ui.TextStyle,
+//                 textStyle: TextStyle,
+) {
+    when (myTextStyle.contourStyle) {
         0 -> Text(
             text = text,
-            style = TextStyle(
-                fontFamily = textStyle.fontFamily,
-                color = textStyle.contentColor,
-                fontSize = textStyle.fontSize,
+            style =
+//                textStyle,
+                    TextStyle(
+                fontFamily = myTextStyle.fontFamily,
+                color = myTextStyle.contentColor,
+                fontSize = myTextStyle.fontSize,
             ),
             modifier = modifier
-                .background(textStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
-                .then(textStyle.borderModifier)
+                .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
+                .then(myTextStyle.borderModifier)
                 .padding(8.dp)
         )
         1 -> {
             TextWithBorder(
                 text = text,
-                fontFamily = textStyle.fontFamily,
-                fontSize = textStyle.fontSize,
-                textColor = textStyle.contentColor,
-                containerColor = textStyle.addColor,
+                fontSize = myTextStyle.fontSize,
+                textColor = myTextStyle.contentColor,
+                containerColor = myTextStyle.addColor,
                 borderWidth = 6f,
                 modifier = modifier
-                    .then(textStyle.borderModifier)
+                    .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
+                    .then(myTextStyle.borderModifier)
                     .padding(8.dp)
             )
         }
         2 -> {
             TextWithContour(
                 text = text,
-                textColor = textStyle.addColor,
-                fontSize = textStyle.fontSize,
-                contourColor = textStyle.contentColor,
+                textColor = myTextStyle.addColor,
+                fontSize = myTextStyle.fontSize,
+                contourColor = myTextStyle.contentColor,
                 contourWidth = 8f,
                 modifier = modifier
-                    .then(textStyle.borderModifier)
+                    .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
+                    .then(myTextStyle.borderModifier)
                     .padding(8.dp)
             )
         }
@@ -122,8 +130,8 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
                 containerColor = addColor,
                 fontSize = fontSize,
                 borderWidth = 8f,
-                fontFamily = fontFamily,
                 modifier = modifier
+                    .background(backgroundColor, shape = RoundedCornerShape(4.dp))
                     .then(borderModifier)
                     .padding(8.dp)
             )
@@ -136,6 +144,7 @@ fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modif
                 contourColor = contentColor,
                 contourWidth = 8f,
                 modifier = modifier
+                    .background(backgroundColor, shape = RoundedCornerShape(4.dp))
                     .then(borderModifier)
                     .padding(8.dp)
             )
@@ -150,15 +159,18 @@ fun PreviewGetTextStyle(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
-            textStyle = TextStyle(
-                fontFamily = getFontFamily(0),
-                contentColor = Color.Black,
-                backgroundColor = Color.Transparent,
-                addColor = Color.Black,
-                borderModifier = Modifier,
-                fontSize = 24.sp,
-                contourStyle = 0
-            )
+            style = listOf(0, 0, 1, 1 ,1),
+            colorScheme = LightColorScheme,
+            modifier = Modifier,
+//            myTextStyle = TextStyle(
+//                fontFamily = getFontFamily(0),
+//                contentColor = Color.Black,
+//                backgroundColor = Color.Transparent,
+//                addColor = Color.Black,
+//                borderModifier = Modifier,
+//                fontSize = 24.sp,
+//                contourStyle = 0
+//            )
         )
     }
 }
@@ -168,7 +180,7 @@ fun PreviewGetTextStyleWithBorder(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World, 가나다라마바사",
-            textStyle = TextStyle(
+            myTextStyle = TextStyle(
                 fontFamily = getFontFamily(0),
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 backgroundColor = Color.Transparent,
@@ -186,7 +198,7 @@ fun PreviewGetTextStyleWithContour(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
-            textStyle = TextStyle(
+            myTextStyle = TextStyle(
                 fontFamily = getFontFamily(0),
                 contentColor = Color.Black,
                 backgroundColor = Color.Transparent,
@@ -249,13 +261,12 @@ fun getColor(colorScheme: ColorScheme, color: Int): List<Color> {
 fun TextWithBorder(
     text: String,
     textColor: Color,
-    fontFamily: FontFamily,
     containerColor: Color,
     borderWidth: Float,
     fontSize: TextUnit = 24.sp,
     modifier: Modifier = Modifier
 ) {
-    val outlineColor = MaterialTheme.colorScheme.outline
+    val outlineColor = Color.Red
     BasicText(
         text = text,
         style = TextStyle(
@@ -265,81 +276,94 @@ fun TextWithBorder(
             fontFamily = FontFamily.Default
         ),
         modifier = modifier
-            .drawBehind {
-                drawTextWithShadow(
-                    text,
-                    textColor = containerColor,
-                    contourColor = textColor,
-                    outlineColor = outlineColor,
-                    borderWidth,
-                    fontFamily = fontFamily,
-                    fontSize = fontSize,
-                    maxWidth = size.width,)
-            }
+            .drawTextWithShadow(
+                text,
+                textColor = containerColor,
+                contourColor = textColor,
+                outlineColor = outlineColor,
+                borderWidth,
+                fontSize = fontSize,
+            )
     )
 }
 
-fun DrawScope.drawTextWithShadow(
+fun Modifier.drawTextWithShadow(
     text: String,
     textColor: Color,
     contourColor: Color,
     outlineColor: Color,
     contourWidth: Float,
-    maxWidth: Float,
-    fontFamily: FontFamily,
     fontSize: TextUnit = 24.sp,
-) {
-    drawIntoCanvas { canvas ->
-        val contourPaint = Paint().apply {
-            this.color = textColor.toArgb()
-            this.style = Paint.Style.STROKE
-            this.strokeWidth = contourWidth
-            this.textSize = fontSize.toPx()
-            this.isAntiAlias = true
-        }
-        val textPaint = Paint().apply {
-            this.color = contourColor.toArgb()
-            this.textSize = fontSize.toPx()
-            this.isAntiAlias = true
-        }
-        val shadowPaint = Paint().apply {
-            this.color = outlineColor.toArgb()
-            this.strokeWidth = contourWidth + 2
-            this.textSize = fontSize.toPx()
-            this.isAntiAlias = true
+):Modifier = this.then(
+    Modifier.drawWithCache {
+        // Setup only once per input change
+        val textPx = fontSize.toPx()
+        val layoutWidth = size.width.toInt()
+
+        val contourPaint = TextPaint().apply {
+            color = textColor.toArgb()
+            style = Paint.Style.STROKE
+            strokeWidth = contourWidth
+            this.textSize = textPx
+            isAntiAlias = true
+            typeface = Typeface.DEFAULT_BOLD
         }
 
-        val contourLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(contourPaint), maxWidth.toInt())
+        val fillPaint = TextPaint().apply {
+            color = contourColor.toArgb()
+            this.textSize = textPx
+            isAntiAlias = true
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        val shadowPaint = TextPaint().apply {
+            color = outlineColor.toArgb()
+            strokeWidth = contourWidth + 2
+            this.textSize = textPx
+            isAntiAlias = true
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        val contourLayout =
+            StaticLayout.Builder.obtain(text, 0, text.length, contourPaint, layoutWidth)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0f, 1f)
+                .setIncludePad(false)
+                .build()
+
+        val fillLayout = StaticLayout.Builder.obtain(text, 0, text.length, fillPaint, layoutWidth)
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
             .setIncludePad(false)
             .build()
 
-        val textLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(textPaint), maxWidth.toInt())
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(0f, 1f)
-            .setIncludePad(false)
-            .build()
+        val shadowLayout =
+            StaticLayout.Builder.obtain(text, 0, text.length, shadowPaint, layoutWidth)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0f, 1f)
+                .setIncludePad(false)
+                .build()
 
-        val shadowLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(shadowPaint), maxWidth.toInt())
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(0f, 1f)
-            .setIncludePad(false)
-            .build()
+        // Draw only when needed
+        onDrawBehind {
+            drawIntoCanvas { canvas ->
+                canvas.nativeCanvas.apply {
+                    save()
+                    shadowLayout.draw(this)
+                    restore()
 
-        canvas.nativeCanvas.save()
-        shadowLayout.draw(canvas.nativeCanvas)
-        canvas.nativeCanvas.restore()
+                    save()
+                    contourLayout.draw(this)
+                    restore()
 
-        canvas.nativeCanvas.save()
-        contourLayout.draw(canvas.nativeCanvas)
-        canvas.nativeCanvas.restore()
-
-        canvas.nativeCanvas.save()
-        textLayout.draw(canvas.nativeCanvas)
-        canvas.nativeCanvas.restore()
+                    save()
+                    fillLayout.draw(this)
+                    restore()
+                }
+            }
+        }
     }
-}
+)
 
 @Composable
 fun TextWithContour(
@@ -353,11 +377,8 @@ fun TextWithContour(
 
     Box(
         modifier = modifier
-            .drawBehind {
-                drawTextWithContour(text, textColor, contourColor, contourWidth,
-                    fontSize = fontSize,
-                    maxWidth = size.width,)
-            }
+            .drawTextWithContour(text, textColor, contourColor, contourWidth,
+                fontSize = fontSize,)
     ){
         Text(
             text = text,
@@ -371,43 +392,60 @@ fun TextWithContour(
     }
 }
 
-fun DrawScope.drawTextWithContour(
-    text: String, textColor: Color,
-    contourColor: Color, contourWidth: Float,
-    maxWidth: Float,
+fun Modifier.drawTextWithContour(
+    text: String,
+    textColor: Color,
+    contourColor: Color,
+    contourWidth: Float,
     fontSize: TextUnit = 24.sp,
-) {
-    drawIntoCanvas { canvas ->
-        val paint = Paint().apply {
-            this.color = contourColor.toArgb()
-            this.style = Paint.Style.STROKE
-            this.strokeWidth = contourWidth
-            this.textSize = fontSize.toPx()
-            this.isAntiAlias = true
+): Modifier = this.then(
+    Modifier.drawWithCache {
+        val textPx = fontSize.toPx()
+
+        val contourPaint = TextPaint().apply {
+            color = contourColor.toArgb()
+            style = Paint.Style.STROKE
+            strokeWidth = contourWidth
+            textSize = textPx
+            isAntiAlias = true
         }
-        val textPaint = Paint().apply {
-            this.color = textColor.toArgb()
-            this.textSize = fontSize.toPx()
-            this.isAntiAlias = true
+
+        val fillPaint = TextPaint().apply {
+            color = textColor.toArgb()
+            textSize = textPx
+            isAntiAlias = true
         }
-        val textLayout = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(paint), maxWidth.toInt())
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(0f, 1f)
-            .setIncludePad(false)
-            .build()
 
-        canvas.nativeCanvas.save()
-        textLayout.draw(canvas.nativeCanvas)
-        canvas.nativeCanvas.restore()
+        lateinit var strokeLayout: StaticLayout
+        lateinit var fillLayout: StaticLayout
 
-        val textLayoutPaint = StaticLayout.Builder.obtain(text, 0, text.length, TextPaint(textPaint), maxWidth.toInt())
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setLineSpacing(0f, 1f)
-            .setIncludePad(false)
-            .build()
+        onDrawBehind {
+            // You can only access `size.width` here
+            val layoutWidth = size.width.toInt()
 
-        canvas.nativeCanvas.save()
-        textLayoutPaint.draw(canvas.nativeCanvas)
-        canvas.nativeCanvas.restore()
+            strokeLayout = StaticLayout.Builder.obtain(text, 0, text.length, contourPaint, layoutWidth)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0f, 1f)
+                .setIncludePad(false)
+                .build()
+
+            fillLayout = StaticLayout.Builder.obtain(text, 0, text.length, fillPaint, layoutWidth)
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0f, 1f)
+                .setIncludePad(false)
+                .build()
+
+            drawIntoCanvas { canvas ->
+                canvas.nativeCanvas.apply {
+                    save()
+                    strokeLayout.draw(this)
+                    restore()
+
+                    save()
+                    fillLayout.draw(this)
+                    restore()
+                }
+            }
+        }
     }
-}
+)

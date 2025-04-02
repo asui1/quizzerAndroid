@@ -35,6 +35,7 @@ android {
 
 dependencies {
 
+    implementation(libs.material.kolor)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -42,6 +43,7 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.androidx.ui.graphics.android)
     implementation(project(":core:util"))
+    implementation(project(":core:resource"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

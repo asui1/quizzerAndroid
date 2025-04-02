@@ -2,12 +2,16 @@ package com.asu1.quiz.ui
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.resources.LightColorScheme
 import com.asu1.resources.TextStyles
 import com.asu1.resources.getFontFamily
@@ -23,13 +27,23 @@ data class TextStyle(
     val contourStyle: Int,
 )
 
-class TextStyleManager {
-    private var questionStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
-    private var bodyStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
-    private var answerStyle: TextStyle = TextStyle(FontFamily.Default, Color.Black, Color.Transparent, Color.Black, Modifier, 24.sp, 0)
+object TextStyleManager {
+    private var questionStyle: TextStyle by mutableStateOf(TextStyle(FontFamily.Default, LightColorScheme.primary, Color.Transparent, Color.Black, Modifier, 24.sp, 0))
+    private var bodyStyle: TextStyle by mutableStateOf( TextStyle(FontFamily.Default, LightColorScheme.primary, Color.Transparent, Color.Black, Modifier, 16.sp, 0))
+    private var answerStyle: TextStyle by mutableStateOf( TextStyle(FontFamily.Default, LightColorScheme.onSurface, Color.Transparent, Color.Black, Modifier, 20.sp, 0))
 
     private var currentColorScheme: ColorScheme = LightColorScheme
     private var colorBrush: Brush = Brush.linearGradient(colors = listOf())
+
+    fun reset(){
+        val quizTheme = QuizTheme()
+        initTextStyleManager(
+            colorScheme = currentColorScheme,
+            questionStyle = quizTheme.questionTextStyle,
+            bodyStyle = quizTheme.bodyTextStyle,
+            answerStyle = quizTheme.answerTextStyle,
+        )
+    }
 
     fun initTextStyleManager(colorScheme: ColorScheme, questionStyle: List<Int>, answerStyle: List<Int>, bodyStyle: List<Int>){
         currentColorScheme = colorScheme
@@ -69,10 +83,12 @@ class TextStyleManager {
 
     @Composable
     fun GetTextComposable(textStyles: TextStyles, text: String, modifier: Modifier = Modifier){
-        when(textStyles){
-            TextStyles.QUESTION -> GetTextStyle(text, modifier, questionStyle)
-            TextStyles.BODY -> GetTextStyle(text, modifier, bodyStyle)
-            TextStyles.ANSWER -> GetTextStyle(text, modifier, answerStyle)
+        val style = when (textStyles) {
+            TextStyles.QUESTION -> questionStyle
+            TextStyles.BODY -> bodyStyle
+            TextStyles.ANSWER -> answerStyle
         }
+
+        GetTextStyle(text, modifier, style)
     }
 }

@@ -31,11 +31,9 @@ class QuizThemeViewModel : ViewModel() {
     private val _quizTheme = MutableStateFlow(QuizTheme())
     val quizTheme: StateFlow<QuizTheme> = _quizTheme.asStateFlow()
 
-    private var textStyleManager = TextStyleManager()
-
     fun resetQuizTheme(){
         _quizTheme.value = QuizTheme()
-        textStyleManager = TextStyleManager()
+        TextStyleManager.reset()
     }
 
     fun loadQuizTheme(quizTheme: QuizTheme){
@@ -48,15 +46,12 @@ class QuizThemeViewModel : ViewModel() {
 
 
     fun initTextStyleManager(){
-        textStyleManager.initTextStyleManager(
+        TextStyleManager.initTextStyleManager(
             colorScheme = quizTheme.value.colorScheme,
             questionStyle = quizTheme.value.questionTextStyle,
             answerStyle = quizTheme.value.answerTextStyle,
             bodyStyle = quizTheme.value.bodyTextStyle
         )
-    }
-    fun getTextStyleManager(): TextStyleManager {
-        return textStyleManager
     }
 
     fun updateBackgroundImage(image: Bitmap?) {
@@ -100,6 +95,12 @@ class QuizThemeViewModel : ViewModel() {
             }
             it.copy(colorScheme = updatedScheme)
         }
+        TextStyleManager.initTextStyleManager(
+            _quizTheme.value.colorScheme,
+            _quizTheme.value.questionTextStyle,
+            _quizTheme.value.bodyTextStyle,
+            _quizTheme.value.answerTextStyle,
+        )
     }
 
     fun updateColorScheme(colorScheme: ColorScheme) {

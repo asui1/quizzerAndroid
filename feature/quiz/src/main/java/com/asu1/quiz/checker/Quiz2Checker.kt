@@ -98,6 +98,6 @@ fun Quiz2Checker(
 fun Quiz2CheckerPreview(){
     Quiz2Checker(
         quiz = sampleQuiz2,
-        quizStyleManager = TextStyleManager()
+        quizStyleManager = TextStyleManager
     )
 }

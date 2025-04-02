@@ -1,4 +1,4 @@
-package com.asu1.quiz.layoutBuilder
+package com.asu1.quiz.layoutBuilder.quizTextInputs
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +47,7 @@ fun QuizLayoutTitleDescriptionTag(
                 ) {
                     QuizLayoutSetTags(
                         quizTags = quizData.tags,
-                        onTagUpdate = {tag -> onTagUpdate(tag) },
+                        onTagUpdate = { tag -> onTagUpdate(tag) },
                         enabled = step == LayoutSteps.TAGS,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -61,7 +61,7 @@ fun QuizLayoutTitleDescriptionTag(
                     QuizLayoutSetDescription(
                         quizDescription = quizData.description,
                         onDescriptionUpdate = { onDescriptionUpdate(it) },
-                        proceed = {proceed()},
+                        proceed = { proceed() },
                         enabled = step == LayoutSteps.DESCRIPTION,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -72,7 +72,7 @@ fun QuizLayoutTitleDescriptionTag(
                 QuizLayoutTitle(
                     title = quizData.title,
                     onTitleUpdate = { onTitleUpdate(it) },
-                    proceed = {proceed()},
+                    proceed = { proceed() },
                     enabled = step == LayoutSteps.TITLE,
                     modifier = Modifier.fillMaxWidth()
                 )

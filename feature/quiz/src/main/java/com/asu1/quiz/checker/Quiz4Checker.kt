@@ -76,7 +76,6 @@ fun Quiz4Checker(
             item{
                 BuildBody(
                     quizBody = quizState.bodyType,
-                    quizStyleManager = quizStyleManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -185,6 +184,6 @@ fun Quiz4CheckerPreview() {
 
     Quiz4Checker(
         quiz = quiz4ViewModel,
-        quizStyleManager = TextStyleManager()
+        quizStyleManager = TextStyleManager
     )
 }

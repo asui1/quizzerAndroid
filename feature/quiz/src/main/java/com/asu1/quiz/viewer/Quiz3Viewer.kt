@@ -43,7 +43,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun Quiz3Viewer(
     quiz: Quiz3,
     onUserInput: (Int, Int) -> Unit = {_, _ ->},
-    quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
 ) {
     val view = LocalView.current
@@ -69,14 +68,13 @@ fun Quiz3Viewer(
             .padding(16.dp)
     ) {
         item {
-            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+            TextStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
                 quizBody = quiz.bodyType,
-                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
+            TextStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
         items(quiz3List.subList(1, quiz3List.size), key = { it }) {
             ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
@@ -107,7 +105,7 @@ fun Quiz3Viewer(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            quizStyleManager.GetTextComposable(TextStyles.ANSWER, item, modifier = Modifier.weight(1f).padding(8.dp))
+                            TextStyleManager.GetTextComposable(TextStyles.ANSWER, item, modifier = Modifier.weight(1f).padding(8.dp))
                             IconButton(
                                 modifier = Modifier.draggableHandle(
                                     enabled = !isPreview,
@@ -140,6 +138,5 @@ fun Quiz3ViewPreview() {
 
     Quiz3Viewer(quiz = sampleQuiz3,
         onUserInput = { _, _ -> },
-        quizStyleManager = TextStyleManager()
     )
 }

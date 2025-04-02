@@ -29,10 +29,9 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 @Composable
 fun BuildBody(
     quizBody: BodyType,
-    quizStyleManager: TextStyleManager,
 ){
     when(quizBody){
-        is BodyType.TEXT -> quizStyleManager.GetTextComposable(TextStyles.BODY, quizBody.bodyText, modifier = Modifier.fillMaxWidth())
+        is BodyType.TEXT -> TextStyleManager.GetTextComposable(TextStyles.BODY, quizBody.bodyText, modifier = Modifier.fillMaxWidth())
         is BodyType.IMAGE -> {
             val image = remember(quizBody.bodyImage){
                 quizBody.bodyImage.asImageBitmap().apply {

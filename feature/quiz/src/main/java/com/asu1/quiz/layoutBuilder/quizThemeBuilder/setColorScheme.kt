@@ -1,4 +1,4 @@
-package com.asu1.quiz.layoutBuilder
+package com.asu1.quiz.layoutBuilder.quizThemeBuilder
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -22,12 +22,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,19 +40,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.colorPicker.ColorSchemeSheet
 import com.asu1.customComposable.colorPicker.ColorPicker
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
+import com.asu1.quiz.layoutBuilder.BackgroundTabs
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
@@ -94,7 +98,7 @@ fun QuizLayoutSetColorScheme(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 8.dp)
+                .padding(8.dp)
         ) {
             item {
                 GenerateColorScheme(
@@ -108,19 +112,12 @@ fun QuizLayoutSetColorScheme(
                         paletteLevel = level
                     },
                     generateColorScheme = {base, isDark ->
-                        updateQuizCoordinator(
-                            QuizCoordinatorActions.GenerateColorScheme(
-                                generateWith = base,
-                                palette = paletteLevel,
-                                contrast = contrastLevel,
-                                isDark = isDark,
-                            )
-                        )
                     }
                 )
             }
             item{
                 BackgroundRow(
+                    modifier = Modifier.padding(bottom = 4.dp),
                     text = stringResource(R.string.background),
                     background = backgroundImage,
                     updateQuizTheme = updateQuizTheme,
@@ -134,6 +131,7 @@ fun QuizLayoutSetColorScheme(
             items(ColorList.size, key = { index -> ColorList[index] }) { index ->
                 if (index == 0 || paletteLevel == paletteSize) {
                     ColorPickerRowOpener(
+                        modifier = Modifier.padding(bottom = 4.dp),
                         text = colorNames[index],
                         imageColor = colors[index],
                         onColorSelected = { color ->
@@ -167,6 +165,7 @@ fun QuizLayoutSetColorScheme(
 
 @Composable
 fun BackgroundRow(
+    modifier: Modifier = Modifier,
     text: String,
     background: ImageColor,
     onOpen: () -> Unit,
@@ -183,7 +182,7 @@ fun BackgroundRow(
         }
     }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
@@ -262,29 +261,40 @@ fun GenerateColorScheme(
     {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            IconButtonWithDisable(
-                imageVector = Icons.Default.Autorenew,
-                text = stringResource(R.string.gen_with_title_image),
+            TextButton(
                 onClick = {
                     generateColorScheme(GenerateWith.TITLE_IMAGE, isDark)
                 },
                 enabled = isTitleImageSet,
-                testTag = "QuizLayoutBuilderColorSchemeGenWithTitleImage"
-            )
-            IconButtonWithDisable(
-                imageVector = Icons.Default.Autorenew,
-                text = stringResource(R.string.gen_with_primary_color),
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                    .testTag("QuizLayoutBuilderColorSchemeGenWithTitleImage")
+            ) {
+                Text(
+                    text = stringResource(R.string.gen_with_title_image),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            TextButton(
                 onClick = {
                     generateColorScheme(GenerateWith.COLOR, isDark)
                 },
                 enabled = true,
-                testTag = "QuizLayoutBuilderColorSchemeGenWithPrimaryColor"
-            )
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                    .testTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
+            ) {
+                Text(text = stringResource(R.string.gen_with_primary_color))
+            }
         }
+        Spacer(modifier = Modifier.height(8.dp))
         LevelSelector(
             prefix = stringResource(R.string.palette),
             items = PaletteStyle.entries.map { paletteStyleStringMap[it] ?: "" } + stringResource(
@@ -321,7 +331,12 @@ fun LevelSelector(
             .padding(8.dp)
     ){
         Text(
-            text = prefix + items[selectedLevel],
+            text = buildAnnotatedString {
+                append(prefix)
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) { // Replace with your desired color
+                    append(items[selectedLevel])
+                }
+            },
             style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -364,42 +379,9 @@ fun LevelSelector(
 
 }
 
-
-
-@Composable
-fun IconButtonWithDisable(
-    imageVector: ImageVector,
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean,
-    testTag: String = ""
-) {
-
-    Box(
-        modifier = Modifier
-            .clickable(enabled = enabled, onClick = onClick)
-            .background(color = MaterialTheme.colorScheme.surface)
-            .testTag(testTag)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Icon(imageVector = imageVector, contentDescription = "Previous",
-                tint = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = text,
-                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
-                color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-            )
-        }
-    }
-}
-
 @Composable
 fun ColorPickerRowOpener(
+    modifier: Modifier = Modifier,
     text: String,
     imageColor: Color,
     onColorSelected: (Color) -> Unit,
@@ -414,7 +396,7 @@ fun ColorPickerRowOpener(
         selectedColor = imageColor
     }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
@@ -439,7 +421,7 @@ fun ColorPickerRowOpener(
                     )
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(36.dp)
                             .background(color = selectedColor)
                     )
                     Icon(

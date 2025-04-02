@@ -44,7 +44,6 @@ import com.asu1.utils.Logger
 fun Quiz4Viewer(
     quiz: Quiz4ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
-    quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
     onUpdate: (List<Int?>) -> Unit = {},
 ) {
@@ -83,13 +82,12 @@ fun Quiz4Viewer(
                 .padding(16.dp)
         ) {
             item {
-                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
+                TextStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
                 BuildBody(
                     quizBody = quizState.bodyType,
-                    quizStyleManager = quizStyleManager,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -110,7 +108,7 @@ fun Quiz4Viewer(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                             ) {
-                                quizStyleManager.GetTextComposable(TextStyles.ANSWER,
+                                TextStyleManager.GetTextComposable(TextStyles.ANSWER,
                                     quizState.answers[index],
                                     modifier = Modifier.weight(1f)
                                 )
@@ -196,7 +194,7 @@ fun Quiz4Viewer(
                                     moveOffset = moveOffset,
                                     key = "QuizCreatorRightDot$index"
                                 )
-                                quizStyleManager.GetTextComposable(
+                                TextStyleManager.GetTextComposable(
                                     TextStyles.ANSWER,
                                     quizState.connectionAnswers[index],
                                     modifier = Modifier.weight(1f)
@@ -238,6 +236,5 @@ fun Quiz4ViewerPreview() {
     Quiz4Viewer(
         quiz = quiz4ViewModel,
         quizTheme = QuizTheme(),
-        quizStyleManager = TextStyleManager()
     )
 }

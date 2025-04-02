@@ -1,4 +1,4 @@
-package com.asu1.quiz.layoutBuilder
+package com.asu1.quiz.layoutBuilder.quizTextInputs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 

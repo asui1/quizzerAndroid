@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":core:util"))
     implementation(project(":core:imageColor"))
     implementation(project(":core:quizCardModel"))
+    implementation(project(":core:colorModel"))
 
     implementation(project(":repository:network"))
 

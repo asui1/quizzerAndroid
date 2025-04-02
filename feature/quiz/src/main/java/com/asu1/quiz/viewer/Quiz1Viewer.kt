@@ -27,7 +27,6 @@ import com.asu1.resources.TextStyles
 fun Quiz1Viewer(
     quiz: Quiz1,
     toggleUserAnswer: (Int) -> Unit = {},
-    quizStyleManager: TextStyleManager,
     isPreview: Boolean = false,
 )
 {
@@ -42,13 +41,14 @@ fun Quiz1Viewer(
             .padding(16.dp)
     ){
         item{
-            quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+            TextStyleManager.GetTextComposable(
+                TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
         item{
             BuildBody(
                 quizBody = quiz.bodyType,
-                quizStyleManager = quizStyleManager,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -73,7 +73,7 @@ fun Quiz1Viewer(
                             contentDescription = "Checkbox at $index, and is ${if(userAnswers[index]) "checked" else "unchecked"}"
                         }
                 )
-                quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
+                TextStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -88,6 +88,5 @@ fun Quiz1ViewerPreview()
 {
     Quiz1Viewer(
         quiz = sampleQuiz1,
-        quizStyleManager = TextStyleManager()
     )
 }

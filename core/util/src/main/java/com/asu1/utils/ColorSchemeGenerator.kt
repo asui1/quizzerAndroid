@@ -70,11 +70,9 @@ fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary
     )
 }
 
-fun randomDynamicColorScheme(seedColor: Color, paletteLevel: Int = 2, contrastLevel: Int = 2, isDark: Boolean): ColorScheme {
-    val style = PaletteStyle.entries[paletteLevel]
-    val contrast = Contrast.entries[contrastLevel].value
+fun randomDynamicColorScheme(seedColor: Color, paletteLevel: PaletteStyle, contrastLevel: Contrast, isDark: Boolean): ColorScheme {
     return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
-        style = style,
-        contrastLevel = contrast,
+        style = paletteLevel,
+        contrastLevel = contrastLevel.value,
     )
 }

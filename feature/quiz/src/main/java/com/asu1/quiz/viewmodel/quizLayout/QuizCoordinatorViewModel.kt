@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.asu1.colormodel.ContrastLevel
+import com.asu1.colormodel.PaletteLevel
 import com.asu1.models.quiz.GetQuizResult
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizResult
@@ -19,13 +21,10 @@ import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.network.RetrofitInstance
 import com.asu1.network.getErrorMessage
-import com.asu1.quiz.ui.TextStyleManager
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
-import com.asu1.resources.contrastSize
-import com.asu1.resources.paletteSize
 import com.asu1.utils.Logger
 import com.asu1.utils.calculateSeedColor
 import com.asu1.utils.randomDynamicColorScheme
@@ -111,16 +110,15 @@ class QuizCoordinatorViewModel : ViewModel() {
 
     fun generateColorScheme(
         base: GenerateWith,
-        paletteLevel: Int,
-        contrastLevel: Int,
+        paletteLevel: PaletteLevel,
+        contrastLevel: ContrastLevel,
         isDark: Boolean,
     ) {
         viewModelScope.launch {
-            if (contrastLevel in 0 until contrastSize && paletteLevel in 0..paletteSize) {
                 val newColorScheme = when (base) {
                     GenerateWith.TITLE_IMAGE -> {
                         if (_titleImageColors.value.isEmpty()) return@launch
-                        if (paletteLevel == paletteSize) {
+                        if (paletteLevel.palette == null) {
                             toScheme(
                                 primary = _titleImageColors.value[0],
                                 secondary = _titleImageColors.value[1],
@@ -128,13 +126,13 @@ class QuizCoordinatorViewModel : ViewModel() {
                                 isLight = !isDark
                             )
                         } else {
-                            randomDynamicColorScheme(_titleImageColors.value[0], paletteLevel, contrastLevel, isDark)
+                            randomDynamicColorScheme(_titleImageColors.value[0], paletteLevel.palette!!, contrastLevel.contrast, isDark)
                         }
                     }
 
                     GenerateWith.COLOR -> {
                         val currentScheme = quizThemeViewModel.quizTheme.value.colorScheme
-                        if (paletteLevel == paletteSize) {
+                        if (paletteLevel.palette == null) {
                             toScheme(
                                 primary = currentScheme.primary,
                                 secondary = currentScheme.secondary,
@@ -142,13 +140,12 @@ class QuizCoordinatorViewModel : ViewModel() {
                                 isLight = !isDark
                             )
                         } else {
-                            randomDynamicColorScheme(currentScheme.primary, paletteLevel, contrastLevel, isDark)
+                            randomDynamicColorScheme(currentScheme.primary, paletteLevel.palette!!, contrastLevel.contrast, isDark)
                         }
                     }
                 }
                 quizThemeViewModel.updateColorScheme(newColorScheme)
             }
-        }
     }
 
     private fun initializeStateFlows() {
@@ -214,10 +211,6 @@ class QuizCoordinatorViewModel : ViewModel() {
                 handleFailure("Failed to load quiz result: ${e.message}")
             }
         }
-    }
-
-    fun getTextStyleManager(): TextStyleManager{
-        return quizThemeViewModel.getTextStyleManager()
     }
 
     private suspend fun processQuizResult(quizResult: GetQuizResult) {
@@ -435,7 +428,7 @@ sealed class QuizCoordinatorActions{
     data class AddQuizAt(val quiz: Quiz<*>, val index: Int) : QuizCoordinatorActions()
     data object ResetQuizResult: QuizCoordinatorActions()
     data object ResetQuiz: QuizCoordinatorActions()
-    data class GenerateColorScheme(val generateWith: GenerateWith, val palette: Int, val contrast: Int, val isDark: Boolean): QuizCoordinatorActions()
+    data class GenerateColorScheme(val generateWith: GenerateWith, val palette: PaletteLevel, val contrast: ContrastLevel, val isDark: Boolean): QuizCoordinatorActions()
 }
 
 data class QuizCoordinatorState(

@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -34,7 +33,6 @@ import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.ui.TextStyleManager
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R
@@ -60,7 +58,6 @@ fun QuizSolver(
     ){
         quizzes.size + 1
     }
-    val textStyleManager by rememberUpdatedState(quizCoordinatorViewModel.getTextStyleManager())
 
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
@@ -101,7 +98,6 @@ fun QuizSolver(
                             quizSize = quizzes.size,
                             visibleQuizzes = quizzes,
                             quizTheme = quizTheme,
-                            textStyleManager = textStyleManager,
                             updateQuizCoordinator = { action ->
                                 quizCoordinatorViewModel.updateQuizCoordinator(action = action)
                             },
@@ -129,7 +125,6 @@ fun QuizViewerPager(
     quizSize: Int,
     visibleQuizzes: List<Quiz<*>>,
     quizTheme: QuizTheme = QuizTheme(),
-    textStyleManager: TextStyleManager,
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
     isPreview: Boolean = false,
@@ -155,7 +150,6 @@ fun QuizViewerPager(
                             )
                         )
                     },
-                    quizStyleManager = textStyleManager,
                     isPreview = isPreview
                 )
                 Text(

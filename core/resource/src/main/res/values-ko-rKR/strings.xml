@@ -36,7 +36,7 @@
     <string name="set_quiz_image">표지</string>
     <string name="set_quiz_description">설명</string>
     <string name="set_quiz_tags">태그</string>
-    <string name="set_color_setting">색 설정</string>
+    <string name="set_color_setting">테마 설정</string>
     <string name="set_text_setting">텍스트 설정</string>
     <string name="warning">주의</string>
     <string name="warn_progress_not_saved">저장되지 않은 내용은 사라집니다.\n계속하시겠습니까?</string>
@@ -136,8 +136,8 @@
     <string name="single_color">단색</string>
     <string name="gradient">그라데이션</string>
     <string name="image">이미지</string>
-    <string name="gen_with_title_image">표지로\n생성</string>
-    <string name="gen_with_primary_color">메인 색으로\n생성</string>
+    <string name="gen_with_title_image">표지 이미지에서 색상 추출</string>
+    <string name="gen_with_primary_color">메인 색에서 색상 생성</string>
     <string name="palette">"색 설정: "</string>
     <string name="contrast">"대비: "</string>
     <string name="enter_quiz_description">설명을 입력하세요.</string>
@@ -250,16 +250,28 @@
     <string name="trends">트랜드</string>
     <string name="ranks">랭킹</string>
     <string name="setting">설정</string>
-    <string-array name = "palette_style_names">
-        <item>차분한</item>
+    <string name="contrast_default">기본</string>
+    <string name="contrast_medium">보통</string>
+    <string name="contrast_high">높은</string>
+    <string name="contrast_reduced">낮은</string>
+    <string name="palette_tonal">조화로운</string>
+    <string name="palette_neutral">중립적</string>
+    <string name="palette_vibrant">선명한</string>
+    <string name="palette_expressive">강렬한</string>
+    <string name="palette_rainbow">무지개의</string>
+    <string name="palette_fruit">장난스러운</string>
+    <string name="palette_mono">단조로운</string>
+    <string name="palette_fidel">충실한</string>
+    <string name="palette_content">콘텐츠 기반</string>    <string-array name = "palette_style_names">
+        <item>조화로운</item>
         <item>중립적</item>
-        <item>생생한</item>
+        <item>선명한</item>
         <item>강렬한</item>
         <item>무지개의</item>
         <item>장난스러운</item>
         <item>단조로운</item>
         <item>충실한</item>
-        <item>만족스러운</item>
+        <item>콘텐츠 기반</item>
     </string-array>
     <string-array name="contrast_names">
         <item>기본</item>
