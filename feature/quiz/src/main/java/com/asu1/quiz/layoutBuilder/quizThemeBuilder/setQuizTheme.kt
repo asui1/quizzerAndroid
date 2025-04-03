@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,15 +35,29 @@ fun QuizLayoutSetQuizTheme(
             }
         )
         // 중앙 -> Scroll 가능한 퀴즈 예시
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         QuizThemeExample(
             quizTheme = quizTheme,
         )
         // 하단 -> Scroll 가능한 Color Scheme의  색들 표시.
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Bakground") // 선택하면 아래에 배경 선택 열림.
-        Text("Scrollable Colors") // 옆으로 펼쳐진 색 중 하나 선택하면 color picker 열림.
-        Text("Scrollable Texts") // 텍스트 포맷 누르면 수정 가능한 뭔가 열림.
+        Spacer(modifier = Modifier.height(8.dp))
+        QuizLayoutSetBackground(
+            modifier = Modifier,
+            backgroundImageColor = quizTheme.backgroundImage,
+            updateQuizTheme = { quizThemeAction ->
+                updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        SetColorScheme(
+            modifier = Modifier,
+            currentColors = quizTheme.colorScheme,
+            updateQuizTheme = { quizThemeAction ->
+                updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        QuizLayoutSetTextStyle()
     }
 }
 

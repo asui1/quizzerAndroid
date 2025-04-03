@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.dotlottie.android)
     implementation(libs.colorpicker.compose)
+    implementation(libs.androidx.constraint.layout)
 
     implementation(project(":core:resource"))
     implementation(project(":core:util"))

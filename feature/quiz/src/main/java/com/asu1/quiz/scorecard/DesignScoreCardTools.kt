@@ -42,7 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.asu1.customComposable.Switch.LabeledSwitch
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.dialog.FastCreateDialog
-import com.asu1.customComposable.dropdown.FastCreateDropDown
+import com.asu1.customComposable.dropdown.FastCreateDropDownWithIcon
 import com.asu1.customComposable.imageGetter.ImageGetter
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageBlendMode
@@ -95,6 +95,13 @@ fun DesignScoreCardTools(
                         1 -> R.string.select_color2
                         2 -> R.string.select_color3
                         else -> R.string.select_color1
+                    }
+                ),
+                colorName = stringResource(
+                    when(colorIndex) {
+                        1 -> R.string.color2
+                        2 -> R.string.color3
+                        else -> R.string.color1
                     }
                 ),
                 onClose = {
@@ -187,6 +194,7 @@ fun DesignScoreCardTools(
                     )
                 },
                 text = stringResource(R.string.select_text_color),
+                colorName = stringResource(R.string.text_color),
                 onClose = {
                     showTextColorPicker = false
                 }
@@ -289,7 +297,7 @@ fun DesignScoreCardTools(
                     currentSelection = scoreCard.background.effect.ordinal
                 )
             } else if (colorName == R.string.gradient) {
-                FastCreateDropDown(
+                FastCreateDropDownWithIcon(
                     showDropdownMenu = showGradientDropdown,
                     labelText = stringResource(R.string.gradient),
                     onClick = { dropdownIndex ->

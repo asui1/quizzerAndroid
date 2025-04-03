@@ -4,9 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,19 +24,21 @@ fun TextColorPickerModalSheet(
     initialColor: Color,
     onColorSelected: (Color) -> Unit,
     text: String = "",
+    colorName: String = "",
     onClose: () -> Unit = {},
     toggleBlendMode: @Composable () -> Unit = {},
     resetToTransparent: @Composable () -> Unit = {},
 ){
     Column(
         modifier = Modifier
-            .wrapContentSize()
+            .fillMaxWidth()
+            .wrapContentHeight()
             .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(16.dp))
             .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp)
+            .padding(4.dp)
     ){
         Text(
-            text = text ,
+            text = text,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -43,6 +46,8 @@ fun TextColorPickerModalSheet(
         toggleBlendMode()
         resetToTransparent()
         ColorPicker(
+            modifier = Modifier.height(300.dp),
+            colorName = colorName,
             initialColor = initialColor,
             onColorSelected = { color ->
                 onColorSelected(color)

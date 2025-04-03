@@ -44,7 +44,7 @@ fun QuizThemeExample(
     val screenHeight = remember(windowInfo, density) {
         with(density) { windowInfo.containerSize.height.toDp().coerceAtMost(800.dp)}
     }
-    val scale = 0.5f
+    val scale = 0.3f
     MaterialTheme(
         colorScheme = quizTheme.colorScheme
     ) {

@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.androidx.ui.graphics.android)
+    implementation(libs.androidx.material3.android)
+    implementation(libs.material3)
     implementation(project(":core:util"))
     implementation(project(":core:resource"))
     testImplementation(libs.junit)

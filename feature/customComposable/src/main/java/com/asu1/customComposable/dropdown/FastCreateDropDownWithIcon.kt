@@ -23,7 +23,7 @@ import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.utils.shaders.ShaderType
 
 @Composable
-fun FastCreateDropDown(
+fun FastCreateDropDownWithIcon(
     showDropdownMenu: Boolean,
     labelText: String = "",
     onClick: (Int) -> Unit = {},
@@ -54,7 +54,7 @@ fun FastCreateDropDown(
             onDismissRequest = { onChangeDropDown(false) },
         ) {
             inputItems.withIndex().forEach { (index, item) ->
-                DropdownMenuItem( //DesignScoreCardShaderButton
+                DropdownMenuItem(
                     modifier = Modifier.testTag("$testTag${index}")
                         .background(
                             color = if(index == currentSelection) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
@@ -77,7 +77,7 @@ fun FastCreateDropDown(
 @Composable
 fun FastCreateDropDownPreview() {
     QuizzerAndroidTheme {
-        FastCreateDropDown(
+        FastCreateDropDownWithIcon(
             showDropdownMenu = false,
             labelText = "Select",
             onClick = { },
