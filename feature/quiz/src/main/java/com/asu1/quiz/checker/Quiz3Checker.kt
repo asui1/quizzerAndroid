@@ -22,14 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.sampleQuiz3
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
-import com.asu1.resources.TextStyles
 
 @Composable
 fun Quiz3Checker(
     quiz: Quiz3,
-    quizStyleManager: TextStyleManager,
 ) {
     val result = remember{quiz.gradeQuiz()}
     LazyColumn(
@@ -42,14 +41,14 @@ fun Quiz3Checker(
                 isCorrect = result,
                 contentAlignment = Alignment.CenterStart
             ){
-                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+                QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
                 quizBody = quiz.bodyType,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
+            AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
         items(quiz.answers.size-1, key = {it}){it ->
             val newIndex = it + 1
@@ -77,8 +76,7 @@ fun Quiz3Checker(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        quizStyleManager.GetTextComposable(
-                            TextStyles.ANSWER,
+                        AnswerTextStyle.GetTextComposable(
                             item,
                             modifier = Modifier.weight(1f).padding(8.dp)
                         )
@@ -99,6 +97,5 @@ fun Quiz3Checker(
 fun Quiz3CheckerPreview(){
     Quiz3Checker(
         quiz = sampleQuiz3,
-        quizStyleManager = TextStyleManager
     )
 }

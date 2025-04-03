@@ -63,7 +63,7 @@ import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.layoutBuilder.quizTextInputs.QuizLayoutTitleDescriptionTag
-import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetColorScheme
+import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetQuizTheme
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
@@ -308,25 +308,13 @@ fun QuizLayoutBuilderScreenBody(
                     )
                 }
                 3 -> {
-                    QuizLayoutSetColorScheme(
-                        colorScheme = quizTheme.colorScheme,
-                        isTitleImageSet = quizData.image.width > 2,
-                        updateQuizTheme = { action ->
-                            updateQuiz(QuizCoordinatorActions.UpdateQuizTheme(action))
-                        },
-                        backgroundImage = quizTheme.backgroundImage,
-                        updateQuizCoordinator = {action ->
+                    QuizLayoutSetQuizTheme(
+                        quizTheme = quizTheme,
+                        isTitleImageSet = quizData.image.width > 5,
+                        updateQuizCoordinator = { action ->
                             updateQuiz(action)
-                        }
+                        },
                     )
-                    // Set Color Setting
-//                    QuizLayoutSetQuizTheme(
-//                        quizTheme = quizTheme,
-//                        isTitleImageSet = quizData.image.width > 5,
-//                        updateQuizCoordinator = { action ->
-//                            updateQuiz(action)
-//                        },
-//                    )
                 }
                 4 -> {
                     QuizLayoutSetTextStyle(

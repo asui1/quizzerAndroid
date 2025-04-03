@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.Quiz1
 import com.asu1.models.sampleQuiz1
-import com.asu1.quiz.ui.TextStyleManager
-import com.asu1.resources.TextStyles
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 
 @Composable
 fun Quiz1Viewer(
@@ -41,8 +41,8 @@ fun Quiz1Viewer(
             .padding(16.dp)
     ){
         item{
-            TextStyleManager.GetTextComposable(
-                TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth()
+            QuestionTextStyle.GetTextComposable(
+                quiz.question, modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -73,7 +73,7 @@ fun Quiz1Viewer(
                             contentDescription = "Checkbox at $index, and is ${if(userAnswers[index]) "checked" else "unchecked"}"
                         }
                 )
-                TextStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
+                AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }

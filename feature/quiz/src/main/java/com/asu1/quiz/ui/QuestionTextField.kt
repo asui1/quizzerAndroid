@@ -12,12 +12,11 @@ import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun QuestionTextFieldWithPoints(
+fun QuestionTextField(
     question: String = "",
     onQuestionChange: (String) -> Unit = {},
     focusManager: FocusManager,
 ) {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -39,7 +38,7 @@ fun QuestionTextFieldWithPoints(
 @Composable
 fun QuestionTextFieldWithPointsPreview() {
     val focusManager = LocalFocusManager.current
-    QuestionTextFieldWithPoints(
+    QuestionTextField(
         focusManager = focusManager
     )
 }

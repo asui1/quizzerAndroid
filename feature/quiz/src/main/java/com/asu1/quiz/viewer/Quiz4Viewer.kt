@@ -34,10 +34,10 @@ import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz4
 import com.asu1.quiz.creator.DraggableDot
 import com.asu1.quiz.creator.DrawLines
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
-import com.asu1.resources.TextStyles
 import com.asu1.utils.Logger
 
 @Composable
@@ -82,7 +82,7 @@ fun Quiz4Viewer(
                 .padding(16.dp)
         ) {
             item {
-                TextStyleManager.GetTextComposable(TextStyles.QUESTION, quizState.question, modifier = Modifier.fillMaxWidth())
+                QuestionTextStyle.GetTextComposable(quizState.question, modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
@@ -108,7 +108,7 @@ fun Quiz4Viewer(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                             ) {
-                                TextStyleManager.GetTextComposable(TextStyles.ANSWER,
+                                AnswerTextStyle.GetTextComposable(
                                     quizState.answers[index],
                                     modifier = Modifier.weight(1f)
                                 )
@@ -194,8 +194,7 @@ fun Quiz4Viewer(
                                     moveOffset = moveOffset,
                                     key = "QuizCreatorRightDot$index"
                                 )
-                                TextStyleManager.GetTextComposable(
-                                    TextStyles.ANSWER,
+                                AnswerTextStyle.GetTextComposable(
                                     quizState.connectionAnswers[index],
                                     modifier = Modifier.weight(1f)
                                 )

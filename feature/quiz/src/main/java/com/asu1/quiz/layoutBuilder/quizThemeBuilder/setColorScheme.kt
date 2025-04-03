@@ -56,7 +56,6 @@ import com.asu1.customComposable.colorPicker.ColorSchemeSheet
 import com.asu1.customComposable.colorPicker.ColorPicker
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.quiz.layoutBuilder.BackgroundTabs
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
@@ -217,16 +216,6 @@ fun BackgroundRow(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            }
-            if (isOpen) {
-                BackgroundTabs(
-                    selectedTabIndex = selectedTabIndex,
-                    updateQuizTheme = updateQuizTheme,
-                    background = background,
-                    onClose = {
-                        isOpen = false
-                    }
-                )
             }
         }
     }

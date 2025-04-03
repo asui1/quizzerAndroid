@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.sampleQuiz3
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
-import com.asu1.resources.TextStyles
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -68,13 +68,13 @@ fun Quiz3Viewer(
             .padding(16.dp)
     ) {
         item {
-            TextStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+            QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
                 quizBody = quiz.bodyType,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            TextStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
+            AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
         items(quiz3List.subList(1, quiz3List.size), key = { it }) {
             ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
@@ -105,7 +105,7 @@ fun Quiz3Viewer(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            TextStyleManager.GetTextComposable(TextStyles.ANSWER, item, modifier = Modifier.weight(1f).padding(8.dp))
+                            AnswerTextStyle.GetTextComposable(item, modifier = Modifier.weight(1f).padding(8.dp))
                             IconButton(
                                 modifier = Modifier.draggableHandle(
                                     enabled = !isPreview,

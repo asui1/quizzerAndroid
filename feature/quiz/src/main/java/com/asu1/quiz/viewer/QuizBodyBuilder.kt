@@ -18,8 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.asu1.models.serializers.BodyType
-import com.asu1.quiz.ui.TextStyleManager
-import com.asu1.resources.TextStyles
+import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
 import com.asu1.utils.Logger
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -31,7 +30,7 @@ fun BuildBody(
     quizBody: BodyType,
 ){
     when(quizBody){
-        is BodyType.TEXT -> TextStyleManager.GetTextComposable(TextStyles.BODY, quizBody.bodyText, modifier = Modifier.fillMaxWidth())
+        is BodyType.TEXT -> BodyTextStyle.GetTextComposable(quizBody.bodyText, modifier = Modifier.fillMaxWidth())
         is BodyType.IMAGE -> {
             val image = remember(quizBody.bodyImage){
                 quizBody.bodyImage.asImageBitmap().apply {

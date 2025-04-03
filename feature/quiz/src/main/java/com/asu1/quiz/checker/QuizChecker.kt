@@ -28,7 +28,6 @@ import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz1
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.ui.TextStyleManager
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.utils.setTopBarColor
@@ -98,7 +97,6 @@ fun QuizCheckerPager(
             QuizCheckerBody(
                 quiz = quizzes[page],
                 quizTheme = quizTheme,
-                quizStyleManager = TextStyleManager,
             )
             Text(
                 text = "${page + 1}/${quizzes.size}",
@@ -113,26 +111,22 @@ fun QuizCheckerPager(
 fun QuizCheckerBody(
     quiz: Quiz<*>,
     quizTheme: QuizTheme = QuizTheme(),
-    quizStyleManager: TextStyleManager,
 ) {
     when(quiz){
         is Quiz1 -> {
             Quiz1Checker(
                 quiz = quiz,
-                quizStyleManager = quizStyleManager,
             )
         }
         is Quiz2 -> {
             Quiz2Checker(
                 quiz = quiz,
                 quizTheme = quizTheme,
-                quizStyleManager = quizStyleManager,
             )
         }
         is Quiz3 -> {
             Quiz3Checker(
                 quiz = quiz,
-                quizStyleManager = quizStyleManager
             )
         }
         is Quiz4 -> {
@@ -142,7 +136,6 @@ fun QuizCheckerBody(
             quiz4ViewModel.loadQuiz(quiz)
             Quiz4Checker(
                 quiz = quiz4ViewModel,
-                quizStyleManager = quizStyleManager,
             )
         }
     }
@@ -152,13 +145,10 @@ fun QuizCheckerBody(
 @Composable
 fun QuizCheckerPreview(){
     val quizTheme = QuizTheme()
-    val textStyleManager = TextStyleManager
     Column(){
         QuizCheckerBody(
             quiz = sampleQuiz1,
             quizTheme = quizTheme,
-            quizStyleManager = textStyleManager
         )
-
     }
 }

@@ -18,11 +18,10 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz2
 import com.asu1.quiz.creator.CalendarWithFocusDates
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
-
 import com.asu1.resources.R
-import com.asu1.resources.TextStyles
 import java.time.LocalDate
 
 @Composable
@@ -49,7 +48,7 @@ fun Quiz2Viewer(
             .padding(16.dp)
     ){
         item{
-            TextStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+            QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
@@ -68,12 +67,13 @@ fun Quiz2Viewer(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            TextStyleManager.GetTextComposable(TextStyles.ANSWER,
+            AnswerTextStyle.GetTextComposable(
                 stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(userAnswers.size){
-            TextStyleManager.GetTextComposable(TextStyles.ANSWER, buildString {
+            AnswerTextStyle.GetTextComposable(
+                buildString {
                 append("${it + 1}. ")
                 append(userAnswers[it])
             }, modifier = Modifier.fillMaxWidth())

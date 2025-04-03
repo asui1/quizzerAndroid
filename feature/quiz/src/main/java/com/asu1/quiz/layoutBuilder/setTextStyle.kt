@@ -30,7 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.flipper.HorizontalFlipper
-import com.asu1.quiz.ui.GetTextStyle
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.resources.R
 import com.asu1.resources.borders
 import com.asu1.resources.colors
@@ -96,6 +98,12 @@ fun TextStyleRowOpener(
         2 -> stringResource(R.string.answer)
         else -> stringResource(R.string.body)
     }
+    val targetTextStyle = when(targetSelector){
+        0 -> QuestionTextStyle
+        1 -> BodyTextStyle
+        2 -> AnswerTextStyle
+        else -> QuestionTextStyle
+    }
 
     Box(
         modifier = Modifier
@@ -124,10 +132,8 @@ fun TextStyleRowOpener(
                         .background(colorScheme.background),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    GetTextStyle(
+                    targetTextStyle.GetTextComposable(
                         text = text,
-                        style = textStyle,
-                        colorScheme = colorScheme,
                     )
                     Icon(
                         imageVector = if(isOpen) Icons.Default.ArrowDropDown

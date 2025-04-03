@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz1
-import com.asu1.quiz.ui.QuestionTextFieldWithPoints
+import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.Quiz1ViewModel
 import com.asu1.resources.R
 
@@ -51,7 +51,7 @@ fun Quiz1Creator(
                 .testTag("Quiz1CreatorLazyColumn")
         ) {
             item {
-                QuestionTextFieldWithPoints(
+                QuestionTextField(
                     question = quiz1State.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
                     focusManager = focusManager,

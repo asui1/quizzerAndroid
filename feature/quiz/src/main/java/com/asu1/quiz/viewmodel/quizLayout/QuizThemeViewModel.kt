@@ -6,7 +6,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.resources.ColorList
 import com.asu1.resources.ViewModelState
 import com.asu1.resources.borders
@@ -33,7 +35,6 @@ class QuizThemeViewModel : ViewModel() {
 
     fun resetQuizTheme(){
         _quizTheme.value = QuizTheme()
-        TextStyleManager.reset()
     }
 
     fun loadQuizTheme(quizTheme: QuizTheme){
@@ -46,12 +47,9 @@ class QuizThemeViewModel : ViewModel() {
 
 
     fun initTextStyleManager(){
-        TextStyleManager.initTextStyleManager(
-            colorScheme = quizTheme.value.colorScheme,
-            questionStyle = quizTheme.value.questionTextStyle,
-            answerStyle = quizTheme.value.answerTextStyle,
-            bodyStyle = quizTheme.value.bodyTextStyle
-        )
+        QuestionTextStyle.update(_quizTheme.value.questionTextStyle, _quizTheme.value.colorScheme)
+        BodyTextStyle.update(_quizTheme.value.bodyTextStyle, _quizTheme.value.colorScheme)
+        AnswerTextStyle.update(_quizTheme.value.answerTextStyle, _quizTheme.value.colorScheme)
     }
 
     fun updateBackgroundImage(image: Bitmap?) {
@@ -62,7 +60,7 @@ class QuizThemeViewModel : ViewModel() {
 
     fun updateBackgroundColor(color: Color) {
         _quizTheme.update {
-            Logger.debug("UPDATE BACKGROUND COLOR: ${color}")
+            Logger.debug("UPDATE BACKGROUND COLOR: $color")
             it.copy(backgroundImage = it.backgroundImage.copy(color = color))
         }
     }
@@ -95,12 +93,7 @@ class QuizThemeViewModel : ViewModel() {
             }
             it.copy(colorScheme = updatedScheme)
         }
-        TextStyleManager.initTextStyleManager(
-            _quizTheme.value.colorScheme,
-            _quizTheme.value.questionTextStyle,
-            _quizTheme.value.bodyTextStyle,
-            _quizTheme.value.answerTextStyle,
-        )
+        initTextStyleManager()
     }
 
     fun updateColorScheme(colorScheme: ColorScheme) {
@@ -110,6 +103,7 @@ class QuizThemeViewModel : ViewModel() {
                 backgroundImage = it.backgroundImage.copy(color = colorScheme.surface)
             )
         }
+        initTextStyleManager()
     }
 
     fun updateTextStyle(targetSelector: Int, indexSelector: Int, isIncrease: Boolean) {
@@ -135,19 +129,25 @@ class QuizThemeViewModel : ViewModel() {
 
     fun updateQuestionTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.update {
-            it.copy(questionTextStyle = textStyleUpdater(it.questionTextStyle, indexSelector, isIncrease))
+            val newStyle = textStyleUpdater(it.questionTextStyle, indexSelector, isIncrease)
+            QuestionTextStyle.update(newStyle, it.colorScheme, indexSelector)
+            it.copy(questionTextStyle = newStyle)
         }
     }
 
     fun updateBodyTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.update {
-            it.copy(bodyTextStyle = textStyleUpdater(it.bodyTextStyle, indexSelector, isIncrease))
+            val newStyle = textStyleUpdater(it.bodyTextStyle, indexSelector, isIncrease)
+            BodyTextStyle.update(newStyle, it.colorScheme, indexSelector)
+            it.copy(bodyTextStyle = newStyle)
         }
     }
 
     fun updateAnswerTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.update {
-            it.copy(answerTextStyle = textStyleUpdater(it.answerTextStyle, indexSelector, isIncrease))
+            val newStyle = textStyleUpdater(it.answerTextStyle, indexSelector, isIncrease)
+            AnswerTextStyle.update(newStyle, it.colorScheme, indexSelector)
+            it.copy(answerTextStyle = newStyle)
         }
     }
 

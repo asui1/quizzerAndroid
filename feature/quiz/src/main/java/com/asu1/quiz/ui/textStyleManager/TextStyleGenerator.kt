@@ -1,22 +1,18 @@
-package com.asu1.quiz.ui
+package com.asu1.quiz.ui.textStyleManager
 
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
@@ -33,125 +29,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.asu1.resources.LightColorScheme
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.getFontFamily
 
 @Composable
 fun GetTextStyle(text: String,
                  modifier: Modifier = Modifier,
-                 myTextStyle: com.asu1.quiz.ui.TextStyle,
-//                 textStyle: TextStyle,
+                 myTextStyleExtra: TextStyleExtra,
+                 textStyle: TextStyle,
 ) {
-    when (myTextStyle.contourStyle) {
+    when (myTextStyleExtra.contourStyle) {
         0 -> Text(
             text = text,
             style =
-//                textStyle,
-                    TextStyle(
-                fontFamily = myTextStyle.fontFamily,
-                color = myTextStyle.contentColor,
-                fontSize = myTextStyle.fontSize,
-            ),
+                textStyle,
             modifier = modifier
-                .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
-                .then(myTextStyle.borderModifier)
-                .padding(8.dp)
         )
         1 -> {
             TextWithBorder(
                 text = text,
-                fontSize = myTextStyle.fontSize,
-                textColor = myTextStyle.contentColor,
-                containerColor = myTextStyle.addColor,
+                fontSize = textStyle.fontSize,
+                textColor = textStyle.color,
+                containerColor = myTextStyleExtra.addColor,
                 borderWidth = 6f,
                 modifier = modifier
-                    .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
-                    .then(myTextStyle.borderModifier)
-                    .padding(8.dp)
             )
         }
         2 -> {
             TextWithContour(
                 text = text,
-                textColor = myTextStyle.addColor,
-                fontSize = myTextStyle.fontSize,
-                contourColor = myTextStyle.contentColor,
+                textColor = myTextStyleExtra.addColor,
+                fontSize = textStyle.fontSize,
+                contourColor = textStyle.color,
                 contourWidth = 8f,
                 modifier = modifier
-                    .background(myTextStyle.backgroundColor, shape = RoundedCornerShape(4.dp))
-                    .then(myTextStyle.borderModifier)
-                    .padding(8.dp)
             )
         }
     }
 }
-
-@Composable
-fun GetTextStyle(text: String, style: List<Int>, colorScheme: ColorScheme, modifier: Modifier = Modifier) {
-    // -> FONT FAMILY, Color, BoderStyle, FontWeight
-    val fontFamily = getFontFamily(style[0])
-    val color = style[1]
-    val borderStyle = style[2]
-    val (backgroundColor, contentColor) = getColor(colorScheme, color)
-    val colorBrush = remember(colorScheme.primary, colorScheme.secondary){ Brush.linearGradient(colors = listOf(colorScheme.primary, colorScheme.secondary))}
-    val borderModifier = Modifier.getBorder(borderStyle, MaterialTheme.colorScheme.outline, colorBrush)
-
-    val fontSize = when(style[3]){
-        0 -> 24.sp // question
-        1 -> 20.sp // answer
-        2 -> 16.sp // body
-        else -> 16.sp
-    }
-    val contourStyle = style[4]
-    val addColor = when(contourStyle){
-        0 -> Color.Transparent
-        1 -> if(backgroundColor == Color.Transparent) if(isSystemInDarkTheme()) Color.Black else Color.White else backgroundColor
-        2 -> if(backgroundColor == Color.Transparent) if(isSystemInDarkTheme()) Color.Black else Color.White else backgroundColor
-        else -> Color.Transparent
-    }
-    when (contourStyle) {
-        0 -> Text(
-            text = text,
-            style = TextStyle(
-                fontFamily = fontFamily,
-                color = contentColor,
-                fontSize = fontSize
-            ),
-            modifier = modifier
-                .background(backgroundColor, shape = RoundedCornerShape(4.dp))
-                .then(borderModifier)
-                .padding(8.dp)
-        )
-        1 -> {
-            TextWithBorder(
-                text = text,
-                textColor = contentColor,
-                containerColor = addColor,
-                fontSize = fontSize,
-                borderWidth = 8f,
-                modifier = modifier
-                    .background(backgroundColor, shape = RoundedCornerShape(4.dp))
-                    .then(borderModifier)
-                    .padding(8.dp)
-            )
-        }
-        2 -> {
-            TextWithContour(
-                text = text,
-                textColor = addColor,
-                fontSize = fontSize,
-                contourColor = contentColor,
-                contourWidth = 8f,
-                modifier = modifier
-                    .background(backgroundColor, shape = RoundedCornerShape(4.dp))
-                    .then(borderModifier)
-                    .padding(8.dp)
-            )
-        }
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable
@@ -159,18 +74,16 @@ fun PreviewGetTextStyle(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
-            style = listOf(0, 0, 1, 1 ,1),
-            colorScheme = LightColorScheme,
             modifier = Modifier,
-//            myTextStyle = TextStyle(
-//                fontFamily = getFontFamily(0),
-//                contentColor = Color.Black,
-//                backgroundColor = Color.Transparent,
-//                addColor = Color.Black,
-//                borderModifier = Modifier,
-//                fontSize = 24.sp,
-//                contourStyle = 0
-//            )
+            myTextStyleExtra = TextStyleExtra(
+                addColor = Color.Black,
+                contourStyle = 0
+            ),
+            textStyle =TextStyle(
+                fontFamily = getFontFamily(0),
+                color = Color.Black,
+                fontSize = 24.sp,
+            ),
         )
     }
 }
@@ -180,15 +93,15 @@ fun PreviewGetTextStyleWithBorder(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World, 가나다라마바사",
-            myTextStyle = TextStyle(
-                fontFamily = getFontFamily(0),
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                backgroundColor = Color.Transparent,
+            myTextStyleExtra = TextStyleExtra(
                 addColor = MaterialTheme.colorScheme.primaryContainer,
-                borderModifier = Modifier,
-                fontSize = 24.sp,
                 contourStyle = 1
-            )
+            ),
+            textStyle =TextStyle(
+                fontFamily = getFontFamily(0),
+                color = Color.Black,
+                fontSize = 24.sp,
+            ),
         )
     }
 }
@@ -198,15 +111,15 @@ fun PreviewGetTextStyleWithContour(){
     QuizzerAndroidTheme {
         GetTextStyle(
             text = "Hello World",
-            myTextStyle = TextStyle(
-                fontFamily = getFontFamily(0),
-                contentColor = Color.Black,
-                backgroundColor = Color.Transparent,
+            myTextStyleExtra = TextStyleExtra(
                 addColor = Color.White,
-                borderModifier = Modifier,
-                fontSize = 24.sp,
                 contourStyle = 2
-            )
+            ),
+            textStyle =TextStyle(
+                fontFamily = getFontFamily(0),
+                color = Color.Black,
+                fontSize = 24.sp,
+            ),
         )
     }
 }

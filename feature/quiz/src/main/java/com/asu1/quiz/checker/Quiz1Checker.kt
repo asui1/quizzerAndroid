@@ -18,14 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.Quiz1
 import com.asu1.models.sampleQuiz1
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
-import com.asu1.resources.TextStyles
 
 @Composable
 fun Quiz1Checker(
     quiz: Quiz1,
-    quizStyleManager: TextStyleManager,
 ){
     val result = remember{quiz.gradeQuiz()}
     LazyColumn(
@@ -38,7 +37,7 @@ fun Quiz1Checker(
                 isCorrect = result,
                 contentAlignment = Alignment.CenterStart
             ){
-                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+                QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -67,7 +66,7 @@ fun Quiz1Checker(
                             }
                     )
                 }
-                quizStyleManager.GetTextComposable(TextStyles.ANSWER, quiz.shuffledAnswers[index])
+                AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -80,6 +79,5 @@ fun Quiz1Checker(
 fun PreviewQuiz1Checker(){
     Quiz1Checker(
         quiz = sampleQuiz1,
-        quizStyleManager = TextStyleManager
     )
 }

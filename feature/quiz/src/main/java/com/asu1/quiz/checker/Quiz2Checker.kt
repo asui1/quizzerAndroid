@@ -17,15 +17,14 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz2
 import com.asu1.quiz.creator.CalendarWithFocusDates
-import com.asu1.quiz.ui.TextStyleManager
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.resources.R
-import com.asu1.resources.TextStyles
 
 @Composable
 fun Quiz2Checker(
     quiz: Quiz2,
     quizTheme: QuizTheme = QuizTheme(),
-    quizStyleManager: TextStyleManager,
 )
 {
     val result = remember{quiz.gradeQuiz()}
@@ -39,7 +38,7 @@ fun Quiz2Checker(
                 isCorrect = result,
                 contentAlignment = Alignment.CenterStart
             ){
-                quizStyleManager.GetTextComposable(TextStyles.QUESTION, quiz.question, modifier = Modifier.fillMaxWidth())
+                QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -56,8 +55,7 @@ fun Quiz2Checker(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            quizStyleManager.GetTextComposable(
-                TextStyles.ANSWER,
+            AnswerTextStyle.GetTextComposable(
                 stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -67,10 +65,11 @@ fun Quiz2Checker(
                     isCorrect = quiz.answerDate.contains(localDate),
                     contentAlignment = Alignment.CenterStart,
                 ){
-                    quizStyleManager.GetTextComposable(TextStyles.ANSWER, buildString {
-                        append("${index + 1}. ")
-                        append(localDate)
-                    }, modifier = Modifier.fillMaxWidth())
+                    AnswerTextStyle.GetTextComposable(
+                        buildString {
+                            append("${index + 1}. ")
+                            append(localDate)
+                        }, modifier = Modifier.fillMaxWidth())
                 }
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -85,7 +84,7 @@ fun Quiz2Checker(
                         isCorrect = false,
                         contentAlignment = Alignment.CenterStart,
                     ){
-                        quizStyleManager.GetTextComposable(TextStyles.ANSWER, localDate.toString(), modifier = Modifier.fillMaxWidth())
+                        AnswerTextStyle.GetTextComposable(localDate.toString(), modifier = Modifier.fillMaxWidth())
                     }
                     Spacer(modifier = Modifier.height(4.dp))                }
             }
@@ -98,6 +97,5 @@ fun Quiz2Checker(
 fun Quiz2CheckerPreview(){
     Quiz2Checker(
         quiz = sampleQuiz2,
-        quizStyleManager = TextStyleManager
     )
 }

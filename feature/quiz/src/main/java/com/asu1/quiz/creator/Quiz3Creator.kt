@@ -32,7 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz3
-import com.asu1.quiz.ui.QuestionTextFieldWithPoints
+import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
 
 @Composable
@@ -57,7 +57,7 @@ fun Quiz3Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                QuestionTextFieldWithPoints(
+                QuestionTextField(
                     question = quiz3State.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
                     focusManager = focusManager

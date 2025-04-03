@@ -50,9 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz2
-import com.asu1.quiz.ui.QuestionTextFieldWithPoints
-import com.asu1.quiz.ui.getBorder
-import com.asu1.quiz.ui.getColor
+import com.asu1.quiz.ui.QuestionTextField
+import com.asu1.quiz.ui.textStyleManager.getBorder
+import com.asu1.quiz.ui.textStyleManager.getColor
 import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
 import com.asu1.resources.R
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -88,7 +88,7 @@ fun Quiz2Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                QuestionTextFieldWithPoints(
+                QuestionTextField(
                     question = quiz2State.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
                     focusManager = focusManager,

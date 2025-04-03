@@ -47,7 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz4
-import com.asu1.quiz.ui.QuestionTextFieldWithPoints
+import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
 
@@ -86,7 +86,7 @@ fun Quiz4Creator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                QuestionTextFieldWithPoints(
+                QuestionTextField(
                     question = quizState.question,
                     onQuestionChange =  {quiz.updateQuestion(it)},
                     focusManager = focusManager
