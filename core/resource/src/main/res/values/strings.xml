@@ -141,7 +141,7 @@
     <string name="color_colon">Color : </string>
     <string name="refresh_color">Color ↻</string>
     <string name="gen_with_title_image">Image</string>
-    <string name="gen_with_primary_color">Color</string>
+    <string name="gen_with_primary_color">Main Color</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
     <string name="tertiary">Tertiary</string>

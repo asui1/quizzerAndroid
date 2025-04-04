@@ -142,7 +142,7 @@
     <string name="color_colon">색상 : </string>
     <string name="refresh_color">색상 ↻</string>
     <string name="gen_with_title_image">이미지</string>
-    <string name="gen_with_primary_color">색</string>
+    <string name="gen_with_primary_color">메인 색</string>
     <string name="primary">메인 색1</string>
     <string name="secondary">메인 색2</string>
     <string name="tertiary">메인 색3</string>

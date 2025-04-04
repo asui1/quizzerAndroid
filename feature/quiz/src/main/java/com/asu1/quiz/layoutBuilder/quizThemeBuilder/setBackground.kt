@@ -1,6 +1,7 @@
 package com.asu1.quiz.layoutBuilder.quizThemeBuilder
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ fun QuizLayoutSetBackground(
     modifier: Modifier = Modifier,
     backgroundImageColor: ImageColor,
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
+    scrollTo: () -> Unit = {},
 ){
     var isOpen by remember { mutableStateOf(false) }
     var selectedTabIndex by remember { mutableIntStateOf(1) }
@@ -53,7 +57,9 @@ fun QuizLayoutSetBackground(
 
     Column(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(8.dp))
@@ -66,6 +72,7 @@ fun QuizLayoutSetBackground(
                 }else{
                     isOpen = true
                 }
+                if(isOpen) scrollTo()
             }
         )
         AnimatedVisibility(

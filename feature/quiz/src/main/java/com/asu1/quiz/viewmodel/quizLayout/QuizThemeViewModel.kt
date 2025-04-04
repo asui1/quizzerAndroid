@@ -4,12 +4,22 @@ import android.graphics.Bitmap
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.asu1.colormodel.ThemeColorPicker
+import com.asu1.colormodel.updateError
+import com.asu1.colormodel.updateErrorContainer
+import com.asu1.colormodel.updateOutline
+import com.asu1.colormodel.updatePrimary
+import com.asu1.colormodel.updatePrimaryContainer
+import com.asu1.colormodel.updateSecondary
+import com.asu1.colormodel.updateSecondaryContainer
+import com.asu1.colormodel.updateSurfaceGroup
+import com.asu1.colormodel.updateTertiary
+import com.asu1.colormodel.updateTertiaryContainer
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
-import com.asu1.resources.ColorList
 import com.asu1.resources.ViewModelState
 import com.asu1.resources.borders
 import com.asu1.resources.colors
@@ -18,9 +28,6 @@ import com.asu1.resources.outlines
 import com.asu1.utils.Logger
 import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.shaders.ShaderType
-import com.asu1.utils.withPrimaryColor
-import com.asu1.utils.withSecondaryColor
-import com.asu1.utils.withTertiaryColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -83,13 +90,19 @@ class QuizThemeViewModel : ViewModel() {
         }
     }
 
-    fun updateColorScheme(name: String, color: Color) {
+    fun updateColorScheme(name: ThemeColorPicker, color: Color) {
         _quizTheme.update {
             val updatedScheme = when (name) {
-                ColorList[0] -> it.colorScheme.withPrimaryColor(color)
-                ColorList[1] -> it.colorScheme.withSecondaryColor(color)
-                ColorList[2] -> it.colorScheme.withTertiaryColor(color)
-                else -> it.colorScheme
+                ThemeColorPicker.Primary -> _quizTheme.value.colorScheme.updatePrimary(color)
+                ThemeColorPicker.PrimaryContainer -> _quizTheme.value.colorScheme.updatePrimaryContainer(color)
+                ThemeColorPicker.Secondary -> _quizTheme.value.colorScheme.updateSecondary(color)
+                ThemeColorPicker.SecondaryContainer -> _quizTheme.value.colorScheme.updateSecondaryContainer(color)
+                ThemeColorPicker.Tertiary -> _quizTheme.value.colorScheme.updateTertiary(color)
+                ThemeColorPicker.TertiaryContainer -> _quizTheme.value.colorScheme.updateTertiaryContainer(color)
+                ThemeColorPicker.Error -> _quizTheme.value.colorScheme.updateError(color)
+                ThemeColorPicker.ErrorContainer -> _quizTheme.value.colorScheme.updateErrorContainer(color)
+                ThemeColorPicker.Surface -> _quizTheme.value.colorScheme.updateSurfaceGroup(color)
+                ThemeColorPicker.Outline -> _quizTheme.value.colorScheme.updateOutline(color)
             }
             it.copy(colorScheme = updatedScheme)
         }
@@ -154,7 +167,7 @@ class QuizThemeViewModel : ViewModel() {
     fun updateQuizTheme(action: QuizThemeActions){
         when(action){
             is QuizThemeActions.InitTextStyleManager -> initTextStyleManager()
-            is QuizThemeActions.UpdateColor -> updateColorScheme(action.colorName, action.color)
+            is QuizThemeActions.UpdateColor -> updateColorScheme(action.colorType, action.color)
             is QuizThemeActions.UpdateBackgroundColor -> updateBackgroundColor(action.color)
             is QuizThemeActions.UpdateGradientColor -> updateGradientColor(action.color)
             is QuizThemeActions.UpdateBackgroundImage -> updateBackgroundImage(action.bitmap)
@@ -167,7 +180,7 @@ class QuizThemeViewModel : ViewModel() {
 
 sealed class QuizThemeActions{
     data object InitTextStyleManager: QuizThemeActions()
-    data class UpdateColor(val colorName: String, val color: Color): QuizThemeActions()
+    data class UpdateColor(val colorType: ThemeColorPicker, val color: Color): QuizThemeActions()
     data class UpdateBackgroundColor(val color: Color): QuizThemeActions()
     data class UpdateGradientColor(val color: Color): QuizThemeActions()
     data class UpdateBackgroundImage(val bitmap: Bitmap?): QuizThemeActions()

@@ -3,13 +3,15 @@ package com.asu1.quiz.layoutBuilder.quizThemeBuilder
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -39,28 +41,35 @@ fun SetColorScheme(
     modifier: Modifier = Modifier,
     currentColors: ColorScheme,
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
+    scrollTo: () -> Unit = {},
 ){
-    var selectedColor: ThemeColorPicker? by remember { mutableStateOf(ThemeColorPicker.Primary) }
+    var selectedColor: ThemeColorPicker? by remember { mutableStateOf(null) }
+    val state = rememberLazyListState()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
-        Row(
+        LazyRow(
+            state = state,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = modifier
-                .horizontalScroll(rememberScrollState())
                 .fillMaxWidth(),
         ) {
-            Text(
-                stringResource(R.string.color_colon),
-                fontWeight = FontWeight.ExtraBold,
-            )
-            ThemeColorPicker.entries.forEach { color ->
+            item("Text"){
+                Text(
+                    stringResource(R.string.color_colon),
+                    fontWeight = FontWeight.ExtraBold,
+                )
+            }
+            items(ThemeColorPicker.entries, key = {it.name}) { color ->
                 OverlappingColorCircles(
                     modifier = Modifier
                         .then(
-                            if (color == selectedColor) Modifier.border(2.dp, MaterialTheme.colorScheme.primary)
+                            if (color == selectedColor) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
                             else Modifier
                         )
                         .clickable {
@@ -68,6 +77,7 @@ fun SetColorScheme(
                                 selectedColor = null
                             }else{
                                 selectedColor = color
+                                scrollTo()
                             }
                         },
                     label = stringResource(color.stringResourceId),
@@ -81,15 +91,14 @@ fun SetColorScheme(
         ) {
             ColorPicker(
                 modifier = Modifier
-                    .height(300.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.primary),
+                    .height(300.dp),
                 initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
                 colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
                 onColorSelected = { color ->
                     updateQuizTheme(
                         QuizThemeActions.UpdateColor(
-                            colorName = selectedColor?.name ?: "",
-                            color = color
+                            colorType = selectedColor ?: ThemeColorPicker.Primary,
+                            color = color,
                         )
                     )
                 },

@@ -15,12 +15,32 @@ fun tonalPalette(color: Color): Map<Int, Color> {
     val hct = Hct.from(color)
     val palette = TonalPalette.fromHct(hct)
     val colors = mutableMapOf<Int, Color>()
-
     for (i in 0 ..  100) {
         colors[i] = Color(palette.tone(i))
     }
-
     return colors
+}
+
+fun computeOnColor(hct: Hct): Double{
+    val tone = hct.tone
+    val computedOnTone = if (tone < 50) {
+        (tone + 55).coerceAtMost(100.0)
+    } else {
+        (tone - 35).coerceAtLeast(0.0)
+    }
+    return computedOnTone
+}
+
+fun computeOnColorToColor(color: Color): Color {
+    val hctColor = Hct.from(color)
+    val tone = hctColor.tone
+    val computedTone = if (tone < 50) {
+        (tone + 55).coerceAtMost(100.0)
+    } else {
+        (tone - 35).coerceAtLeast(0.0)
+    }
+    val computedHct = Hct.from(hctColor.hue, hctColor.chroma, computedTone)
+    return Color(computedHct.toInt())
 }
 
 fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary: Color): ColorScheme {

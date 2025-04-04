@@ -42,6 +42,7 @@ import com.asu1.resources.R
 fun GenerateNewColorScheme(
     isTitleImageSet: Boolean = false,
     generateColorScheme: (QuizCoordinatorActions) -> Unit = { _ -> },
+    scrollTo: () -> Unit = {},
 ){
     val isDark = isSystemInDarkTheme()
     var openColorSettings by remember {mutableStateOf(false)}
@@ -57,7 +58,6 @@ fun GenerateNewColorScheme(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
         ){
             Text(
                 stringResource(R.string.refresh_color),
@@ -99,6 +99,7 @@ fun GenerateNewColorScheme(
             IconButton(
                 onClick = {
                     openColorSettings = openColorSettings.not()
+                    if(openColorSettings) scrollTo()
                 },
                 colors = IconButtonDefaults.iconButtonColors(),
             ) {
