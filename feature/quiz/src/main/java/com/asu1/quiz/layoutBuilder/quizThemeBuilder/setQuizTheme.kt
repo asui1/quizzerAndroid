@@ -87,7 +87,16 @@ fun QuizLayoutSetQuizTheme(
         }
 
         item("SetTextStyle"){
-            QuizLayoutSetTextStyle()
+            QuizLayoutSetTextStyle(
+                modifier = Modifier,
+                questionStyle = quizTheme.questionTextStyle,
+                bodyStyle = quizTheme.bodyTextStyle,
+                answerStyle = quizTheme.answerTextStyle,
+                updateQuizTheme = { quizThemeAction ->
+                    updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                },
+                scrollTo = { scrollTo(3) },
+                )
         }
         // 중앙 -> Scroll 가능한 퀴즈 예시
     }

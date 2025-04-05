@@ -54,7 +54,6 @@ fun OverlappingColorCircles(
             label,
             style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
-            minLines = 2,
         )
     }
 }
