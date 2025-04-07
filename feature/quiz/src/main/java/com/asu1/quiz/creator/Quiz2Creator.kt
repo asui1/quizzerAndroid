@@ -1,6 +1,5 @@
 package com.asu1.quiz.creator
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -26,20 +23,16 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -49,17 +42,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz2
+import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.ui.textStyleManager.getBorder
-import com.asu1.quiz.ui.textStyleManager.getColor
 import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
 import com.asu1.resources.R
-import com.kizitonwose.calendar.compose.HorizontalCalendar
-import com.kizitonwose.calendar.compose.rememberCalendarState
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable
@@ -229,124 +215,6 @@ fun YearMonthDropDown(
     }
 }
 
-@Composable
-fun CalendarWithFocusDates(
-    focusDates: Set<LocalDate>,
-    onDateClick: (LocalDate) -> Unit,
-    currentMonth: YearMonth = YearMonth.now(),
-    yearRange: Int = 10,
-    colorScheme: ColorScheme,
-    bodyTextStyle: List<Int> = listOf(0, 0, 2, 1),
-    isPreview: Boolean = false
-) {
-    val startMonth = currentMonth.minusYears(yearRange.toLong()) // Adjust as needed
-    val endMonth = currentMonth.plusYears(yearRange.toLong()) // Adjust as needed
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
-    val daysOfWeek = remember{listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")}
-    val state = rememberCalendarState(
-        startMonth = startMonth,
-        endMonth = endMonth,
-        firstVisibleMonth = currentMonth,
-        firstDayOfWeek = firstDayOfWeek
-    )
-    val (backgroundColor, contentColor) = remember{getColor(colorScheme, bodyTextStyle[1])}
-    val redded = remember{contentColor.copy(
-        red = (contentColor.red + 0.5f).coerceAtMost(1f),
-    )}
-    val blueed = remember{contentColor.copy(
-        blue = (contentColor.blue + 0.5f).coerceAtMost(1f),
-    )}
-    val focusColor = remember{colorScheme.surfaceDim}
-
-    HorizontalCalendar(
-        userScrollEnabled = !isPreview,
-        modifier = Modifier
-            .fillMaxWidth()
-            .getBorder(bodyTextStyle[2], MaterialTheme.colorScheme.outline, colorScheme.primary)
-            .background(color = backgroundColor)
-            .height(380.dp),
-        state = state,
-        dayContent = {
-            val isSelected = focusDates.contains(it.date)
-            key(isSelected) {
-                Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick,
-                    focusColor, contentColor, redded, blueed)
-            }
-        },
-        monthHeader = { month ->
-            Column() {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(text = buildString {
-                        append(month.yearMonth.year.toString())
-                        append("  /  ")
-                        append(month.yearMonth.monthValue)
-                    })
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(){
-                    daysOfWeek.forEach { day ->
-                        Text(
-                            color = when(day){
-                                daysOfWeek[0] -> redded
-                                daysOfWeek[6] -> blueed
-                                else -> contentColor
-                            },
-                            text = day,
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-        },
-    )
-}
-
-@Composable
-fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateClick: (LocalDate) -> Unit,
-        focusColor: Color,
-        contentColor: Color,
-        redded: Color,
-        blueed: Color,
-) {
-    val isInCurrentMonth = day.date.month == currentMonth.month
-    val alpha = if (isInCurrentMonth) 1f else 0.5f
-    val color = when (day.date.dayOfWeek) {
-        DayOfWeek.SATURDAY -> blueed
-        DayOfWeek.SUNDAY -> redded
-        else -> contentColor
-    }
-    val backgroundColor = if (isSelected) focusColor else Color.Transparent
-
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f) // This is important for square sizing!
-            .alpha(alpha)
-            .background(
-                color = backgroundColor,
-                shape = androidx.compose.foundation.shape.CircleShape
-            )
-            .clickable {
-                onDateClick(day.date)
-            }
-            .semantics {
-                contentDescription = "Day ${day.date}"
-            }
-            .testTag(day.date.toString()),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = day.date.dayOfMonth.toString(),
-            color = color
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.quiz.creator.CalendarWithFocusDates
+import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.resources.R
@@ -30,19 +30,23 @@ fun Quiz2Preview(
     ){
         QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(16.dp))
+
         CalendarWithFocusDates(
             focusDates = quiz.userAnswerDate.toSet(),
             onDateClick = { date ->
             },
             currentMonth = quiz.centerDate,
             colorScheme = quizTheme.colorScheme,
-            bodyTextStyle = quizTheme.bodyTextStyle,
             isPreview = true,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         AnswerTextStyle.GetTextComposable(
             stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
+
         Spacer(modifier = Modifier.height(8.dp))
+
         quiz.userAnswerDate.forEachIndexed { index, date ->
             AnswerTextStyle.GetTextComposable(
                 buildString {

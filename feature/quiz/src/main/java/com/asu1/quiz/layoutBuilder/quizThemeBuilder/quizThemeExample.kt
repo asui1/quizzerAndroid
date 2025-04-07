@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -18,11 +20,24 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
+import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuizList
 import com.asu1.quiz.preview.QuizPreview
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.utils.Logger
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+
+fun sampleQuizFlow(): Flow<Quiz<*>> = flow {
+    for (quiz in sampleQuizList) {
+        emit(quiz)
+        delay(200L)
+    }
+}
+
 
 @Composable
 fun QuizThemeExample(
@@ -38,6 +53,15 @@ fun QuizThemeExample(
         with(density) { windowInfo.containerSize.height.toDp().coerceAtMost(800.dp)}
     }
     val scale = 0.3f
+    val sampleQuizList = remember { mutableStateListOf<Quiz<*>>() }
+
+    LaunchedEffect(Unit) {
+        Logger.debug("LAUNCHED UNIT")
+        sampleQuizFlow().collect { quiz ->
+            sampleQuizList.add(quiz)
+        }
+    }
+
     MaterialTheme(
         colorScheme = quizTheme.colorScheme
     ) {

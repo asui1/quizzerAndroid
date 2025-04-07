@@ -36,13 +36,13 @@ fun Quiz1Preview(
             quizBody = quiz.bodyType,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        quiz.userAns.forEachIndexed { index, item ->
+        quiz.userAns.withIndex().forEach { (index, item) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ){
                 Checkbox(
-                    checked = quiz.userAns[index],
+                    checked = item,
                     onCheckedChange = {
                     },
                     modifier = Modifier

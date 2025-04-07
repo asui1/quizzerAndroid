@@ -27,6 +27,16 @@ abstract class BaseTextStyleManager {
     var textStyle: TextStyle by mutableStateOf(TextStyle())
     var borderModifier: Modifier by mutableStateOf(Modifier)
     var borderIndex = 0
+    var backgroundColor: Color = Color.Transparent
+
+    val contentColor: Color
+        get() = textStyle.color
+
+    val contentColorToRed: Color
+        get() = contentColor.copy(red = (contentColor.red + 0.5f).coerceAtMost(1f))
+
+    val contentColorToBlue: Color
+        get() = contentColor.copy(blue = (contentColor.blue + 0.5f).coerceAtMost(1f))
 
     fun update(style: List<Int>, colorScheme: ColorScheme, isDark: Boolean = false) {
         updateFontFamily(style[0])
@@ -56,10 +66,10 @@ abstract class BaseTextStyleManager {
     }
 
     fun updateTextColor(index: Int, colorScheme: ColorScheme) {
-        val (backgroundColor, contentColor) = getColor(colorScheme, index)
+        val (newBackgroundColor, contentColor) = getColor(colorScheme, index)
         textStyle = textStyle.copy(color = contentColor)
+        backgroundColor = newBackgroundColor
         rebuildBorderModifier(
-            backgroundColor,
             colorScheme.outline,
             colorScheme.primary
         )
@@ -76,16 +86,16 @@ abstract class BaseTextStyleManager {
     }
 
     fun updateBorderStyle(colorIndex: Int, index: Int, colorScheme: ColorScheme) {
-        val (backgroundColor, _) = getColor(colorScheme, colorIndex)
+        val (newBackgroundColor, _) = getColor(colorScheme, colorIndex)
         borderIndex = index
+        backgroundColor = newBackgroundColor
         rebuildBorderModifier(
-            backgroundColor,
             colorScheme.outline,
             colorScheme.primary
         )
     }
 
-    private fun rebuildBorderModifier(backgroundColor: Color, borderColor1: Color, borderColor2: Color) {
+    private fun rebuildBorderModifier(borderColor1: Color, borderColor2: Color) {
         borderModifier = Modifier
             .background(backgroundColor, shape = RoundedCornerShape(4.dp))
             .getBorder(borderIndex, borderColor1, borderColor2)
