@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -258,20 +257,12 @@ fun CalendarWithFocusDates(
         blue = (contentColor.blue + 0.5f).coerceAtMost(1f),
     )}
     val focusColor = remember{colorScheme.surfaceDim}
-    val brush = remember{
-        Brush.linearGradient(
-            colors = listOf(
-                colorScheme.primary,
-                colorScheme.secondary,
-            )
-        )
-    }
 
     HorizontalCalendar(
         userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxWidth()
-            .getBorder(bodyTextStyle[2], MaterialTheme.colorScheme.outline, brush)
+            .getBorder(bodyTextStyle[2], MaterialTheme.colorScheme.outline, colorScheme.primary)
             .background(color = backgroundColor)
             .height(380.dp),
         state = state,

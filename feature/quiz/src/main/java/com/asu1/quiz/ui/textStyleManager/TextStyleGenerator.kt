@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -124,15 +123,7 @@ fun PreviewGetTextStyleWithContour(){
     }
 }
 
-fun Color.flipAlpha(): Color {
-    val newAlpha = when {
-        this.alpha < 0.5f -> this.alpha + 0.5f
-        else -> this.alpha - 0.5f
-    }
-    return this.copy(alpha = newAlpha)
-}
-
-fun Modifier.getBorder(borderStyle: Int, borderColor1: Color, colorBrush: Brush? = null): Modifier {
+fun Modifier.getBorder(borderStyle: Int, borderColor1: Color, primaryColor: Color): Modifier {
     return when (borderStyle) {
         1 -> this.then(Modifier.drawBehind {
             val strokeWidth = 2.dp.toPx()
@@ -145,11 +136,7 @@ fun Modifier.getBorder(borderStyle: Int, borderColor1: Color, colorBrush: Brush?
             )
         })
         2 -> this.then(Modifier.border(width = 2.dp, color = borderColor1, shape = RoundedCornerShape(4.dp)))
-        3 -> {
-            if(colorBrush == null) this
-            else
-                this.then(Modifier.border(width = 2.dp, brush = colorBrush, shape = RoundedCornerShape(4.dp)))
-        }
+        3 -> this.then(Modifier.border(width = 2.dp, color = primaryColor, shape = RoundedCornerShape(4.dp)))
         else -> this
     }
 }

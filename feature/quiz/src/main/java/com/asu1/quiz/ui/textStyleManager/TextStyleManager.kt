@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -27,6 +26,7 @@ abstract class BaseTextStyleManager {
     )
     var textStyle: TextStyle by mutableStateOf(TextStyle())
     var borderModifier: Modifier by mutableStateOf(Modifier)
+    var borderIndex = 0
 
     fun update(style: List<Int>, colorScheme: ColorScheme, isDark: Boolean = false) {
         updateFontFamily(style[0])
@@ -38,10 +38,11 @@ abstract class BaseTextStyleManager {
     }
 
     fun update(style: List<Int>, colorScheme: ColorScheme, targetIndex: Int){
+
         when(targetIndex){
             0 -> updateFontFamily(style[0])
             1 -> updateTextColor(style[1], colorScheme)
-            2 -> updateBorderStyle(style[0], style[2], colorScheme)
+            2 -> updateBorderStyle(style[1], style[2], colorScheme)
             4 -> {
                 val bgColor = getColor(colorScheme, style[1]).first()
                 updateContourStyle(style[4], bgColor, false)
@@ -55,8 +56,13 @@ abstract class BaseTextStyleManager {
     }
 
     fun updateTextColor(index: Int, colorScheme: ColorScheme) {
-        val (_, contentColor) = getColor(colorScheme, index)
+        val (backgroundColor, contentColor) = getColor(colorScheme, index)
         textStyle = textStyle.copy(color = contentColor)
+        rebuildBorderModifier(
+            backgroundColor,
+            colorScheme.outline,
+            colorScheme.primary
+        )
     }
 
     fun updateContourStyle(index: Int, bgColor: Color, isDark: Boolean) {
@@ -71,12 +77,18 @@ abstract class BaseTextStyleManager {
 
     fun updateBorderStyle(colorIndex: Int, index: Int, colorScheme: ColorScheme) {
         val (backgroundColor, _) = getColor(colorScheme, colorIndex)
-        val brush = Brush.linearGradient(
-            listOf(colorScheme.primary, colorScheme.secondary)
+        borderIndex = index
+        rebuildBorderModifier(
+            backgroundColor,
+            colorScheme.outline,
+            colorScheme.primary
         )
+    }
+
+    private fun rebuildBorderModifier(backgroundColor: Color, borderColor1: Color, borderColor2: Color) {
         borderModifier = Modifier
             .background(backgroundColor, shape = RoundedCornerShape(4.dp))
-            .getBorder(index, colorScheme.outline, brush)
+            .getBorder(borderIndex, borderColor1, borderColor2)
             .padding(8.dp)
     }
 

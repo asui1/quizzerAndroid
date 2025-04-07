@@ -53,7 +53,7 @@ fun QuizLayoutSetTextStyle(
     scrollTo: () -> Unit = {},
 ){
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var isOpen by remember { mutableStateOf(true) }
+    var isOpen by remember { mutableStateOf(false) }
     val textStyle: List<Int> = when (selectedTabIndex) {
         0 -> questionStyle
         1 -> bodyStyle
@@ -163,7 +163,7 @@ private fun StyleTabItem(
                 .height(2.dp)
                 .width(with(LocalDensity.current) { textWidth.toDp() })
                 .background(
-                    if (selectedTabIndex == index) MaterialTheme.colorScheme.primary // your theme color
+                    if (selectedTabIndex == index) MaterialTheme.colorScheme.primary
                     else Color.Transparent
                 )
         )
