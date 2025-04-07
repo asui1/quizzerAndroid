@@ -31,7 +31,7 @@ abstract class BaseTextStyleManager {
     fun update(style: List<Int>, colorScheme: ColorScheme, isDark: Boolean = false) {
         updateFontFamily(style[0])
         updateTextColor(style[1], colorScheme)
-        updateBorderStyle(style[0], style[2], colorScheme)
+        updateBorderStyle(style[1], style[2], colorScheme)
 
         val bgColor = getColor(colorScheme, style[1]).first()
         updateContourStyle(style[4], bgColor, isDark)

@@ -67,7 +67,6 @@ import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetQuizTheme
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
-import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.LayoutSteps
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
@@ -108,8 +107,7 @@ fun QuizLayoutBuilderScreen(
                 pagerState.scrollToPage(2)
             }
 
-            LayoutSteps.THEME -> pagerState.scrollToPage(3)
-            LayoutSteps.TEXTSTYLE -> pagerState.scrollToPage(4)
+            LayoutSteps.THEME, LayoutSteps.TEXTSTYLE -> pagerState.scrollToPage(3)
         }
     }
     BackHandler {
@@ -170,11 +168,6 @@ fun QuizLayoutBuilderScreen(
                             )
                         )
                     } else {
-                        quizCoordinatorViewModel.updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizTheme(
-                                QuizThemeActions.InitTextStyleManager
-                            )
-                        )
                         navController.navigate(Route.QuizBuilder){
                             launchSingleTop = true
                         }
@@ -314,23 +307,7 @@ fun QuizLayoutBuilderScreenBody(
                         updateQuizCoordinator = { action ->
                             updateQuiz(action)
                         },
-                    )
-                }
-                4 -> {
-                    QuizLayoutSetTextStyle(
-                        questionStyle = quizTheme.questionTextStyle,
-                        bodyStyle = quizTheme.bodyTextStyle,
-                        answerStyle = quizTheme.answerTextStyle,
-                        updateStyle = { targetSelector, index, isIncrease ->
-                            updateQuiz(
-                                QuizCoordinatorActions.UpdateQuizTheme(
-                                    QuizThemeActions.UpdateTextStyle(
-                                        targetSelector, index, isIncrease
-                                    )
-                                )
-                            )
-                        },
-                        colorScheme = quizTheme.colorScheme,
+                        step = step,
                     )
                 }
             }

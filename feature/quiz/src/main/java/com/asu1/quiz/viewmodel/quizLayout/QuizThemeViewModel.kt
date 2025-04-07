@@ -42,6 +42,7 @@ class QuizThemeViewModel : ViewModel() {
 
     fun resetQuizTheme(){
         _quizTheme.value = QuizTheme()
+        initTextStyleManager()
     }
 
     fun loadQuizTheme(quizTheme: QuizTheme){
@@ -51,12 +52,13 @@ class QuizThemeViewModel : ViewModel() {
         initTextStyleManager()
     }
 
-
-
     fun initTextStyleManager(){
         QuestionTextStyle.update(_quizTheme.value.questionTextStyle, _quizTheme.value.colorScheme)
         BodyTextStyle.update(_quizTheme.value.bodyTextStyle, _quizTheme.value.colorScheme)
         AnswerTextStyle.update(_quizTheme.value.answerTextStyle, _quizTheme.value.colorScheme)
+        Logger.debug("${_quizTheme.value.questionTextStyle}")
+        Logger.debug("${_quizTheme.value.bodyTextStyle}")
+        Logger.debug("${_quizTheme.value.answerTextStyle}")
     }
 
     fun updateBackgroundImage(image: Bitmap?) {
@@ -143,6 +145,7 @@ class QuizThemeViewModel : ViewModel() {
     fun updateQuestionTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.update {
             val newStyle = textStyleUpdater(it.questionTextStyle, indexSelector, isIncrease)
+            Logger.debug(newStyle)
             QuestionTextStyle.update(newStyle, it.colorScheme, indexSelector)
             it.copy(questionTextStyle = newStyle)
         }

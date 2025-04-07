@@ -52,7 +52,7 @@ fun QuizLayoutSetTextStyle(
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
     scrollTo: () -> Unit = {},
 ){
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(-1) }
     var isOpen by remember { mutableStateOf(false) }
     val textStyle: List<Int> = when (selectedTabIndex) {
         0 -> questionStyle
@@ -77,6 +77,7 @@ fun QuizLayoutSetTextStyle(
                     true
                 }
                 if(isOpen) scrollTo()
+                if(!isOpen && clickedSame) selectedTabIndex = -1
             }
         )
 

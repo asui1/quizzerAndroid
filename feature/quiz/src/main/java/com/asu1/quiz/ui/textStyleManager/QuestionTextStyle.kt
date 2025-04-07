@@ -8,7 +8,7 @@ object QuestionTextStyle : BaseTextStyleManager() {
     init {
         textStyle = TextStyle(fontSize = 24.sp)
         update(
-            style = listOf(0, 0, 1, 0, 0),
+            style = listOf(0, 5, 1, 0, 0),
             colorScheme = LightColorScheme,
             isDark = false,
         )
@@ -19,7 +19,7 @@ object BodyTextStyle : BaseTextStyleManager() {
     init {
         textStyle = TextStyle(fontSize = 16.sp)
         update(
-            style = listOf(0, 0, 2, 1, 0),
+            style = listOf(0, 9, 3, 1, 0),
             colorScheme = LightColorScheme,
             isDark = false,
         )

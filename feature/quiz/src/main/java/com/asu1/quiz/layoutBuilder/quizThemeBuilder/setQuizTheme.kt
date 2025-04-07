@@ -13,8 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
+import com.asu1.resources.LayoutSteps
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.utils.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -23,12 +23,12 @@ fun QuizLayoutSetQuizTheme(
     quizTheme: QuizTheme = QuizTheme(),
     isTitleImageSet: Boolean = false,
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit = {},
+    step: LayoutSteps = LayoutSteps.THEME,
 ){
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
     fun scrollTo(index: Int){
-        Logger.debug("Scroll to $index")
         coroutineScope.launch {
             delay(300)
             listState.animateScrollToItem(index, scrollOffset = 0) // For QuizThemeExample
@@ -53,8 +53,6 @@ fun QuizLayoutSetQuizTheme(
             Spacer(modifier = Modifier.height(8.dp))
         }
         item("Example") {
-
-            //TODO(Quiz Theme Example is Too heavy)
             QuizThemeExample(
                 quizTheme = quizTheme,
             )
@@ -62,43 +60,46 @@ fun QuizLayoutSetQuizTheme(
         }
 
         // 하단 -> Scroll 가능한 Color Scheme의  색들 표시.
-        item("Background") {
-            QuizLayoutSetBackground(
-                modifier = Modifier,
-                backgroundImageColor = quizTheme.backgroundImage,
-                updateQuizTheme = { quizThemeAction ->
-                    updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
-                },
-                scrollTo = { scrollTo(2) },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        item("ColorSchemeSet") {
-            SetColorScheme(
-                modifier = Modifier,
-                currentColors = quizTheme.colorScheme,
-                updateQuizTheme = { quizThemeAction ->
-                    updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
-                },
-                scrollTo = { scrollTo(3) },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        item("SetTextStyle"){
-            QuizLayoutSetTextStyle(
-                modifier = Modifier,
-                questionStyle = quizTheme.questionTextStyle,
-                bodyStyle = quizTheme.bodyTextStyle,
-                answerStyle = quizTheme.answerTextStyle,
-                updateQuizTheme = { quizThemeAction ->
-                    updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
-                },
-                scrollTo = { scrollTo(3) },
+        if(step == LayoutSteps.THEME) {
+            item("Background") {
+                QuizLayoutSetBackground(
+                    modifier = Modifier,
+                    backgroundImageColor = quizTheme.backgroundImage,
+                    updateQuizTheme = { quizThemeAction ->
+                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                    },
+                    scrollTo = { scrollTo(2) },
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            item("ColorSchemeSet") {
+                SetColorScheme(
+                    modifier = Modifier,
+                    currentColors = quizTheme.colorScheme,
+                    updateQuizTheme = { quizThemeAction ->
+                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                    },
+                    scrollTo = { scrollTo(3) },
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
-        // 중앙 -> Scroll 가능한 퀴즈 예시
+
+        if(step == LayoutSteps.TEXTSTYLE) {
+            item("SetTextStyle") {
+                QuizLayoutSetTextStyle(
+                    modifier = Modifier,
+                    questionStyle = quizTheme.questionTextStyle,
+                    bodyStyle = quizTheme.bodyTextStyle,
+                    answerStyle = quizTheme.answerTextStyle,
+                    updateQuizTheme = { quizThemeAction ->
+                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                    },
+                    scrollTo = { scrollTo(3) },
+                )
+            }
+        }
     }
 }
 
