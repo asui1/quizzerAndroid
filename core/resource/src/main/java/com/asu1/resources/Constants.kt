@@ -1,23 +1,8 @@
 package com.asu1.resources
 
-import com.materialkolor.PaletteStyle
-
 const val BASE_URL = "https://quizzer.co.kr/"
 const val BASE_URL_API = "${BASE_URL}api/"
-val questionTypes = listOf(R.drawable.questiontype1, R.drawable.questiontype2, R.drawable.questiontype3, R.drawable.questiontype4)
 
-val ColorList = listOf(
-    "PrimaryColor",
-    "SecondaryColor",
-    "TertiaryColor",
-    "ErrorColor",
-    "SurfaceColor",
-    "OutlineColor",
-)
-
-
-
-val paletteSize = PaletteStyle.entries.size
 
 enum class GenerateWith{
     TITLE_IMAGE, COLOR

@@ -41,7 +41,6 @@ fun QuizLayoutSetQuizTheme(
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        // 상단 -> Generate New Scheme: 배경/메인 색/세팅
         item("ColorSchemeGen") {
             GenerateNewColorScheme(
                 isTitleImageSet = isTitleImageSet,
@@ -58,19 +57,21 @@ fun QuizLayoutSetQuizTheme(
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-
-        // 하단 -> Scroll 가능한 Color Scheme의  색들 표시.
-        if(step == LayoutSteps.THEME) {
+        if (step == LayoutSteps.THEME) {
             item("Background") {
                 QuizLayoutSetBackground(
                     modifier = Modifier,
                     backgroundImageColor = quizTheme.backgroundImage,
                     updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                        updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizTheme(
+                                quizThemeAction
+                            )
+                        )
                     },
                     scrollTo = { scrollTo(2) },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             item("ColorSchemeSet") {
@@ -78,7 +79,11 @@ fun QuizLayoutSetQuizTheme(
                     modifier = Modifier,
                     currentColors = quizTheme.colorScheme,
                     updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                        updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizTheme(
+                                quizThemeAction
+                            )
+                        )
                     },
                     scrollTo = { scrollTo(3) },
                 )
@@ -86,7 +91,7 @@ fun QuizLayoutSetQuizTheme(
             }
         }
 
-        if(step == LayoutSteps.TEXTSTYLE) {
+        if (step == LayoutSteps.TEXTSTYLE) {
             item("SetTextStyle") {
                 QuizLayoutSetTextStyle(
                     modifier = Modifier,
@@ -94,7 +99,9 @@ fun QuizLayoutSetQuizTheme(
                     bodyStyle = quizTheme.bodyTextStyle,
                     answerStyle = quizTheme.answerTextStyle,
                     updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(quizThemeAction))
+                        updateQuizCoordinator(
+                            QuizCoordinatorActions.UpdateQuizTheme(
+                                quizThemeAction))
                     },
                     scrollTo = { scrollTo(3) },
                 )

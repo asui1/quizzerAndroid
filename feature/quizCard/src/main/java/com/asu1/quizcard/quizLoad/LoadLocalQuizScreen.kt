@@ -25,13 +25,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customComposable.animations.LoadingAnimation
+import com.asu1.customComposable.topBar.RowWithAppIconAndName
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal
-import com.asu1.customComposable.topBar.RowWithAppIconAndName
-import com.asu1.activityNavigation.Route
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -71,10 +70,7 @@ fun LoadLocalQuizScreen(
             RowWithAppIconAndName(
                 header = @Composable {
                     IconButton(onClick = {
-                        navController.popBackStack(
-                            Route.CreateQuizLayout,
-                            inclusive = false
-                        )
+                        navController.popBackStack()
                     }
                     ) {
                         Icon(

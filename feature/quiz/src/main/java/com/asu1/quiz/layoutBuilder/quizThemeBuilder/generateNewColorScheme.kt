@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -51,18 +52,20 @@ fun GenerateNewColorScheme(
 
     Column(
         modifier = Modifier.fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .padding(vertical = 4.dp)
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Text(
+            text = stringResource(R.string.refresh_color),
+            fontWeight = FontWeight.Bold,
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxWidth()
         ){
-            Text(
-                stringResource(R.string.refresh_color),
-                fontWeight = FontWeight.Bold,
-            )
             TextButton(
                 enabled = isTitleImageSet,
                 onClick = {
@@ -73,8 +76,9 @@ fun GenerateNewColorScheme(
                         isDark = isDark,
                     ))
                 },
+                shape = RoundedCornerShape(10),
                 colors = ButtonDefaults.buttonColors(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp),
             ) {
                 Text(
                     stringResource(R.string.gen_with_title_image)
@@ -89,8 +93,9 @@ fun GenerateNewColorScheme(
                         isDark = isDark,
                     ))
                 },
+                shape = RoundedCornerShape(10),
                 colors = ButtonDefaults.buttonColors(),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp),
             ) {
                 Text(
                     stringResource(R.string.gen_with_primary_color)

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
@@ -45,7 +44,7 @@ fun QuizLayoutSetBackground(
     scrollTo: () -> Unit = {},
 ){
     var isOpen by remember { mutableStateOf(false) }
-    var selectedTabIndex by remember { mutableIntStateOf(1) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     LaunchedEffect(backgroundImageColor.state) {
         selectedTabIndex = when (backgroundImageColor.state) {
             ImageColorState.COLOR -> 0
@@ -58,10 +57,14 @@ fun QuizLayoutSetBackground(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Text(
+            stringResource(R.string.background),
+            fontWeight = FontWeight.ExtraBold,
+        )
         Spacer(modifier = Modifier.height(8.dp))
         BackgroundSecondaryTabRow(
             selectedTabIndex = selectedTabIndex,
@@ -132,11 +135,6 @@ fun BackgroundSecondaryTabRow(
     Row(
         modifier = modifier.fillMaxWidth()
     ) {
-        Text(
-            "${stringResource(R.string.background)}:",
-            fontWeight = FontWeight.ExtraBold,
-        )
-        Spacer(modifier = Modifier.width(4.dp))
         SecondaryTabRow(
             selectedTabIndex = selectedTabIndex,
         ) {

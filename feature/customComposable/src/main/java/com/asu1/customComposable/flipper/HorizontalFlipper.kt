@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
@@ -36,12 +37,19 @@ fun HorizontalFlipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit
             Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = stringResource(R.string.back))
         }
         Text(
-            text = if (items[currentIndex] is Int) {
-                stringResource(id = items[currentIndex] as Int)
-            } else {
-                items[currentIndex].toString()
+            text = buildString {
+                append("[  ")
+                append(
+                    if (items[currentIndex] is Int) {
+                        stringResource(id = items[currentIndex] as Int)
+                    } else {
+                        items[currentIndex].toString()
+                    }
+                )
+                append("  ]")
             },
-            style = QuizzerTypographyDefaults.quizzerBodyLarge
+            style = QuizzerTypographyDefaults.quizzerBodyLarge,
+            fontWeight = FontWeight.Bold,
         )
         IconButton(
             modifier = Modifier.testTag("${key}FlipperNext"),

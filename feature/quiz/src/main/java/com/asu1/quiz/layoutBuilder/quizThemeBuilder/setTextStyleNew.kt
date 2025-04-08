@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +38,7 @@ import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.R
 import com.asu1.resources.borders
 import com.asu1.resources.colors
 import com.asu1.resources.fonts
@@ -52,8 +53,8 @@ fun QuizLayoutSetTextStyle(
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
     scrollTo: () -> Unit = {},
 ){
-    var selectedTabIndex by remember { mutableIntStateOf(-1) }
-    var isOpen by remember { mutableStateOf(false) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var isOpen by remember { mutableStateOf(true) }
     val textStyle: List<Int> = when (selectedTabIndex) {
         0 -> questionStyle
         1 -> bodyStyle
@@ -65,8 +66,13 @@ fun QuizLayoutSetTextStyle(
         modifier = modifier
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Text(
+            stringResource(R.string.text_style_colon),
+            fontWeight = FontWeight.ExtraBold,
+        )
         SetTextStyleTabRow(
             selectedTabIndex = selectedTabIndex,
             onClick = { index, clickedSame ->
@@ -84,6 +90,7 @@ fun QuizLayoutSetTextStyle(
         AnimatedVisibility(
             visible = isOpen,
         ) {
+            HorizontalDivider()
             TextStyleFlipper(
                 selectedTabIndex = selectedTabIndex,
                 textStyle = textStyle,
@@ -100,21 +107,17 @@ fun SetTextStyleTabRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
-            .horizontalScroll(rememberScrollState())
-            .padding(vertical = 2.dp)
+            .padding(vertical = 4.dp)
+            .height(55.dp)
+            .fillMaxWidth()
     ) {
-        Text(
-            "Style:",
-            fontWeight = FontWeight.ExtraBold,
-        )
-
         StyleTabItem(
             index = 0,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
-                QuestionTextStyle.GetTextComposable("QUESTION", modifier)
+                QuestionTextStyle.GetTextComposable(stringResource(R.string.question), modifier)
             },
             onClick = onClick
         )
@@ -123,7 +126,7 @@ fun SetTextStyleTabRow(
             index = 1,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
-                BodyTextStyle.GetTextComposable("BODY", modifier)
+                BodyTextStyle.GetTextComposable(stringResource(R.string.body), modifier)
             },
             onClick = onClick
         )
@@ -132,7 +135,7 @@ fun SetTextStyleTabRow(
             index = 2,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
-                AnswerTextStyle.GetTextComposable("ANSWER", modifier)
+                AnswerTextStyle.GetTextComposable(stringResource(R.string.answer), modifier)
             },
             onClick = onClick
         )

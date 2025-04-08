@@ -50,8 +50,13 @@ fun SetColorScheme(
         modifier = modifier
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            stringResource(R.string.color_colon),
+            fontWeight = FontWeight.ExtraBold,
+        )
         LazyRow(
             state = state,
             verticalAlignment = Alignment.CenterVertically,
@@ -59,12 +64,6 @@ fun SetColorScheme(
             modifier = modifier
                 .fillMaxWidth(),
         ) {
-            item("Text"){
-                Text(
-                    stringResource(R.string.color_colon),
-                    fontWeight = FontWeight.ExtraBold,
-                )
-            }
             items(ThemeColorPicker.entries, key = {it.name}) { color ->
                 OverlappingColorCircles(
                     modifier = Modifier

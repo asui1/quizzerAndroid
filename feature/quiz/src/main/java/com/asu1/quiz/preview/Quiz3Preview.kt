@@ -39,6 +39,7 @@ fun Quiz3Preview(
         Spacer(modifier = Modifier.height(8.dp))
         AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         quiz.shuffledAnswers.drop(1).forEach { answer ->
+            val item = answer.replace(Regex("Q!Z2\\d+$"), "")
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -59,7 +60,7 @@ fun Quiz3Preview(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    AnswerTextStyle.GetTextComposable(answer, modifier = Modifier.weight(1f).padding(8.dp))
+                    AnswerTextStyle.GetTextComposable(item, modifier = Modifier.weight(1f).padding(8.dp))
                     IconButton(
                         onClick = {},
                     ) {

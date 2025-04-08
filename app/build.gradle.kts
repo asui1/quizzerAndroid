@@ -28,16 +28,16 @@ android {
         versionProps.load(versionFile.inputStream())
     }
 
-    val localVersionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
-    val versionMain = versionProps.getProperty("VERSION_MAIN")?.toIntOrNull() ?: 1
-    val versionSub = versionProps.getProperty("VERSION_SUB")?.toIntOrNull() ?: 0
-    val versionChild = versionProps.getProperty("VERSION_CHILD")?.toIntOrNull() ?: 0
+//    val localVersionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
+//    val versionMain = versionProps.getProperty("VERSION_MAIN")?.toIntOrNull() ?: 1
+//    val versionSub = versionProps.getProperty("VERSION_SUB")?.toIntOrNull() ?: 0
+//    val versionChild = versionProps.getProperty("VERSION_CHILD")?.toIntOrNull() ?: 0
 
     defaultConfig {
         applicationId = "com.asu1.quizzer"
         minSdk = 29
         targetSdk = 35
-        versionCode = 73
+        versionCode = 74
         versionName = "1.0.15"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -119,13 +119,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
 }
 
 

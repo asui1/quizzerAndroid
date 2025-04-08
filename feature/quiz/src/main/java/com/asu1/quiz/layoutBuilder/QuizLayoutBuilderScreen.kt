@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +20,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Save
@@ -64,6 +62,7 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.layoutBuilder.quizTextInputs.QuizLayoutTitleDescriptionTag
 import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetQuizTheme
+import com.asu1.quiz.ui.QuizLayoutBottomBar
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
@@ -197,7 +196,6 @@ fun QuizLayoutBuilderScreen(
     }
 }
 
-//TODO: MAKE QUIZLAYOUTBUILDER BODY
 @Composable
 fun QuizLayoutBuilderScreenBody(
     step: LayoutSteps,
@@ -237,15 +235,26 @@ fun QuizLayoutBuilderScreenBody(
         },
         bottomBar = {
             QuizLayoutBottomBar(
-                step = step,
-                updateStep = { step ->
-                    updateQuiz(QuizCoordinatorActions.UpdateQuizGeneral(
-                        QuizGeneralActions.UpdateStep(step)
-                    ))
+                moveBack = {
+                    if (step.ordinal > 1) {
+                        updateQuiz(QuizCoordinatorActions.UpdateQuizGeneral(
+                            QuizGeneralActions.UpdateStep(step-1)
+                        ))
+                    }
+                    else{
+                        moveBackToHome()
+                    }
                 },
-                onSaveLocal = onSaveLocal,
-                proceed = proceed,
-                moveBackToHome = { moveBackToHome() }
+                moveForward = proceed,
+                content = {
+                    IconButtonWithText(
+                        imageVector = Icons.Default.Save,
+                        text = stringResource(R.string.temp_save),
+                        onClick = onSaveLocal,
+                        description = "Save Local",
+                        iconSize = 24.dp
+                    )
+                }
             )
         }
     ) {paddingValue ->
@@ -312,63 +321,6 @@ fun QuizLayoutBuilderScreenBody(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun QuizLayoutBottomBar(
-    step: LayoutSteps,
-    updateStep: (LayoutSteps) -> Unit = {},
-    onSaveLocal: () -> Unit = {},
-    proceed: () -> Unit,
-    moveBackToHome: () -> Unit = {},
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .imePadding(),
-        verticalAlignment = Alignment.CenterVertically
-    )
-    {
-        IconButtonWithText(
-            imageVector = Icons.Default.ArrowBackIosNew,
-            text = stringResource(R.string.back),
-            onClick = {
-                if (step.ordinal > 1) {
-                    updateStep(step - 1)
-                }
-                else{
-                    moveBackToHome()
-                }
-            },
-            description = "Move back"
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButtonWithText(
-            imageVector = Icons.Default.Save,
-            text = stringResource(R.string.temp_save),
-            onClick = onSaveLocal,
-            description = "Save Local"
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButtonWithText(
-            modifier = Modifier.testTag("QuizLayoutBuilderProceedButton"),
-            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-            text = stringResource(R.string.next),
-            onClick = proceed,
-            description = "Move Forward"
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun QuizLayoutBuilderScreenPreview() {
-    QuizzerAndroidTheme {
-        QuizLayoutBottomBar(
-            step = LayoutSteps.TITLE,
-            proceed = {}
-        )
     }
 }
 
