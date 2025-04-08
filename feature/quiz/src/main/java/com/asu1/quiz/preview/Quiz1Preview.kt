@@ -32,11 +32,11 @@ fun Quiz1Preview(
         QuestionTextStyle.GetTextComposable(
             quiz.question, modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         BuildBody(
             quizBody = quiz.bodyType,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         quiz.userAns.withIndex().forEach { (index, item) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,

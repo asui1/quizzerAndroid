@@ -42,16 +42,13 @@ fun Quiz2SelectionViewer(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
         )
-        // Existing loop, but now can optionally show correctness
         answerDate.forEachIndexed { index, date ->
             if (markAnswers) {
-                // ✅ If marking answers, use your AnswerShower
                 val isCorrect = correctAnswers.contains(date)
                 AnswerShower(
                     isCorrect = isCorrect,
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    // The same text, but inside AnswerShower
                     AnswerTextStyle.GetTextComposable(
                         buildString {
                             append("${index + 1}.    ")
@@ -65,7 +62,6 @@ fun Quiz2SelectionViewer(
                     )
                 }
             } else {
-                // ✅ If NOT marking answers, original display
                 AnswerTextStyle.GetTextComposable(
                     buildString {
                         append("${index + 1}.    ")

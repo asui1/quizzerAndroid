@@ -19,7 +19,7 @@ object BodyTextStyle : BaseTextStyleManager() {
     init {
         textStyle = TextStyle(fontSize = 22.sp)
         update(
-            style = listOf(0, 9, 3, 1, 0),
+            style = listOf(0, 7, 3, 1, 0),
             colorScheme = LightColorScheme,
             isDark = false,
         )

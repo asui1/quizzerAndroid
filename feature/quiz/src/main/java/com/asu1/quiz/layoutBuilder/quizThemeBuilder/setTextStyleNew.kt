@@ -54,7 +54,7 @@ fun QuizLayoutSetTextStyle(
     scrollTo: () -> Unit = {},
 ){
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var isOpen by remember { mutableStateOf(true) }
+    var isOpen by remember { mutableStateOf(false) }
     val textStyle: List<Int> = when (selectedTabIndex) {
         0 -> questionStyle
         1 -> bodyStyle
