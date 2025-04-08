@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,13 +45,13 @@ fun Quiz1Viewer(
             QuestionTextStyle.GetTextComposable(
                 quiz.question, modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
         item{
             BuildBody(
                 quizBody = quiz.bodyType,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
         items(userAnswers.size, key = {it}){ index ->
             Row(
@@ -72,6 +73,7 @@ fun Quiz1Viewer(
                         .semantics {
                             contentDescription = "Checkbox at $index, and is ${if(userAnswers[index]) "checked" else "unchecked"}"
                         }
+                        .scale(1.5f)
                 )
                 AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
             }

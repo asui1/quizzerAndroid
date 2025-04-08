@@ -64,7 +64,7 @@ fun SetGradientBackground(
                     showGradientDropdown = false
                 },
                 onChangeDropDown = { showGradientDropdown = it },
-                inputItems = ShaderType.entries.map { it.shaderName },
+                inputStringResourceItems = ShaderType.entries.map { it.shaderName },
                 currentSelection = backgroundImageColor.shaderType.index,
             )
         }

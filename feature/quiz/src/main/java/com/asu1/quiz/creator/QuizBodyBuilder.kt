@@ -2,6 +2,7 @@ package com.asu1.quiz.creator
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +18,9 @@ import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,30 +57,14 @@ fun QuizBodyBuilder(
         )
     }
 
-    Column(
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
     ){
-        if(bodyState != BodyType.NONE) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = {
-                        updateBody(BodyType.NONE)
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.RemoveCircleOutline,
-                        contentDescription = stringResource(R.string.delete_body)
-                    )
-                }
-            }
-        }
+        @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when(bodyState){
             is BodyType.TEXT -> {
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("QuizCreatorBodyTextField"),
@@ -114,7 +99,7 @@ fun QuizBodyBuilder(
                 )
             }
             is BodyType.CODE -> {
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("QuizCreatorBodyTextField"),
@@ -139,7 +124,23 @@ fun QuizBodyBuilder(
                 Logger.debug("QUIZBODYBUILDER", "NOT IMPLEMENTED BODY TYPE UI")
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        if(bodyState != BodyType.NONE) {
+            Row(
+                modifier = Modifier.fillMaxWidth().align(Alignment.TopEnd),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = {
+                        updateBody(BodyType.NONE)
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RemoveCircleOutline,
+                        contentDescription = stringResource(R.string.delete_body)
+                    )
+                }
+            }
+        }
     }
 }
 

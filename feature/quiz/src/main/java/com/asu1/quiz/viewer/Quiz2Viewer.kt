@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,10 +17,9 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.sampleQuiz2
 import com.asu1.quiz.ui.CalendarWithFocusDates
-import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
-import com.asu1.resources.R
 import java.time.LocalDate
 
 @Composable
@@ -65,18 +63,13 @@ fun Quiz2Viewer(
                 )
         }
         item{
-            Spacer(modifier = Modifier.height(8.dp))
-            AnswerTextStyle.GetTextComposable(
-                stringResource(R.string.selected_answers), modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        items(userAnswers.size){
-            AnswerTextStyle.GetTextComposable(
-                buildString {
-                append("${it + 1}. ")
-                append(userAnswers[it])
-            }, modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(4.dp))
+            Quiz2SelectionViewer(
+                answerDate = userAnswers.toSet(),
+                updateDate = { date ->
+                    onUserInput(date)
+                    updateLocalUserAnswer(date)
+                }
+            )
         }
     }
 

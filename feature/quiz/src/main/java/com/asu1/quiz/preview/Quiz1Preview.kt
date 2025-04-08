@@ -11,6 +11,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ fun Quiz1Preview(
                         .semantics {
                             contentDescription = "Checkbox at $index"
                         }
+                        .scale(1.5f)
                 )
                 AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
             }

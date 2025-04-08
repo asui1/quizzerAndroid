@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -30,7 +31,7 @@ fun BuildBody(
     quizBody: BodyType,
 ){
     when(quizBody){
-        is BodyType.TEXT -> BodyTextStyle.GetTextComposable(quizBody.bodyText, modifier = Modifier.fillMaxWidth())
+        is BodyType.TEXT -> BodyTextStyle.GetTextComposable(quizBody.bodyText, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
         is BodyType.IMAGE -> {
             val image = remember(quizBody.bodyImage){
                 quizBody.bodyImage.asImageBitmap().apply {

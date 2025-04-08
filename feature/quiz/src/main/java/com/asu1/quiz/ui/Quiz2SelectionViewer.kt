@@ -1,0 +1,96 @@
+package com.asu1.quiz.ui
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.asu1.quiz.checker.AnswerShower
+import com.asu1.quiz.creator.monthDateYearFormatter
+import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
+import com.asu1.resources.R
+import java.time.LocalDate
+
+@Composable
+fun Quiz2SelectionViewer(
+    answerDate: Set<LocalDate>,
+    updateDate: (LocalDate) -> Unit,
+    markAnswers: Boolean = false,
+    correctAnswers: Set<LocalDate> = emptySet(),
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 4.dp, vertical = 12.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.selected_dates),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
+        )
+        // Existing loop, but now can optionally show correctness
+        answerDate.forEachIndexed { index, date ->
+            if (markAnswers) {
+                // ✅ If marking answers, use your AnswerShower
+                val isCorrect = correctAnswers.contains(date)
+                AnswerShower(
+                    isCorrect = isCorrect,
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    // The same text, but inside AnswerShower
+                    AnswerTextStyle.GetTextComposable(
+                        buildString {
+                            append("${index + 1}.    ")
+                            append(date.format(monthDateYearFormatter))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                updateDate(date)
+                            }
+                    )
+                }
+            } else {
+                // ✅ If NOT marking answers, original display
+                AnswerTextStyle.GetTextComposable(
+                    buildString {
+                        append("${index + 1}.    ")
+                        append(date.format(monthDateYearFormatter))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            updateDate(date)
+                        }
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        if(markAnswers){
+            correctAnswers.forEach{localDate ->
+                if(!answerDate.contains(localDate)){
+                    AnswerShower(
+                        isCorrect = false,
+                        contentAlignment = Alignment.CenterStart,
+                    ){
+                        AnswerTextStyle.GetTextComposable(localDate.toString(), modifier = Modifier.fillMaxWidth())
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))                }
+            }
+        }
+    }
+}

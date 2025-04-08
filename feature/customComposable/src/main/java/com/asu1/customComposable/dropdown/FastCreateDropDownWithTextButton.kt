@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -40,7 +41,7 @@ fun FastCreateDropDownWithTextButton(
     labelText: String = "",
     onClick: (Int) -> Unit = {},
     onChangeDropDown: (Boolean) -> Unit = {},
-    inputItems: List<Int> = emptyList(),
+    inputStringResourceItems: List<Int> = emptyList(),
     testTag: String = "",
     currentSelection: Int = -1,
 ) {
@@ -61,6 +62,7 @@ fun FastCreateDropDownWithTextButton(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .clickable{ onChangeDropDown(!showDropdownMenu) }
+                .defaultMinSize(minHeight = 48.dp)
                 .fillMaxWidth(),
         ) {
             Text(
@@ -79,7 +81,7 @@ fun FastCreateDropDownWithTextButton(
             expanded = showDropdownMenu,
             onDismissRequest = { onChangeDropDown(false) },
         ) {
-            inputItems.withIndex().forEach { (index, item) ->
+            inputStringResourceItems.withIndex().forEach { (index, item) ->
                 DropdownMenuItem(
                     modifier = Modifier
                         .then(
@@ -114,7 +116,7 @@ fun PreviewFastCreateDropDownWithTextButton() {
             labelText = "Select",
             onClick = { },
             onChangeDropDown = { },
-            inputItems = ShaderType.entries.map { it.shaderName },
+            inputStringResourceItems = ShaderType.entries.map { it.shaderName },
             testTag = "DesignScoreCardDropDown",
         )
     }

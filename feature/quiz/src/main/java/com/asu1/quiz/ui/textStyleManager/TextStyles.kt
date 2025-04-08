@@ -17,7 +17,7 @@ object QuestionTextStyle : BaseTextStyleManager() {
 
 object BodyTextStyle : BaseTextStyleManager() {
     init {
-        textStyle = TextStyle(fontSize = 16.sp)
+        textStyle = TextStyle(fontSize = 22.sp)
         update(
             style = listOf(0, 9, 3, 1, 0),
             colorScheme = LightColorScheme,

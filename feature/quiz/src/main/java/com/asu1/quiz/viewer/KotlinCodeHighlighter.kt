@@ -13,8 +13,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color as ComposeColor
 
 @Composable
@@ -30,7 +30,7 @@ fun KotlinCodeHighlighter(
         BasicText(
             text = highlightedCode,
             modifier = modifier.padding(16.dp),
-            style = TextStyle(fontSize = TextUnit.Unspecified, textAlign = TextAlign.Start)
+            style = TextStyle(fontSize = 22.sp, textAlign = TextAlign.Start)
         )
     }
 }

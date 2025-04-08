@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +65,7 @@ fun Quiz1Checker(
                             .semantics {
                                 contentDescription = "Checkbox at $index, and is ${if(quiz.userAns[index]) "checked" else "unchecked"}"
                             }
+                            .scale(1.5f)
                     )
                 }
                 AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])

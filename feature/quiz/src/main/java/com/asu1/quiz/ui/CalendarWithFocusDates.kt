@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.asu1.quiz.creator.monthYearFormatter
 import com.asu1.quiz.ui.textStyleManager.BodyTextStyle
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -60,7 +61,7 @@ fun CalendarWithFocusDates(
             val isSelected = focusDates.contains(it.date)
             key(isSelected) {
                 Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick,
-                    colorScheme.surfaceDim)
+                    colorScheme.primaryContainer)
             }
         },
         monthHeader = { month ->
@@ -72,11 +73,9 @@ fun CalendarWithFocusDates(
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Text(text = buildString {
-                        append(month.yearMonth.year.toString())
-                        append("  /  ")
-                        append(month.yearMonth.monthValue)
-                    })
+                    Text(text =
+                        month.yearMonth.format(monthYearFormatter)
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(){
@@ -105,8 +104,8 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
     val isInCurrentMonth = day.date.month == currentMonth.month
     val alpha = if (isInCurrentMonth) 1f else 0.5f
     val color = when (day.date.dayOfWeek) {
-        DayOfWeek.SATURDAY -> BodyTextStyle.contentColorToRed
-        DayOfWeek.SUNDAY -> BodyTextStyle.contentColorToBlue
+        DayOfWeek.SATURDAY -> BodyTextStyle.contentColorToBlue
+        DayOfWeek.SUNDAY -> BodyTextStyle.contentColorToRed
         else -> BodyTextStyle.contentColor
     }
     val backgroundColor = if (isSelected) focusColor else Color.Transparent
