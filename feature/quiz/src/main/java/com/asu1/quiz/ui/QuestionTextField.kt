@@ -26,6 +26,7 @@ fun QuestionTextField(
             onValueChange = {onQuestionChange(it)},
             onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
+                focusManager.moveFocus(FocusDirection.Left)
             },
             modifier = Modifier.weight(5f),
             key = "QuizQuestionTextField",

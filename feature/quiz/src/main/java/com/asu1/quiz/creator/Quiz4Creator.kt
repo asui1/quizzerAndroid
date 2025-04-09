@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,12 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +46,9 @@ import com.asu1.models.quiz.Quiz4
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
 
 @Composable
 fun Quiz4Creator(
@@ -104,7 +103,6 @@ fun Quiz4Creator(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,
@@ -125,7 +123,6 @@ fun Quiz4Creator(
                                     modifier = Modifier.weight(1f).testTag(
                                         "QuizCreatorAnswerLeftTextField$index"
                                     ),
-                                    label = "Answer ${index + 1}",
                                     deleteAnswer = {
                                         quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveLeft(index))
                                     }
@@ -188,17 +185,12 @@ fun Quiz4Creator(
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        IconButton(
-                            modifier = Modifier.testTag("QuizCreatorAddAnswerLeftButton"),
+                        Spacer(modifier = Modifier.height(8.dp))
+                        AddAnswer(
                             onClick = {
                                 quiz.onQuiz4Update(Quiz4ViewModelStates.AddLeft)
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AddCircleOutline,
-                                contentDescription = "Add answer"
-                            )
-                        }
+                        )
                     }
                     Spacer(modifier = Modifier.width(40.dp))
                     Column(
@@ -239,7 +231,6 @@ fun Quiz4Creator(
                                         }
                                     },
                                     modifier = Modifier.weight(1f).testTag("QuizCreatorAnswerRightTextField$index"),
-                                    label = "Answer ${index + 1}",
                                     deleteAnswer = {
                                         quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveRight(index))
                                     },
@@ -247,18 +238,12 @@ fun Quiz4Creator(
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        IconButton(
-                            modifier = Modifier
-                                .testTag("QuizCreatorAddAnswerRightButton"),
+                        Spacer(modifier = Modifier.height(8.dp))
+                        AddAnswer(
                             onClick = {
                                 quiz.onQuiz4Update(Quiz4ViewModelStates.AddRight)
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AddCircleOutline,
-                                contentDescription = "Add answer"
-                            )
-                        }
+                        )
                     }
                 }
             }
@@ -272,13 +257,14 @@ fun Quiz4Creator(
                     color = color,
                     start = startOffset,
                     end = endOffset,
-                    strokeWidth = 4f
+                    strokeWidth = 8f
                 )
             }
         }
     }
 }
 
+@OptIn(FlowPreview::class)
 @Composable
 fun DraggableDot(
     modifier: Modifier = Modifier,
@@ -290,6 +276,16 @@ fun DraggableDot(
     moveOffset: Float = 0f,
     key: String = "",
 ) {
+    val offsetFlow = remember { MutableSharedFlow<Offset>(extraBufferCapacity = 1) }
+
+    LaunchedEffect(Unit) {
+        offsetFlow
+            .debounce(200L)  // adjust debounce delay as needed
+            .collect { offset ->
+                setOffset(offset)
+            }
+    }
+
     Box(
         modifier = modifier
             .size(dotSize)
@@ -303,8 +299,10 @@ fun DraggableDot(
             }
             .onGloballyPositioned { coordinates ->
                 val globalOffset = coordinates.positionInRoot()
+                // Calculate a new relative offset based on your parameters.
                 val relativeOffset = globalOffset - boxPosition + Offset(moveOffset, moveOffset)
-                setOffset(relativeOffset)
+                // Emit the calculated offset into the flow.
+                offsetFlow.tryEmit(relativeOffset)
             }
             .testTag(key)
     )
@@ -329,7 +327,7 @@ fun DrawLines(
                 color = color,
                 start = start,
                 end = end,
-                strokeWidth = 4f
+                strokeWidth = 8f
             )
         }
     }

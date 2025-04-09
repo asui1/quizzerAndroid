@@ -75,7 +75,6 @@ fun Quiz4Viewer(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             item {
                 QuestionTextStyle.GetTextComposable(quizState.question, modifier = Modifier.fillMaxWidth())
@@ -212,7 +211,7 @@ fun Quiz4Viewer(
                     color = color,
                     start = startOffset,
                     end = endOffset,
-                    strokeWidth = 4f
+                    strokeWidth = 8f
                 )
             }
         }
