@@ -149,7 +149,7 @@
     <string name="move_home">메인으로</string>
     <string name="select_color1">배경 색 필터</string>
     <string name="select_color2">효과 색</string>
-    <string name="select_text_color">글자 색 선택</string>
+    <string name="select_text_color">글자 색상 선택</string>
     <string name="color1">배경 색</string>
     <string name="color2">효과 색</string>
     <string name="color3">그라데이션</string>

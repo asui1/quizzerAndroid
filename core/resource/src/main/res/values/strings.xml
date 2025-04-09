@@ -149,7 +149,7 @@
     <string name="move_home">Move Home</string>
     <string name="select_color1">Background Color Filter</string>
     <string name="select_color2">Effect Color</string>
-    <string name="select_text_color">Select Text Color</string>
+    <string name="select_text_color">Pick Text Color</string>
     <string name="color1">Background</string>
     <string name="color2">Effect</string>
     <string name="color3">Gradient</string>

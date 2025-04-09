@@ -17,12 +17,9 @@ import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material.icons.filled.ImageSearch
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -48,10 +45,23 @@ import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.BackgroundImagePickerDialog
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.OverlayImagePickerDialog
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.ResetToTransparentButton
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.ScoreCardColorPickerDialog
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.TextColorPickerDialog
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModelActions
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
+
+sealed class ScoreCardDialog {
+    object None : ScoreCardDialog()
+    object ColorPicker : ScoreCardDialog()
+    object OverlayImagePicker : ScoreCardDialog()
+    object TextColorPicker : ScoreCardDialog()
+    object BackgroundImagePicker : ScoreCardDialog()
+}
 
 @Composable
 fun DesignScoreCardTools(
@@ -63,176 +73,58 @@ fun DesignScoreCardTools(
 ) {
     var showEffectDropdown by remember { mutableStateOf(false) }
     var showGradientDropdown by remember { mutableStateOf(false) }
-    var showScoreCardColorPicker by remember { mutableStateOf(false) }
-    var showTextColorPicker by remember { mutableStateOf(false) }
-    var showBackgroundImagePicker by remember { mutableStateOf(false) }
-    var showOverlayImagePicker by remember { mutableStateOf(false) }
     var colorIndex by remember{ mutableIntStateOf(0) }
     var showEffectsDialog by remember {mutableStateOf(false)}
+    var scoreCardDialog by remember {mutableStateOf<ScoreCardDialog>(ScoreCardDialog.None)}
 
-    if(showScoreCardColorPicker){
-        Dialog(
-            onDismissRequest = {
-                showScoreCardColorPicker = false
-            },
-            properties = DialogProperties(dismissOnBackPress = true)
-        ) {
-            TextColorPickerModalSheet(
-                initialColor = when(colorIndex) {
-                    1 -> scoreCard.background.color2
-                    2 -> scoreCard.background.colorGradient
-                    else -> scoreCard.background.color
-                },
-                onColorSelected = { color ->
-                    updateQuizCoordinate(
-                        QuizCoordinatorActions.UpdateScoreCard(
-                            ScoreCardViewModelActions.UpdateColor(color, colorIndex)
-                        )
-                    )
-                },
-                text = stringResource(
-                    when(colorIndex) {
-                        1 -> R.string.select_color2
-                        2 -> R.string.select_color3
-                        else -> R.string.select_color1
-                    }
-                ),
-                colorName = stringResource(
-                    when(colorIndex) {
-                        1 -> R.string.color2
-                        2 -> R.string.color3
-                        else -> R.string.color1
-                    }
-                ),
-                onClose = {
-                    showScoreCardColorPicker = false
-                },
-                toggleBlendMode = {
-                    if(colorIndex == 0){
-                        ToggleTextWithSwitch(
-                            textA = stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId),
-                            textB = stringResource(ImageBlendMode.BLENDHUE.stringResourceId),
-                            isBSelected = scoreCard.background.imageBlendMode == ImageBlendMode.BLENDHUE,
-                            onClick = { it ->
-                                updateQuizCoordinate(
-                                    QuizCoordinatorActions.UpdateScoreCard(
-                                        ScoreCardViewModelActions.ChangeBlendMode
-                                    )
-                                )
-                            }
-                        )
-                    }
-                },
-                resetToTransparent = {
-                    ResetToTransparentButton(
-                        onReset = {
-                            updateQuizCoordinate(
-                                QuizCoordinatorActions.UpdateScoreCard(
-                                    ScoreCardViewModelActions.UpdateColor(Color.Transparent, colorIndex)
-                                )
-                            )
-                        },
-                    )
-                },
-            )
-        }
+    fun onDismiss() {
+        scoreCardDialog = ScoreCardDialog.None
     }
-    if(showOverlayImagePicker){
+    if(scoreCardDialog != ScoreCardDialog.None) {
         Dialog(
-            onDismissRequest = {
-                showOverlayImagePicker = false
-            }
-        ){
-            ImageGetter(
-                image = scoreCard.background.overlayImage,
-                onImageUpdate = {bitmap ->
-                    updateQuizCoordinate(
-                        QuizCoordinatorActions.UpdateScoreCard(
-                            ScoreCardViewModelActions.UpdateOverlayImage(bitmap)
-                        )
-                    )
-                },
-                topBar = {
-                    LabeledSwitch(
-                        label = stringResource(R.string.remove_background),
-                        checked = removeBackground,
-                        onCheckedChange = { checked ->
-                            updateQuizCoordinate(
-                                QuizCoordinatorActions.UpdateScoreCard(
-                                    ScoreCardViewModelActions.UpdateRemoveBackground(checked)
-                                )
-                            )
-                        }
-                    )
-                },
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .border(
-                        2.dp,
-                        MaterialTheme.colorScheme.onSurface,
-                        shape = RoundedCornerShape(8.dp)
-                    )
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
             )
-        }
-    }
-    if(showTextColorPicker){
-        Dialog(
-            onDismissRequest = {
-                showTextColorPicker = false
-            }
         ) {
-            TextColorPickerModalSheet(
-                initialColor = scoreCard.textColor,
-                onColorSelected = { color ->
-                    updateQuizCoordinate(
-                        QuizCoordinatorActions.UpdateScoreCard(
-                            ScoreCardViewModelActions.UpdateTextColor(color)
-                        )
+            when(scoreCardDialog){
+                ScoreCardDialog.ColorPicker -> {
+                    ScoreCardColorPickerDialog(
+                        colorIndex = colorIndex,
+                        scoreCard = scoreCard,
+                        updateQuizCoordinate = updateQuizCoordinate,
+                        onDismiss = {onDismiss()}
                     )
-                },
-                text = stringResource(R.string.select_text_color),
-                colorName = stringResource(R.string.text_color),
-                onClose = {
-                    showTextColorPicker = false
                 }
-            )
-        }
-    }
-    if(showBackgroundImagePicker){
-        Dialog(
-            onDismissRequest = {
-                showBackgroundImagePicker = false
+                ScoreCardDialog.OverlayImagePicker -> {
+                    OverlayImagePickerDialog(
+                        scoreCard = scoreCard,
+                        removeBackground = removeBackground,
+                        updateQuizCoordinate = updateQuizCoordinate,
+                        onDismiss = {onDismiss()}
+                    )
+                }
+                ScoreCardDialog.TextColorPicker -> {
+                    TextColorPickerDialog(
+                        scoreCard = scoreCard,
+                        updateQuizCoordinate = updateQuizCoordinate,
+                        onDismiss = {onDismiss()}
+                    )
+                }
+                ScoreCardDialog.BackgroundImagePicker -> {
+                    BackgroundImagePickerDialog(
+                        scoreCard = scoreCard,
+                        updateQuizCoordinate = updateQuizCoordinate,
+                        onDismiss = {onDismiss()},
+                        screenWidth = screenWidth,
+                        screenHeight = screenHeight
+                    )
+                }
+                ScoreCardDialog.None -> { /* Do nothing */ }
             }
-        ) {
-            ImagePickerWithBaseImages(
-                modifier = Modifier,
-                onBaseImageSelected = { baseImage ->
-                    updateQuizCoordinate(
-                        QuizCoordinatorActions.UpdateScoreCard(
-                            ScoreCardViewModelActions.UpdateBackgroundImageBase(baseImage)
-                        )
-                    )
-                    showBackgroundImagePicker = false
-                },
-                onImageSelected = {bitmap ->
-                    updateQuizCoordinate(
-                        QuizCoordinatorActions.UpdateScoreCard(
-                            ScoreCardViewModelActions.UpdateBackgroundImage(bitmap)
-                        )
-                    )
-                    showBackgroundImagePicker = false
-                },
-                imageColorState = scoreCard.background.state,
-                currentSelection = scoreCard.background.backgroundBase,
-                currentImage = scoreCard.background.imageData,
-                width = screenWidth,
-                height = screenHeight,
-            )
         }
     }
+
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
@@ -249,7 +141,7 @@ fun DesignScoreCardTools(
             imageVector = Icons.Default.FormatColorText,
             text = stringResource(R.string.text_color),
             onClick = {
-                showTextColorPicker = true
+                scoreCardDialog = ScoreCardDialog.TextColorPicker
             },
             description = "Set Text Color For ScoreCard",
             modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
@@ -259,7 +151,7 @@ fun DesignScoreCardTools(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.image_on_top),
             onClick = {
-                showOverlayImagePicker = true
+                scoreCardDialog = ScoreCardDialog.OverlayImagePicker
             },
             description = "Set Image to go on top",
             modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
@@ -269,7 +161,7 @@ fun DesignScoreCardTools(
             imageVector = Icons.Default.ImageSearch,
             text = stringResource(R.string.background_newline),
             onClick = {
-                showBackgroundImagePicker = true
+                scoreCardDialog = ScoreCardDialog.BackgroundImagePicker
             },
             description = "Set Background Image For ScoreCard",
             modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
@@ -322,7 +214,7 @@ fun DesignScoreCardTools(
                 text = stringResource(colorName),
                 onClick = {
                     colorIndex = index
-                    showScoreCardColorPicker = true
+                    scoreCardDialog = ScoreCardDialog.ColorPicker
                 },
                 description = "Set Color For ScoreCard",
                 modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
@@ -331,40 +223,6 @@ fun DesignScoreCardTools(
         }
     }
 }
-
-@Composable
-private fun ResetToTransparentButton(
-    modifier: Modifier = Modifier,
-    onReset: () -> Unit,
-) {
-    TextButton(
-        onClick = onReset,
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.reset_color_transparent),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Reset"
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ResetToTransparentButtonPreview() {
-    ResetToTransparentButton(onReset = {
-        // Your reset logic goes here.
-    })
-}
-
 
 @Composable
 fun ToggleTextWithSwitch(
