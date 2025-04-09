@@ -20,7 +20,6 @@ fun QuizViewer(
     quiz: Quiz<*>,
     quizTheme: QuizTheme = QuizTheme(),
     updateQuiz: (QuizUserUpdates) -> Unit = {},
-    isPreview: Boolean = false,
 ) {
     when(quiz){
         is Quiz1 -> {
@@ -29,7 +28,6 @@ fun QuizViewer(
                 toggleUserAnswer = {
                     updateQuiz(QuizUserUpdates.Quiz1Update(it))
                 },
-                isPreview = isPreview,
             )
         }
         is Quiz2 -> {
@@ -39,7 +37,6 @@ fun QuizViewer(
                 onUserInput = {
                     updateQuiz(QuizUserUpdates.Quiz2Update(it))
                 },
-                isPreview = isPreview,
             )
         }
         is Quiz3 -> {
@@ -48,7 +45,6 @@ fun QuizViewer(
                 onUserInput = {first, second ->
                     updateQuiz(QuizUserUpdates.Quiz3Update(first, second))
                 },
-                isPreview = isPreview,
             )
         }
         is Quiz4 -> {
@@ -59,7 +55,6 @@ fun QuizViewer(
             Quiz4Viewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
-                isPreview = isPreview,
                 onUpdate = {items ->
                     updateQuiz(QuizUserUpdates.Quiz4Update(items))
                 }

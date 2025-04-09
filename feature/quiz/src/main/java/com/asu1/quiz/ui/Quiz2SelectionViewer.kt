@@ -32,17 +32,18 @@ fun Quiz2SelectionViewer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 12.dp)
             .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 4.dp, vertical = 12.dp)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.selected_dates),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 12.dp)
         )
         answerDate.forEachIndexed { index, date ->
+            Spacer(modifier = Modifier.height(4.dp))
             if (markAnswers) {
                 val isCorrect = correctAnswers.contains(date)
                 AnswerShower(
@@ -74,18 +75,18 @@ fun Quiz2SelectionViewer(
                         }
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
         }
         if(markAnswers){
             correctAnswers.forEach{localDate ->
                 if(!answerDate.contains(localDate)){
+                    Spacer(modifier = Modifier.height(4.dp))
                     AnswerShower(
                         isCorrect = false,
                         contentAlignment = Alignment.CenterStart,
                     ){
                         AnswerTextStyle.GetTextComposable(localDate.toString(), modifier = Modifier.fillMaxWidth())
                     }
-                    Spacer(modifier = Modifier.height(4.dp))                }
+                }
             }
         }
     }

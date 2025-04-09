@@ -74,7 +74,7 @@
     <string name="delete_body">예제 삭제</string>
     <string name="add_body">예제 추가</string>
     <string name="body_text">예제 텍스트 입력</string>
-    <string name="select_body_type">예제 종류를 선택하세요</string>
+    <string name="select_body_type">예제 종류를 선택하세요.</string>
     <string name="quiz_image_for">"퀴즈 이미지: "</string>
     <string name="solved">풀이 수🧠️ : </string>
     <string name="save">저장</string>

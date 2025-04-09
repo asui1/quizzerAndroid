@@ -11,16 +11,18 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.asu1.resources.R
 
 @Composable
 fun TextFieldWithDelete(
     modifier: Modifier = Modifier,
     value: String,
-    label: String = "Answer",
+    label: String = stringResource(R.string.answer_label),
     onValueChange: (String) -> Unit = {},
     isLast: Boolean = false,
     onNext: () -> Unit = {},

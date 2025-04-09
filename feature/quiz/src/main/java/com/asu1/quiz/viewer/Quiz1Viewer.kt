@@ -28,7 +28,6 @@ import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 fun Quiz1Viewer(
     quiz: Quiz1,
     toggleUserAnswer: (Int) -> Unit = {},
-    isPreview: Boolean = false,
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
@@ -36,7 +35,6 @@ fun Quiz1Viewer(
         userAnswers[index ] = !userAnswers[index]
     }
     LazyColumn(
-        userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -57,7 +55,6 @@ fun Quiz1Viewer(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().clickable {
-                    if(isPreview) return@clickable
                     toggleLocalUserAnswers(index)
                     toggleUserAnswer(index)
                 }
@@ -65,7 +62,6 @@ fun Quiz1Viewer(
                 Checkbox(
                     checked = userAnswers[index],
                     onCheckedChange = {
-                        if(isPreview) return@Checkbox
                         toggleLocalUserAnswers(index)
                         toggleUserAnswer(index)
                     },

@@ -106,7 +106,8 @@ abstract class BaseTextStyleManager {
     fun GetTextComposable(text: String, modifier: Modifier = Modifier){
         GetTextStyle(
             text = text,
-            modifier = modifier.then(borderModifier),
+            modifier = modifier
+                .then(borderModifier),
             myTextStyleExtra = extra,
             textStyle = textStyle,
         )

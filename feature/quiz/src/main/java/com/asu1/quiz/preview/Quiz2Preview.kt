@@ -34,7 +34,6 @@ fun Quiz2Preview(
             },
             currentMonth = quiz.centerDate,
             colorScheme = quizTheme.colorScheme,
-            isPreview = true,
         )
         Quiz2SelectionViewer(
             answerDate = quiz.userAnswerDate,

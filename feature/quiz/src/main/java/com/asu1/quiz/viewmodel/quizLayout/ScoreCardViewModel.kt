@@ -58,7 +58,6 @@ class ScoreCardViewModel: ViewModel() {
                     2 -> currentBackground.copy(colorGradient = color)
                     else -> currentBackground.copy(color = color)
                 }
-                Logger.debug("COLOR UPDATE: $index, $color")
                 currentState.copy(scoreCard = currentState.scoreCard.copy(background = updatedBackground))
             }
         } catch (e: Exception) {

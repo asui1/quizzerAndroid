@@ -103,7 +103,6 @@ fun QuizSolver(
                                 quizCoordinatorViewModel.updateQuizCoordinator(action = action)
                             },
                             modifier = Modifier.fillMaxSize(),
-                            isPreview = false,
                             lastElement = {
                                 QuizSubmit(
                                     title = quizData.title,
@@ -128,7 +127,6 @@ fun QuizViewerPager(
     quizTheme: QuizTheme = QuizTheme(),
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
-    isPreview: Boolean = false,
 ) {
     HorizontalPager(
         state = pagerState,
@@ -150,8 +148,7 @@ fun QuizViewerPager(
                                 page, quizUserUpdate
                             )
                         )
-                    },
-                    isPreview = isPreview
+                    }
                 )
                 Text(
                     text = "${page + 1}/${quizSize}",

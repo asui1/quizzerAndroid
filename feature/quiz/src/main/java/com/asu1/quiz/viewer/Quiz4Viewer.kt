@@ -38,13 +38,11 @@ import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
-import com.asu1.utils.Logger
 
 @Composable
 fun Quiz4Viewer(
     quiz: Quiz4ViewModel = viewModel(),
     quizTheme: QuizTheme = QuizTheme(),
-    isPreview: Boolean = false,
     onUpdate: (List<Int?>) -> Unit = {},
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
@@ -62,7 +60,6 @@ fun Quiz4Viewer(
 
     DisposableEffect(Unit){
         onDispose {
-            Logger.debug("Save")
             onUpdate(quizState.userConnectionIndex)
         }
     }
@@ -76,7 +73,6 @@ fun Quiz4Viewer(
             }
     ) {
         LazyColumn(
-            userScrollEnabled = !isPreview,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -205,21 +201,19 @@ fun Quiz4Viewer(
                 }
             }
         }
-        if(!isPreview) {
-            DrawLines(
-                leftDots = quizState.leftDots,
-                rightDots = quizState.rightDots,
-                connections = quizState.userConnectionIndex
-            )
-            if(isDragging) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawLine(
-                        color = color,
-                        start = startOffset,
-                        end = endOffset,
-                        strokeWidth = 4f
-                    )
-                }
+        DrawLines(
+            leftDots = quizState.leftDots,
+            rightDots = quizState.rightDots,
+            connections = quizState.userConnectionIndex
+        )
+        if(isDragging) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawLine(
+                    color = color,
+                    start = startOffset,
+                    end = endOffset,
+                    strokeWidth = 4f
+                )
             }
         }
     }

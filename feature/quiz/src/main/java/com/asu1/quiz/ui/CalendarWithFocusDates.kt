@@ -41,8 +41,7 @@ fun CalendarWithFocusDates(
     onDateClick: (LocalDate) -> Unit,
     currentMonth: YearMonth = YearMonth.now(),
     yearRange: Int = 10,
-    colorScheme: ColorScheme,
-    isPreview: Boolean = false
+    colorScheme: ColorScheme
 ) {
     val state = rememberCalendarState(
         startMonth = currentMonth.minusYears(yearRange.toLong()),
@@ -51,7 +50,6 @@ fun CalendarWithFocusDates(
         firstDayOfWeek = DayOfWeek.SUNDAY
     )
     HorizontalCalendar(
-        userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxWidth()
             .height(380.dp)

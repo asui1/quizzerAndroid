@@ -3,9 +3,6 @@ package com.asu1.quiz.viewer
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,25 +11,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.rounded.DragHandle
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.sampleQuiz3
+import com.asu1.quiz.ui.ArrowDownwardWithPaddings
+import com.asu1.quiz.ui.SurfaceWithAnswerComposable
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
@@ -43,7 +35,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun Quiz3Viewer(
     quiz: Quiz3,
     onUserInput: (Int, Int) -> Unit = {_, _ ->},
-    isPreview: Boolean = false,
 ) {
     val view = LocalView.current
     val quiz3List = remember { mutableStateListOf(*quiz.shuffledAnswers.toTypedArray()) }
@@ -61,8 +52,8 @@ fun Quiz3Viewer(
     }
 
     LazyColumn(
-        userScrollEnabled = !isPreview,
         state = lazyListState,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -74,57 +65,29 @@ fun Quiz3Viewer(
                 quizBody = quiz.bodyType,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
+            AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0],
+                modifier = Modifier.fillMaxWidth())
         }
         items(quiz3List.subList(1, quiz3List.size), key = { it }) {
+            ArrowDownwardWithPaddings()
             ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
                 val item = it.replace(Regex("Q!Z2\\d+$"), "")
-                val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "")
+                val elevation by animateDpAsState(if (isDragging) 2.dp else 1.dp, label = "")
 
-                Surface(
-                    color = Color.Transparent,
+                SurfaceWithAnswerComposable(
+                    modifier = Modifier.draggableHandle(
+                        onDragStarted = {
+                            if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
+                                view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
+                        },
+                        onDragStopped = {
+                            if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
+                                view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
+                        },
+                    ),
+                    item = item,
                     shadowElevation = elevation
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDownward,
-                                contentDescription = "Reorder",
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            AnswerTextStyle.GetTextComposable(item, modifier = Modifier.weight(1f).padding(8.dp))
-                            IconButton(
-                                modifier = Modifier.draggableHandle(
-                                    enabled = !isPreview,
-                                    onDragStarted = {
-                                        if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
-                                        view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
-                                    },
-                                    onDragStopped = {
-                                        if(Build.VERSION_CODES.R <= Build.VERSION.SDK_INT)
-                                        view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
-                                    },
-                                ),
-                                onClick = {},
-                            ) {
-                                Icon(Icons.Rounded.DragHandle, contentDescription = "Reorder")
-                            }
-                        }
-                    }
-                }
+                )
             }
         }
     }

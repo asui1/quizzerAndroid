@@ -1,23 +1,18 @@
 package com.asu1.quiz.preview
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.rounded.DragHandle
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.Quiz3
+import com.asu1.quiz.ui.ArrowDownwardWithPaddings
+import com.asu1.quiz.ui.SurfaceWithAnswerComposable
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
@@ -27,6 +22,7 @@ fun Quiz3Preview(
     quiz: Quiz3,
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -40,34 +36,11 @@ fun Quiz3Preview(
         AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         quiz.shuffledAnswers.drop(1).forEach { answer ->
             val item = answer.replace(Regex("Q!Z2\\d+$"), "")
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDownward,
-                        contentDescription = "Reorder",
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AnswerTextStyle.GetTextComposable(item, modifier = Modifier.weight(1f).padding(8.dp))
-                    IconButton(
-                        onClick = {},
-                    ) {
-                        Icon(Icons.Rounded.DragHandle, contentDescription = "Reorder")
-                    }
-                }
-            }
+            ArrowDownwardWithPaddings()
+            SurfaceWithAnswerComposable(
+                item = item,
+                shadowElevation = 1.dp,
+                )
         }
     }
 }

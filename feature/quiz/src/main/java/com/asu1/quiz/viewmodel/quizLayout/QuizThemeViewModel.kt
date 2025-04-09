@@ -25,7 +25,6 @@ import com.asu1.resources.borders
 import com.asu1.resources.colors
 import com.asu1.resources.fonts
 import com.asu1.resources.outlines
-import com.asu1.utils.Logger
 import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.shaders.ShaderType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,9 +55,6 @@ class QuizThemeViewModel : ViewModel() {
         QuestionTextStyle.update(_quizTheme.value.questionTextStyle, _quizTheme.value.colorScheme)
         BodyTextStyle.update(_quizTheme.value.bodyTextStyle, _quizTheme.value.colorScheme)
         AnswerTextStyle.update(_quizTheme.value.answerTextStyle, _quizTheme.value.colorScheme)
-        Logger.debug("${_quizTheme.value.questionTextStyle}")
-        Logger.debug("${_quizTheme.value.bodyTextStyle}")
-        Logger.debug("${_quizTheme.value.answerTextStyle}")
     }
 
     fun updateBackgroundImage(image: Bitmap?) {
@@ -69,7 +65,6 @@ class QuizThemeViewModel : ViewModel() {
 
     fun updateBackgroundColor(color: Color) {
         _quizTheme.update {
-            Logger.debug("UPDATE BACKGROUND COLOR: $color")
             it.copy(backgroundImage = it.backgroundImage.copy(color = color))
         }
     }
@@ -145,7 +140,6 @@ class QuizThemeViewModel : ViewModel() {
     fun updateQuestionTextStyle(indexSelector: Int, isIncrease: Boolean) {
         _quizTheme.update {
             val newStyle = textStyleUpdater(it.questionTextStyle, indexSelector, isIncrease)
-            Logger.debug(newStyle)
             QuestionTextStyle.update(newStyle, it.colorScheme, indexSelector)
             it.copy(questionTextStyle = newStyle)
         }

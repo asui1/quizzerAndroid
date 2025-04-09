@@ -47,7 +47,6 @@ fun Quiz2Checker(
                 },
                 currentMonth = quiz.centerDate,
                 colorScheme = quizTheme.colorScheme,
-                isPreview = true,
             )
         }
         item{

@@ -162,7 +162,6 @@ fun QuizBuilderScreen(
                             quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
                         },
                         modifier = Modifier.fillMaxSize(),
-                        isPreview = false,
                         lastElement = {
                             QuizSubmit(
                                 title = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),

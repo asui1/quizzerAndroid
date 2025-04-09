@@ -27,7 +27,6 @@ fun Quiz2Viewer(
     quiz: Quiz2,
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (LocalDate) -> Unit = {},
-    isPreview: Boolean = false,
 )
 {
     val userAnswers = remember { mutableStateListOf(*quiz.userAnswerDate.toTypedArray()) }
@@ -40,7 +39,6 @@ fun Quiz2Viewer(
     }
 
     LazyColumn(
-        userScrollEnabled = !isPreview,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -53,13 +51,11 @@ fun Quiz2Viewer(
                 CalendarWithFocusDates(
                     focusDates = userAnswers.toSet(),
                     onDateClick = { date ->
-                        if(isPreview) return@CalendarWithFocusDates
                         onUserInput(date)
                         updateLocalUserAnswer(date)
                     },
                     currentMonth = quiz.centerDate,
                     colorScheme = quizTheme.colorScheme,
-                    isPreview = isPreview,
                 )
         }
         item{
