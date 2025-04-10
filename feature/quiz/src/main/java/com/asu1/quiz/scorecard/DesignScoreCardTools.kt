@@ -1,12 +1,8 @@
 package com.asu1.quiz.scorecard
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -18,8 +14,6 @@ import androidx.compose.material.icons.filled.FormatColorText
 import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,18 +29,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.asu1.customComposable.Switch.LabeledSwitch
 import com.asu1.customComposable.button.IconButtonWithText
-import com.asu1.customComposable.dialog.FastCreateDialog
 import com.asu1.customComposable.dropdown.FastCreateDropDownWithIcon
-import com.asu1.customComposable.imageGetter.ImageGetter
-import com.asu1.imagecolor.Effect
-import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quiz.scorecard.scorecardToolsDialogs.BackgroundImagePickerDialog
+import com.asu1.quiz.scorecard.scorecardToolsDialogs.EffectPickerDialog
 import com.asu1.quiz.scorecard.scorecardToolsDialogs.OverlayImagePickerDialog
-import com.asu1.quiz.scorecard.scorecardToolsDialogs.ResetToTransparentButton
 import com.asu1.quiz.scorecard.scorecardToolsDialogs.ScoreCardColorPickerDialog
 import com.asu1.quiz.scorecard.scorecardToolsDialogs.TextColorPickerDialog
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
@@ -61,6 +49,7 @@ sealed class ScoreCardDialog {
     object OverlayImagePicker : ScoreCardDialog()
     object TextColorPicker : ScoreCardDialog()
     object BackgroundImagePicker : ScoreCardDialog()
+    object EffectPicker : ScoreCardDialog()
 }
 
 @Composable
@@ -71,10 +60,8 @@ fun DesignScoreCardTools(
     screenWidth: Dp,
     screenHeight: Dp,
 ) {
-    var showEffectDropdown by remember { mutableStateOf(false) }
     var showGradientDropdown by remember { mutableStateOf(false) }
     var colorIndex by remember{ mutableIntStateOf(0) }
-    var showEffectsDialog by remember {mutableStateOf(false)}
     var scoreCardDialog by remember {mutableStateOf<ScoreCardDialog>(ScoreCardDialog.None)}
 
     fun onDismiss() {
@@ -100,8 +87,7 @@ fun DesignScoreCardTools(
                     OverlayImagePickerDialog(
                         scoreCard = scoreCard,
                         removeBackground = removeBackground,
-                        updateQuizCoordinate = updateQuizCoordinate,
-                        onDismiss = {onDismiss()}
+                        updateQuizCoordinate = updateQuizCoordinate
                     )
                 }
                 ScoreCardDialog.TextColorPicker -> {
@@ -118,6 +104,13 @@ fun DesignScoreCardTools(
                         onDismiss = {onDismiss()},
                         screenWidth = screenWidth,
                         screenHeight = screenHeight
+                    )
+                }
+                ScoreCardDialog.EffectPicker -> {
+                    EffectPickerDialog(
+                        onClick = {},
+                        currentSelection = -1,
+                        onDismiss = {},
                     )
                 }
                 ScoreCardDialog.None -> { /* Do nothing */ }
@@ -169,24 +162,15 @@ fun DesignScoreCardTools(
         )
         colorNames.forEachIndexed { index, colorName ->
             if (colorName == R.string.effect) {
-                FastCreateDialog(
-                    showDialog = showEffectsDialog,
-                    labelText = stringResource(R.string.effects),
-                    onClick = { dropdownIndex ->
-                        showEffectDropdown = false
-                        updateQuizCoordinate(
-                            QuizCoordinatorActions.UpdateScoreCard(
-                                ScoreCardViewModelActions.UpdateEffect(Effect.entries[dropdownIndex])
-                            )
-                        )
-                    },
-                    onChangeDialog = { showEffectsDialog = it },
-                    inputItems = remember { Effect.entries.map { it.stringId } },
-                    modifier = Modifier.width(iconSize * 1.7f),
+                IconButtonWithText(
                     imageVector = Icons.Filled.Animation,
-                    testTag = "DesignScoreCardAnimationButton",
+                    text = stringResource(R.string.effects),
+                    onClick = {
+                        scoreCardDialog = ScoreCardDialog.EffectPicker
+                    },
+                    modifier = Modifier.testTag("DesignScoreCardAnimationButton"),
+                    description = "Open Dialog",
                     iconSize = iconSize,
-                    currentSelection = scoreCard.background.effect.ordinal
                 )
             } else if (colorName == R.string.gradient) {
                 FastCreateDropDownWithIcon(
@@ -222,49 +206,6 @@ fun DesignScoreCardTools(
             )
         }
     }
-}
-
-@Composable
-fun ToggleTextWithSwitch(
-    textA: String,
-    textB: String,
-    isBSelected: Boolean,
-    onClick: (Boolean) -> Unit = {},
-) {
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // A switch to toggle the state.
-        Text(
-            text = textA,
-            style = MaterialTheme.typography.titleSmall
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Switch(
-            checked = isBSelected,
-            onCheckedChange = { onClick(it) }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = textB,
-            style = MaterialTheme.typography.titleSmall
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ToggleTextWithSwitchPreview() {
-    ToggleTextWithSwitch(
-        textA = "COLOR",
-        textB = "HUE",
-        isBSelected = true,
-        
-    )
 }
 
 @Preview(showBackground = true)

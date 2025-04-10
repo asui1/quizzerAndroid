@@ -34,7 +34,7 @@ fun TextColorPickerModalSheet(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
             .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
             .padding(4.dp)
     ){

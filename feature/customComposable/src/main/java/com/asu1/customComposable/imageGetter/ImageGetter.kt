@@ -9,20 +9,23 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,13 +40,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.compose.ui.unit.sp
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.utils.launchPhotoPicker
 import com.asu1.utils.uriToByteArray
@@ -92,13 +98,23 @@ fun ImageGetter(
             }
             false -> {
                 Column(
-                    modifier = modifier.width(localWidth)
+                    modifier = modifier
+                        .width(localWidth)
+                        .height(localHeight)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.surfaceVariant,
+                            RoundedCornerShape(12.dp)
+                        )
                 ){
                     topBar(Modifier.fillMaxWidth())
                     Box(
                         modifier = Modifier
-                            .width(localWidth)
-                            .height(localHeight)
+                            .fillMaxSize()
                             .clickable {
                                 photoPickerLauncher.launch(
                                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -108,6 +124,9 @@ fun ImageGetter(
                         contentAlignment = Alignment.Center
                     ) {
                         if (image.width <= 1 || image.height <= 1) {
+                            val calculatedFontSize = (size.value / 7).sp
+                            val fontSize = minOf(calculatedFontSize.value, 18f).sp
+                            Logger.debug(calculatedFontSize)
                             Icon(
                                 imageVector = Icons.Default.ImageSearch,
                                 contentDescription = stringResource(R.string.add_image),
@@ -115,6 +134,8 @@ fun ImageGetter(
                             )
                             Text(
                                 stringResource(R.string.add_image),
+                                fontSize = fontSize,
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         } else {
@@ -146,7 +167,6 @@ fun ImageGetter(
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -155,11 +175,6 @@ fun ImageGetterPreview() {
     QuizzerAndroidTheme {
         ImageGetter(
             topBar = { modifier ->
-                Row(
-                    modifier = modifier.fillMaxWidth()
-                ){
-                    Text("Remove Background")
-                }
             },
             image = createEmptyBitmap(),
             onImageUpdate = {}

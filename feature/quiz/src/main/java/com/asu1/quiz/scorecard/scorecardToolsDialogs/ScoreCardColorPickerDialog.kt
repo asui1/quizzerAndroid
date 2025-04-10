@@ -1,15 +1,21 @@
 package com.asu1.quiz.scorecard.scorecardToolsDialogs
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.models.scorecard.ScoreCard
+import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quiz.scorecard.TextColorPickerModalSheet
-import com.asu1.quiz.scorecard.ToggleTextWithSwitch
+import com.asu1.quiz.ui.ToggleTextWithTabRow
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModelActions
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ScoreCardColorPickerDialog(
@@ -48,10 +54,9 @@ fun ScoreCardColorPickerDialog(
         onClose = onDismiss,
         toggleBlendMode = {
             if(colorIndex == 0){
-                ToggleTextWithSwitch(
-                    textA = stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId),
-                    textB = stringResource(ImageBlendMode.BLENDHUE.stringResourceId),
-                    isBSelected = scoreCard.background.imageBlendMode == ImageBlendMode.BLENDHUE,
+                ToggleTextWithTabRow(
+                    tabTexts = persistentListOf(stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId), stringResource(ImageBlendMode.BLENDHUE.stringResourceId)),
+                    selectedItem = if(scoreCard.background.imageBlendMode == ImageBlendMode.BLENDHUE) 1 else 0,
                     onClick = {
                         updateQuizCoordinate(
                             QuizCoordinatorActions.UpdateScoreCard(
@@ -64,6 +69,7 @@ fun ScoreCardColorPickerDialog(
         },
         resetToTransparent = {
             ResetToTransparentButton(
+                modifier = Modifier.fillMaxWidth(),
                 onReset = {
                     updateQuizCoordinate(
                         QuizCoordinatorActions.UpdateScoreCard(
@@ -74,4 +80,17 @@ fun ScoreCardColorPickerDialog(
             )
         },
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewScoreCardColorPickerDialog(){
+    QuizzerAndroidTheme {
+        ScoreCardColorPickerDialog(
+            colorIndex = 0,
+            scoreCard = sampleScoreCard,
+            updateQuizCoordinate = {},
+            onDismiss = {},
+        )
+    }
 }

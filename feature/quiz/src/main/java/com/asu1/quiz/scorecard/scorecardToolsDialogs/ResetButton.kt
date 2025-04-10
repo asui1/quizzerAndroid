@@ -30,14 +30,14 @@ fun ResetToTransparentButton(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(R.string.reset_color_transparent),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 imageVector = Icons.Default.Refresh,
                 contentDescription = "Reset"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.reset_color_transparent),
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }

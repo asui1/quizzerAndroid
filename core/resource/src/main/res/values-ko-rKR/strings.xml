@@ -14,6 +14,7 @@
     <string name="contact">문의</string>
     <string name="notification">공지사항</string>
     <string name="profile">프로필</string>
+    <string name="all">전체</string>
     <string name="inquiry">문의</string>
     <string name="inquiry_type">❓ 문의 유형</string>
     <string name="empty_string" />
@@ -147,8 +148,8 @@
     <string name="solve_again">다시 풀기</string>
     <string name="check_answer">정답 확인</string>
     <string name="move_home">메인으로</string>
-    <string name="select_color1">배경 색 필터</string>
-    <string name="select_color2">효과 색</string>
+    <string name="select_color1">배경 색상 선택</string>
+    <string name="select_color2">효과 색상 선택</string>
     <string name="select_text_color">글자 색상 선택</string>
     <string name="color1">배경 색</string>
     <string name="color2">효과 색</string>
@@ -160,6 +161,7 @@
     <string name="single_color">단색</string>
     <string name="gradient">그라데이션</string>
     <string name="image">이미지</string>
+    <string name="set_overlay_image">오버레이 이미지 설정</string>
     <string name="color_colon">색상</string>
     <string name="refresh_color">새로운 테마 ↻</string>
     <string name="gen_with_title_image">이미지</string>
@@ -228,12 +230,16 @@
     <string name="cloud">구름</string>
     <string name="none">없음</string>
     <string name="effect">효과</string>
-    <string name="select_color3">그라데이션 색</string>
+    <string name="select_color3">그라데이션 색상 선택</string>
     <string name="background_newline">배경</string>
     <string name="your_score_is">점수는</string>
     <string name="effects">효과</string>
     <string name="scorecard_effect">카드 효과</string>
     <string name="flowers">꽃</string>
+    <string name="celebration">축하 🎉</string>
+    <string name="nature">자연 🌙</string>
+    <string name="object">사물 💼</string>
+    <string name="emotion">표현 ❤️</string>
     <string name="text">텍스트</string>
     <string name="youtube">유튜브</string>
     <string name="code">코드</string>
@@ -257,7 +263,7 @@
     <string name="christmas">크리스마스</string>
     <string name="music_notes">음표</string>
     <string name="rain">비</string>
-    <string name="christmas_bell">크리스마스 종</string>
+    <string name="bell">종</string>
     <string name="bubbles">버블</string>
     <string name="hearts">하트</string>
     <string name="wreath">화관</string>

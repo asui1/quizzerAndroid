@@ -36,14 +36,18 @@ android {
 dependencies {
 
     implementation(project(":core:resource"))
+    implementation(project(":core:colorModel"))
+    implementation(project(":core:util"))
+
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui.graphics.android)
-    implementation(project(":core:util"))
     implementation(libs.androidx.material3.android)
-    implementation(project(":core:colorModel"))
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
