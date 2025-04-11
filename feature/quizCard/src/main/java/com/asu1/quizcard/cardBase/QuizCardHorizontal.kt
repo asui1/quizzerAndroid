@@ -89,7 +89,7 @@ fun QuizCardHorizontal(
                 modifier = Modifier
                     .height(minSize)
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 8.dp, vertical = 2.dp),
             ) {
                 QuizCardHorizontalTextBody(quizCard)
                 IconButton(
@@ -166,14 +166,14 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = quizCard.creator,
             style = QuizzerTypographyDefaults.quizzerBodySmallLight,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         TagsView(
             tags = quizCard.tags,
             modifier = Modifier
@@ -182,7 +182,6 @@ private fun QuizCardHorizontalTextBody(quizCard: QuizCard) {
                 .padding(horizontal = 4.dp),
             maxLines = 2
         )
-        Spacer(modifier = Modifier.height(4.dp))
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = buildString {

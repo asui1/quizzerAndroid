@@ -15,7 +15,7 @@ enum class EffectTypes(val stringResource: Int){
         R.string.nature
     ),
     OBJECTS(
-        R.string.nature
+        R.string.`object`
     ),
     EMOTION(
         R.string.emotion
@@ -37,7 +37,7 @@ enum class Effect(
         "",
         BlendModeCompat.COLOR,
         listOf(),
-        iconRes = "\uD83C\uDF8A",
+        iconRes = "\uD83D\uDDD9",
         typeLabel = EffectTypes.NONE,
     ),
     FIREWORKS(R.string.firework, fireworks,

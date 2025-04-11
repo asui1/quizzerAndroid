@@ -36,7 +36,7 @@ fun TextColorPickerModalSheet(
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
             .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
-            .padding(4.dp)
+            .padding(24.dp)
     ){
         Text(
             text = text,

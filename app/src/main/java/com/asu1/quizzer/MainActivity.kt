@@ -24,6 +24,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -31,27 +34,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.asu1.quiz.checker.QuizChecker
-import com.asu1.quiz.creator.QuizCaller
-import com.asu1.quiz.viewmodel.quizLayout.QuizContentViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizResultViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizThemeViewModel
-import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
-import com.asu1.activityNavigation.snackbar.CustomSnackbarHost
-import com.asu1.quizcard.quizLoad.LoadMyQuizScreen
-import com.asu1.quiz.creator.QuizBuilderScreen
-import com.asu1.quiz.viewer.QuizSolver
-import com.asu1.quiz.scorecard.ScoringScreen
-import com.asu1.quiz.scorecard.DesignScoreCardScreen
-import com.asu1.quizcard.quizLoad.LoadLocalQuizScreen
-import com.asu1.quiz.layoutBuilder.QuizLayoutBuilderScreen
 import com.asu1.activityNavigation.Route
 import com.asu1.activityNavigation.enterFadeInTransition
 import com.asu1.activityNavigation.enterFromRightTransition
 import com.asu1.activityNavigation.exitFadeOutTransition
 import com.asu1.activityNavigation.exitToRightTransition
+import com.asu1.activityNavigation.snackbar.CustomSnackbarHost
 import com.asu1.mainpage.screens.LoginScreen
 import com.asu1.mainpage.screens.MainScreen
 import com.asu1.mainpage.screens.MyActivitiesScreen
@@ -60,7 +48,22 @@ import com.asu1.mainpage.screens.PrivacyPolicy
 import com.asu1.mainpage.screens.RegisterScreen
 import com.asu1.mainpage.viewModels.QuizCardMainViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.checker.QuizChecker
+import com.asu1.quiz.creator.QuizBuilderScreen
+import com.asu1.quiz.creator.QuizCaller
+import com.asu1.quiz.layoutBuilder.QuizLayoutBuilderScreen
+import com.asu1.quiz.scorecard.DesignScoreCardScreen
+import com.asu1.quiz.scorecard.ScoringScreen
+import com.asu1.quiz.viewer.QuizSolver
+import com.asu1.quiz.viewmodel.quizLayout.QuizContentViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizResultViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizThemeViewModel
+import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
+import com.asu1.quizcard.quizLoad.LoadLocalQuizScreen
 import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
+import com.asu1.quizcard.quizLoad.LoadMyQuizScreen
 import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
 import com.asu1.resources.R
 import com.asu1.search.SearchScreen
@@ -108,10 +111,8 @@ class MainActivity : ComponentActivity() {
         updateLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
         ) { result ->
-            // Handle update result
             if (result.resultCode != RESULT_OK) {
                 Logger.debug("Update flow failed! Result code: " + result.resultCode)
-                // Handle failure (maybe retry or show a message)
             } else{
                 initializationViewModel.noUpdateAvailable()
             }
@@ -151,6 +152,7 @@ class MainActivity : ComponentActivity() {
             quizResult = quizResultViewModel,
             scoreCard = scoreCardViewModel,
         )
+        ProcessLifecycleOwner.get().lifecycle.addObserver(appStateObserver)
 
         setContent {
             val context = LocalContext.current
@@ -564,6 +566,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val appStateObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_START) {
+            Logger.debug("QUIZZER ON START")
+        }
+    }
     override fun onResume() {
         super.onResume()
         appUpdateManager

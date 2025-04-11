@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.graphics.toColorInt
-import com.asu1.utils.Logger
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -69,13 +68,12 @@ fun ColorPicker(
     LaunchedEffect(controller) {
         controller.getColorFlow(100)
             .collect { colorEnvelope ->
-                val selectedColor = colorEnvelope.color.copy(alpha = 1.0f)
+                val selectedColor =
+                    if(colorEnvelope.fromUser) colorEnvelope.color.copy(alpha = 1.0f)
+                    else colorEnvelope.color
 
-                // Update localColor to reflect brightness changes
                 localColor = selectedColor
                 rgbValue = selectedColor.toRgbHex()
-                Logger.debug("Update Color to $selectedColor")
-                // Notify parent with the updated color
                 onColorSelected(selectedColor)
             }
     }
@@ -86,14 +84,17 @@ fun ColorPicker(
         controller: ColorPickerController,
         fallbackColor: Color
     ) {
-        if (newValue.length == 6) {
-            val color = try {
-                Color("#$newValue".toColorInt())
-            } catch (_: IllegalArgumentException) {
-                fallbackColor
+        if (newValue.length <= 6) {
+            rgbValue = newValue
+            if (newValue.length == 6) {
+                val color = try {
+                    Color("#$newValue".toColorInt())
+                } catch (_: IllegalArgumentException) {
+                    fallbackColor
+                }
+                onColorSelected(color)
+                controller.selectByColor(color, true)
             }
-            onColorSelected(color)
-            controller.selectByColor(color, true)
         }
     }
 
@@ -105,7 +106,6 @@ fun ColorPicker(
         val isWide = this.maxWidth > 250.dp
 
         if (isWide) {
-            // Horizontal Layout
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxSize()
@@ -133,7 +133,6 @@ fun ColorPicker(
                         }
                 )
 
-                // HSV Picker (top-right)
                 HsvColorPicker(
                     modifier = Modifier
                         .constrainAs(pickerRef) {
@@ -145,7 +144,6 @@ fun ColorPicker(
                     controller = controller
                 )
 
-                // Brightness Slider (below picker)
                 BrightnessSlider(
                     modifier = Modifier
                         .constrainAs(sliderRef) {
@@ -164,15 +162,7 @@ fun ColorPicker(
                     value = rgbValue,
                     onValueChange = { newValue ->
                         if (newValue.length <= 6) {
-                            if (newValue.length == 6) {
-                                val color = try {
-                                    Color("#$newValue".toColorInt())
-                                } catch (_: IllegalArgumentException) {
-                                    initialColor
-                                }
-                                onColorSelected(color)
-                                controller.selectByColor(color, true)
-                            }
+                            onColorSelectedOrUpdate(newValue, onColorSelected, controller, initialColor)
                         }
                     },
                     label = { Text("RGB Value") },
@@ -196,7 +186,6 @@ fun ColorPicker(
                 )
             }
         } else {
-            // Vertical Layout (mobile / narrow screens)
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -240,9 +229,7 @@ fun ColorPicker(
                 TextField(
                     value = rgbValue,
                     onValueChange = { newValue ->
-                        if (newValue.length <= 6) {
-                            onColorSelectedOrUpdate(newValue, onColorSelected, controller, initialColor)
-                        }
+                        onColorSelectedOrUpdate(newValue, onColorSelected, controller, initialColor)
                     },
                     label = { Text("RGB Value") },
                     modifier = Modifier

@@ -226,6 +226,7 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
     implementation(libs.kotlinx.coroutines.rx3)
+    implementation(libs.androidx.lifecycle.process)
 
     //EXOPLAYER
     implementation(libs.exoplayer)

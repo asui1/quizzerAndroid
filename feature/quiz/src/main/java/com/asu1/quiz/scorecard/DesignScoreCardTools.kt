@@ -108,9 +108,15 @@ fun DesignScoreCardTools(
                 }
                 ScoreCardDialog.EffectPicker -> {
                     EffectPickerDialog(
-                        onClick = {},
-                        currentSelection = -1,
-                        onDismiss = {},
+                        onClick = { selectedEffect ->
+                            updateQuizCoordinate(
+                                QuizCoordinatorActions.UpdateScoreCard(
+                                    ScoreCardViewModelActions.UpdateEffect(selectedEffect)
+                                )
+                            )
+                        },
+                        currentSelection = scoreCard.background.effect,
+                        onDismiss = {onDismiss()},
                     )
                 }
                 ScoreCardDialog.None -> { /* Do nothing */ }

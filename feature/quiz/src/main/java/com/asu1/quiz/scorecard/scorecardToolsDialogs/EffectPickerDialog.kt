@@ -34,11 +34,12 @@ import androidx.compose.ui.unit.dp
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.EffectTypes
 import com.asu1.resources.QuizzerAndroidTheme
+import com.asu1.resources.R
 
 @Composable
 fun EffectPickerDialog(
-    onClick: (Int) -> Unit = {},
-    currentSelection: Int = -1,
+    onClick: (Effect) -> Unit = {},
+    currentSelection: Effect = Effect.NONE,
     onDismiss: () -> Unit,
 ){
     var selectedEffectType by remember { mutableStateOf(EffectTypes.NONE) }
@@ -58,15 +59,17 @@ fun EffectPickerDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(vertical = 8.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                "EFFECT PICKER",
+                stringResource(R.string.pick_effect),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
             SecondaryScrollableTabRow(
-                selectedTabIndex = selectedEffectType.ordinal
+                selectedTabIndex = selectedEffectType.ordinal,
+                edgePadding = 0.dp,
             ) {
                 EffectTypes.entries.forEach { item ->
                     Tab(
@@ -74,7 +77,11 @@ fun EffectPickerDialog(
                         onClick = { selectedEffectType = item },
                     ) {
                         Text(
-                            stringResource(item.stringResource)
+                            text = stringResource(item.stringResource),
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -94,13 +101,13 @@ fun EffectPickerDialog(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .background(
-                                color = if (index == currentSelection)
+                                color = if (item == currentSelection)
                                     MaterialTheme.colorScheme.primaryContainer
                                 else MaterialTheme.colorScheme.surfaceContainer,
                                 shape = MaterialTheme.shapes.small
                             )
                             .clickable {
-                                onClick(index)
+                                onClick(item)
                                 onDismiss()
                             }
                             .padding(8.dp)
@@ -129,7 +136,6 @@ fun PreviewEffectPickerDialog(){
     QuizzerAndroidTheme {
         EffectPickerDialog(
             onClick = {},
-            currentSelection = -1,
             onDismiss = {},
         )
     }
