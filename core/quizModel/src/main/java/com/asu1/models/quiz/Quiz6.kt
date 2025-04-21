@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
 data class Quiz6(
     var fillInAnswers: List<String> = listOf(),
     var userAnswers: List<String> = listOf(),
-    override val layoutType: QuizType = QuizType.Quiz6,
+    override val layoutType: QuizType = QuizType.QUIZ6,
     override var answers: List<String> = listOf(""),
     override var question: String = "",
     override var bodyType: BodyType = BodyType.NONE

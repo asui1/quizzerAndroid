@@ -32,12 +32,12 @@ enum class QuizType(
         R.string.connect_items,
         Icons.Default.Link
     ),
-    Quiz5(
+    QUIZ5(
         4,
         R.string.short_answer,
         Icons.AutoMirrored.Filled.ShortText
     ),
-    Quiz6(
+    QUIZ6(
         5,
         R.string.fill_blank,
         Icons.Default.TextFields
