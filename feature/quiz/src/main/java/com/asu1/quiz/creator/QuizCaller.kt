@@ -13,6 +13,7 @@ import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quiz.Quiz5
 import com.asu1.models.serializers.QuizType
 import com.asu1.quiz.viewmodel.quiz.Quiz1ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
@@ -103,6 +104,18 @@ fun QuizCaller(
                 }
                 Quiz4Creator(
                     quiz = quiz4ViewModel,
+                    onSave = {
+                        onSave(it)
+                    },
+                )
+            }
+            QuizType.Quiz5 -> {
+                val quiz5ViewModel: Quiz5ViewModel = viewModel(key = "Quiz5ViewModel")
+                if(quiz != null){
+                    quiz5ViewModel.loadQuiz(quiz as Quiz5)
+                }
+                Quiz4Creator(
+                    quiz = quiz5ViewModel,
                     onSave = {
                         onSave(it)
                     },

@@ -189,6 +189,8 @@
     <string name="choose_date">Choose Date</string>
     <string name="reorder_item">Reorder Items</string>
     <string name="connect_items">Connect Items</string>
+    <string name="short_answer">Short Answer</string>
+    <string name="fill_blank">Fill In Blanks</string>
     <string name="answer">Answer</string>
     <string name="answer_label">Answer</string>
     <string name="body">Body</string>

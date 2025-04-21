@@ -109,8 +109,7 @@ fun LoadMyQuizBody(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValue)
-                .padding(top = 16.dp)
+                .padding(paddingValue).padding(8.dp).padding(top = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             AnimatedContent(

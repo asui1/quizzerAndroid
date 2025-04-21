@@ -191,6 +191,8 @@
     <string name="choose_date">날짜 선택</string>
     <string name="reorder_item">순서 정렬</string>
     <string name="connect_items">연결 문제</string>
+    <string name="short_answer">단답형 문제</string>
+    <string name="fill_blank">빈칸 채우기</string>
     <string name="body">예제, ABC</string>
     <string name="enter_quiz_title">제목을 입력하세요</string>
     <string name="set_quiz_image_80_kb">표지 이미지를\n등록해주세요.</string>

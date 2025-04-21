@@ -6,6 +6,8 @@ import com.asu1.models.quiz.Quiz1
 import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.Quiz3
 import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quiz.Quiz5
+import com.asu1.models.quiz.Quiz6
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -227,6 +229,67 @@ sealed class QuizJson {
         val ans: List<Boolean>,
         val question: String,
         val bodyValue: String,
+    )
+
+    @Serializable
+    @SerialName("4")
+    data class Quiz5Json(
+        val body: Quiz5Body
+    ) : QuizJson(){
+        override fun load(): Quiz5 {
+            val quiz = Quiz5()
+            quiz.load(this.toString())
+            return quiz
+        }
+
+        override fun toQuiz(): Quiz5 {
+            val quiz = Quiz5(
+                question = body.question,
+                answer = body.answer,
+                bodyType = manualDeserializer(body.bodyValue)
+            )
+            quiz.initViewState()
+            return quiz
+        }
+    }
+
+
+    @Serializable
+    data class Quiz5Body(
+        val question: String,
+        val bodyValue: String,
+        val answer: String,
+    )
+
+    @Serializable
+    @SerialName("5")
+    data class Quiz6Json(
+        val body: Quiz6Body
+    ) : QuizJson(){
+        override fun load(): Quiz6 {
+            val quiz = Quiz6()
+            quiz.load(this.toString())
+            return quiz
+        }
+
+        override fun toQuiz(): Quiz6 {
+            val quiz = Quiz6(
+                question = body.question,
+                bodyType = manualDeserializer(body.bodyValue),
+
+            )
+            quiz.initViewState()
+            return quiz
+        }
+    }
+
+
+    @Serializable
+    data class Quiz6Body(
+        val question: String,
+        val bodyValue: String,
+        val answers: List<String>,
+        val fillInAnswers: List<String>,
     )
 }
 
