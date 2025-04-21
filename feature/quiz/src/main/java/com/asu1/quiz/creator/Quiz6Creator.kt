@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,11 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz6
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.viewmodel.quiz.Quiz6ViewModel
+import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
 
 @Composable
 fun Quiz6Creator(
-    quiz: Quiz6ViewModel,
+    quiz: ShortAnswerQuizViewModel,
     onSave: (Quiz<Quiz6>) -> Unit
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()

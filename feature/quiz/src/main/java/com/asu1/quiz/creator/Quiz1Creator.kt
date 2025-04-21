@@ -38,13 +38,13 @@ import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz1
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.viewmodel.quiz.Quiz1ViewModel
+import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.resources.R
 
 
 @Composable
 fun Quiz1Creator(
-    quiz: Quiz1ViewModel,
+    quiz: MultipleChoiceQuizViewModel,
     onSave: (Quiz<Quiz1>) -> Unit
 ) {
     val quiz1State by quiz.quizState.collectAsStateWithLifecycle()

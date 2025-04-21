@@ -35,7 +35,7 @@ import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
 
 @Composable
 fun Quiz4Checker(
@@ -105,7 +105,7 @@ fun Quiz4Checker(
                                     DraggableDot(
                                         setOffset = { offset ->
                                             quiz.onQuiz4Update(
-                                                Quiz4ViewModelStates.UpdateLeftDotOffset(
+                                                ConnectItemsQuizViewModelStates.UpdateLeftDotOffset(
                                                     index,
                                                     offset
                                                 )
@@ -136,7 +136,7 @@ fun Quiz4Checker(
                                 DraggableDot(
                                     setOffset = { offset ->
                                         quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateRightDotOffset(
+                                            ConnectItemsQuizViewModelStates.UpdateRightDotOffset(
                                                 index,
                                                 offset
                                             )

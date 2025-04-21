@@ -45,7 +45,7 @@ import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz4
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
@@ -124,13 +124,13 @@ fun Quiz4Creator(
                                         "QuizCreatorAnswerLeftTextField$index"
                                     ),
                                     deleteAnswer = {
-                                        quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveLeft(index))
+                                        quiz.onQuiz4Update(ConnectItemsQuizViewModelStates.RemoveLeft(index))
                                     }
                                 )
                                 DraggableDot(
                                     setOffset = { offset ->
                                         quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateLeftDotOffset(
+                                            ConnectItemsQuizViewModelStates.UpdateLeftDotOffset(
                                                 index,
                                                 offset
                                             )
@@ -144,7 +144,7 @@ fun Quiz4Creator(
                                                 endOffset =
                                                     quizState.leftDots[index] ?: Offset(0f, 0f)
                                                 quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.ResetConnectionCreator(
+                                                    ConnectItemsQuizViewModelStates.ResetConnectionCreator(
                                                         index
                                                     )
                                                 )
@@ -154,7 +154,7 @@ fun Quiz4Creator(
                                             onDragEnd = {
                                                 isDragging = false
                                                 quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.OnDragEndCreator(
+                                                    ConnectItemsQuizViewModelStates.OnDragEndCreator(
                                                         index,
                                                         endOffset
                                                     )
@@ -188,7 +188,7 @@ fun Quiz4Creator(
                         Spacer(modifier = Modifier.height(8.dp))
                         AddAnswer(
                             onClick = {
-                                quiz.onQuiz4Update(Quiz4ViewModelStates.AddLeft)
+                                quiz.onQuiz4Update(ConnectItemsQuizViewModelStates.AddLeft)
                             }
                         )
                     }
@@ -206,7 +206,7 @@ fun Quiz4Creator(
                                 DraggableDot(
                                     setOffset = { offset ->
                                         quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateRightDotOffset(
+                                            ConnectItemsQuizViewModelStates.UpdateRightDotOffset(
                                                 index,
                                                 offset
                                             )
@@ -232,7 +232,7 @@ fun Quiz4Creator(
                                     },
                                     modifier = Modifier.weight(1f).testTag("QuizCreatorAnswerRightTextField$index"),
                                     deleteAnswer = {
-                                        quiz.onQuiz4Update(Quiz4ViewModelStates.RemoveRight(index))
+                                        quiz.onQuiz4Update(ConnectItemsQuizViewModelStates.RemoveRight(index))
                                     },
                                 )
                             }
@@ -241,7 +241,7 @@ fun Quiz4Creator(
                         Spacer(modifier = Modifier.height(8.dp))
                         AddAnswer(
                             onClick = {
-                                quiz.onQuiz4Update(Quiz4ViewModelStates.AddRight)
+                                quiz.onQuiz4Update(ConnectItemsQuizViewModelStates.AddRight)
                             }
                         )
                     }

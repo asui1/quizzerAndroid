@@ -37,7 +37,7 @@ import com.asu1.quiz.creator.DrawLines
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModelStates
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
 
 @Composable
 fun Quiz4Viewer(
@@ -110,7 +110,7 @@ fun Quiz4Viewer(
                                 DraggableDot(
                                     setOffset = { offset ->
                                         quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateLeftDotOffset(
+                                            ConnectItemsQuizViewModelStates.UpdateLeftDotOffset(
                                                 index,
                                                 offset
                                             )
@@ -124,7 +124,7 @@ fun Quiz4Viewer(
                                                 endOffset =
                                                     quizState.leftDots[index] ?: Offset(0f, 0f)
                                                 quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.ResetConnectionViewer(
+                                                    ConnectItemsQuizViewModelStates.ResetConnectionViewer(
                                                         index
                                                     )
                                                 )
@@ -134,7 +134,7 @@ fun Quiz4Viewer(
                                             onDragEnd = {
                                                 isDragging = false
                                                 quiz.onQuiz4Update(
-                                                    Quiz4ViewModelStates.OnDragEndViewer(
+                                                    ConnectItemsQuizViewModelStates.OnDragEndViewer(
                                                         index,
                                                         endOffset
                                                     )
@@ -177,7 +177,7 @@ fun Quiz4Viewer(
                                 DraggableDot(
                                     setOffset = { offset ->
                                         quiz.onQuiz4Update(
-                                            Quiz4ViewModelStates.UpdateRightDotOffset(
+                                            ConnectItemsQuizViewModelStates.UpdateRightDotOffset(
                                                 index,
                                                 offset
                                             )

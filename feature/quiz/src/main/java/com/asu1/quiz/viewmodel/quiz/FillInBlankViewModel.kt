@@ -1,33 +1,29 @@
 package com.asu1.quiz.viewmodel.quiz
 
-import com.asu1.models.quiz.Quiz6
+import com.asu1.models.quizRefactor.FillInBlankQuiz
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class Quiz6ViewModel : BaseQuizViewModel<Quiz6>(Quiz6()){
-    override val _quizState: MutableStateFlow<Quiz6> = MutableStateFlow(Quiz6())
+class FillInBlankViewModel: BaseQuizViewModel<FillInBlankQuiz>(
+    FillInBlankQuiz()
+) {
+    override val _quizState: MutableStateFlow<FillInBlankQuiz> = MutableStateFlow(FillInBlankQuiz())
 
     init {
         resetQuiz()
     }
-
-    override fun resetQuiz(){
-        _quizState.value = Quiz6()
+    override fun loadQuiz(quiz: FillInBlankQuiz) {
+        this._quizState.value = quiz
     }
 
-    override fun loadQuiz(quiz: Quiz6){
-        _quizState.value = quiz
+    override fun resetQuiz() {
+        this._quizState.value = FillInBlankQuiz()
     }
 
-    override fun viewerInit(){
+    override fun viewerInit() {
         _quizState.value.initViewState()
     }
-
-    override fun toggleAnsAt(index: Int){
-// NOT USED IN QUIZ6
-    }
-
-    override fun removeAnswerAt(index: Int){
+    fun removeAnswerAt(index: Int){
         _quizState.update{ state ->
             if (index >= state.fillInAnswers.size || index + 1 >= state.answers.size) {
                 return@update state
@@ -71,8 +67,7 @@ class Quiz6ViewModel : BaseQuizViewModel<Quiz6>(Quiz6()){
         }
     }
 
-    override fun addAnswer(){
+    fun addAnswer(){
         addAnswer(_quizState.value.answers.size-1)
     }
-
 }

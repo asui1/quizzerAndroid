@@ -82,10 +82,10 @@ class QuizContentViewModel: ViewModel() {
 
     fun updateQuizAnswer(index: Int, update: QuizUserUpdates){
         when(update){
-            is QuizUserUpdates.Quiz1Update -> updateQuiz1(index, update.index)
-            is QuizUserUpdates.Quiz2Update -> updateQuiz2(index, update.date)
-            is QuizUserUpdates.Quiz3Update -> updateQuiz3(index, update.first, update.second)
-            is QuizUserUpdates.Quiz4Update -> updateQuiz4(index, update.items)
+            is QuizUserUpdates.MultipleChoiceQuizUpdate -> updateQuiz1(index, update.index)
+            is QuizUserUpdates.DateSelectionQuizUpdate -> updateQuiz2(index, update.date)
+            is QuizUserUpdates.ReorderQuizUpdate -> updateQuiz3(index, update.first, update.second)
+            is QuizUserUpdates.ConnectItemQuizUpdate -> updateQuiz4(index, update.items)
         }
     }
 

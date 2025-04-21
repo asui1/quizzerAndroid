@@ -13,8 +13,6 @@ import java.util.UUID
 data class ReorderQuiz(
     override var question: String = "",
     val answers: List<String> = emptyList(),       // same JSON key
-    val ans: List<Boolean> = emptyList(),          // same JSON key
-    val maxAnswerSelection: Int = 1,                // same JSON key
     override var bodyType: BodyType = BodyType.NONE,
     override val uuid: String = UUID.randomUUID().toString(),
     override val layoutType: QuizType = QuizType.QUIZ3
@@ -58,8 +56,6 @@ data class ReorderQuiz(
         return copy(
             question           = question,
             answers            = answers,
-            ans                = ans,
-            maxAnswerSelection = maxAnswerSelection,
             bodyType           = bodyType,
             uuid               = uuid
         ).also { it.initViewState() }

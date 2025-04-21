@@ -14,9 +14,9 @@ import java.util.UUID
 data class MultipleChoiceQuiz(
     override var question: String = "",
     @SerialName("answers")
-    val options: List<String>,
+    val options: List<String> = List(5){""},
     @SerialName("ans")
-    val correctFlags: List<Boolean>,
+    val correctFlags: List<Boolean> = List(5){false},
     val shuffleAnswers: Boolean = false,
     override var bodyType: BodyType = BodyType.NONE,
     override val uuid: String = UUID.randomUUID().toString(),

@@ -16,12 +16,12 @@ import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.Quiz5
 import com.asu1.models.quiz.Quiz6
 import com.asu1.models.serializers.QuizType
-import com.asu1.quiz.viewmodel.quiz.Quiz1ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
+import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
+import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
 import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz5ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz6ViewModel
+import com.asu1.quiz.viewmodel.quiz.FillInBlankViewModel
+import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 
@@ -65,24 +65,24 @@ fun QuizCaller(
     ) {
         when(quizType){
             QuizType.QUIZ1 -> {
-                val quiz1ViewModel: Quiz1ViewModel = viewModel(key="Quiz1ViewModel")
+                val multipleChoiceQuizViewModel: MultipleChoiceQuizViewModel = viewModel(key="Quiz1ViewModel")
                 if(quiz != null){
-                    quiz1ViewModel.loadQuiz(quiz as Quiz1)
+                    multipleChoiceQuizViewModel.loadQuiz(quiz as Quiz1)
                 }
                 Quiz1Creator(
-                    quiz = quiz1ViewModel,
+                    quiz = multipleChoiceQuizViewModel,
                     onSave = {
                         onSave(it)
                     },
                 )
             }
             QuizType.QUIZ2 -> {
-                val quiz2ViewModel: Quiz2ViewModel = viewModel(key="Quiz2ViewModel")
+                val dateSelectionQuizViewModel: DateSelectionQuizViewModel = viewModel(key="Quiz2ViewModel")
                 if(quiz != null){
-                    quiz2ViewModel.loadQuiz(quiz as Quiz2)
+                    dateSelectionQuizViewModel.loadQuiz(quiz as Quiz2)
                 }
                 Quiz2Creator(
-                    quiz = quiz2ViewModel,
+                    quiz = dateSelectionQuizViewModel,
                     onSave = {
                         onSave(it)
                     },
@@ -113,24 +113,24 @@ fun QuizCaller(
                 )
             }
             QuizType.QUIZ5 -> {
-                val quiz5ViewModel: Quiz5ViewModel = viewModel(key = "Quiz5ViewModel")
+                val fillInBlankViewModel: FillInBlankViewModel = viewModel(key = "Quiz5ViewModel")
                 if(quiz != null){
-                    quiz5ViewModel.loadQuiz(quiz as Quiz5)
+                    fillInBlankViewModel.loadQuiz(quiz as Quiz5)
                 }
                 Quiz5Creator(
-                    quiz = quiz5ViewModel,
+                    quiz = fillInBlankViewModel,
                     onSave = {
                         onSave(it)
                     },
                 )
             }
             QuizType.QUIZ6 -> {
-                val quiz6ViewModel: Quiz6ViewModel = viewModel(key = "Quiz6ViewModel")
+                val shortAnswerQuizViewModel: ShortAnswerQuizViewModel = viewModel(key = "Quiz6ViewModel")
                 if(quiz != null){
-                    quiz6ViewModel.loadQuiz(quiz as Quiz6)
+                    shortAnswerQuizViewModel.loadQuiz(quiz as Quiz6)
                 }
                 Quiz6Creator(
-                    quiz = quiz6ViewModel,
+                    quiz = shortAnswerQuizViewModel,
                     onSave = {
                         onSave(it)
                     },

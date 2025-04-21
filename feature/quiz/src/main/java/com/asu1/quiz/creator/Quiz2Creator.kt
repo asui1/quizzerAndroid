@@ -42,7 +42,7 @@ import com.asu1.models.quiz.Quiz2
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.ui.Quiz2SelectionViewer
-import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
+import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
 import com.asu1.resources.R
 import java.time.YearMonth
@@ -53,7 +53,7 @@ val monthYearFormatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("yyyy /
 
 @Composable
 fun Quiz2Creator(
-    quiz: Quiz2ViewModel = viewModel(),
+    quiz: DateSelectionQuizViewModel = viewModel(),
     onSave: (Quiz<Quiz2>) -> Unit
 ){
     val quiz2State by quiz.quizState.collectAsStateWithLifecycle()
@@ -211,7 +211,7 @@ fun YearMonthDropDown(
 fun Quiz2CreatorPreview() {
     com.asu1.resources.QuizzerAndroidTheme {
         Quiz2Creator(
-            quiz = Quiz2ViewModel(),
+            quiz = DateSelectionQuizViewModel(),
             onSave = {}
         )
     }

@@ -1,21 +1,23 @@
 package com.asu1.quiz.viewmodel.quiz
 
-import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
-    override val _quizState: MutableStateFlow<Quiz4> = MutableStateFlow(Quiz4())
+class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
+    ConnectItemsQuiz()
+) {
+    override val _quizState: MutableStateFlow<ConnectItemsQuiz> = MutableStateFlow(ConnectItemsQuiz())
 
     init {
         resetQuiz()
     }
 
-    fun onQuiz4Update(quiz4ViewModelStates: Quiz4ViewModelStates){
+    fun onQuiz4Update(quiz4ViewModelStates: ConnectItemsQuizViewModelStates){
         when(quiz4ViewModelStates){
-            Quiz4ViewModelStates.AddLeft -> this._quizState.update { it.copy().apply { addAnswer() } }
-            Quiz4ViewModelStates.AddRight -> this._quizState.update { it.copy().apply { addConnectionAnswer() } }
-            is Quiz4ViewModelStates.RemoveLeft -> {
+            ConnectItemsQuizViewModelStates.AddLeft -> this._quizState.update { it.copy().apply { addAnswer() } }
+            ConnectItemsQuizViewModelStates.AddRight -> this._quizState.update { it.copy().apply { addConnectionAnswer() } }
+            is ConnectItemsQuizViewModelStates.RemoveLeft -> {
                 if(this._quizState.value.answers.size <= 2){
                     return
                 }
@@ -25,7 +27,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
                     }
                 }
             }
-            is Quiz4ViewModelStates.RemoveRight -> {
+            is ConnectItemsQuizViewModelStates.RemoveRight -> {
                 if(this._quizState.value.answers.size <= 2){
                     return
                 }
@@ -35,7 +37,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
                     }
                 }
             }
-            is Quiz4ViewModelStates.UpdateLeftDotOffset -> {
+            is ConnectItemsQuizViewModelStates.UpdateLeftDotOffset -> {
                 this._quizState.update {
                     it.copy().apply{
                         leftDots = leftDots.toMutableList().apply {
@@ -47,7 +49,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
                     }
                 }
             }
-            is Quiz4ViewModelStates.UpdateRightDotOffset -> {
+            is ConnectItemsQuizViewModelStates.UpdateRightDotOffset -> {
                 this._quizState.update {
                     it.copy().apply{
                         rightDots = rightDots.toMutableList().apply {
@@ -59,21 +61,21 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
                     }
                 }
             }
-            is Quiz4ViewModelStates.OnDragEndCreator -> {
+            is ConnectItemsQuizViewModelStates.OnDragEndCreator -> {
                 this._quizState.update {
                     it.copy().apply {
                         onDragEnd(quiz4ViewModelStates.from, quiz4ViewModelStates.offset, true)
                     }
                 }
             }
-            is Quiz4ViewModelStates.OnDragEndViewer -> {
+            is ConnectItemsQuizViewModelStates.OnDragEndViewer -> {
                 this._quizState.update {
                     it.copy().apply {
                         onDragEnd(quiz4ViewModelStates.from, quiz4ViewModelStates.offset, false)
                     }
                 }
             }
-            is Quiz4ViewModelStates.ResetConnectionCreator -> {
+            is ConnectItemsQuizViewModelStates.ResetConnectionCreator -> {
                 this._quizState.update {
                     it.copy().apply{
                         connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
@@ -82,7 +84,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
                     }
                 }
             }
-            is Quiz4ViewModelStates.ResetConnectionViewer -> {
+            is ConnectItemsQuizViewModelStates.ResetConnectionViewer -> {
                 this._quizState.update {
                     it.copy().apply{
                         userConnectionIndex = userConnectionIndex.toMutableList().apply {
@@ -98,7 +100,7 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
         this._quizState.update {
             it.copy().apply {
                 connectionAnswers = connectionAnswers.toMutableList().apply {
-                    this.set(index, answer)
+                    this[index] = answer
                 }
             }
         }
@@ -108,23 +110,11 @@ class Quiz4ViewModel: BaseQuizViewModel<Quiz4>(Quiz4()) {
         this._quizState.value.initViewState()
     }
 
-    override fun loadQuiz(quiz: Quiz4) {
+    override fun loadQuiz(quiz: ConnectItemsQuiz) {
         this._quizState.value = quiz
     }
 
     override fun resetQuiz() {
-        this._quizState.value = Quiz4()
-    }
-
-    override fun toggleAnsAt(index: Int) {
-        //NOT USED IN QUIZ4
-    }
-
-    override fun removeAnswerAt(index: Int) {
-        //NOT USED IN QUIZ4
-    }
-
-    override fun addAnswer() {
-        //NOT USED IN QUIZ4
+        this._quizState.value = ConnectItemsQuiz()
     }
 }

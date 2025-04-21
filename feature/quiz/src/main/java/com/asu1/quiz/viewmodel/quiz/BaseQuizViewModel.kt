@@ -1,46 +1,31 @@
 package com.asu1.quiz.viewmodel.quiz
 
 import androidx.lifecycle.ViewModel
-import com.asu1.models.quiz.Quiz
+import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.serializers.BodyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-abstract class BaseQuizViewModel<T : Quiz<T>>(initialQuiz: T) : ViewModel() {
-    protected open val _quizState: MutableStateFlow<T> = MutableStateFlow(initialQuiz)
-    val quizState: StateFlow<T> get() = _quizState.asStateFlow()
+abstract class BaseQuizViewModel<Q: Quiz>(initialQuiz: Q) : ViewModel() {
+    protected open val _quizState: MutableStateFlow<Q> = MutableStateFlow(initialQuiz)
+    val quizState: StateFlow<Q> get() = _quizState.asStateFlow()
 
-    fun updateQuestion(question: String) {
-        val currentQuiz = _quizState.value
-        _quizState.update {
-            currentQuiz.cloneQuiz(question = question)
+    fun updateQuestion(newQuestion: String) {
+        _quizState.update { quiz ->
+            @Suppress("UNCHECKED_CAST")
+            (quiz.cloneQuiz(question = newQuestion) as Q)
         }
-        _quizState.value = currentQuiz.cloneQuiz(question = question)
     }
 
-    abstract fun loadQuiz(quiz: T)
+    abstract fun loadQuiz(quiz: Q)
     abstract fun resetQuiz()
-    fun updateAnswerAt(index: Int, answer: String) {
-        val currentQuiz = _quizState.value
-        _quizState.value = currentQuiz.cloneQuiz(answers = currentQuiz.answers.toMutableList().apply {
-            if (index >= this.size) {
-                this.add(answer)
-            } else {
-                this[index] = answer
-            }
-        })
-    }
-    abstract fun toggleAnsAt(index: Int)
-    abstract fun removeAnswerAt(index: Int)
-    abstract fun addAnswer()
     abstract fun viewerInit()
     fun updateBodyState(bodyType: BodyType){
-        _quizState.update { currentState ->
-            currentState.cloneQuiz(
-                bodyType = bodyType
-            )
+        _quizState.update { quiz ->
+            @Suppress("UNCHECKED_CAST")
+            (quiz.cloneQuiz(bodyType = bodyType) as Q)
         }
     }
 }

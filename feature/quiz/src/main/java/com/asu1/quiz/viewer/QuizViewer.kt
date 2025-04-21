@@ -26,7 +26,7 @@ fun QuizViewer(
             Quiz1Viewer(
                 quiz = quiz,
                 toggleUserAnswer = {
-                    updateQuiz(QuizUserUpdates.Quiz1Update(it))
+                    updateQuiz(QuizUserUpdates.MultipleChoiceQuizUpdate(it))
                 },
             )
         }
@@ -35,7 +35,7 @@ fun QuizViewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
                 onUserInput = {
-                    updateQuiz(QuizUserUpdates.Quiz2Update(it))
+                    updateQuiz(QuizUserUpdates.DateSelectionQuizUpdate(it))
                 },
             )
         }
@@ -43,7 +43,7 @@ fun QuizViewer(
             Quiz3Viewer(
                 quiz = quiz,
                 onUserInput = {first, second ->
-                    updateQuiz(QuizUserUpdates.Quiz3Update(first, second))
+                    updateQuiz(QuizUserUpdates.ReorderQuizUpdate(first, second))
                 },
             )
         }
@@ -56,7 +56,7 @@ fun QuizViewer(
                 quiz = quiz4ViewModel,
                 quizTheme = quizTheme,
                 onUpdate = {items ->
-                    updateQuiz(QuizUserUpdates.Quiz4Update(items))
+                    updateQuiz(QuizUserUpdates.ConnectItemQuizUpdate(items))
                 }
                 )
         }

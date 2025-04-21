@@ -19,7 +19,7 @@ import com.asu1.models.sampleQuiz2
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
-import com.asu1.quiz.viewmodel.quiz.Quiz2ViewModel
+import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import java.time.LocalDate
 
 @Composable
@@ -74,8 +74,8 @@ fun Quiz2Viewer(
 @Preview(showBackground = true)
 @Composable
 fun Quiz2ViewerPreview(){
-    val quiz2ViewModel: Quiz2ViewModel = viewModel()
-    quiz2ViewModel.loadQuiz(sampleQuiz2)
+    val dateSelectionQuizViewModel: DateSelectionQuizViewModel = viewModel()
+    dateSelectionQuizViewModel.loadQuiz(sampleQuiz2)
 
     Quiz2Viewer(
         quiz = sampleQuiz2,

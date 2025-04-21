@@ -27,12 +27,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.Quiz5
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.viewmodel.quiz.Quiz5ViewModel
+import com.asu1.quiz.viewmodel.quiz.FillInBlankViewModel
 import com.asu1.resources.R
 
 @Composable
 fun Quiz5Creator(
-    quiz: Quiz5ViewModel,
+    quiz: FillInBlankViewModel,
     onSave: (Quiz<Quiz5>) -> Unit
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
