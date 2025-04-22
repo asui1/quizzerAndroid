@@ -1,6 +1,7 @@
 package com.asu1.models.quizRefactor
 
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
 import kotlinx.serialization.SerialName
@@ -13,13 +14,16 @@ import java.util.UUID
 data class ReorderQuiz(
     override var question: String = "",
     val answers: List<String> = emptyList(),       // same JSON key
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ3
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     /** Transient state, not serialized **/
     @Transient
     var shuffledAnswers: MutableList<String> = answers.toMutableList()
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ3
 
     override fun initViewState() {
         if (answers.isNotEmpty()) {
@@ -56,8 +60,15 @@ data class ReorderQuiz(
         return copy(
             question           = question,
             answers            = answers,
-            bodyType           = bodyType,
-            uuid               = uuid
+            bodyValue           = bodyType,
         ).also { it.initViewState() }
+    }
+
+    fun swap(from: Int, to: Int) {
+        if (from !in shuffledAnswers.indices || to !in shuffledAnswers.indices) return
+
+        val tmp = shuffledAnswers[from]
+        shuffledAnswers[from] = shuffledAnswers[to]
+        shuffledAnswers[to] = tmp
     }
 }

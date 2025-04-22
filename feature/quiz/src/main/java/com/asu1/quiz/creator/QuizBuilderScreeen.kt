@@ -78,6 +78,7 @@ import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.coroutines.launch
+import kotlin.collections.isNotEmpty
 
 const val scale = 0.66f
 
@@ -321,7 +322,7 @@ fun QuizBuilderScreen(
                             }
                             moveToQuizCaller(
                                 loadIndex = curIndex,
-                                quizType = quizzes[curIndex].layoutType,
+                                quizType = quizzes[curIndex].quizType,
                                 insertIndex = curIndex
                             )
                         },

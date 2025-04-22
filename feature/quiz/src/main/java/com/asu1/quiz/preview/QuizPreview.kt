@@ -1,28 +1,36 @@
 package com.asu1.quiz.preview
 
 import androidx.compose.runtime.Composable
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
 
 @Composable
 fun QuizPreview(
-    quiz: Quiz<*>,
+    quiz: Quiz,
 ) {
     when(quiz){
-        is Quiz1 -> {
-            Quiz1Preview(quiz)
+        is MultipleChoiceQuiz -> {
+            MultipleChoiceQuizPreview(quiz)
         }
-        is Quiz2 -> {
-            Quiz2Preview(quiz)
+        is DateSelectionQuiz -> {
+            DateSelectionQuizPreview(quiz)
         }
-        is Quiz3 -> {
-            Quiz3Preview(quiz)
+        is ReorderQuiz -> {
+            ReorderQuizPreview(quiz)
         }
-        is Quiz4 -> {
-            Quiz4Preview(quiz)
+        is ConnectItemsQuiz -> {
+            ConnectItemsQuizPreview(quiz)
+        }
+        is ShortAnswerQuiz -> {
+            TODO()
+        }
+        is FillInBlankQuiz -> {
+            TODO()
         }
     }
 }

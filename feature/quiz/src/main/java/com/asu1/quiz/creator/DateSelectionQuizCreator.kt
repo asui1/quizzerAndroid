@@ -37,14 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.dropdown.FastCreateDropDownWithTextButton
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz2
+import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
 import com.asu1.resources.R
+import com.kizitonwose.calendar.core.yearMonth
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -52,9 +52,9 @@ val monthDateYearFormatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("yy
 val monthYearFormatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("yyyy / MMMM")
 
 @Composable
-fun Quiz2Creator(
+fun DateSelectionQuizCreator(
     quiz: DateSelectionQuizViewModel = viewModel(),
-    onSave: (Quiz<Quiz2>) -> Unit
+    onSave: (DateSelectionQuiz) -> Unit
 ){
     val quiz2State by quiz.quizState.collectAsStateWithLifecycle()
     var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
@@ -101,7 +101,7 @@ fun Quiz2Creator(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 YearMonthDropDown(
-                    yearMonth = quiz2State.centerDate,
+                    yearMonth = quiz2State.centerDate.yearMonth,
                     onYearMonthChange = {
                         quiz.updateCenterDate(it)
                     },
@@ -113,9 +113,9 @@ fun Quiz2Creator(
                     focusDates = quiz2State.answerDate,
                     onDateClick = { date ->
                         quiz.updateDate(date)
-                        currentMonth = YearMonth.of(date.year, date.month)
+                        currentMonth = date
                     },
-                    currentMonth = currentMonth,
+                    currentMonth = currentMonth.yearMonth,
                     colorScheme = MaterialTheme.colorScheme
                 )
             }
@@ -208,9 +208,9 @@ fun YearMonthDropDown(
 
 @Preview(showBackground = true)
 @Composable
-fun Quiz2CreatorPreview() {
+fun PreviewDateSelectionQuizCreator() {
     com.asu1.resources.QuizzerAndroidTheme {
-        Quiz2Creator(
+        DateSelectionQuizCreator(
             quiz = DateSelectionQuizViewModel(),
             onSave = {}
         )

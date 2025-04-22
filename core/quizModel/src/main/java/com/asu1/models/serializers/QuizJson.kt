@@ -1,31 +1,32 @@
 package com.asu1.models.serializers
 
-import androidx.compose.ui.geometry.Offset
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
-import com.asu1.models.quiz.Quiz5
-import com.asu1.models.quiz.Quiz6
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import java.time.LocalDate
-import java.time.YearMonth
 
 val quizSerializersModule = SerializersModule {
-    polymorphic(QuizJson::class) {
-        subclass(QuizJson.Quiz1Json::class)
-        subclass(QuizJson.Quiz2Json::class)
-        subclass(QuizJson.Quiz3Json::class)
-        subclass(QuizJson.Quiz4Json::class)
+    polymorphic(Quiz::class){
+        subclass(MultipleChoiceQuiz::class)
+        subclass(DateSelectionQuiz::class)
+        subclass(ReorderQuiz::class)
+        subclass(ConnectItemsQuiz::class)
+        subclass(ShortAnswerQuiz::class)
+        subclass(FillInBlankQuiz::class)
     }
 }
 
@@ -47,249 +48,19 @@ val json = Json {
     ignoreUnknownKeys = true
 }
 
-fun extractYouTubeDetails(jsonString: String): Pair<String, Int> {
-    val regex = """"youtubeId":"(.*?)","youtubeStartTime":(\d+)""".toRegex()
-    val matchResult = regex.find(jsonString)
-    val youtubeId = matchResult?.groups?.get(1)?.value ?: ""
-    val youtubeStartTime = matchResult?.groups?.get(2)?.value?.toInt() ?: 0
-    return Pair(youtubeId, youtubeStartTime)
-}
-fun extractBodyText(jsonString: String): String {
-    val regex = """"bodyText":"(.*?)"""".toRegex()
-    val matchResult = regex.find(jsonString)
-    val bodyText = matchResult?.groups?.get(1)?.value ?: ""
-    return bodyText.replace("\\n", "\n")
-}
-fun manualDeserializer(input: String): BodyType{
-    if(input.contains("quizzer.model.BodyType.NONE")){
-        return BodyType.NONE
-    }else if(input.contains("quizzer.model.BodyType.TEXT")) {
-//Old Input: {"type":"com.asu1.quizzer.model.BodyType.TEXT","value":1,"bodyText":"I'm stanning, just stanning you\n(_________________)\n\n오늘도 스치듯 그 말이"}
-        val bodyText = extractBodyText(input)
-        return BodyType.TEXT(bodyText)
-    }else if(input.contains("quizzer.model.BodyType.IMAGE")) {
-        return BodyType.NONE
-    }else if(input.contains("quizzer.model.BodyType.YOUTUBE")) {
-//Old Input: {"type":"com.asu1.quizzer.model.BodyType.YOUTUBE","value":3,"youtubeId":"v7bnOxV4jAc","youtubeStartTime":0}
-        val (youtubeId, youtubeStartTime) = extractYouTubeDetails(input)
-        return BodyType.YOUTUBE(youtubeId, youtubeStartTime)
-    }
-    return json.decodeFromString(input)
-}
-
 @OptIn(ExperimentalSerializationApi::class)
-@JsonClassDiscriminator("layoutType")
-@Serializable
-sealed class QuizJson {
-    abstract fun load() : Quiz<*>
-    abstract fun toQuiz(): Quiz<*>
+object QuizSerializer : JsonTransformingSerializer<Quiz>(
+    PolymorphicSerializer(Quiz::class)
+) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val obj = element.jsonObject
+        val typeField = obj["layoutType"]
+        val bodyObj  = obj["body"]?.jsonObject
+            ?: return element
 
-    @Serializable
-    @SerialName("0")
-    data class Quiz1Json(
-        val body: Quiz1Body
-    ) : QuizJson(){
-        override fun load(): Quiz1 {
-            val quiz = Quiz1()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz1 {
-            val quiz = Quiz1(
-                question = body.question,
-                answers = body.answers.toMutableList(),
-                ans = body.ans.toMutableList(),
-                shuffleAnswers = body.shuffleAnswers,
-                bodyType = manualDeserializer(body.bodyValue)
-            )
-            quiz.initViewState()
-            return quiz
+        return buildJsonObject {
+            bodyObj.forEach { (k,v) -> put(k, v) }
+            if (typeField != null) put("layoutType", typeField)
         }
     }
-
-
-    @Serializable
-    data class Quiz1Body(
-        val shuffleAnswers: Boolean,
-        val answers: List<String>,
-        val ans: List<Boolean>,
-        val question: String,
-        val bodyValue: String,
-    )
-
-    @Serializable
-    @SerialName("1")
-    data class Quiz2Json(
-        val body: Quiz2Body
-    ) : QuizJson(){
-        override fun load(): Quiz2 {
-            val quiz = Quiz2()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz2 {
-            val quiz = Quiz2(
-                question = body.question,
-                answers = body.answers.toMutableList(),
-                maxAnswerSelection = body.maxAnswerSelection,
-                yearRange = body.yearRange,
-                centerDate = YearMonth.of(body.centerDate[0], body.centerDate[1]),
-                answerDate = body.answerDate.map{it -> LocalDate.of(it[0], it[1], it[2])}.toMutableSet(),
-            )
-            quiz.initViewState()
-            return quiz
-        }
-    }
-
-    @Serializable
-    data class Quiz2Body(
-        val centerDate: List<Int>,
-        val yearRange: Int,
-        val answerDate: List<List<Int>>,
-        val maxAnswerSelection: Int,
-        val answers: List<String>,
-        val ans: List<Boolean>,
-        val question: String
-    )
-
-    @Serializable
-    @SerialName("2")
-    data class Quiz3Json(
-        val body: Quiz3Body
-    ) : QuizJson(){
-        override fun load(): Quiz3 {
-            val quiz = Quiz3()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz3 {
-            val quiz = Quiz3(
-                question = body.question,
-                answers = body.answers.toMutableList(),
-                bodyType = manualDeserializer(body.bodyValue),
-            )
-            quiz.initViewState()
-            return quiz
-        }
-    }
-
-    @Serializable
-    data class Quiz3Body(
-        val layoutType: Int,
-        val maxAnswerSelection: Int,
-        val answers: List<String>,
-        val ans: List<Boolean>,
-        val question: String,
-        val bodyValue: String,
-    )
-
-    @Serializable
-    @SerialName("3")
-    data class Quiz4Json(
-        val body: Quiz4Body
-    ) : QuizJson(){
-        override fun load(): Quiz4 {
-            val quiz = Quiz4()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz4 {
-            val quiz = Quiz4(
-                question = body.question,
-                answers = body.answers.toMutableList(),
-                connectionAnswers = body.connectionAnswers.toMutableList(),
-                connectionAnswerIndex = body.connectionAnswerIndex.toMutableList(),
-                leftDots = mutableListOf<Offset?>().apply {
-                    body.answers.forEach { _ -> add(null) }
-                },
-                rightDots = mutableListOf<Offset?>().apply {
-                    body.connectionAnswers.forEach { _ -> add(null) }
-                },
-                bodyType = manualDeserializer(body.bodyValue),
-                userConnectionIndex = mutableListOf<Int?>().apply {
-                    body.answers.forEach { _ -> add(null) }
-                },
-            )
-            quiz.initViewState()
-            return quiz
-        }
-    }
-
-    @Serializable
-    data class Quiz4Body(
-        val connectionAnswers: List<String>,
-        val connectionAnswerIndex: List<Int?>,
-        val layoutType: Int,
-        val maxAnswerSelection: Int,
-        val answers: List<String>,
-        val ans: List<Boolean>,
-        val question: String,
-        val bodyValue: String,
-    )
-
-    @Serializable
-    @SerialName("4")
-    data class Quiz5Json(
-        val body: Quiz5Body
-    ) : QuizJson(){
-        override fun load(): Quiz5 {
-            val quiz = Quiz5()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz5 {
-            val quiz = Quiz5(
-                question = body.question,
-                answer = body.answer,
-                bodyType = manualDeserializer(body.bodyValue)
-            )
-            quiz.initViewState()
-            return quiz
-        }
-    }
-
-
-    @Serializable
-    data class Quiz5Body(
-        val question: String,
-        val bodyValue: String,
-        val answer: String,
-    )
-
-    @Serializable
-    @SerialName("5")
-    data class Quiz6Json(
-        val body: Quiz6Body
-    ) : QuizJson(){
-        override fun load(): Quiz6 {
-            val quiz = Quiz6()
-            quiz.load(this.toString())
-            return quiz
-        }
-
-        override fun toQuiz(): Quiz6 {
-            val quiz = Quiz6(
-                question = body.question,
-                bodyType = manualDeserializer(body.bodyValue),
-
-            )
-            quiz.initViewState()
-            return quiz
-        }
-    }
-
-
-    @Serializable
-    data class Quiz6Body(
-        val question: String,
-        val bodyValue: String,
-        val answers: List<String>,
-        val fillInAnswers: List<String>,
-    )
 }
-

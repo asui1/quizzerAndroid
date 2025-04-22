@@ -13,23 +13,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.sampleQuiz2
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.sampleDateSelectionQuiz
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
+import com.kizitonwose.calendar.core.yearMonth
 import java.time.LocalDate
 
 @Composable
-fun Quiz2Viewer(
-    quiz: Quiz2,
+fun DateSelectionQuizViewer(
+    quiz: DateSelectionQuiz,
     quizTheme: QuizTheme = QuizTheme(),
     onUserInput: (LocalDate) -> Unit = {},
 )
 {
-    val userAnswers = remember { mutableStateListOf(*quiz.userAnswerDate.toTypedArray()) }
+    val userAnswers = remember { mutableStateListOf(*quiz.userDates.toTypedArray()) }
     fun updateLocalUserAnswer(localDate: LocalDate){
         if(userAnswers.contains(localDate)) {
             userAnswers.remove(localDate)
@@ -54,7 +55,7 @@ fun Quiz2Viewer(
                         onUserInput(date)
                         updateLocalUserAnswer(date)
                     },
-                    currentMonth = quiz.centerDate,
+                    currentMonth = quiz.centerDate.yearMonth,
                     colorScheme = quizTheme.colorScheme,
                 )
         }
@@ -73,12 +74,12 @@ fun Quiz2Viewer(
 
 @Preview(showBackground = true)
 @Composable
-fun Quiz2ViewerPreview(){
+fun PreviewDateSelectionQuizViewer(){
     val dateSelectionQuizViewModel: DateSelectionQuizViewModel = viewModel()
-    dateSelectionQuizViewModel.loadQuiz(sampleQuiz2)
+    dateSelectionQuizViewModel.loadQuiz(sampleDateSelectionQuiz)
 
-    Quiz2Viewer(
-        quiz = sampleQuiz2,
+    DateSelectionQuizViewer(
+        quiz = sampleDateSelectionQuiz,
         quizTheme = QuizTheme(),
         onUserInput = { },
     )

@@ -31,16 +31,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz3
+import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
+import com.asu1.quiz.viewmodel.quiz.ReorderQuizViewModel
 import com.asu1.resources.R
 
 @Composable
-fun Quiz3Creator(
-    quiz: Quiz3ViewModel = viewModel(),
-    onSave: (Quiz<Quiz3>) -> Unit
+fun ReorderQuizCreator(
+    quiz: ReorderQuizViewModel = viewModel(),
+    onSave: (ReorderQuiz) -> Unit
 ){
     val quiz3State by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -68,7 +67,7 @@ fun Quiz3Creator(
             }
             item {
                 QuizBodyBuilder(
-                    bodyState = quiz3State.bodyType,
+                    bodyState = quiz3State.bodyValue,
                     updateBody = { quiz.updateBodyState(it) },
                 )
             }
@@ -128,8 +127,8 @@ fun Quiz3Creator(
 
 @Preview(showBackground = true)
 @Composable
-fun Quiz3CreatorPreview() {
-    Quiz3Creator(
+fun PreviewReorderQuizCreator() {
+    ReorderQuizCreator(
         onSave = {}
     )
 }

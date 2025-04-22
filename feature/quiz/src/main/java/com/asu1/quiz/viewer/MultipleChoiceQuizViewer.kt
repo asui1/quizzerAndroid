@@ -19,21 +19,22 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.sampleQuiz1
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.sampleMultipleChoiceQuiz
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 
 @Composable
-fun Quiz1Viewer(
-    quiz: Quiz1,
+fun MultipleChoiceQuizViewer(
+    quiz: MultipleChoiceQuiz,
     toggleUserAnswer: (Int) -> Unit = {},
 )
 {
-    val userAnswers = remember { mutableStateListOf(*quiz.userAns.toTypedArray()) }
+    val userAnswers = remember { mutableStateListOf(*quiz.userSelections.toTypedArray()) }
     fun toggleLocalUserAnswers(index: Int){
         userAnswers[index ] = !userAnswers[index]
     }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +48,7 @@ fun Quiz1Viewer(
         }
         item{
             BuildBody(
-                quizBody = quiz.bodyType,
+                quizBody = quiz.bodyValue,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -71,7 +72,7 @@ fun Quiz1Viewer(
                         }
                         .scale(1.5f)
                 )
-                AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
+                AnswerTextStyle.GetTextComposable(quiz.displayedOptions[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -84,7 +85,7 @@ fun Quiz1Viewer(
 @Composable
 fun Quiz1ViewerPreview()
 {
-    Quiz1Viewer(
-        quiz = sampleQuiz1,
+    MultipleChoiceQuizViewer(
+        quiz = sampleMultipleChoiceQuiz,
     )
 }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz3
+import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.quiz.ui.ArrowDownwardWithPaddings
 import com.asu1.quiz.ui.SurfaceWithAnswerComposable
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
@@ -18,8 +18,8 @@ import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 
 @Composable
-fun Quiz3Preview(
-    quiz: Quiz3,
+fun ReorderQuizPreview(
+    quiz: ReorderQuiz,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -30,7 +30,7 @@ fun Quiz3Preview(
         QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(16.dp))
         BuildBody(
-            quizBody = quiz.bodyType,
+            quizBody = quiz.bodyValue,
         )
         Spacer(modifier = Modifier.height(8.dp))
         AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))

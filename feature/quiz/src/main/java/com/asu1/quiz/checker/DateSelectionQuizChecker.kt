@@ -12,16 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.sampleQuiz2
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.sampleDateSelectionQuiz
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
+import com.kizitonwose.calendar.core.yearMonth
 
 @Composable
-fun Quiz2Checker(
-    quiz: Quiz2,
+fun DateSelectionQuizChecker(
+    quiz: DateSelectionQuiz,
     quizTheme: QuizTheme = QuizTheme(),
 )
 {
@@ -42,16 +43,16 @@ fun Quiz2Checker(
         }
         item {
             CalendarWithFocusDates(
-                focusDates = quiz.userAnswerDate,
+                focusDates = quiz.userDates,
                 onDateClick = {
                 },
-                currentMonth = quiz.centerDate,
+                currentMonth = quiz.centerDate.yearMonth,
                 colorScheme = quizTheme.colorScheme,
             )
         }
         item{
             Quiz2SelectionViewer(
-                answerDate = quiz.userAnswerDate,
+                answerDate = quiz.userDates,
                 updateDate = {},
                 markAnswers = true,
                 correctAnswers = quiz.answerDate,
@@ -63,7 +64,7 @@ fun Quiz2Checker(
 @Preview(showBackground = true)
 @Composable
 fun Quiz2CheckerPreview(){
-    Quiz2Checker(
-        quiz = sampleQuiz2,
+    DateSelectionQuizChecker(
+        quiz = sampleDateSelectionQuiz,
     )
 }

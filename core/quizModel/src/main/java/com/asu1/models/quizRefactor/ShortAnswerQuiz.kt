@@ -1,6 +1,7 @@
 package com.asu1.models.quizRefactor
 
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
 import com.asu1.utils.normalizeMixedInputPrecisely
@@ -13,15 +14,17 @@ import java.util.UUID
 @SerialName("4")
 data class ShortAnswerQuiz(
     override var question: String = "",
-    /** must match old JSON key `answer` */
     val answer: String = "",
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ5
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     /** Runtime‐only user input, not serialized */
     @Transient
     var userAnswer: String = ""
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ5
 
     override fun initViewState() {
         userAnswer = ""
@@ -45,7 +48,6 @@ data class ShortAnswerQuiz(
     ): Quiz = copy(
         question  = question,
         answer    = answer,
-        bodyType  = bodyType,
-        uuid      = uuid
+        bodyValue  = bodyType,
     ).also { it.initViewState() }
 }

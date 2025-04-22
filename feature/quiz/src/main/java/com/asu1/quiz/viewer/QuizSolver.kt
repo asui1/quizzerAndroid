@@ -31,8 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customComposable.animations.LoadingAnimation
-import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
@@ -123,7 +123,7 @@ fun QuizViewerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     quizSize: Int,
-    visibleQuizzes: List<Quiz<*>>,
+    visibleQuizzes: List<Quiz>,
     quizTheme: QuizTheme = QuizTheme(),
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,

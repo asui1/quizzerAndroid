@@ -13,17 +13,17 @@ fun deleteDatabase(context: Context, dbName: String) {
 }
 
 fun getCurrentDatabaseVersion(context: Context, dbName: String): Int {
-    return try {
-        val db = SQLiteDatabase.openDatabase(
-            context.getDatabasePath(dbName).absolutePath,
-            null,
-            SQLiteDatabase.OPEN_READONLY
-        )
-        val version = db.version
-        db.close()
-        version
-    } catch (e: Exception) {
+    val dbFile = context.getDatabasePath(dbName)
+    if (!dbFile.exists()) {
         Logger.debug("DB_UPDATE", "Database doesn't exist: $dbName")
-        0 // If database doesn't exist, assume version 0
+        return 0
+    }
+
+    SQLiteDatabase.openDatabase(
+        dbFile.absolutePath,
+        null,
+        SQLiteDatabase.OPEN_READONLY
+    ).use { db ->
+        return db.version
     }
 }

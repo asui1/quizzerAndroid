@@ -1,10 +1,12 @@
 package com.asu1.models.quizRefactor
 
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.LocalDateSerializer
 import com.asu1.models.serializers.LocalDateSetSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
+import com.asu1.utils.toggle
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -18,16 +20,20 @@ data class DateSelectionQuiz(
     // store as LocalDate, but serialize as [year,month,day]
     @Serializable(with = LocalDateSerializer::class)
     val centerDate: LocalDate = LocalDate.now().withDayOfMonth(1),
-    val yearRange: Int = 20,
     @Serializable(with = LocalDateSetSerializer::class)
     val answerDate: Set<LocalDate> = emptySet(),
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ2
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     /** Transient view‐state, not serialized **/
     @Transient
     var userDates: MutableSet<LocalDate> = mutableSetOf()
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ2
+    @Transient
+    val yearRange: Int = 20
 
     override fun initViewState() {
         userDates.clear()
@@ -51,10 +57,10 @@ data class DateSelectionQuiz(
         return copy(
             question           = question,
             centerDate         = centerDate,
-            yearRange          = yearRange,
             answerDate         = answerDate,
-            bodyType           = bodyType,
-            uuid               = uuid
+            bodyValue           = bodyType,
         ).also { it.initViewState() }
     }
+
+    fun toggleUserAnswer(date: LocalDate) = userDates.toggle(date)
 }

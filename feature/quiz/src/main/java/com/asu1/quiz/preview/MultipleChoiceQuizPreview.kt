@@ -15,14 +15,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz1
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 
 @Composable
-fun Quiz1Preview(
-    quiz: Quiz1
+fun MultipleChoiceQuizPreview(
+    quiz: MultipleChoiceQuiz
 ){
     Column(
         modifier = Modifier
@@ -34,10 +34,10 @@ fun Quiz1Preview(
         )
         Spacer(modifier = Modifier.height(16.dp))
         BuildBody(
-            quizBody = quiz.bodyType,
+            quizBody = quiz.bodyValue,
         )
         Spacer(modifier = Modifier.height(16.dp))
-        quiz.userAns.withIndex().forEach { (index, item) ->
+        quiz.userSelections.withIndex().forEach { (index, item) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -52,7 +52,7 @@ fun Quiz1Preview(
                         }
                         .scale(1.5f)
                 )
-                AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
+                AnswerTextStyle.GetTextComposable(quiz.displayedOptions[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }

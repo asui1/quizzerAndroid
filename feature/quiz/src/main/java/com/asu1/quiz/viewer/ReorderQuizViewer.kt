@@ -20,20 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.sampleQuiz3
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.sampleReorderQuiz
 import com.asu1.quiz.ui.ArrowDownwardWithPaddings
 import com.asu1.quiz.ui.SurfaceWithAnswerComposable
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
-import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun Quiz3Viewer(
-    quiz: Quiz3,
+fun ReorderQuizViewer(
+    quiz: ReorderQuiz,
     onUserInput: (Int, Int) -> Unit = {_, _ ->},
 ) {
     val view = LocalView.current
@@ -62,7 +60,7 @@ fun Quiz3Viewer(
             QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
-                quizBody = quiz.bodyType,
+                quizBody = quiz.bodyValue,
             )
             Spacer(modifier = Modifier.height(8.dp))
             AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0],
@@ -96,10 +94,7 @@ fun Quiz3Viewer(
 @Preview(showBackground = true)
 @Composable
 fun Quiz3ViewPreview() {
-    val quiz3ViewModel: Quiz3ViewModel = viewModel()
-    quiz3ViewModel.loadQuiz(sampleQuiz3)
-
-    Quiz3Viewer(quiz = sampleQuiz3,
+    ReorderQuizViewer(quiz = sampleReorderQuiz,
         onUserInput = { _, _ -> },
     )
 }

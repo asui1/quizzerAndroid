@@ -41,10 +41,7 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                 this._quizState.update {
                     it.copy().apply{
                         leftDots = leftDots.toMutableList().apply {
-                            this.set(
-                                quiz4ViewModelStates.index,
-                                quiz4ViewModelStates.offset
-                            )
+                            this[quiz4ViewModelStates.index] = quiz4ViewModelStates.offset
                         }
                     }
                 }
@@ -91,6 +88,16 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                             this.set(quiz4ViewModelStates.index, null)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun updateAnswerAt(index: Int, answer: String){
+        this._quizState.update {
+            it.copy().apply {
+                answers = answers.toMutableList().apply {
+                    this[index] = answer
                 }
             }
         }

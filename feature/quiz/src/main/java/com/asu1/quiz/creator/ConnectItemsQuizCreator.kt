@@ -41,19 +41,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 
 @Composable
-fun Quiz4Creator(
-    quiz: Quiz4ViewModel = viewModel(),
-    onSave: (Quiz<Quiz4>) -> Unit
+fun ConnectItemsQuizCreator(
+    quiz: ConnectItemsQuizViewModel = viewModel(),
+    onSave: (ConnectItemsQuiz) -> Unit
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
@@ -94,7 +93,7 @@ fun Quiz4Creator(
             }
             item {
                 QuizBodyBuilder(
-                    bodyState = quizState.bodyType,
+                    bodyState = quizState.bodyValue,
                     updateBody = { quiz.updateBodyState(it) },
                 )
             }
@@ -140,9 +139,9 @@ fun Quiz4Creator(
                                         detectDragGestures(
                                             onDragStart = {
                                                 startOffset =
-                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
+                                                    quizState.leftDots[index]
                                                 endOffset =
-                                                    quizState.leftDots[index] ?: Offset(0f, 0f)
+                                                    quizState.leftDots[index]
                                                 quiz.onQuiz4Update(
                                                     ConnectItemsQuizViewModelStates.ResetConnectionCreator(
                                                         index
@@ -337,5 +336,5 @@ fun DrawLines(
 @Preview(showBackground = true)
 @Composable
 fun Quiz4CreatorPreview() {
-    Quiz4Creator() {}
+    ConnectItemsQuizCreator() {}
 }

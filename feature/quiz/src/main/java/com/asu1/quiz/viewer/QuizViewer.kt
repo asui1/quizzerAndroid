@@ -2,36 +2,36 @@ package com.asu1.quiz.viewer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.sampleQuiz1
-import com.asu1.models.sampleQuiz2
-import com.asu1.models.sampleQuiz3
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
+import com.asu1.models.sampleMultipleChoiceQuiz
+import com.asu1.models.sampleDateSelectionQuiz
+import com.asu1.models.sampleReorderQuiz
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 
 @Composable
 fun QuizViewer(
-    quiz: Quiz<*>,
+    quiz: Quiz,
     quizTheme: QuizTheme = QuizTheme(),
     updateQuiz: (QuizUserUpdates) -> Unit = {},
 ) {
     when(quiz){
-        is Quiz1 -> {
-            Quiz1Viewer(
+        is MultipleChoiceQuiz -> {
+            MultipleChoiceQuizViewer(
                 quiz = quiz,
                 toggleUserAnswer = {
                     updateQuiz(QuizUserUpdates.MultipleChoiceQuizUpdate(it))
                 },
             )
         }
-        is Quiz2 -> {
-            Quiz2Viewer(
+        is DateSelectionQuiz -> {
+            DateSelectionQuizViewer(
                 quiz = quiz,
                 quizTheme = quizTheme,
                 onUserInput = {
@@ -39,26 +39,28 @@ fun QuizViewer(
                 },
             )
         }
-        is Quiz3 -> {
-            Quiz3Viewer(
+        is ReorderQuiz -> {
+            ReorderQuizViewer(
                 quiz = quiz,
                 onUserInput = {first, second ->
                     updateQuiz(QuizUserUpdates.ReorderQuizUpdate(first, second))
                 },
             )
         }
-        is Quiz4 -> {
-            val quiz4ViewModel: Quiz4ViewModel = viewModel(
-                key = quiz.uuid
-            )
-            quiz4ViewModel.loadQuiz(quiz)
-            Quiz4Viewer(
-                quiz = quiz4ViewModel,
+        is ConnectItemsQuiz -> {
+            ConnectItemsQuizViewer(
+                quiz = quiz,
                 quizTheme = quizTheme,
                 onUpdate = {items ->
                     updateQuiz(QuizUserUpdates.ConnectItemQuizUpdate(items))
                 }
                 )
+        }
+        is ShortAnswerQuiz -> {
+            TODO()
+        }
+        is FillInBlankQuiz -> {
+            TODO()
         }
     }
 }
@@ -68,7 +70,7 @@ fun QuizViewer(
 @Composable
 fun ViewerPreviewQuiz1() {
     QuizViewer(
-        quiz = sampleQuiz1,
+        quiz = sampleMultipleChoiceQuiz,
     )
 }
 
@@ -76,7 +78,7 @@ fun ViewerPreviewQuiz1() {
 @Composable
 fun ViewerPreviewQuiz2() {
     QuizViewer(
-        quiz = sampleQuiz2,
+        quiz = sampleDateSelectionQuiz,
     )
 }
 
@@ -84,6 +86,6 @@ fun ViewerPreviewQuiz2() {
 @Composable
 fun ViewerPreviewQuiz3(){
     QuizViewer(
-        quiz = sampleQuiz3,
+        quiz = sampleReorderQuiz,
     )
 }

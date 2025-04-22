@@ -56,6 +56,22 @@ class MultipleChoiceQuizViewModel : BaseQuizViewModel<MultipleChoiceQuiz>(
         }
     }
 
+    fun updateAnswerAt(index: Int, newAnswer: String){
+        val state = _quizState.value
+        if (index !in state.options.indices) return
+
+        val newOptions = state.options.toMutableList().apply {
+            this[index] = newAnswer
+        }
+
+        _quizState.update { state ->
+
+            state.copy(
+                options = newOptions
+            )
+        }
+    }
+
     fun toggleShuffleAnswers(){
         _quizState.update {
             it.copy(shuffleAnswers = !it.shuffleAnswers)

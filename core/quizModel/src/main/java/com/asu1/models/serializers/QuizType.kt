@@ -41,5 +41,5 @@ enum class QuizType(
         5,
         R.string.fill_blank,
         Icons.Default.TextFields
-    )
+    ),
 }

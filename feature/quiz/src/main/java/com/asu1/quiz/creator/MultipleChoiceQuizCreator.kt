@@ -35,17 +35,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.resources.R
 
 
 @Composable
-fun Quiz1Creator(
+fun MultipleChoiceQuizCreator(
     quiz: MultipleChoiceQuizViewModel,
-    onSave: (Quiz<Quiz1>) -> Unit
+    onSave: (MultipleChoiceQuiz) -> Unit
 ) {
     val quiz1State by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -70,16 +69,16 @@ fun Quiz1Creator(
             }
             item {
                 QuizBodyBuilder(
-                    bodyState = quiz1State.bodyType,
+                    bodyState = quiz1State.bodyValue,
                     updateBody = { quiz.updateBodyState(it) },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            items(quiz1State.answers.size) { index ->
+            items(quiz1State.options.size) { index ->
                 AnswerTextField(
-                    value = quiz1State.answers[index],
+                    value = quiz1State.options[index],
                     onValueChange = {it ->  quiz.updateAnswerAt(index, it) },
-                    answerCheck = quiz1State.ans[index],
+                    answerCheck = quiz1State.correctFlags[index],
                     toggleAnswer = {
                         quiz.toggleAnsAt(index)
                     },
@@ -89,7 +88,7 @@ fun Quiz1Creator(
                     onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
                     },
-                    isLast = index == quiz1State.answers.size-1,
+                    isLast = index == quiz1State.options.size-1,
                     key = "QuizAnswerTextField$index"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -228,7 +227,7 @@ fun Quiz1AnswerShuffle(
 @Composable
 fun Quiz1Preview() {
     com.asu1.resources.QuizzerAndroidTheme {
-        Quiz1Creator(
+        MultipleChoiceQuizCreator(
             quiz = viewModel(),
             onSave = {}
         )

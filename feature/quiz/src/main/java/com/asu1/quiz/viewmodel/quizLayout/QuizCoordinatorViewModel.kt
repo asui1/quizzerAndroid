@@ -12,10 +12,10 @@ import androidx.navigation.NavController
 import com.asu1.colormodel.ContrastLevel
 import com.asu1.colormodel.PaletteLevel
 import com.asu1.models.quiz.GetQuizResult
-import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizResult
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quiz.SendQuizResult
+import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizLayoutSerializer
@@ -243,12 +243,14 @@ class QuizCoordinatorViewModel : ViewModel() {
     }
 
     fun loadQuiz(quizId: String) {
+        Logger.debug(quizId)
         _quizViewModelState.value = ViewModelState.LOADING
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.api.getQuizData(quizId)
 
                 if (!response.isSuccessful) throw Exception("Response Failed")
+                Logger.debug(response.body()!!)
                 val quizSerialize = response.body() ?: Exception("Response is null")
                 processQuizData(quizSerialize as QuizLayoutSerializer)
                 _quizViewModelState.update {
@@ -263,6 +265,7 @@ class QuizCoordinatorViewModel : ViewModel() {
     private suspend fun processQuizData(quizSerialized: QuizLayoutSerializer) {
         coroutineScope {
             try{
+                Logger.debug("Process Quiz Data")
                 val loadQuizGeneralDeferred = async { quizGeneralViewModel.loadQuizData(quizSerialized.quizData) }
                 val loadQuizThemeDeferred = async { quizThemeViewModel.loadQuizTheme(quizSerialized.quizTheme) }
                 val loadQuizDataDeferred = async { quizContentViewModel.loadQuizContents(quizSerialized.quizData.quizzes) }
@@ -360,9 +363,7 @@ class QuizCoordinatorViewModel : ViewModel() {
             titleImage = titleImage,
             uuid = quizGeneralViewModel.getUuidFromTitle(),
             tags = quizData.tags,
-            quizzes = quizContentViewModel.quizContentState.value.quizzes.map {
-                it.changeToJson()
-            },
+            quizzes = quizContentViewModel.quizContentState.value.quizzes,
             description = quizData.description
         )
         return quizDataSerializer
@@ -424,8 +425,8 @@ sealed class QuizCoordinatorActions{
     data class UpdateScoreCard(val scoreCardAction: ScoreCardViewModelActions) : QuizCoordinatorActions()
     data class UpdateQuizAnswer(val index: Int, val update: QuizUserUpdates) : QuizCoordinatorActions()
     data class RemoveQuizAt(val index: Int) : QuizCoordinatorActions()
-    data class UpdateQuizAt(val quiz: Quiz<*>, val index: Int) : QuizCoordinatorActions()
-    data class AddQuizAt(val quiz: Quiz<*>, val index: Int) : QuizCoordinatorActions()
+    data class UpdateQuizAt(val quiz: Quiz, val index: Int) : QuizCoordinatorActions()
+    data class AddQuizAt(val quiz: Quiz, val index: Int) : QuizCoordinatorActions()
     data object ResetQuizResult: QuizCoordinatorActions()
     data object ResetQuiz: QuizCoordinatorActions()
     data class GenerateColorScheme(val generateWith: GenerateWith, val palette: PaletteLevel, val contrast: ContrastLevel, val isDark: Boolean): QuizCoordinatorActions()

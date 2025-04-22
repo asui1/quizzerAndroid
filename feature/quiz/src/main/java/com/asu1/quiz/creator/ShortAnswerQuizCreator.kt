@@ -16,15 +16,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz6
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
 
 @Composable
-fun Quiz6Creator(
+fun ShortAnswerQuizCreator(
     quiz: ShortAnswerQuizViewModel,
-    onSave: (Quiz<Quiz6>) -> Unit
+    onSave: (ShortAnswerQuiz) -> Unit
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -49,16 +48,10 @@ fun Quiz6Creator(
             }
             item {
                 QuizBodyBuilder(
-                    bodyState = quizState.bodyType,
+                    bodyState = quizState.bodyValue,
                     updateBody = { quiz.updateBodyState(it) },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-            }
-            item{
-                Quiz6FillInBody()
-            }
-            items(quizState.fillInAnswers) {
-
             }
             item{
                 AddAnswer {  }
@@ -74,16 +67,11 @@ fun Quiz6Creator(
     }
 }
 
-@Composable
-fun Quiz6FillInBody(){
-
-}
-
 @Preview(showBackground = true)
 @Composable
 fun Quiz6Preview() {
     com.asu1.resources.QuizzerAndroidTheme {
-        Quiz6Creator(
+        ShortAnswerQuizCreator(
             quiz = viewModel(),
             onSave = {}
         )

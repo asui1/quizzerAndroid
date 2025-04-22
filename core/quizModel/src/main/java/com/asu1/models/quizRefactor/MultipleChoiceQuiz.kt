@@ -1,14 +1,15 @@
 package com.asu1.models.quizRefactor
 
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
+import com.asu1.utils.Logger
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
-// === Only MultipleChoiceQuiz declares an 'options' list ===
 @Serializable
 @SerialName("0")
 data class MultipleChoiceQuiz(
@@ -18,9 +19,8 @@ data class MultipleChoiceQuiz(
     @SerialName("ans")
     val correctFlags: List<Boolean> = List(5){false},
     val shuffleAnswers: Boolean = false,
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ1
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     @Transient
     var displayedOptions: MutableList<String> = mutableListOf()
@@ -28,7 +28,13 @@ data class MultipleChoiceQuiz(
     @Transient
     var userSelections: MutableList<Boolean> = mutableListOf()
 
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ1
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
+
     override fun initViewState() {
+        Logger.debug("INITIALIZE MULTIPLE CHOICE QUIZ")
         displayedOptions = if (shuffleAnswers) options.shuffled().toMutableList()
         else options.toMutableList()
         userSelections = MutableList(options.size) { false }
@@ -42,7 +48,16 @@ data class MultipleChoiceQuiz(
     }
 
     override fun gradeQuiz(): Boolean {
-        return correctFlags.indices.all { correctFlags[it] == userSelections[it] }
+        // Build a list of “correct” flags in the same order as displayedOptions
+        val effectiveCorrectFlags = displayedOptions.map { option ->
+            // Find this option’s original index, then grab its correctFlags entry
+            options.indexOf(option).takeIf { it >= 0 }?.let { correctFlags[it] } == true
+        }
+
+        // Compare each flag to the user’s selection
+        return effectiveCorrectFlags.zip(userSelections).all { (correct, selected) ->
+            correct == selected
+        }
     }
 
     override fun cloneQuiz(
@@ -55,8 +70,11 @@ data class MultipleChoiceQuiz(
             options = options,
             correctFlags = correctFlags,
             shuffleAnswers = shuffleAnswers,
-            bodyType = bodyType,
-            uuid = uuid
+            bodyValue = bodyType,
         ).also { it.initViewState() }
+    }
+
+    fun toggleUserSelectionAt(answerIndex: Int){
+        userSelections[answerIndex] = !userSelections[answerIndex]
     }
 }

@@ -28,18 +28,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.sampleQuiz4
+import com.asu1.models.sampleConnectItemsQuiz
 import com.asu1.quiz.creator.DraggableDot
 import com.asu1.quiz.creator.DrawLines
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
 
 @Composable
-fun Quiz4Checker(
-    quiz: Quiz4ViewModel = viewModel(),
+fun ConnectItemsQuizChecker(
+    quiz: ConnectItemsQuizViewModel = viewModel(),
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
@@ -74,7 +74,7 @@ fun Quiz4Checker(
             }
             item{
                 BuildBody(
-                    quizBody = quizState.bodyType,
+                    quizBody = quizState.bodyValue,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -176,10 +176,10 @@ fun Quiz4Checker(
 @Preview(showBackground = true)
 @Composable
 fun Quiz4CheckerPreview() {
-    val quiz4ViewModel: Quiz4ViewModel = viewModel()
-    quiz4ViewModel.loadQuiz(sampleQuiz4)
+    val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel()
+    quiz4ViewModel.loadQuiz(sampleConnectItemsQuiz)
 
-    Quiz4Checker(
+    ConnectItemsQuizChecker(
         quiz = quiz4ViewModel,
     )
 }

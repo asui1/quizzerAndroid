@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.sampleQuiz3
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.sampleReorderQuiz
 import com.asu1.quiz.ui.ArrowDownwardWithPaddings
 import com.asu1.quiz.ui.SurfaceWithAnswerComposable
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
@@ -21,8 +21,8 @@ import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 
 @Composable
-fun Quiz3Checker(
-    quiz: Quiz3,
+fun ReorderQuizChecker(
+    quiz: ReorderQuiz,
 ) {
     val result = remember{quiz.gradeQuiz()}
     LazyColumn(
@@ -40,7 +40,7 @@ fun Quiz3Checker(
             }
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
-                quizBody = quiz.bodyType,
+                quizBody = quiz.bodyValue,
             )
             Spacer(modifier = Modifier.height(8.dp))
             AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
@@ -63,8 +63,8 @@ fun Quiz3Checker(
 
 @Preview(showBackground = true)
 @Composable
-fun Quiz3CheckerPreview(){
-    Quiz3Checker(
-        quiz = sampleQuiz3,
+fun PreviewReorderQuizChecker(){
+    ReorderQuizChecker(
+        quiz = sampleReorderQuiz,
     )
 }

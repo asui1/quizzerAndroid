@@ -22,8 +22,8 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.sampleQuizList
 import com.asu1.quiz.preview.QuizPreview
 import com.asu1.quiz.ui.ImageColorBackground
@@ -33,7 +33,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-fun sampleQuizFlow(): Flow<Quiz<*>> = flow {
+fun sampleQuizFlow(): Flow<Quiz> = flow {
     for (quiz in sampleQuizList) {
         emit(quiz)
         delay(200L)
@@ -55,7 +55,7 @@ fun QuizThemeExample(
         with(density) { windowInfo.containerSize.height.toDp().coerceAtMost(800.dp)}
     }
     val scale = 0.3f
-    val sampleQuizList = remember { mutableStateListOf<Quiz<*>>() }
+    val sampleQuizList = remember { mutableStateListOf<Quiz>() }
 
     LaunchedEffect(Unit) {
         Logger.debug("LAUNCHED UNIT")

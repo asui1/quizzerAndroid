@@ -25,6 +25,21 @@ class ReorderQuizViewModel : BaseQuizViewModel<ReorderQuiz>(
         this._quizState.value = ReorderQuiz()
     }
 
+    fun updateAnswerAt(index: Int, newAnswer: String) {
+        val state = _quizState.value
+        if (index !in state.answers.indices) return
+
+        // build the new list once, outside of the lambda
+        val newAnswers = state.answers
+            .toMutableList()
+            .apply { this[index] = newAnswer }
+
+        _quizState.update { quiz ->
+            // lambda only does the immutable copy
+            quiz.copy(answers = newAnswers)
+        }
+    }
+
     fun removeAnswerAt(index: Int) {
         _quizState.update { quiz ->
             if (quiz.answers.size <= 3 || index !in quiz.answers.indices) return@update quiz

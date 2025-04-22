@@ -8,19 +8,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
-import com.asu1.models.quiz.Quiz5
-import com.asu1.models.quiz.Quiz6
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.serializers.QuizType
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz3ViewModel
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
 import com.asu1.quiz.viewmodel.quiz.FillInBlankViewModel
+import com.asu1.quiz.viewmodel.quiz.ReorderQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
@@ -38,14 +38,14 @@ fun QuizCaller(
     val quizTheme = quizState.quizTheme
     val quizzes = quizState.quizContentState.quizzes
 
-    val quiz: Quiz<*>? = if (loadIndex != -1 && quizzes.size > loadIndex
+    val quiz: Quiz? = if (loadIndex != -1 && quizzes.size > loadIndex
     ) {
         quizzes[loadIndex]
     } else {
         null
     }
 
-    fun onSave(newQuiz: Quiz<*>){
+    fun onSave(newQuiz: Quiz){
         newQuiz.initViewState()
         if(quiz != null){
             quizCoordinatorViewModel.updateQuizCoordinator(
@@ -67,9 +67,9 @@ fun QuizCaller(
             QuizType.QUIZ1 -> {
                 val multipleChoiceQuizViewModel: MultipleChoiceQuizViewModel = viewModel(key="Quiz1ViewModel")
                 if(quiz != null){
-                    multipleChoiceQuizViewModel.loadQuiz(quiz as Quiz1)
+                    multipleChoiceQuizViewModel.loadQuiz(quiz as MultipleChoiceQuiz)
                 }
-                Quiz1Creator(
+                MultipleChoiceQuizCreator(
                     quiz = multipleChoiceQuizViewModel,
                     onSave = {
                         onSave(it)
@@ -79,9 +79,9 @@ fun QuizCaller(
             QuizType.QUIZ2 -> {
                 val dateSelectionQuizViewModel: DateSelectionQuizViewModel = viewModel(key="Quiz2ViewModel")
                 if(quiz != null){
-                    dateSelectionQuizViewModel.loadQuiz(quiz as Quiz2)
+                    dateSelectionQuizViewModel.loadQuiz(quiz as DateSelectionQuiz)
                 }
-                Quiz2Creator(
+                DateSelectionQuizCreator(
                     quiz = dateSelectionQuizViewModel,
                     onSave = {
                         onSave(it)
@@ -89,11 +89,11 @@ fun QuizCaller(
                 )
             }
             QuizType.QUIZ3 -> {
-                val quiz3ViewModel: Quiz3ViewModel = viewModel(key="Quiz3ViewModel")
+                val quiz3ViewModel: ReorderQuizViewModel = viewModel(key="Quiz3ViewModel")
                 if(quiz != null){
-                    quiz3ViewModel.loadQuiz(quiz as Quiz3)
+                    quiz3ViewModel.loadQuiz(quiz as ReorderQuiz)
                 }
-                Quiz3Creator(
+                ReorderQuizCreator(
                     quiz = quiz3ViewModel,
                     onSave = {
                         onSave(it)
@@ -101,24 +101,12 @@ fun QuizCaller(
                 )
             }
             QuizType.QUIZ4 -> {
-                val quiz4ViewModel: Quiz4ViewModel = viewModel(key="Quiz4ViewModel")
+                val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel(key="Quiz4ViewModel")
                 if(quiz != null){
-                    quiz4ViewModel.loadQuiz(quiz as Quiz4)
+                    quiz4ViewModel.loadQuiz(quiz as ConnectItemsQuiz)
                 }
-                Quiz4Creator(
+                ConnectItemsQuizCreator(
                     quiz = quiz4ViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ5 -> {
-                val fillInBlankViewModel: FillInBlankViewModel = viewModel(key = "Quiz5ViewModel")
-                if(quiz != null){
-                    fillInBlankViewModel.loadQuiz(quiz as Quiz5)
-                }
-                Quiz5Creator(
-                    quiz = fillInBlankViewModel,
                     onSave = {
                         onSave(it)
                     },
@@ -127,10 +115,22 @@ fun QuizCaller(
             QuizType.QUIZ6 -> {
                 val shortAnswerQuizViewModel: ShortAnswerQuizViewModel = viewModel(key = "Quiz6ViewModel")
                 if(quiz != null){
-                    shortAnswerQuizViewModel.loadQuiz(quiz as Quiz6)
+                    shortAnswerQuizViewModel.loadQuiz(quiz as ShortAnswerQuiz)
                 }
-                Quiz6Creator(
+                ShortAnswerQuizCreator(
                     quiz = shortAnswerQuizViewModel,
+                    onSave = {
+                        onSave(it)
+                    },
+                )
+            }
+            QuizType.QUIZ5 -> {
+                val fillInBlankViewModel: FillInBlankViewModel = viewModel(key = "Quiz5ViewModel")
+                if(quiz != null){
+                    fillInBlankViewModel.loadQuiz(quiz as FillInBlankQuiz)
+                }
+                FillInBlankQuizCreator(
+                    quiz = fillInBlankViewModel,
                     onSave = {
                         onSave(it)
                     },

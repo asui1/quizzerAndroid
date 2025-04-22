@@ -2,13 +2,14 @@ package com.asu1.models.quizRefactor
 
 import androidx.compose.ui.geometry.Offset
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
+import com.asu1.utils.getDragIndex
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
-import kotlin.math.abs
 
 @Serializable
 @SerialName("3")
@@ -17,24 +18,26 @@ data class ConnectItemsQuiz(
     var answers: List<String> = emptyList(),
     var connectionAnswers: List<String> = emptyList(),
     var connectionAnswerIndex: List<Int?> = emptyList(),
-    val maxAnswerSelection: Int = 1,
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ4
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(
 ) {
     /** Transient view‑state (not serialized) **/
     @Transient
-    var leftDots: MutableList<Offset?> = MutableList(answers.size) { null }
+    var leftDots: MutableList<Offset> = MutableList(answers.size) { Offset.Zero }
     @Transient
-    var rightDots: MutableList<Offset?> = MutableList(connectionAnswers.size) { null }
+    var rightDots: MutableList<Offset> = MutableList(connectionAnswers.size) { Offset.Zero }
     @Transient
     var userConnectionIndex: MutableList<Int?> = MutableList(answers.size) { null }
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ4
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
 
     override fun initViewState() {
         userConnectionIndex = MutableList(answers.size) { null }
-        leftDots            = MutableList(answers.size) { null }
-        rightDots           = MutableList(connectionAnswers.size) { null }
+        leftDots            = MutableList(answers.size) { Offset.Zero }
+        rightDots           = MutableList(connectionAnswers.size) { Offset.Zero }
     }
 
     override fun validateQuiz(): QuizError {
@@ -60,10 +63,9 @@ data class ConnectItemsQuiz(
         answers               = answers,
         connectionAnswers     = connectionAnswers,
         connectionAnswerIndex = connectionAnswerIndex,
-        maxAnswerSelection    = maxAnswerSelection,
-        bodyType              = bodyType,
-        uuid                  = uuid
+        bodyValue              = bodyType,
     ).also { it.initViewState() }
+
     fun addAnswer(){
         answers = answers.toMutableList().apply {
             add("")
@@ -71,7 +73,7 @@ data class ConnectItemsQuiz(
                 add(null)
             }
             leftDots = leftDots.toMutableList().apply {
-                add(null)
+                add(Offset.Zero)
             }
         }
     }
@@ -80,7 +82,7 @@ data class ConnectItemsQuiz(
         connectionAnswers = connectionAnswers.toMutableList().apply {
             add("")
             rightDots = rightDots.toMutableList().apply {
-                add(null)
+                add(Offset.Zero)
             }
         }
     }
@@ -118,21 +120,14 @@ data class ConnectItemsQuiz(
     }
 
     fun onDragEnd(from: Int, offset: Offset, isCreator: Boolean){
-        if(rightDots[0] == null) return
-        if(abs(offset.x - (rightDots[0]!!.x)) > 25) return
-        for(i in rightDots.indices){
-            if(rightDots[i] == null) continue
-            if(abs(offset.y - rightDots[i]!!.y) < 25) {
-                if(isCreator) {
-                    connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                        this[from] = i
-                    }
-                }else{
-                    userConnectionIndex = userConnectionIndex.toMutableList().apply {
-                        this[from] = i
-                    }
-                }
-                break
+        val connectionIndex = getDragIndex(offset, rightDots)
+        if(isCreator) {
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                this[from] = connectionIndex
+            }
+        }else{
+            userConnectionIndex = userConnectionIndex.toMutableList().apply {
+                this[from] = connectionIndex
             }
         }
     }

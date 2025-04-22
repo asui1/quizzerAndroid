@@ -17,15 +17,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.sampleQuiz1
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.sampleMultipleChoiceQuiz
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 
 @Composable
-fun Quiz1Checker(
-    quiz: Quiz1,
+fun MultipleChoiceQuizChecker(
+    quiz: MultipleChoiceQuiz,
 ){
     val result = remember{quiz.gradeQuiz()}
     LazyColumn(
@@ -44,31 +44,31 @@ fun Quiz1Checker(
         }
         item{
             BuildBody(
-                quizBody = quiz.bodyType,
+                quizBody = quiz.bodyValue,
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        items(quiz.answers.size, key = {it}){ index ->
+        items(quiz.options.size, key = {it}){ index ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ){
                 AnswerShower(
-                    isCorrect = quiz.ans[index] == quiz.userAns[index],
-                    showChecker = quiz.ans[index] || quiz.userAns[index]
+                    isCorrect = quiz.correctFlags[index] == quiz.userSelections[index],
+                    showChecker = quiz.correctFlags[index] || quiz.userSelections[index]
                 ){
                     Checkbox(
-                        checked = quiz.userAns[index],
+                        checked = quiz.userSelections[index],
                         onCheckedChange = {
                         },
                         modifier = Modifier
                             .semantics {
-                                contentDescription = "Checkbox at $index, and is ${if(quiz.userAns[index]) "checked" else "unchecked"}"
+                                contentDescription = "Checkbox at $index, and is ${if(quiz.userSelections[index]) "checked" else "unchecked"}"
                             }
                             .scale(1.5f)
                     )
                 }
-                AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[index])
+                AnswerTextStyle.GetTextComposable(quiz.displayedOptions[index])
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -78,8 +78,8 @@ fun Quiz1Checker(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewQuiz1Checker(){
-    Quiz1Checker(
-        quiz = sampleQuiz1,
+fun PreviewMultipleChoiceQuizChecker(){
+    MultipleChoiceQuizChecker(
+        quiz = sampleMultipleChoiceQuiz,
     )
 }

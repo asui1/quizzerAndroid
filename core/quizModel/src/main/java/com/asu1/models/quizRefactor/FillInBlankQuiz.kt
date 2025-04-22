@@ -1,6 +1,7 @@
 package com.asu1.models.quizRefactor
 
 import com.asu1.models.serializers.BodyType
+import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
 import com.asu1.utils.normalizeMixedInputPrecisely
@@ -15,15 +16,17 @@ data class FillInBlankQuiz(
     override var question: String = "",
     val answers: List<String> = listOf(""),
     val fillInAnswers: List<String> = emptyList(),
-    @SerialName("bodyValue")
-    override var bodyType: BodyType = BodyType.NONE,
-    override val uuid: String = UUID.randomUUID().toString(),
-    override val layoutType: QuizType = QuizType.QUIZ6
+    @Serializable(with = BodyTypeSerializer::class)
+    override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(
 ) {
     /** Transient UI state: not serialized **/
     @Transient
     var userAnswers: MutableList<String> = mutableListOf()
+    @Transient
+    override val uuid: String = UUID.randomUUID().toString()
+    @Transient
+    override val quizType: QuizType = QuizType.QUIZ6
 
     override fun initViewState() {
         userAnswers = MutableList(fillInAnswers.size) { "" }
@@ -52,7 +55,6 @@ data class FillInBlankQuiz(
         question       = question,
         answers        = answers,
         fillInAnswers  = fillInAnswers,
-        bodyType       = bodyType,
-        uuid           = uuid
+        bodyValue       = bodyType,
     ).also { it.initViewState() }
 }

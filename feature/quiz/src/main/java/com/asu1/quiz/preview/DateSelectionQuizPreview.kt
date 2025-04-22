@@ -9,15 +9,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz2
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.quiz.ui.CalendarWithFocusDates
 import com.asu1.quiz.ui.Quiz2SelectionViewer
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
+import com.kizitonwose.calendar.core.yearMonth
 
 @Composable
-fun Quiz2Preview(
-    quiz: Quiz2,
+fun DateSelectionQuizPreview(
+    quiz: DateSelectionQuiz,
     quizTheme: QuizTheme = QuizTheme(),
 )
 {
@@ -29,14 +30,14 @@ fun Quiz2Preview(
         QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(16.dp))
         CalendarWithFocusDates(
-            focusDates = quiz.userAnswerDate.toSet(),
+            focusDates = quiz.userDates,
             onDateClick = { date ->
             },
-            currentMonth = quiz.centerDate,
+            currentMonth = quiz.centerDate.yearMonth,
             colorScheme = quizTheme.colorScheme,
         )
         Quiz2SelectionViewer(
-            answerDate = quiz.userAnswerDate,
+            answerDate = quiz.userDates,
             updateDate = { date ->
             }
         )

@@ -16,15 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.quiz.creator.DraggableDot
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
 
 @Composable
-fun Quiz4Preview(
-    quiz: Quiz4,
+fun ConnectItemsQuizPreview(
+    quiz: ConnectItemsQuiz,
 ) {
     val dotSizeDp = 20.dp
     val paddingDp = 4.dp
@@ -41,7 +41,7 @@ fun Quiz4Preview(
             QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             BuildBody(
-                quizBody = quiz.bodyType,
+                quizBody = quiz.bodyValue,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(

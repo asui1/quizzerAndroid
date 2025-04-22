@@ -20,15 +20,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
 import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.sampleQuiz1
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
+import com.asu1.models.sampleMultipleChoiceQuiz
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.viewmodel.quiz.Quiz4ViewModel
+import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.utils.setTopBarColor
 
@@ -82,7 +84,7 @@ fun QuizChecker(
 fun QuizCheckerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    quizzes: List<Quiz<*>>,
+    quizzes: List<Quiz>,
     quizTheme: QuizTheme = QuizTheme(),
 ) {
     HorizontalPager(
@@ -109,34 +111,40 @@ fun QuizCheckerPager(
 
 @Composable
 fun QuizCheckerBody(
-    quiz: Quiz<*>,
+    quiz: Quiz,
     quizTheme: QuizTheme = QuizTheme(),
 ) {
     when(quiz){
-        is Quiz1 -> {
-            Quiz1Checker(
-                quiz = quiz,
+        is MultipleChoiceQuiz -> {
+            MultipleChoiceQuizChecker(
+                quiz
             )
         }
-        is Quiz2 -> {
-            Quiz2Checker(
+        is DateSelectionQuiz -> {
+            DateSelectionQuizChecker(
                 quiz = quiz,
                 quizTheme = quizTheme,
             )
         }
-        is Quiz3 -> {
-            Quiz3Checker(
+        is ReorderQuiz -> {
+            ReorderQuizChecker(
                 quiz = quiz,
             )
         }
-        is Quiz4 -> {
-            val quiz4ViewModel: Quiz4ViewModel = viewModel(
+        is ConnectItemsQuiz -> {
+            val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel(
                 key = quiz.uuid
             )
             quiz4ViewModel.loadQuiz(quiz)
-            Quiz4Checker(
+            ConnectItemsQuizChecker(
                 quiz = quiz4ViewModel,
             )
+        }
+        is ShortAnswerQuiz -> {
+            TODO()
+        }
+        is FillInBlankQuiz -> {
+            TODO()
         }
     }
 }
@@ -147,7 +155,7 @@ fun QuizCheckerPreview(){
     val quizTheme = QuizTheme()
     Column(){
         QuizCheckerBody(
-            quiz = sampleQuiz1,
+            quiz = sampleMultipleChoiceQuiz,
             quizTheme = quizTheme,
         )
     }

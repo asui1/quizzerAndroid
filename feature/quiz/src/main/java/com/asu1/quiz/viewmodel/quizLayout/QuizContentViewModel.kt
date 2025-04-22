@@ -3,13 +3,12 @@ package com.asu1.quiz.viewmodel.quizLayout
 import SnackBarManager
 import ToastType
 import androidx.lifecycle.ViewModel
-import com.asu1.models.quiz.Quiz
-import com.asu1.models.quiz.Quiz1
-import com.asu1.models.quiz.Quiz2
-import com.asu1.models.quiz.Quiz3
-import com.asu1.models.quiz.Quiz4
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.serializers.QuizError
-import com.asu1.models.serializers.QuizJson
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
@@ -32,10 +31,14 @@ class QuizContentViewModel: ViewModel() {
         }
     }
 
-    fun loadQuizContents(quizzes: List<QuizJson>){
+    fun loadQuizContents(quizzes: List<Quiz>){
+        quizzes.forEach { quiz ->
+            quiz.initViewState()
+            Logger.debug(quiz)
+        }
         _quizContentState.update { currentState ->
             currentState.copy(
-                quizzes = quizzes.map{ it.toQuiz()},
+                quizzes = quizzes,
                 quizInitIndex = 0,
             )
         }
@@ -66,7 +69,7 @@ class QuizContentViewModel: ViewModel() {
         }
     }
 
-    fun addQuiz(quiz: Quiz<*>, index: Int? = null) {
+    fun addQuiz(quiz: Quiz, index: Int? = null) {
         _quizContentState.update { currentState ->
             val updatedQuizzes = currentState.quizzes.toMutableList()
 
@@ -82,43 +85,43 @@ class QuizContentViewModel: ViewModel() {
 
     fun updateQuizAnswer(index: Int, update: QuizUserUpdates){
         when(update){
-            is QuizUserUpdates.MultipleChoiceQuizUpdate -> updateQuiz1(index, update.index)
-            is QuizUserUpdates.DateSelectionQuizUpdate -> updateQuiz2(index, update.date)
-            is QuizUserUpdates.ReorderQuizUpdate -> updateQuiz3(index, update.first, update.second)
-            is QuizUserUpdates.ConnectItemQuizUpdate -> updateQuiz4(index, update.items)
+            is QuizUserUpdates.MultipleChoiceQuizUpdate -> updateMultipleChoiceQuiz(index, update.index)
+            is QuizUserUpdates.DateSelectionQuizUpdate -> updateDateSelectionQuiz(index, update.date)
+            is QuizUserUpdates.ReorderQuizUpdate -> updateReorderQuiz(index, update.first, update.second)
+            is QuizUserUpdates.ConnectItemQuizUpdate -> updateConnectItemsQuiz(index, update.items)
         }
     }
 
-    fun updateQuiz1(quizIndex: Int, answerIndex: Int) {
+    fun updateMultipleChoiceQuiz(quizIndex: Int, answerIndex: Int) {
         _quizContentState.update { currentState ->
             val updatedQuizzes = currentState.quizzes.toMutableList()
-            (updatedQuizzes[quizIndex] as? Quiz1)?.toggleUserAnswerAt(answerIndex)
+            (updatedQuizzes[quizIndex] as? MultipleChoiceQuiz)?.toggleUserSelectionAt(answerIndex)
             currentState.copy(quizzes = updatedQuizzes)
         }
     }
 
-    fun updateQuiz2(quizIndex: Int, date: LocalDate) {
+    fun updateDateSelectionQuiz(quizIndex: Int, date: LocalDate) {
         _quizContentState.update { currentState ->
             val updatedQuizzes = currentState.quizzes.toMutableList()
-            (updatedQuizzes[quizIndex] as? Quiz2)?.toggleUserAnswer(date)
+            (updatedQuizzes[quizIndex] as? DateSelectionQuiz)?.toggleUserAnswer(date)
             currentState.copy(quizzes = updatedQuizzes)
         }
     }
 
-    fun updateQuiz3(quizIndex: Int, from: Int, to: Int) {
+    fun updateReorderQuiz(quizIndex: Int, from: Int, to: Int) {
         _quizContentState.update { currentState ->
             val updatedQuizzes = currentState.quizzes.toMutableList()
-            (updatedQuizzes[quizIndex] as? Quiz3)?.swap(from, to)
+            (updatedQuizzes[quizIndex] as? ReorderQuiz)?.swap(from, to)
             currentState.copy(quizzes = updatedQuizzes)
         }
     }
 
-    fun updateQuiz4(quizIndex: Int, items: List<Int?>) {
+    fun updateConnectItemsQuiz(quizIndex: Int, items: List<Int?>) {
         _quizContentState.update { currentState ->
             val updatedQuizzes = currentState.quizzes.toMutableList()
             try {
-                (updatedQuizzes[quizIndex] as? Quiz4)?.let {
-                    it.userConnectionIndex = items
+                (updatedQuizzes[quizIndex] as? ConnectItemsQuiz)?.let {
+                    it.userConnectionIndex = items as MutableList<Int?>
                     currentState.copy(quizzes = updatedQuizzes)
                 } ?: currentState
             } catch (e: Exception) {
@@ -128,7 +131,7 @@ class QuizContentViewModel: ViewModel() {
         }
     }
 
-    fun updateQuiz(quiz: Quiz<*>, index: Int) {
+    fun updateQuiz(quiz: Quiz, index: Int) {
         _quizContentState.update { currentState ->
             if (index in currentState.quizzes.indices) {
                 val updatedQuizzes = currentState.quizzes.toMutableList()
@@ -173,6 +176,6 @@ class QuizContentViewModel: ViewModel() {
 }
 
 data class QuizContentState(
-    val quizzes: List<Quiz<*>> = emptyList(),
+    val quizzes: List<Quiz> = emptyList(),
     val quizInitIndex: Int = 0,
 )
