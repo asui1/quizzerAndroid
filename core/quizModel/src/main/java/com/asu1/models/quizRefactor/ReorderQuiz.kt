@@ -4,6 +4,7 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
+import com.asu1.utils.Logger
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -31,7 +32,7 @@ data class ReorderQuiz(
             val head = answers.first()
             val tagged = answers
                 .drop(1)
-                .mapIndexed { idx, ans -> "$ans Q!Z2${idx+1}" }
+                .mapIndexed { idx, ans -> "${ans}Q!Z2${idx+1}" }
                 .shuffled()
             shuffledAnswers = (listOf(head) + tagged).toMutableList()
         }
@@ -44,6 +45,8 @@ data class ReorderQuiz(
     }
 
     override fun gradeQuiz(): Boolean {
+        Logger.debug(answers)
+        Logger.debug(shuffledAnswers)
         return answers.indices.all { i ->
             val candidate = shuffledAnswers.getOrNull(i)
                 ?.replace(Regex("Q!Z2\\d+$"), "")

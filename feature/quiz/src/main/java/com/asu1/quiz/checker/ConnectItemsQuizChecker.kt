@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,29 +27,35 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.sampleConnectItemsQuiz
 import com.asu1.quiz.creator.DraggableDot
 import com.asu1.quiz.creator.DrawLines
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
-import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
-import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
+import com.asu1.quiz.viewer.boxPadding
+import com.asu1.quiz.viewer.dotSizeDp
+import com.asu1.quiz.viewer.moveOffsetDp
+import com.asu1.quiz.viewer.paddingDp
 
 @Composable
 fun ConnectItemsQuizChecker(
-    quiz: ConnectItemsQuizViewModel = viewModel(),
+    quiz: ConnectItemsQuiz
 ) {
-    val quizState by quiz.quizState.collectAsStateWithLifecycle()
     var boxPosition by remember { mutableStateOf(Offset.Zero) }
-    val dotSizeDp = 20.dp
-    val paddingDp = 4.dp
-    val boxPadding = 16.dp
-    val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
     val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
-    val result = remember{quizState.gradeQuiz()}
+
+    val leftDotOffsets = remember {
+        mutableStateListOf<Offset>().apply {
+            repeat(quiz.answers.size) { add(Offset.Zero) }
+        }
+    }
+    val rightDotOffsets = remember {
+        mutableStateListOf<Offset>().apply {
+            repeat(quiz.connectionAnswers.size) { add(Offset.Zero) }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -61,20 +68,19 @@ fun ConnectItemsQuizChecker(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             item {
                 AnswerShower(
-                    isCorrect = result,
+                    isCorrect = quiz.gradeQuiz(),
                     contentAlignment = Alignment.CenterStart
                 ){
-                    QuestionTextStyle.GetTextComposable(quizState.question, modifier = Modifier.fillMaxWidth())
+                    QuestionTextStyle.GetTextComposable(quiz.question, modifier = Modifier.fillMaxWidth())
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item{
                 BuildBody(
-                    quizBody = quizState.bodyValue,
+                    quizBody = quiz.bodyValue,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -90,26 +96,21 @@ fun ConnectItemsQuizChecker(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
                     ) {
-                        quizState.answers.forEachIndexed { index, answer ->
+                        quiz.answers.forEachIndexed { index, answer ->
                             AnswerShower(
-                                isCorrect = quizState.connectionAnswerIndex[index] == quizState.userConnectionIndex[index],
+                                isCorrect = quiz.connectionAnswerIndex[index] == quiz.userConnectionIndex[index],
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     AnswerTextStyle.GetTextComposable(
-                                        quizState.answers[index],
+                                        quiz.answers[index],
                                         modifier = Modifier.weight(1f)
                                     )
                                     DraggableDot(
                                         setOffset = { offset ->
-                                            quiz.onQuiz4Update(
-                                                ConnectItemsQuizViewModelStates.UpdateLeftDotOffset(
-                                                    index,
-                                                    offset
-                                                )
-                                            )
+                                            leftDotOffsets[index] = offset
                                         },
                                         boxPosition = boxPosition,
                                         dotSize = dotSizeDp,
@@ -128,19 +129,14 @@ fun ConnectItemsQuizChecker(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
                     ) {
-                        quizState.connectionAnswers.forEachIndexed{index, answer ->
+                        quiz.connectionAnswers.forEachIndexed{index, answer ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 DraggableDot(
                                     setOffset = { offset ->
-                                        quiz.onQuiz4Update(
-                                            ConnectItemsQuizViewModelStates.UpdateRightDotOffset(
-                                                index,
-                                                offset
-                                            )
-                                        )
+                                        rightDotOffsets[index] = offset
                                     },
                                     boxPosition = boxPosition,
                                     dotSize = dotSizeDp,
@@ -149,7 +145,7 @@ fun ConnectItemsQuizChecker(
                                     key = "QuizCreatorRightDot$index"
                                 )
                                 AnswerTextStyle.GetTextComposable(
-                                    quizState.connectionAnswers[index],
+                                    quiz.connectionAnswers[index],
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -160,15 +156,15 @@ fun ConnectItemsQuizChecker(
             }
         }
         DrawLines(
-            leftDots = quizState.leftDots,
-            rightDots = quizState.rightDots,
-            connections = quizState.connectionAnswerIndex,
+            leftDots = leftDotOffsets,
+            rightDots = rightDotOffsets,
+            connections = quiz.connectionAnswerIndex,
             color = MaterialTheme.colorScheme.error
         )
         DrawLines(
-            leftDots = quizState.leftDots,
-            rightDots = quizState.rightDots,
-            connections = quizState.userConnectionIndex
+            leftDots = leftDotOffsets,
+            rightDots = rightDotOffsets,
+            connections = quiz.userConnectionIndex
         )
     }
 }
@@ -176,10 +172,7 @@ fun ConnectItemsQuizChecker(
 @Preview(showBackground = true)
 @Composable
 fun Quiz4CheckerPreview() {
-    val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel()
-    quiz4ViewModel.loadQuiz(sampleConnectItemsQuiz)
-
     ConnectItemsQuizChecker(
-        quiz = quiz4ViewModel,
+        quiz = sampleConnectItemsQuiz,
     )
 }

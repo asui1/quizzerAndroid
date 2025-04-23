@@ -30,7 +30,6 @@ import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.sampleMultipleChoiceQuiz
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.utils.setTopBarColor
 
@@ -132,16 +131,14 @@ fun QuizCheckerBody(
             )
         }
         is ConnectItemsQuiz -> {
-            val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel(
-                key = quiz.uuid
-            )
-            quiz4ViewModel.loadQuiz(quiz)
             ConnectItemsQuizChecker(
-                quiz = quiz4ViewModel,
+                quiz = quiz,
             )
         }
         is ShortAnswerQuiz -> {
-            TODO()
+            ShortAnswerQuizChecker(
+                quiz = quiz
+            )
         }
         is FillInBlankQuiz -> {
             TODO()
@@ -153,7 +150,7 @@ fun QuizCheckerBody(
 @Composable
 fun QuizCheckerPreview(){
     val quizTheme = QuizTheme()
-    Column(){
+    Column {
         QuizCheckerBody(
             quiz = sampleMultipleChoiceQuiz,
             quizTheme = quizTheme,

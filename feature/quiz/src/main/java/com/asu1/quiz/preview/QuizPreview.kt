@@ -27,7 +27,7 @@ fun QuizPreview(
             ConnectItemsQuizPreview(quiz)
         }
         is ShortAnswerQuiz -> {
-            TODO()
+            ShortAnswerQuizPreview(quiz)
         }
         is FillInBlankQuiz -> {
             TODO()

@@ -23,10 +23,10 @@ data class MultipleChoiceQuiz(
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     @Transient
-    var displayedOptions: MutableList<String> = mutableListOf()
+    var displayedOptions: MutableList<String> = options.toMutableList()
 
     @Transient
-    var userSelections: MutableList<Boolean> = mutableListOf()
+    var userSelections: MutableList<Boolean> = MutableList(options.size) { false }
 
     @Transient
     override val quizType: QuizType = QuizType.QUIZ1

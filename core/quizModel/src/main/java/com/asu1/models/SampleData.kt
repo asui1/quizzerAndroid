@@ -14,9 +14,7 @@ val sampleMultipleChoiceQuiz = MultipleChoiceQuiz(
     options = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai"),
     correctFlags = mutableListOf(true, false, false, false),
     bodyValue = BodyType.TEXT("This is a sample body text"),
-).apply{
-    displayedOptions = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai")
-}
+)
 
 val sampleDateSelectionQuiz = DateSelectionQuiz(
     question = "Select your birthdate",
@@ -49,9 +47,7 @@ val sampleConnectItemsQuiz = ConnectItemsQuiz(
 val sampleShortAnswerQuiz = ShortAnswerQuiz(
     question = "What is Capital of Korea?",
     answer = "Seoul",
-).apply {
-    userAnswer = "Seoul"
-}
+)
 
 val sampleQuizList = persistentListOf(
     sampleMultipleChoiceQuiz,

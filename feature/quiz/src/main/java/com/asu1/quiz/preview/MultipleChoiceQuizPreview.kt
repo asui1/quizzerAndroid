@@ -14,11 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.sampleMultipleChoiceQuiz
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.viewer.BuildBody
+import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun MultipleChoiceQuizPreview(
@@ -56,5 +59,15 @@ fun MultipleChoiceQuizPreview(
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMultipleChoiceQuizPreview(){
+    QuizzerAndroidTheme {
+        MultipleChoiceQuizPreview(
+            sampleMultipleChoiceQuiz
+        )
     }
 }
