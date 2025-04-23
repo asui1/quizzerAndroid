@@ -83,7 +83,7 @@ fun MultipleChoiceQuizViewer(
 
 @Preview(showBackground = true)
 @Composable
-fun Quiz1ViewerPreview()
+fun PreviewMultipleChoiceQuizViewer()
 {
     MultipleChoiceQuizViewer(
         quiz = sampleMultipleChoiceQuiz,

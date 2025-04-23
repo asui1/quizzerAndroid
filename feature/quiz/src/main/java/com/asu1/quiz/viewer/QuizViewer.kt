@@ -57,7 +57,12 @@ fun QuizViewer(
                 )
         }
         is ShortAnswerQuiz -> {
-            TODO()
+            ShortAnswerQuizViewer(
+                quiz = quiz,
+                updateUserAnswer = { answer ->
+                    updateQuiz(QuizUserUpdates.ShortAnswerQuizUpdate(answer))
+                }
+            )
         }
         is FillInBlankQuiz -> {
             TODO()

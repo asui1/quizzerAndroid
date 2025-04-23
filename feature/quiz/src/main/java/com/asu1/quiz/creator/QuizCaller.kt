@@ -112,7 +112,7 @@ fun QuizCaller(
                     },
                 )
             }
-            QuizType.QUIZ6 -> {
+            QuizType.QUIZ5 -> {
                 val shortAnswerQuizViewModel: ShortAnswerQuizViewModel = viewModel(key = "Quiz6ViewModel")
                 if(quiz != null){
                     shortAnswerQuizViewModel.loadQuiz(quiz as ShortAnswerQuiz)
@@ -124,7 +124,7 @@ fun QuizCaller(
                     },
                 )
             }
-            QuizType.QUIZ5 -> {
+            QuizType.QUIZ6 -> {
                 val fillInBlankViewModel: FillInBlankViewModel = viewModel(key = "Quiz5ViewModel")
                 if(quiz != null){
                     fillInBlankViewModel.loadQuiz(quiz as FillInBlankQuiz)

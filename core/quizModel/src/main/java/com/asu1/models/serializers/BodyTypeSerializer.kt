@@ -3,116 +3,131 @@ package com.asu1.models.serializers
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.core.graphics.createBitmap
 import com.asu1.utils.Logger
-import com.asu1.utils.images.createEmptyBitmap
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.io.ByteArrayOutputStream
+import kotlinx.serialization.json.put
 
 object BodyTypeSerializer : KSerializer<BodyType> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BodyType", PrimitiveKind.STRING)
+    private const val LEGACY_FQCN = "com.asu1.quizzer.model.BodyType."
+
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("BodyType") {
+        element<String>("type")
+        element<String>("bodyText", isOptional = true)
+        element<String>("bodyImage", isOptional = true)
+        element<String>("youtubeId", isOptional = true)
+        element<Int>("youtubeStartTime", isOptional = true)
+        element<String>("code", isOptional = true)
+    }
 
     override fun serialize(encoder: Encoder, value: BodyType) {
-        val json = when (value) {
-            is BodyType.NONE -> JsonObject(mapOf("type" to JsonPrimitive("NONE")))
-            is BodyType.TEXT -> JsonObject(
-                mapOf(
-                    "type" to JsonPrimitive("TEXT"),
-                    "bodyText" to JsonPrimitive(value.bodyText)
-                )
-            )
-            is BodyType.IMAGE -> {
-                // Convert the Bitmap to a Base64 encoded string
-                val stream = ByteArrayOutputStream()
-                value.bodyImage.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                val byteArray = stream.toByteArray()
-                val encoded = Base64.encodeToString(byteArray, Base64.DEFAULT)
-                JsonObject(mapOf("type" to JsonPrimitive("IMAGE"), "bodyImage" to JsonPrimitive(encoded)))
+        require(encoder is JsonEncoder)
+        val jsonElem = when (value) {
+            BodyType.NONE -> buildJsonObject { put("type", "NONE") }
+            is BodyType.TEXT -> buildJsonObject {
+                put("type", "TEXT")
+                put("bodyText", value.bodyText)
             }
-            is BodyType.YOUTUBE -> JsonObject(
-                mapOf(
-                    "type" to JsonPrimitive("YOUTUBE"),
-                    "youtubeId" to JsonPrimitive(value.youtubeId),
-                    "youtubeStartTime" to JsonPrimitive(value.youtubeStartTime)
-                )
-            )
-            is BodyType.CODE -> JsonObject(
-                mapOf(
-                    "type" to JsonPrimitive("CODE"),
-                    "code" to JsonPrimitive(value.code)
-                )
-            )
+            is BodyType.IMAGE -> buildJsonObject {
+                put("type", "IMAGE")
+                // Convert Bitmap to Base64 string
+                val stream = java.io.ByteArrayOutputStream()
+                value.bodyImage.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val encoded = Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+                put("bodyImage", encoded)
+            }
+            is BodyType.YOUTUBE -> buildJsonObject {
+                put("type", "YOUTUBE")
+                put("youtubeId", value.youtubeId)
+                put("youtubeStartTime", value.youtubeStartTime)
+            }
+            is BodyType.CODE -> buildJsonObject {
+                put("type", "CODE")
+                put("code", value.code)
+            }
         }
-        encoder.encodeString(json.toString())
+        encoder.encodeJsonElement(jsonElem)
     }
 
     override fun deserialize(decoder: Decoder): BodyType {
-        try {
-            val json = Json.parseToJsonElement(decoder.decodeString()).jsonObject
-            val type = json["type"]?.jsonPrimitive?.content
+        return try {
+            require(decoder is JsonDecoder)
+            // Decode raw element (could be object or string)
+            val rawElem = decoder.decodeJsonElement()
+
+            Logger.debug(rawElem)
+            // Unwrap potentially nested JSON-in-string formats
+            val obj = when {
+                rawElem is JsonObject -> rawElem
+                rawElem is JsonPrimitive && rawElem.isString -> {
+                    // Recursively parse string content until we get a JsonObject
+                    var parsed: JsonElement = rawElem
+                    while (parsed is JsonPrimitive && parsed.isString) {
+                        parsed = Json.parseToJsonElement(parsed.content)
+                    }
+                    if (parsed is JsonObject) parsed.jsonObject else return BodyType.NONE
+                }
+                else -> return BodyType.NONE
+            }
+
+            // Extract and normalize type
+            val rawType = obj["type"]?.jsonPrimitive?.content ?: return BodyType.NONE
+            val type = rawType.removePrefix(LEGACY_FQCN)
+
+            // Build the appropriate BodyType
             return when (type) {
                 "NONE" -> BodyType.NONE
-                "TEXT" -> BodyType.TEXT(json["bodyText"]?.jsonPrimitive?.content ?: "")
+                "TEXT" -> BodyType.TEXT(obj["bodyText"]?.jsonPrimitive?.content.orEmpty())
                 "IMAGE" -> {
-                    Logger.debug("Quiz Body Deserialize")
-                    val bodyImageElement: JsonElement? = json["bodyImage"]
-
-                    val bitmap: Bitmap = when {
-                        // If the element is null, return an empty Bitmap.
-                        bodyImageElement == null -> {
-                            createEmptyBitmap()
+                    val imgElem = obj["bodyImage"]
+                    val bitmap = when (imgElem) {
+                        is JsonArray -> {
+                            val bytes = imgElem.map { it.jsonPrimitive.int.toByte() }.toByteArray()
+                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: createEmptyBitmap()
                         }
-                        // If it's an empty JSON array, return an empty Bitmap.
-                        bodyImageElement is JsonArray && bodyImageElement.isEmpty() -> {
-                            createEmptyBitmap()
-                        }
-                        // If it's a JSON array of numbers, convert it to a ByteArray.
-                        bodyImageElement is JsonArray -> {
-                            val byteArray = bodyImageElement.map { it.jsonPrimitive.int.toByte() }.toByteArray()
-                            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                                ?: createEmptyBitmap()
-                        }
-                        // If it's a JSON primitive string, treat it as a Base64 string.
-                        bodyImageElement is JsonPrimitive && bodyImageElement.isString -> {
-                            val encoded = bodyImageElement.content.trim()
-                            if (encoded.isEmpty() || encoded == "[]") {
-                                createEmptyBitmap()
-                            } else {
-                                val byteArray = Base64.decode(encoded, Base64.DEFAULT)
-                                BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                                    ?: createEmptyBitmap()
+                        is JsonPrimitive -> {
+                            val enc = imgElem.content.trim()
+                            if (enc.isEmpty() || enc == "[]") createEmptyBitmap()
+                            else {
+                                val data = Base64.decode(enc, Base64.DEFAULT)
+                                BitmapFactory.decodeByteArray(data, 0, data.size) ?: createEmptyBitmap()
                             }
                         }
-                        // Fallback for unexpected JSON element types.
-                        else -> {
-                            createEmptyBitmap()
-                        }
+                        else -> createEmptyBitmap()
                     }
                     BodyType.IMAGE(bitmap)
                 }
                 "YOUTUBE" -> BodyType.YOUTUBE(
-                    json["youtubeId"]?.jsonPrimitive?.content ?: "",
-                    json["youtubeStartTime"]?.jsonPrimitive?.int ?: 0
+                    obj["youtubeId"]?.jsonPrimitive?.content.orEmpty(),
+                    obj["youtubeStartTime"]?.jsonPrimitive?.int ?: 0
                 )
-                "CODE" -> BodyType.CODE(json["code"]?.jsonPrimitive?.content ?: "")
-                "com.asu1.quizzer.model.BodyType.NONE" -> BodyType.NONE
-                else -> throw IllegalArgumentException("Unknown BodyType: $type")
+                "CODE" -> BodyType.CODE(obj["code"]?.jsonPrimitive?.content.orEmpty())
+                else -> BodyType.NONE
             }
         } catch (e: Exception) {
             Logger.debug("Body Type deserialization failed : $e")
-            return BodyType.NONE
+            BodyType.NONE
         }
+    }
+
+    private fun createEmptyBitmap(): Bitmap {
+        // implement your empty-bitmap creation logic
+        return createBitmap(1, 1)
     }
 }

@@ -8,6 +8,7 @@ import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.serializers.QuizError
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.R
@@ -89,6 +90,7 @@ class QuizContentViewModel: ViewModel() {
             is QuizUserUpdates.DateSelectionQuizUpdate -> updateDateSelectionQuiz(index, update.date)
             is QuizUserUpdates.ReorderQuizUpdate -> updateReorderQuiz(index, update.first, update.second)
             is QuizUserUpdates.ConnectItemQuizUpdate -> updateConnectItemsQuiz(index, update.items)
+            is QuizUserUpdates.ShortAnswerQuizUpdate -> updateShortAnswerQuiz(index, update.userAnswer)
         }
     }
 
@@ -128,6 +130,14 @@ class QuizContentViewModel: ViewModel() {
                 Logger.debug("Failed to update quiz 4: ${e.message}")
                 currentState
             }
+        }
+    }
+
+    fun updateShortAnswerQuiz(quizIndex: Int, newAnswer: String) {
+        _quizContentState.update { currentState ->
+            val updatedQuizzes = currentState.quizzes.toMutableList()
+            (updatedQuizzes[quizIndex] as? ShortAnswerQuiz)?.userAnswer = newAnswer
+            currentState.copy(quizzes = updatedQuizzes)
         }
     }
 
@@ -171,8 +181,6 @@ class QuizContentViewModel: ViewModel() {
         }
         return Pair(currentScore, corrections)
     }
-
-
 }
 
 data class QuizContentState(

@@ -86,7 +86,8 @@ fun MultipleChoiceQuizCreator(
                         quiz.removeAnswerAt(index)
                     },
                     onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
+                        if(index == quiz1State.options.size-1) focusManager.clearFocus()
+                        else focusManager.moveFocus(FocusDirection.Down)
                     },
                     isLast = index == quiz1State.options.size-1,
                     key = "QuizAnswerTextField$index"
