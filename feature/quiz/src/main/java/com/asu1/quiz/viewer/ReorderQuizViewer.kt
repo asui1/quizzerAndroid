@@ -62,7 +62,6 @@ fun ReorderQuizViewer(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(8.dp))
             AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0],
                 modifier = Modifier.fillMaxWidth())
         }

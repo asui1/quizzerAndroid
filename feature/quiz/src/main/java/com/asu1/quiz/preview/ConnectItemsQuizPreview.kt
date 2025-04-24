@@ -43,7 +43,6 @@ fun ConnectItemsQuizPreview(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier

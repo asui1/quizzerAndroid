@@ -42,7 +42,6 @@ fun ShortAnswerQuizChecker(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
         item{
             AnswerShower(

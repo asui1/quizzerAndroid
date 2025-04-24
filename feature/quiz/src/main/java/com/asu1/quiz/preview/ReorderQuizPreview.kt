@@ -32,7 +32,6 @@ fun ReorderQuizPreview(
         BuildBody(
             quizBody = quiz.bodyValue,
         )
-        Spacer(modifier = Modifier.height(8.dp))
         AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         quiz.shuffledAnswers.drop(1).forEach { answer ->
             val item = answer.replace(Regex("Q!Z2\\d+$"), "")

@@ -42,7 +42,6 @@ fun ReorderQuizChecker(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(8.dp))
             AnswerTextStyle.GetTextComposable(quiz.shuffledAnswers[0], modifier = Modifier.fillMaxWidth().padding(8.dp))
         }
         items(quiz.answers.size-1, key = {it}){it ->

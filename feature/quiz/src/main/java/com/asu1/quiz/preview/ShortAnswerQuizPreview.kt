@@ -46,7 +46,6 @@ fun ShortAnswerQuizPreview(
         BuildBody(
             quizBody = quiz.bodyValue,
         )
-        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             modifier= AnswerTextStyle.borderModifier.fillMaxWidth(0.8f),
             value = quiz.userAnswer,

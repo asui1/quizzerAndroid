@@ -94,7 +94,6 @@ fun ConnectItemsQuizViewer(
                 BuildBody(
                     quizBody = quiz.bodyValue,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
             item{
                 Row(

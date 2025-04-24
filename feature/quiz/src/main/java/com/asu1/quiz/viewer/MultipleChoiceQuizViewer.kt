@@ -50,7 +50,6 @@ fun MultipleChoiceQuizViewer(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
         items(userAnswers.size, key = {it}){ index ->
             Row(

@@ -39,7 +39,6 @@ fun MultipleChoiceQuizPreview(
         BuildBody(
             quizBody = quiz.bodyValue,
         )
-        Spacer(modifier = Modifier.height(16.dp))
         quiz.userSelections.withIndex().forEach { (index, item) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,

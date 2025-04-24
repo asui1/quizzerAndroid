@@ -14,13 +14,12 @@ import java.util.UUID
 @SerialName("5")
 data class FillInBlankQuiz(
     override var question: String = "",
-    val answers: List<String> = listOf(""),
-    val fillInAnswers: List<String> = emptyList(),
+    var rawText: String = "",
+    var correctAnswers: List<String> = emptyList(),
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(
 ) {
-    /** Transient UI state: not serialized **/
     @Transient
     var userAnswers: MutableList<String> = mutableListOf()
     @Transient
@@ -28,33 +27,108 @@ data class FillInBlankQuiz(
     @Transient
     override val quizType: QuizType = QuizType.QUIZ6
 
+    companion object {
+        const val MAX_PLACEHOLDERS = 9
+        const val PLACEHOLDER = "1\uFE0F\u20E3"  // fixed placeholder
+
+        /** matches “ 1️⃣ ” … “ 9️⃣ ” and captures the digit */
+        private val placeholderRegex = Regex("""([1-9])\uFE0F\u20E3""")
+
+        /** turn 1→"1️⃣", 2→"2️⃣", … */
+        fun numberToEmoji(n: Int): String =
+            if (n in 1..9) "$n\uFE0F\u20E3" else PLACEHOLDER
+
+        /** pull out all the digits currently in your placeholders, e.g. [1,2,3] */
+        private fun extractOrdinals(text: String): List<Int> =
+            placeholderRegex.findAll(text)
+                .map { it.groupValues[1].toInt() }
+                .toList()
+
+        /** renumber *every* placeholder in order → " 1️⃣ "," 2️⃣ ",… */
+        private fun renumberPlaceholders(text: String): String {
+            var counter = 1
+            return placeholderRegex.replace(text) {
+                numberToEmoji(counter++)
+            }
+        }
+    }
+
+    init {
+        initViewState()
+    }
+
     override fun initViewState() {
-        userAnswers = MutableList(fillInAnswers.size) { "" }
+        userAnswers = MutableList(correctAnswers.size) { "" }
     }
 
     override fun validateQuiz(): QuizError {
-        if (question.isBlank())                          return QuizError.EMPTY_QUESTION
-        if (answers.isEmpty() || answers.any(String::isBlank))
-            return QuizError.EMPTY_ANSWER
-        if (fillInAnswers.isEmpty() || fillInAnswers.any(String::isBlank))
-            return QuizError.EMPTY_ANSWER
+        if (question.isBlank()) return QuizError.EMPTY_QUESTION
+        if (correctAnswers.isEmpty()) return QuizError.EMPTY_ANSWER
         return QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean =
-        fillInAnswers.indices.all { idx ->
-            normalizeMixedInputPrecisely(userAnswers[idx]) ==
-                    normalizeMixedInputPrecisely(fillInAnswers[idx])
+        correctAnswers.indices.all { i ->
+            normalizeMixedInputPrecisely(userAnswers[i]) ==
+                    normalizeMixedInputPrecisely(correctAnswers[i])
         }
 
     override fun cloneQuiz(
         question: String,
         bodyType: BodyType,
         uuid: String
-    ): Quiz = copy(
-        question       = question,
-        answers        = answers,
-        fillInAnswers  = fillInAnswers,
-        bodyValue       = bodyType,
-    ).also { it.initViewState() }
+    ): Quiz {
+        return copy(
+            question       = question,
+            rawText        = rawText,
+            correctAnswers = correctAnswers,
+            bodyValue      = bodyType
+        )
+    }
+
+    fun addCorrectAnswer() {
+        if(correctAnswers.size >= 9) return
+        correctAnswers = correctAnswers + listOf("")
+        rawText += numberToEmoji(correctAnswers.size)
+    }
+
+    fun removeCorrectAnswer(index: Int) {
+        if (index !in correctAnswers.indices) return
+
+        // 1) remove nth placeholder
+        rawText = rawText.replaceFirst(numberToEmoji(index+1), "")
+
+        for (n in (index+1)..correctAnswers.size+1) {
+            val from = " ${n+1}\uFE0F\u20E3 "
+            val to   = numberToEmoji(n)
+            rawText = rawText.replaceFirst(from, to)
+        }
+        correctAnswers = correctAnswers.toMutableList().apply {
+            removeAt(index)
+        }
+    }
+
+    fun updateRawText(newRawText: String) {
+        val oldOrd = extractOrdinals(rawText)
+        val newOrd = extractOrdinals(newRawText)
+
+        // 1) DELETIONS: dropped ordinals = oldOrd – newOrd
+        val removed = oldOrd - newOrd
+        if (removed.isNotEmpty()) {
+            // remove from largest→smallest so indices stay valid
+            removed.sortedDescending().forEach { ord ->
+                removeCorrectAnswer(ord - 1)
+            }
+        }
+
+        // 2) INSERTIONS: newCount > oldCount?
+        val oldCount = oldOrd.size
+        val newCount = newOrd.size
+        if (newCount > oldCount) {
+            val toAdd = minOf(newCount - oldCount, MAX_PLACEHOLDERS - oldCount)
+            repeat(toAdd) { addCorrectAnswer() }
+        }
+
+        rawText = renumberPlaceholders(newRawText)
+    }
 }

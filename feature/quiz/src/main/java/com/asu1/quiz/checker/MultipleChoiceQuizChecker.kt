@@ -46,7 +46,6 @@ fun MultipleChoiceQuizChecker(
             BuildBody(
                 quizBody = quiz.bodyValue,
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
         items(quiz.options.size, key = {it}){ index ->
             Row(

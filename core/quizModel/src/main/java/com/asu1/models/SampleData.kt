@@ -2,6 +2,7 @@ package com.asu1.models
 
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
@@ -49,10 +50,20 @@ val sampleShortAnswerQuiz = ShortAnswerQuiz(
     answer = "Seoul",
 )
 
+val sampleFillInBlankQuiz = FillInBlankQuiz(
+    question = "Fill In following blanks.",
+    rawText = "The capital of France is 1\uFE0F\u20E3 and the currency is 2\uFE0F\u20E3",
+    correctAnswers = listOf(
+        "Paris",
+        "Euro",
+    )
+)
+
 val sampleQuizList = persistentListOf(
     sampleMultipleChoiceQuiz,
     sampleDateSelectionQuiz,
     sampleReorderQuiz,
     sampleConnectItemsQuiz,
+    sampleShortAnswerQuiz,
 )
 

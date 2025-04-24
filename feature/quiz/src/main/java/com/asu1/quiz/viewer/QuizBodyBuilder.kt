@@ -4,8 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -28,51 +29,83 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 @Composable
 fun BuildBody(
-    quizBody: BodyType,
-){
-    when(quizBody){
-        is BodyType.TEXT -> BodyTextStyle.GetTextComposable(quizBody.bodyText, modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
-        is BodyType.IMAGE -> {
-            val image = remember(quizBody.bodyImage){
-                quizBody.bodyImage.asImageBitmap().apply {
-                    prepareToDraw()
-                }
-            }
-            Image(
-                bitmap = image,
-                contentDescription = "Selected Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
-        is BodyType.YOUTUBE -> {
-            val context = LocalContext.current
-            AndroidView(factory = {
-                val youTubePlayerView = YouTubePlayerView(context)
-                youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.cueVideo(quizBody.youtubeId, quizBody.youtubeStartTime.toFloat())
-                    }
-                })
-                youTubePlayerView
-            })
-        }
-        is BodyType.CODE -> {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                    .fillMaxWidth()
-            ) {
-                KotlinCodeHighlighter(
-                    code = quizBody.code
+    quizBody: BodyType
+) {
+    // Skip entirely if there's no body
+    if (quizBody is BodyType.NONE) return
+
+    // Wrap all non-NONE bodies in consistent padding
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        when (quizBody) {
+            is BodyType.TEXT -> {
+                BodyTextStyle.GetTextComposable(
+                    text = quizBody.bodyText,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
-        }
-        is BodyType.NONE ->{       }
-        else -> {
-            Logger.debug("Quiz Body Builder", "NOT IMPLEMENTED UI FOR BODY TYPE, ${quizBody.value}")
+
+            is BodyType.IMAGE -> {
+                val bitmap = remember(quizBody.bodyImage) {
+                    quizBody.bodyImage
+                        .asImageBitmap()
+                        .apply { prepareToDraw() }
+                }
+                Image(
+                    bitmap = bitmap,
+                    contentDescription = "Selected Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            is BodyType.YOUTUBE -> {
+                val context = LocalContext.current
+                AndroidView(
+                    factory = {
+                        YouTubePlayerView(context).apply {
+                            addYouTubePlayerListener(
+                                object : AbstractYouTubePlayerListener() {
+                                    override fun onReady(player: YouTubePlayer) {
+                                        player.cueVideo(
+                                            quizBody.youtubeId,
+                                            quizBody.youtubeStartTime.toFloat()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+
+            is BodyType.CODE -> {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .fillMaxWidth()
+                ) {
+                    KotlinCodeHighlighter(
+                        code = quizBody.code,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
+            }
+
+            else -> {
+                Logger.debug("BuildBody", "Unhandled body type: $quizBody")
+            }
         }
     }
 }
