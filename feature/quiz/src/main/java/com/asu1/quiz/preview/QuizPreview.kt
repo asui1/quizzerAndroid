@@ -8,7 +8,9 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
-import com.asu1.quiz.content.multipleChoice.MultipleChoiceQuizPreview
+import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizPreview
+import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizPreview
+import com.asu1.quiz.content.reorderQuiz.ReorderQuizPreview
 
 @Composable
 fun QuizPreview(

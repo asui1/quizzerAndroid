@@ -9,7 +9,9 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
-import com.asu1.quiz.content.multipleChoice.MultipleChoiceQuizViewer
+import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizViewer
+import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizViewer
+import com.asu1.quiz.content.reorderQuiz.ReorderQuizViewer
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 
 @Composable
@@ -30,18 +32,17 @@ fun QuizViewer(
         is DateSelectionQuiz -> {
             DateSelectionQuizViewer(
                 quiz = quiz,
-                quizTheme = quizTheme,
-                onUserInput = {
-                    updateQuiz(QuizUserUpdates.DateSelectionQuizUpdate(it))
-                },
+                onUserInput = { userUpdate ->
+                    updateQuiz(userUpdate)
+                }
             )
         }
         is ReorderQuiz -> {
             ReorderQuizViewer(
                 quiz = quiz,
-                onUserInput = {first, second ->
-                    updateQuiz(QuizUserUpdates.ReorderQuizUpdate(first, second))
-                },
+                onUserInput = { userUpdate ->
+                    updateQuiz(userUpdate)
+                }
             )
         }
         is ConnectItemsQuiz -> {

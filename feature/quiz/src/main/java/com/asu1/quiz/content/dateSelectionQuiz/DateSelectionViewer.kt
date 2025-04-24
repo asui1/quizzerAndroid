@@ -1,4 +1,4 @@
-package com.asu1.quiz.ui
+package com.asu1.quiz.content.dateSelectionQuiz
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import com.asu1.resources.R
 import java.time.LocalDate
 
 @Composable
-fun Quiz2SelectionViewer(
+fun DateSelectionViewer(
     answerDate: Set<LocalDate>,
     updateDate: (LocalDate) -> Unit,
     markAnswers: Boolean = false,

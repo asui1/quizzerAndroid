@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.FillInBlankQuiz
@@ -29,7 +28,9 @@ import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.sampleMultipleChoiceQuiz
-import com.asu1.quiz.content.multipleChoice.MultipleChoiceQuizChecker
+import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizChecker
+import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizChecker
+import com.asu1.quiz.content.reorderQuiz.ReorderQuizChecker
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.utils.setTopBarColor
@@ -72,7 +73,6 @@ fun QuizChecker(
                 QuizCheckerPager(
                     pagerState = pagerState,
                     quizzes = quizzes,
-                    quizTheme = quizTheme,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -85,7 +85,6 @@ fun QuizCheckerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     quizzes: List<Quiz>,
-    quizTheme: QuizTheme = QuizTheme(),
 ) {
     HorizontalPager(
         state = pagerState,
@@ -98,7 +97,6 @@ fun QuizCheckerPager(
         ) {
             QuizCheckerBody(
                 quiz = quizzes[page],
-                quizTheme = quizTheme,
             )
             Text(
                 text = "${page + 1}/${quizzes.size}",
@@ -112,7 +110,6 @@ fun QuizCheckerPager(
 @Composable
 fun QuizCheckerBody(
     quiz: Quiz,
-    quizTheme: QuizTheme = QuizTheme(),
 ) {
     when(quiz){
         is MultipleChoiceQuiz -> {
@@ -121,15 +118,10 @@ fun QuizCheckerBody(
             )
         }
         is DateSelectionQuiz -> {
-            DateSelectionQuizChecker(
-                quiz = quiz,
-                quizTheme = quizTheme,
-            )
+            DateSelectionQuizChecker(quiz)
         }
         is ReorderQuiz -> {
-            ReorderQuizChecker(
-                quiz = quiz,
-            )
+            ReorderQuizChecker(quiz)
         }
         is ConnectItemsQuiz -> {
             ConnectItemsQuizChecker(
@@ -150,11 +142,9 @@ fun QuizCheckerBody(
 @Preview(showBackground = true)
 @Composable
 fun QuizCheckerPreview(){
-    val quizTheme = QuizTheme()
     Column {
         QuizCheckerBody(
             quiz = sampleMultipleChoiceQuiz,
-            quizTheme = quizTheme,
         )
     }
 }

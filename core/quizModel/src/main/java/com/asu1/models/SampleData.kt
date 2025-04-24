@@ -22,7 +22,9 @@ val sampleDateSelectionQuiz = DateSelectionQuiz(
     answerDate = mutableSetOf(
         LocalDate.of(2000, 1, 1)),
     centerDate = LocalDate.of(2000, 1, 1),
-)
+).apply {
+    userDates = mutableSetOf(LocalDate.of(2000, 1, 5))
+}
 
 val sampleReorderQuiz = ReorderQuiz(
     question = "Arrange the following in ascending order",

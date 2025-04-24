@@ -1,4 +1,4 @@
-package com.asu1.quiz.content.multipleChoice
+package com.asu1.quiz.content.multipleChoiceQuiz
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment

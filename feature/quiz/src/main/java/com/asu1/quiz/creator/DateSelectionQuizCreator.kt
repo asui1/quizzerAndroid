@@ -38,9 +38,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.dropdown.FastCreateDropDownWithTextButton
 import com.asu1.models.quizRefactor.DateSelectionQuiz
-import com.asu1.quiz.ui.CalendarWithFocusDates
+import com.asu1.quiz.content.dateSelectionQuiz.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.ui.Quiz2SelectionViewer
+import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionViewer
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
 import com.asu1.resources.R
@@ -115,12 +115,11 @@ fun DateSelectionQuizCreator(
                         quiz.updateDate(date)
                         currentMonth = date
                     },
-                    currentMonth = currentMonth.yearMonth,
-                    colorScheme = MaterialTheme.colorScheme
+                    currentMonth = currentMonth.yearMonth
                 )
             }
             item{
-                Quiz2SelectionViewer(
+                DateSelectionViewer(
                     answerDate = quiz2State.answerDate,
                     updateDate = { date ->
                         quiz.updateDate(date)

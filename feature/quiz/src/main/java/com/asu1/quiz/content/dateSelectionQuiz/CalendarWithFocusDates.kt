@@ -1,6 +1,7 @@
-package com.asu1.quiz.ui
+package com.asu1.quiz.content.dateSelectionQuiz
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ColorScheme
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -40,12 +42,10 @@ fun CalendarWithFocusDates(
     focusDates: Set<LocalDate>,
     onDateClick: (LocalDate) -> Unit,
     currentMonth: YearMonth = YearMonth.now(),
-    yearRange: Int = 10,
-    colorScheme: ColorScheme
 ) {
     val state = rememberCalendarState(
-        startMonth = currentMonth.minusYears(yearRange.toLong()),
-        endMonth = currentMonth.plusYears(yearRange.toLong()),
+        startMonth = currentMonth.minusYears(10),
+        endMonth = currentMonth.plusYears(10),
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = DayOfWeek.SUNDAY
     )
@@ -58,8 +58,7 @@ fun CalendarWithFocusDates(
         dayContent = {
             val isSelected = focusDates.contains(it.date)
             key(isSelected) {
-                Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick,
-                    colorScheme.primaryContainer)
+                Day(it, state.firstVisibleMonth.yearMonth, isSelected, onDateClick)
             }
         },
         monthHeader = { month ->
@@ -97,7 +96,6 @@ fun CalendarWithFocusDates(
 
 @Composable
 fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateClick: (LocalDate) -> Unit,
-        focusColor: Color,
 ) {
     val isInCurrentMonth = day.date.month == currentMonth.month
     val alpha = if (isInCurrentMonth) 1f else 0.5f
@@ -106,15 +104,24 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
         DayOfWeek.SUNDAY -> BodyTextStyle.contentColorToRed
         else -> BodyTextStyle.contentColor
     }
-    val backgroundColor = if (isSelected) focusColor else Color.Transparent
+    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
 
     Box(
         modifier = Modifier
             .aspectRatio(1f)
             .alpha(alpha)
+            .then(
+                if (isSelected) Modifier
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = CircleShape
+                    )
+                else Modifier
+            )
             .background(
                 color = backgroundColor,
-                shape = androidx.compose.foundation.shape.CircleShape
+                shape = CircleShape
             )
             .clickable {
                 onDateClick(day.date)

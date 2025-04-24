@@ -28,13 +28,10 @@ data class ReorderQuiz(
 
     override fun initViewState() {
         if (answers.isNotEmpty()) {
-            // first item stays, the rest get a “Q!Z2<n>” tag and shuffle
-            val head = answers.first()
             val tagged = answers
-                .drop(1)
                 .mapIndexed { idx, ans -> "${ans}Q!Z2${idx+1}" }
                 .shuffled()
-            shuffledAnswers = (listOf(head) + tagged).toMutableList()
+            shuffledAnswers = tagged as MutableList<String>
         }
     }
 

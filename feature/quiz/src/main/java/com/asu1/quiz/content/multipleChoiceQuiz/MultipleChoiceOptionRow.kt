@@ -1,4 +1,4 @@
-package com.asu1.quiz.content.multipleChoice
+package com.asu1.quiz.content.multipleChoiceQuiz
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

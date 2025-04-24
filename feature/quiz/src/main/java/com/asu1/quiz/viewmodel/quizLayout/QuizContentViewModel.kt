@@ -88,7 +88,7 @@ class QuizContentViewModel: ViewModel() {
         when(update){
             is QuizUserUpdates.MultipleChoiceQuizUpdate -> updateMultipleChoiceQuiz(index, update.index)
             is QuizUserUpdates.DateSelectionQuizUpdate -> updateDateSelectionQuiz(index, update.date)
-            is QuizUserUpdates.ReorderQuizUpdate -> updateReorderQuiz(index, update.first, update.second)
+            is QuizUserUpdates.ReorderQuizUpdate -> updateReorderQuiz(index, update.from, update.to)
             is QuizUserUpdates.ConnectItemQuizUpdate -> updateConnectItemsQuiz(index, update.items)
             is QuizUserUpdates.ShortAnswerQuizUpdate -> updateShortAnswerQuiz(index, update.userAnswer)
         }
