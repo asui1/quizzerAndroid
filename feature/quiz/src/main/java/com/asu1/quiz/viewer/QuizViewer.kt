@@ -1,7 +1,6 @@
 package com.asu1.quiz.viewer
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
@@ -10,9 +9,7 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
-import com.asu1.models.sampleMultipleChoiceQuiz
-import com.asu1.models.sampleDateSelectionQuiz
-import com.asu1.models.sampleReorderQuiz
+import com.asu1.quiz.content.multipleChoice.MultipleChoiceQuizViewer
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 
 @Composable
@@ -25,9 +22,9 @@ fun QuizViewer(
         is MultipleChoiceQuiz -> {
             MultipleChoiceQuizViewer(
                 quiz = quiz,
-                toggleUserAnswer = {
-                    updateQuiz(QuizUserUpdates.MultipleChoiceQuizUpdate(it))
-                },
+                onUserInput = { userUpdate ->
+                    updateQuiz(userUpdate)
+                }
             )
         }
         is DateSelectionQuiz -> {
@@ -65,32 +62,12 @@ fun QuizViewer(
             )
         }
         is FillInBlankQuiz -> {
-            TODO()
+            FillInBlankQuizViewer(
+                quiz = quiz,
+                updateUserAnswer = { answer ->
+
+                },
+            )
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun ViewerPreviewQuiz1() {
-    QuizViewer(
-        quiz = sampleMultipleChoiceQuiz,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ViewerPreviewQuiz2() {
-    QuizViewer(
-        quiz = sampleDateSelectionQuiz,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ViewerPreviewQuiz3(){
-    QuizViewer(
-        quiz = sampleReorderQuiz,
-    )
 }
