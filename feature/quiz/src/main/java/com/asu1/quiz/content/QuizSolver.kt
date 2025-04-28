@@ -33,7 +33,6 @@ import androidx.navigation.NavController
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.ui.ImageColorBackground
-import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
@@ -97,9 +96,6 @@ fun QuizSolver(
                             pagerState = pagerState,
                             quizSize = quizzes.size,
                             quizzes = quizzes,
-                            updateQuizCoordinator = { action ->
-                                quizCoordinatorViewModel.updateQuizCoordinator(action = action)
-                            },
                             modifier = Modifier.fillMaxSize(),
                             lastElement = {
                                 QuizSubmit(
@@ -122,7 +118,6 @@ fun QuizViewerPager(
     pagerState: PagerState,
     quizSize: Int,
     quizzes: List<Quiz>,
-    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
 ) {
     HorizontalPager(
@@ -137,14 +132,7 @@ fun QuizViewerPager(
                     .fillMaxSize()
             ) {
                 QuizViewer(
-                    quiz = quizzes[page],
-                    updateQuiz = {quizUserUpdate ->
-                        updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizAnswer(
-                                page, quizUserUpdate
-                            )
-                        )
-                    }
+                    quiz = quizzes[page]
                 )
                 Text(
                     text = "${page + 1}/${quizSize}",

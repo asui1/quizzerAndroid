@@ -84,9 +84,7 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
             is ConnectItemsQuizViewModelStates.ResetConnectionViewer -> {
                 this._quizState.update {
                     it.copy().apply{
-                        userConnectionIndex = userConnectionIndex.toMutableList().apply {
-                            this.set(quiz4ViewModelStates.index, null)
-                        }
+                        userConnectionIndex[quiz4ViewModelStates.index] = null
                     }
                 }
             }

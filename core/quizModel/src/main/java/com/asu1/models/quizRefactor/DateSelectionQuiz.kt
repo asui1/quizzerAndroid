@@ -1,5 +1,6 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.mutableStateSetOf
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.LocalDateSerializer
@@ -27,7 +28,7 @@ data class DateSelectionQuiz(
 ) : Quiz() {
     /** Transient view‐state, not serialized **/
     @Transient
-    var userDates: MutableSet<LocalDate> = mutableSetOf()
+    var userDates = mutableStateSetOf<LocalDate>()
     @Transient
     override val uuid: String = UUID.randomUUID().toString()
     @Transient

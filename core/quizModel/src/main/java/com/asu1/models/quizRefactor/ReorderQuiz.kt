@@ -1,5 +1,6 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.mutableStateListOf
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
@@ -20,7 +21,8 @@ data class ReorderQuiz(
 ) : Quiz() {
     /** Transient state, not serialized **/
     @Transient
-    var shuffledAnswers: MutableList<String> = answers.toMutableList()
+    var shuffledAnswers = mutableStateListOf<String>()
+
     @Transient
     override val uuid: String = UUID.randomUUID().toString()
     @Transient
@@ -31,7 +33,8 @@ data class ReorderQuiz(
             val tagged = answers
                 .mapIndexed { idx, ans -> "${ans}Q!Z2${idx+1}" }
                 .shuffled()
-            shuffledAnswers = tagged as MutableList<String>
+            shuffledAnswers.clear()
+            shuffledAnswers.addAll(tagged)
         }
     }
 

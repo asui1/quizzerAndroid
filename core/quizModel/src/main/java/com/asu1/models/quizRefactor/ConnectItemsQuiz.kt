@@ -1,5 +1,6 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.geometry.Offset
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
@@ -28,14 +29,17 @@ data class ConnectItemsQuiz(
     @Transient
     var rightDots: MutableList<Offset> = MutableList(connectionAnswers.size) { Offset.Zero }
     @Transient
-    var userConnectionIndex: MutableList<Int?> = MutableList(answers.size) { null }
+    var userConnectionIndex = List(answers.size) { null as Int? }
+        .toMutableStateList()
+
     @Transient
     override val quizType: QuizType = QuizType.QUIZ4
     @Transient
     override val uuid: String = UUID.randomUUID().toString()
 
     override fun initViewState() {
-        userConnectionIndex = MutableList(answers.size) { null }
+        userConnectionIndex = List(answers.size) { null as Int? }
+            .toMutableStateList()
         leftDots            = MutableList(answers.size) { Offset.Zero }
         rightDots           = MutableList(connectionAnswers.size) { Offset.Zero }
     }
@@ -126,9 +130,7 @@ data class ConnectItemsQuiz(
                 this[from] = connectionIndex
             }
         }else{
-            userConnectionIndex = userConnectionIndex.toMutableList().apply {
-                this[from] = connectionIndex
-            }
+            userConnectionIndex[from] = connectionIndex
         }
     }
 }

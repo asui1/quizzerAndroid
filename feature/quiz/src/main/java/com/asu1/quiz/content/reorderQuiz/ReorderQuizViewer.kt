@@ -31,7 +31,6 @@ fun ReorderQuizViewer(
     val lazyState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyState) { from, to ->
         quiz.swap(from.index, to.index)
-//        onUserInput(QuizUserUpdates.ReorderQuizUpdate(from.index, to.index))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
         }

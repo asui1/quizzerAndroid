@@ -23,14 +23,16 @@ val sampleDateSelectionQuiz = DateSelectionQuiz(
         LocalDate.of(2000, 1, 1)),
     centerDate = LocalDate.of(2000, 1, 1),
 ).apply {
-    userDates = mutableSetOf(LocalDate.of(2000, 1, 5))
+    userDates.clear()
+    userDates.add(LocalDate.of(2000, 1, 5))
 }
 
 val sampleReorderQuiz = ReorderQuiz(
     question = "Arrange the following in ascending order",
     answers = mutableListOf("1111", "2222", "3333", "4444", "5555"),
 ).apply{
-    shuffledAnswers = mutableListOf("1111", "4444", "5555", "2222", "3333")
+    shuffledAnswers.clear()
+    shuffledAnswers.addAll(listOf("1111", "4444", "5555", "2222", "3333"))
 }
 
 val sampleConnectItemsQuiz = ConnectItemsQuiz(

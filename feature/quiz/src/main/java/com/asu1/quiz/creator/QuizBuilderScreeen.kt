@@ -158,9 +158,6 @@ fun QuizBuilderScreen(
                         pagerState = pagerState,
                         quizSize = quizzes.size,
                         quizzes = quizzes,
-                        updateQuizCoordinator = { quizCoordinatorAction ->
-                            quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
-                        },
                         modifier = Modifier.fillMaxSize(),
                         lastElement = {
                             QuizSubmit(

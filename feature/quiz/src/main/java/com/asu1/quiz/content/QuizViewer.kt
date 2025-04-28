@@ -14,12 +14,10 @@ import com.asu1.quiz.content.fillInBlanklQuiz.FillInBlankQuizViewer
 import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizViewer
 import com.asu1.quiz.content.reorderQuiz.ReorderQuizViewer
 import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizViewer
-import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 
 @Composable
 fun QuizViewer(
     quiz: Quiz,
-    updateQuiz: (QuizUserUpdates) -> Unit = {},
 ) {
     when(quiz){
         is MultipleChoiceQuiz -> {
@@ -30,9 +28,6 @@ fun QuizViewer(
         is DateSelectionQuiz -> {
             DateSelectionQuizViewer(
                 quiz = quiz,
-                updateQuiz = { update ->
-                    updateQuiz(update)
-                },
             )
         }
         is ReorderQuiz -> {

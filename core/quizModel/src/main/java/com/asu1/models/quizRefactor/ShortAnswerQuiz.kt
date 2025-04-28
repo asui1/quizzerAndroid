@@ -1,5 +1,8 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
@@ -19,8 +22,7 @@ data class ShortAnswerQuiz(
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
     /** Runtime‐only user input, not serialized */
-    @Transient
-    var userAnswer: String = ""
+    var userAnswer by mutableStateOf("")
     @Transient
     override val uuid: String = UUID.randomUUID().toString()
     @Transient

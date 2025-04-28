@@ -123,7 +123,8 @@ class QuizContentViewModel: ViewModel() {
             val updatedQuizzes = currentState.quizzes.toMutableList()
             try {
                 (updatedQuizzes[quizIndex] as? ConnectItemsQuiz)?.let {
-                    it.userConnectionIndex = items as MutableList<Int?>
+                    it.userConnectionIndex.clear()
+                    it.userConnectionIndex.addAll(items)
                     currentState.copy(quizzes = updatedQuizzes)
                 } ?: currentState
             } catch (e: Exception) {
