@@ -1,8 +1,6 @@
 package com.asu1.quiz.content.multipleChoiceQuiz
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
@@ -14,11 +12,10 @@ import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun MultipleChoiceQuizChecker(quiz: MultipleChoiceQuiz) {
-    val selections = remember {quiz.userSelections.toMutableStateList() }
     QuizBase(quiz = quiz, mode = QuizMode.Checker) {
         MultipleChoiceQuizBody(
             displayedOptions = quiz.displayedOptions,
-            selections = selections,
+            selections = quiz.userSelections,
             enabled = false
         ) { idx, content ->
             AnswerShower(

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -53,7 +52,7 @@ fun MultipleChoiceOptionRow(
 @Composable
 fun MultipleChoiceQuizBody(
     displayedOptions: List<String>,
-    selections: SnapshotStateList<Boolean>,
+    selections: List<Boolean>,
     enabled: Boolean,
     onChecked: (idx: Int) -> Unit = {},
     decorator: @Composable (idx: Int, content: @Composable () -> Unit) -> Unit = { _, content -> content() }

@@ -1,5 +1,6 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.mutableStateListOf
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
@@ -26,7 +27,7 @@ data class MultipleChoiceQuiz(
     var displayedOptions: MutableList<String> = options.toMutableList()
 
     @Transient
-    var userSelections: MutableList<Boolean> = MutableList(options.size) { false }
+    var userSelections = mutableStateListOf<Boolean>()
 
     @Transient
     override val quizType: QuizType = QuizType.QUIZ1
@@ -37,7 +38,8 @@ data class MultipleChoiceQuiz(
         Logger.debug("INITIALIZE MULTIPLE CHOICE QUIZ")
         displayedOptions = if (shuffleAnswers) options.shuffled().toMutableList()
         else options.toMutableList()
-        userSelections = MutableList(options.size) { false }
+        userSelections.clear()
+        repeat(options.size) { userSelections.add(false) }
     }
 
     override fun validateQuiz(): QuizError {

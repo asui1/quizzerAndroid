@@ -24,10 +24,7 @@ fun QuizViewer(
     when(quiz){
         is MultipleChoiceQuiz -> {
             MultipleChoiceQuizViewer(
-                quiz = quiz,
-                updateQuiz = { update ->
-                    updateQuiz(update)
-                }
+                quiz = quiz
             )
         }
         is DateSelectionQuiz -> {
