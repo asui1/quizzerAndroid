@@ -1,4 +1,4 @@
-package com.asu1.quiz.viewer
+package com.asu1.quiz.content.bodyBuilder
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText

@@ -67,11 +67,11 @@ import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.models.serializers.QuizType
-import com.asu1.quiz.preview.QuizPreview
+import com.asu1.quiz.content.QuizPreview
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.ui.QuizLayoutBottomBar
-import com.asu1.quiz.viewer.QuizSubmit
-import com.asu1.quiz.viewer.QuizViewerPager
+import com.asu1.quiz.content.QuizSubmit
+import com.asu1.quiz.content.QuizViewerPager
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.QuizzerAndroidTheme
@@ -158,7 +158,6 @@ fun QuizBuilderScreen(
                         pagerState = pagerState,
                         quizSize = quizzes.size,
                         visibleQuizzes = quizzes,
-                        quizTheme = quizTheme,
                         updateQuizCoordinator = { quizCoordinatorAction ->
                             quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
                         },

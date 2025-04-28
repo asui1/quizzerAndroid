@@ -48,13 +48,13 @@ import com.asu1.mainpage.screens.PrivacyPolicy
 import com.asu1.mainpage.screens.RegisterScreen
 import com.asu1.mainpage.viewModels.QuizCardMainViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.quiz.checker.QuizChecker
+import com.asu1.quiz.content.QuizChecker
 import com.asu1.quiz.creator.QuizBuilderScreen
 import com.asu1.quiz.creator.QuizCaller
 import com.asu1.quiz.layoutBuilder.QuizLayoutBuilderScreen
 import com.asu1.quiz.scorecard.DesignScoreCardScreen
 import com.asu1.quiz.scorecard.ScoringScreen
-import com.asu1.quiz.viewer.QuizSolver
+import com.asu1.quiz.content.QuizSolver
 import com.asu1.quiz.viewmodel.quizLayout.QuizContentViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel

@@ -13,9 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.Quiz
-import com.asu1.quiz.checker.AnswerShower
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
-import com.asu1.quiz.viewer.BuildBody
+import com.asu1.quiz.content.bodyBuilder.BuildBody
 
 @Composable
 fun QuizBase(
@@ -29,7 +28,7 @@ fun QuizBase(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(16.dp),
+            .padding(boxPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (mode == QuizMode.Checker) {

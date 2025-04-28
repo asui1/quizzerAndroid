@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.quiz.content.strokeWidth
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
@@ -326,7 +327,7 @@ fun DrawLines(
                 color = color,
                 start = start,
                 end = end,
-                strokeWidth = 8f
+                strokeWidth = strokeWidth
             )
         }
     }

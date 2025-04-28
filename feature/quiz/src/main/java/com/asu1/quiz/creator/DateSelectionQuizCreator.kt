@@ -40,7 +40,7 @@ import com.asu1.customComposable.dropdown.FastCreateDropDownWithTextButton
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.quiz.content.dateSelectionQuiz.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionViewer
+import com.asu1.quiz.content.dateSelectionQuiz.SelectedDatesColumn
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
 import com.asu1.resources.R
@@ -119,7 +119,7 @@ fun DateSelectionQuizCreator(
                 )
             }
             item{
-                DateSelectionViewer(
+                SelectedDatesColumn(
                     answerDate = quiz2State.answerDate,
                     updateDate = { date ->
                         quiz.updateDate(date)

@@ -1,4 +1,4 @@
-package com.asu1.quiz.checker
+package com.asu1.quiz.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +28,11 @@ import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.sampleMultipleChoiceQuiz
+import com.asu1.quiz.content.connectItemQuiz.ConnectItemsQuizChecker
 import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizChecker
 import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizChecker
 import com.asu1.quiz.content.reorderQuiz.ReorderQuizChecker
+import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizChecker
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.utils.setTopBarColor
@@ -125,13 +127,11 @@ fun QuizCheckerBody(
         }
         is ConnectItemsQuiz -> {
             ConnectItemsQuizChecker(
-                quiz = quiz,
+                quiz
             )
         }
         is ShortAnswerQuiz -> {
-            ShortAnswerQuizChecker(
-                quiz = quiz
-            )
+            ShortAnswerQuizChecker(quiz)
         }
         is FillInBlankQuiz -> {
             TODO()

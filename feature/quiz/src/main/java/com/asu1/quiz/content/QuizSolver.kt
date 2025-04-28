@@ -1,4 +1,4 @@
-package com.asu1.quiz.viewer
+package com.asu1.quiz.content
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +31,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customComposable.animations.LoadingAnimation
-import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
@@ -98,7 +97,6 @@ fun QuizSolver(
                             pagerState = pagerState,
                             quizSize = quizzes.size,
                             visibleQuizzes = quizzes,
-                            quizTheme = quizTheme,
                             updateQuizCoordinator = { action ->
                                 quizCoordinatorViewModel.updateQuizCoordinator(action = action)
                             },
@@ -124,7 +122,6 @@ fun QuizViewerPager(
     pagerState: PagerState,
     quizSize: Int,
     visibleQuizzes: List<Quiz>,
-    quizTheme: QuizTheme = QuizTheme(),
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
 ) {
@@ -141,7 +138,6 @@ fun QuizViewerPager(
             ) {
                 QuizViewer(
                     quiz = visibleQuizzes[page],
-                    quizTheme = quizTheme,
                     updateQuiz = {quizUserUpdate ->
                         updateQuizCoordinator(
                             QuizCoordinatorActions.UpdateQuizAnswer(

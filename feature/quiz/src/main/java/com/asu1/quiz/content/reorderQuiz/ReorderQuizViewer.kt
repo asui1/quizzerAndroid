@@ -19,7 +19,6 @@ import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.sampleReorderQuiz
 import com.asu1.quiz.content.QuizBase
 import com.asu1.quiz.content.QuizMode
-import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.QuizzerAndroidTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -27,12 +26,12 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun ReorderQuizViewer(
     quiz: ReorderQuiz,
-    onUserInput: (QuizUserUpdates) -> Unit,
 ) {
     val view = LocalView.current
     val lazyState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyState) { from, to ->
-        onUserInput(QuizUserUpdates.ReorderQuizUpdate(from.index, to.index))
+        quiz.swap(from.index, to.index)
+//        onUserInput(QuizUserUpdates.ReorderQuizUpdate(from.index, to.index))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK)
         }
@@ -82,7 +81,6 @@ fun PreviewReorderQuizViewer(){
     QuizzerAndroidTheme {
         ReorderQuizViewer(
             sampleReorderQuiz,
-            onUserInput = {},
         )
     }
 }
