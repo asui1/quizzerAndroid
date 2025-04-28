@@ -96,7 +96,7 @@ fun QuizSolver(
                         QuizViewerPager(
                             pagerState = pagerState,
                             quizSize = quizzes.size,
-                            visibleQuizzes = quizzes,
+                            quizzes = quizzes,
                             updateQuizCoordinator = { action ->
                                 quizCoordinatorViewModel.updateQuizCoordinator(action = action)
                             },
@@ -121,23 +121,23 @@ fun QuizViewerPager(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     quizSize: Int,
-    visibleQuizzes: List<Quiz>,
+    quizzes: List<Quiz>,
     updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
     lastElement: @Composable () -> Unit,
 ) {
     HorizontalPager(
         state = pagerState,
-        key = { index -> if (index in visibleQuizzes.indices) visibleQuizzes[index].uuid else "Add NewQuiz" },
+        key = { index -> if (index in quizzes.indices) quizzes[index].uuid else "Add NewQuiz" },
         modifier = modifier,
         beyondViewportPageCount = PagerDefaults.BeyondViewportPageCount,
     ) { page ->
-        if (page in visibleQuizzes.indices) {
+        if (page in quizzes.indices) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
                 QuizViewer(
-                    quiz = visibleQuizzes[page],
+                    quiz = quizzes[page],
                     updateQuiz = {quizUserUpdate ->
                         updateQuizCoordinator(
                             QuizCoordinatorActions.UpdateQuizAnswer(

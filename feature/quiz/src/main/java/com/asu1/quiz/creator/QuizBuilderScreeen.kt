@@ -157,7 +157,7 @@ fun QuizBuilderScreen(
                     QuizViewerPager(
                         pagerState = pagerState,
                         quizSize = quizzes.size,
-                        visibleQuizzes = quizzes,
+                        quizzes = quizzes,
                         updateQuizCoordinator = { quizCoordinatorAction ->
                             quizCoordinatorViewModel.updateQuizCoordinator(quizCoordinatorAction)
                         },

@@ -1,6 +1,8 @@
 package com.asu1.quiz.content.multipleChoiceQuiz
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.sampleMultipleChoiceQuiz
@@ -10,18 +12,13 @@ import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
 fun MultipleChoiceQuizPreview(quiz: MultipleChoiceQuiz) {
-    QuizBase(
-        quiz = quiz,
-        mode = QuizMode.Preview
-    ) {
-        quiz.displayedOptions.forEachIndexed { idx, option ->
-            MultipleChoiceOptionRow(
-                text = option,
-                checked = quiz.userSelections[idx],
-                enabled = false,
-                onChecked = {}
-            )
-        }
+    val selections = remember {quiz.userSelections.toMutableStateList() }
+    QuizBase(quiz = quiz, mode = QuizMode.Preview) {
+        MultipleChoiceQuizBody(
+            displayedOptions = quiz.displayedOptions,
+            selections = selections,
+            enabled = false
+        )
     }
 }
 
