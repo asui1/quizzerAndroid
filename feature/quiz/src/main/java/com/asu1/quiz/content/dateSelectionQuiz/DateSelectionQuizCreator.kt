@@ -1,15 +1,12 @@
 package com.asu1.quiz.content.dateSelectionQuiz
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.dropdown.FastCreateDropDownWithTextButton
 import com.asu1.models.quizRefactor.DateSelectionQuiz
-import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.content.quizCommonBuilder.SaveButton
+import com.asu1.quiz.content.quizCommonBuilder.QuizCreatorBase
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
 import com.asu1.resources.QuizzerAndroidTheme
@@ -56,84 +52,68 @@ fun DateSelectionQuizCreator(
     quiz: DateSelectionQuizViewModel = viewModel(),
     onSave: (DateSelectionQuiz) -> Unit
 ){
-    val quiz2State by quiz.quizState.collectAsStateWithLifecycle()
-    var currentMonth by remember { mutableStateOf(quiz2State.centerDate) }
+    val quizState by quiz.quizState.collectAsStateWithLifecycle()
+    var currentMonth by remember { mutableStateOf(quizState.centerDate) }
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(quiz2State.centerDate){
-        currentMonth = quiz2State.centerDate
+    LaunchedEffect(quizState.centerDate){
+        currentMonth = quizState.centerDate
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    QuizCreatorBase(
+        quiz = quizState,
+        testTag = "DateSelectionQuizCreatorLazyColumn",
+        onSave = { onSave(quizState) },
+        focusManager = focusManager,
+        updateQuestion = { it -> quiz.updateQuestion(it) },
+        updateBodyState = { it -> quiz.updateBodyState(it) },
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-        ) {
-            item {
-                QuestionTextField(
-                    question = quiz2State.question,
-                    onQuestionChange =  {quiz.updateQuestion(it)},
-                    focusManager = focusManager,
-                )
-            }
-            item{
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    buildString {
-                        append(stringResource(R.string.current_start))
-                        append("${quiz2State.centerDate.format(monthYearFormatter)}")
-                    },
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Text(
-                    buildString {
-                        append(stringResource(R.string.year_range))
-                        append(": ±20Y")
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Light,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                YearMonthDropDown(
-                    yearMonth = quiz2State.centerDate.yearMonth,
-                    onYearMonthChange = {
-                        quiz.updateCenterDate(it)
-                    },
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                CalendarWithFocusDates(
-                    focusDates = quiz2State.answerDate,
-                    onDateClick = { date ->
-                        quiz.updateDate(date)
-                        currentMonth = date
-                    },
-                    currentMonth = currentMonth.yearMonth
-                )
-            }
-            item{
-                SelectedDatesColumn(
-                    answerDate = quiz2State.answerDate,
-                    updateDate = { date ->
-                        quiz.updateDate(date)
-                    }
-                )
-            }
+        item{
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                buildString {
+                    append(stringResource(R.string.current_start))
+                    append("${quizState.centerDate.format(monthYearFormatter)}")
+                },
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Text(
+                buildString {
+                    append(stringResource(R.string.year_range))
+                    append(": ±20Y")
+                },
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Light,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            YearMonthDropDown(
+                yearMonth = quizState.centerDate.yearMonth,
+                onYearMonthChange = {
+                    quiz.updateCenterDate(it)
+                },
+            )
+            Spacer(modifier = Modifier.height(8.dp))
         }
-        SaveButton(
-            onSave = {
-                onSave(
-                    quiz2State
-                )
-            }
-        )
+        item {
+            CalendarWithFocusDates(
+                focusDates = quizState.answerDate,
+                onDateClick = { date ->
+                    quiz.updateDate(date)
+                    currentMonth = date
+                },
+                currentMonth = currentMonth.yearMonth
+            )
+        }
+        item{
+            SelectedDatesColumn(
+                answerDate = quizState.answerDate,
+                updateDate = { date ->
+                    quiz.updateDate(date)
+                }
+            )
+        }
     }
 }
 

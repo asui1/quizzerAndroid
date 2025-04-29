@@ -1,27 +1,19 @@
 package com.asu1.quiz.content.multipleChoiceQuiz
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,9 +29,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
-import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
-import com.asu1.quiz.content.quizCommonBuilder.SaveButton
-import com.asu1.quiz.ui.QuestionTextField
+import com.asu1.quiz.content.quizCommonBuilder.AddAnswer
+import com.asu1.quiz.content.quizCommonBuilder.QuizCreatorBase
 import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
@@ -50,82 +41,56 @@ fun MultipleChoiceQuizCreator(
     quiz: MultipleChoiceQuizViewModel,
     onSave: (MultipleChoiceQuiz) -> Unit
 ) {
-    val quiz1State by quiz.quizState.collectAsStateWithLifecycle()
+    val quizState by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    QuizCreatorBase(
+        quiz = quizState,
+        testTag = "MultipleChoiceQuizCreatorLazyColumn",
+        onSave = { onSave(quizState) },
+        focusManager = focusManager,
+        updateQuestion = { it -> quiz.updateQuestion(it) },
+        updateBodyState = { it -> quiz.updateBodyState(it) },
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("Quiz1CreatorLazyColumn")
-        ) {
-            item {
-                QuestionTextField(
-                    question = quiz1State.question,
-                    onQuestionChange =  {quiz.updateQuestion(it)},
-                    focusManager = focusManager,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            item {
-                QuizBodyBuilder(
-                    bodyState = quiz1State.bodyValue,
-                    updateBody = { quiz.updateBodyState(it) },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            items(quiz1State.options.size) { index ->
-                AnswerTextField(
-                    value = quiz1State.options[index],
-                    onValueChange = {it ->  quiz.updateAnswerAt(index, it) },
-                    answerCheck = quiz1State.correctFlags[index],
-                    toggleAnswer = {
-                        quiz.toggleAnsAt(index)
-                    },
-                    deleteAnswer = {
-                        quiz.removeAnswerAt(index)
-                    },
-                    onNext = {
-                        if(index == quiz1State.options.size-1) focusManager.clearFocus()
-                        else focusManager.moveFocus(FocusDirection.Down)
-                    },
-                    isLast = index == quiz1State.options.size-1,
-                    key = "QuizAnswerTextField$index"
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                AddAnswer(
-                    onClick = {
-                        quiz.addAnswer()
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                Quiz1AnswerShuffle(
-                    shuffleValue = quiz1State.shuffleAnswers,
-                    onShuffleToggle = { quiz.toggleShuffleAnswers() },
-                )
-            }
+        items(quizState.options.size) { index ->
+            AnswerTextField(
+                value = quizState.options[index],
+                onValueChange = {it ->  quiz.updateAnswerAt(index, it) },
+                answerCheck = quizState.correctFlags[index],
+                toggleAnswer = {
+                    quiz.toggleAnsAt(index)
+                },
+                deleteAnswer = {
+                    quiz.removeAnswerAt(index)
+                },
+                onNext = {
+                    if(index == quizState.options.size-1) focusManager.clearFocus()
+                    else focusManager.moveFocus(FocusDirection.Down)
+                },
+                isLast = index == quizState.options.size-1,
+                key = "QuizAnswerTextField$index"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
         }
-        SaveButton(
-            onSave = {
-                onSave(
-                    quiz1State
-                )
-            }
-        )
+        item {
+            AddAnswer(
+                onClick = {
+                    quiz.addAnswer()
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item {
+            MultipleChoiceAnswerShuffle(
+                shuffleValue = quizState.shuffleAnswers,
+                onShuffleToggle = { quiz.toggleShuffleAnswers() },
+            )
+        }
     }
-
 }
 
 @Composable
-fun AnswerTextField(
+private fun AnswerTextField(
     value: String,
     onValueChange: (String) -> Unit,
     answerCheck: Boolean,
@@ -161,41 +126,7 @@ fun AnswerTextField(
 }
 
 @Composable
-fun AddAnswer(
-    onClick: () -> Unit
-){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ){
-        TextButton(
-            onClick = onClick,
-            modifier = Modifier
-                .width(200.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .testTag("QuizCreatorAddAnswerButton")
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.add_answer),
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
-}
-
-@Composable
-fun Quiz1AnswerShuffle(
+private fun MultipleChoiceAnswerShuffle(
     shuffleValue: Boolean = false,
     onShuffleToggle: () -> Unit,
 ){

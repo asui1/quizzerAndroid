@@ -5,7 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.sampleReorderQuiz
-import com.asu1.quiz.content.quizCommonBuilder.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizViewerBase
 import com.asu1.quiz.content.QuizMode
 import com.asu1.resources.QuizzerAndroidTheme
 
@@ -13,7 +13,7 @@ import com.asu1.resources.QuizzerAndroidTheme
 fun ReorderQuizPreview(
     quiz: ReorderQuiz,
 ) {
-    QuizBase(
+    QuizViewerBase(
         quiz = quiz,
         mode = QuizMode.Preview,
     ){

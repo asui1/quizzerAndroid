@@ -10,6 +10,7 @@ import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.quiz.content.connectItemQuiz.ConnectItemQuizPreview
 import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizPreview
+import com.asu1.quiz.content.fillInBlankQuiz.FillInBlankQuizPreview
 import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizPreview
 import com.asu1.quiz.content.reorderQuiz.ReorderQuizPreview
 import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizPreview
@@ -35,7 +36,7 @@ fun QuizPreview(
             ShortAnswerQuizPreview(quiz)
         }
         is FillInBlankQuiz -> {
-            TODO()
+            FillInBlankQuizPreview(quiz)
         }
     }
 }

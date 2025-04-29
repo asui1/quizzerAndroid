@@ -86,7 +86,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         addQuizInit(quiz, 0, counts)
         addQuizBody(quiz, youtubeLink)
         composeTestRule
-            .onNodeWithTag("Quiz1CreatorLazyColumn")
+            .onNodeWithTag("MultipleChoiceQuizCreatorLazyColumn")
             .performScrollToNode(hasTestTag("QuizAnswerTextField0Checkbox"))
         onIdle()
         waitFor(100)

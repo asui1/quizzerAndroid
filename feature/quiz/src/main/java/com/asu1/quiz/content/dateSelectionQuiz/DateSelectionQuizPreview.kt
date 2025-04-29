@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.sampleDateSelectionQuiz
-import com.asu1.quiz.content.quizCommonBuilder.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizViewerBase
 import com.asu1.quiz.content.QuizMode
 import com.asu1.resources.QuizzerAndroidTheme
 import com.kizitonwose.calendar.core.yearMonth
@@ -13,7 +13,7 @@ import com.kizitonwose.calendar.core.yearMonth
 fun DateSelectionQuizPreview(
     quiz: DateSelectionQuiz
 ) {
-    QuizBase(
+    QuizViewerBase(
         quiz = quiz,
         mode = QuizMode.Preview
     ) {

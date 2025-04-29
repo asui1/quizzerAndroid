@@ -19,7 +19,7 @@ import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.content.quizBodyBuilder.QuizBodyViewer
 
 @Composable
-fun QuizBase(
+fun QuizViewerBase(
     modifier: Modifier = Modifier,
     quiz: Quiz,
     mode: QuizMode,
@@ -37,7 +37,7 @@ fun QuizBase(
             // gradeQuiz() is on the base Quiz class
             AnswerShower(
                 isCorrect = quiz.gradeQuiz(),
-                contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.Center
             ) {
                 QuestionTextStyle.GetTextComposable(
                     quiz.question,

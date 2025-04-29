@@ -10,29 +10,30 @@ import com.asu1.quiz.content.quizCommonBuilder.QuizViewerBase
 import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
-fun FillInBlankQuizViewer(
+fun FillInBlankQuizChecker(
     quiz: FillInBlankQuiz,
 ){
     val focusManager = LocalFocusManager.current
 
     QuizViewerBase(
         quiz = quiz,
-        mode = QuizMode.Viewer
+        mode = QuizMode.Checker
     ){
         FillInBlankQuizBody(
             quiz = quiz,
             focusManager = focusManager,
-            enabled = true,
+            enabled = false,
+            markAnswers = true
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewFillInBlankQuizViewer(){
+fun PreviewFillInBlankQuizChecker(){
     QuizzerAndroidTheme {
-        FillInBlankQuizViewer(
-            sampleFillInBlankQuiz
+        FillInBlankQuizChecker(
+            quiz = sampleFillInBlankQuiz
         )
     }
 }

@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.sampleReorderQuiz
 import com.asu1.quiz.content.quizCommonBuilder.AnswerShower
-import com.asu1.quiz.content.quizCommonBuilder.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizViewerBase
 import com.asu1.quiz.content.QuizMode
 import kotlin.text.replace
 
@@ -14,7 +14,7 @@ import kotlin.text.replace
 fun ReorderQuizChecker(
     quiz: ReorderQuiz,
 ) {
-    QuizBase(
+    QuizViewerBase(
         quiz = quiz,
         mode = QuizMode.Checker
     ) {
