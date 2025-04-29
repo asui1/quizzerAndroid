@@ -40,7 +40,7 @@ fun FillInBlankQuizBody(
             ) {
                 FillInBlankTextField(
                     item = item,
-                    enabled = enabled,
+                    enabled = false,
                     onValueChange = { quiz.userAnswers[index] = it },
                     keyboardActions = KeyboardActions(
                         onNext = {
@@ -51,7 +51,7 @@ fun FillInBlankQuizBody(
                         }
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = if (isLast) ImeAction.Next else ImeAction.Done
+                        imeAction = if (isLast) ImeAction.Done else ImeAction.Next
                     ),
                     label = "${stringResource(R.string.answer_label)} ${index + 1}",
                 )
@@ -70,11 +70,12 @@ fun FillInBlankQuizBody(
                     }
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = if(isLast) ImeAction.Next else ImeAction.Done
+                    imeAction = if(isLast) ImeAction.Done else ImeAction.Next
                 ),
                 label = "${stringResource(R.string.answer_label)} ${index+1}",
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -88,7 +89,7 @@ fun FillInBlankTextField(
     label: String,
 ){
     OutlinedTextField(
-        modifier = AnswerTextStyle.borderModifier.fillMaxWidth(),
+        modifier = AnswerTextStyle.borderModifier.fillMaxWidth(0.8f),
         value = item,
         onValueChange = onValueChange,
         enabled = enabled,

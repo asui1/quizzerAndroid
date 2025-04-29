@@ -72,5 +72,6 @@ val sampleQuizList = persistentListOf(
     sampleReorderQuiz,
     sampleConnectItemsQuiz,
     sampleShortAnswerQuiz,
+    sampleFillInBlankQuiz,
 )
 

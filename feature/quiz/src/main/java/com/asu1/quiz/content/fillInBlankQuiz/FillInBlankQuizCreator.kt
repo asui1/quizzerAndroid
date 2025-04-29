@@ -7,11 +7,19 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +40,19 @@ fun FillInBlankQuizCreator(
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
+
+    LaunchedEffect(quizState.rawText) {
+        if (quizState.rawText != textFieldValue.text) {
+            if (textFieldValue.composition == null) {
+                textFieldValue = textFieldValue.copy(
+                    text      = quizState.rawText,
+                    selection = TextRange(quizState.rawText.length)
+                )
+            }
+        }
+    }
 
     QuizCreatorBase(
         quiz = quizState,
@@ -43,16 +64,18 @@ fun FillInBlankQuizCreator(
     ) {
         item{
             FillInBlankField(
-                rawText = quizState.rawText,
-                onRawTextChange = { it ->
-                    quiz.updateRawText(it)
+                textFieldValue = textFieldValue,
+                onValueChange = { newTfv: TextFieldValue ->
+                    textFieldValue = newTfv
+                    quiz.updateRawText(newTfv.text)
                 },
+                focusRequester = focusRequester,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
         itemsIndexed(quizState.correctAnswers) { index, item ->
             TextFieldWithDelete(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.8f),
                 value = item,
                 onValueChange = {it ->
                     quiz.updateCorrectAnswer(index, it)
@@ -83,13 +106,16 @@ fun FillInBlankQuizCreator(
 
 @Composable
 fun FillInBlankField(
-    rawText: String,
-    onRawTextChange: (String) -> Unit,
+    textFieldValue: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
 ) {
     OutlinedTextField(
-        value = rawText,
-        onValueChange = onRawTextChange,
-        modifier = Modifier.fillMaxWidth(),
+        value = textFieldValue,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
         label = { Text("Question") }
     )
 }

@@ -1,9 +1,11 @@
 package com.asu1.models.quizRefactor
 
+import androidx.compose.runtime.mutableStateListOf
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
+import com.asu1.utils.Logger
 import com.asu1.utils.normalizeMixedInputPrecisely
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,7 +23,7 @@ data class FillInBlankQuiz(
 ) : Quiz(
 ) {
     @Transient
-    var userAnswers: MutableList<String> = mutableListOf()
+    var userAnswers = mutableStateListOf<String>()
     @Transient
     override val uuid: String = UUID.randomUUID().toString()
     @Transient
@@ -58,7 +60,8 @@ data class FillInBlankQuiz(
     }
 
     override fun initViewState() {
-        userAnswers = MutableList(correctAnswers.size) { "" }
+        userAnswers.clear()
+        repeat(correctAnswers.size){ userAnswers.add("") }
     }
 
     override fun validateQuiz(): QuizError {
@@ -89,17 +92,20 @@ data class FillInBlankQuiz(
     fun addCorrectAnswer() {
         if(correctAnswers.size >= 9) return
         correctAnswers = correctAnswers + listOf("")
-        rawText += numberToEmoji(correctAnswers.size)
+        rawText += " ${numberToEmoji(correctAnswers.size)}"
     }
 
     fun removeCorrectAnswer(index: Int) {
         if (index !in correctAnswers.indices) return
 
-        // 1) remove nth placeholder
-        rawText = rawText.replaceFirst(numberToEmoji(index+1), "")
+        val emoji = numberToEmoji(index + 1)
+        val esc = Regex.escape(emoji)
 
+        // “\\s?” means “zero or one whitespace character”
+        rawText = rawText.replaceFirst(Regex("\\s?$esc"), "")
+        Logger.debug(rawText)
         for (n in (index+1)..correctAnswers.size+1) {
-            val from = " ${n+1}\uFE0F\u20E3 "
+            val from = "${n+1}\uFE0F\u20E3"
             val to   = numberToEmoji(n)
             rawText = rawText.replaceFirst(from, to)
         }

@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.flow
 fun sampleQuizFlow(): Flow<Quiz> = flow {
     for (quiz in sampleQuizList) {
         emit(quiz)
-        delay(200L)
+        delay(400L)
     }
 }
 
