@@ -8,7 +8,6 @@ import androidx.compose.ui.platform.LocalDensity
 import com.asu1.quiz.content.dotSizeDp
 import com.asu1.quiz.content.moveOffsetDp
 import com.asu1.quiz.content.paddingDp
-import com.asu1.quiz.creator.DraggableDot
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 
 @Composable

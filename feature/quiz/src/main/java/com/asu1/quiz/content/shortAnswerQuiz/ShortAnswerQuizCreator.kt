@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.shortAnswerQuiz
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -25,8 +25,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
+import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
+import com.asu1.quiz.content.quizCommonBuilder.SaveButton
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 
 @Composable
@@ -93,7 +96,7 @@ fun ShortAnswerQuizCreator(
 @Preview(showBackground = true)
 @Composable
 fun PreviewShortAnswerQuizCreator() {
-    com.asu1.resources.QuizzerAndroidTheme {
+    QuizzerAndroidTheme {
         ShortAnswerQuizCreator(
             quiz = viewModel(),
             onSave = {}

@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.fillInBlankQuiz
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -24,8 +24,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.FillInBlankQuiz
 import com.asu1.models.sampleFillInBlankQuiz
+import com.asu1.quiz.content.multipleChoiceQuiz.AddAnswer
+import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
+import com.asu1.quiz.content.quizCommonBuilder.SaveButton
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.FillInBlankViewModel
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 
 @Composable
@@ -127,7 +131,7 @@ fun FillInBlankField(
 fun PreviewFillInBlankQuizCreator() {
     val fillInBlankViewModel: FillInBlankViewModel = viewModel()
     fillInBlankViewModel.loadQuiz(sampleFillInBlankQuiz)
-    com.asu1.resources.QuizzerAndroidTheme {
+    QuizzerAndroidTheme {
         FillInBlankQuizCreator(
             quiz = fillInBlankViewModel,
             onSave = {}

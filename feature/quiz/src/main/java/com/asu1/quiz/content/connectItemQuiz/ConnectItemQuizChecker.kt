@@ -2,7 +2,7 @@ package com.asu1.quiz.content.connectItemQuiz
 
 import androidx.compose.runtime.Composable
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
-import com.asu1.quiz.content.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizBase
 import com.asu1.quiz.content.QuizMode
 
 @Composable

@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.quizBodyBuilder
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

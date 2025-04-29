@@ -15,7 +15,10 @@ val sampleMultipleChoiceQuiz = MultipleChoiceQuiz(
     options = mutableListOf("Delhi", "Mumbai", "Kolkata", "Chennai"),
     correctFlags = mutableListOf(true, false, false, false),
     bodyValue = BodyType.TEXT("This is a sample body text"),
-)
+).apply {
+    userSelections.clear()
+    userSelections.addAll(listOf(false, false, false, false))
+}
 
 val sampleDateSelectionQuiz = DateSelectionQuiz(
     question = "Select your birthdate",

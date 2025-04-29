@@ -1,7 +1,8 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.multipleChoiceQuiz
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,8 +37,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
+import com.asu1.quiz.content.quizCommonBuilder.SaveButton
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 
 
@@ -162,7 +166,7 @@ fun AddAnswer(
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        horizontalArrangement = Arrangement.Center
     ){
         TextButton(
             onClick = onClick,
@@ -198,7 +202,7 @@ fun Quiz1AnswerShuffle(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        horizontalArrangement = Arrangement.Center
     ) {
         Icon(
             imageVector = Icons.Default.Shuffle,
@@ -227,7 +231,7 @@ fun Quiz1AnswerShuffle(
 @Preview(showBackground = true)
 @Composable
 fun Quiz1Preview() {
-    com.asu1.resources.QuizzerAndroidTheme {
+    QuizzerAndroidTheme {
         MultipleChoiceQuizCreator(
             quiz = viewModel(),
             onSave = {}

@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.connectItemQuiz
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -20,9 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -42,10 +40,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.quiz.content.boxPadding
+import com.asu1.quiz.content.dotSizeDp
+import com.asu1.quiz.content.moveOffsetDp
+import com.asu1.quiz.content.multipleChoiceQuiz.AddAnswer
+import com.asu1.quiz.content.paddingDp
+import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
+import com.asu1.quiz.content.quizCommonBuilder.SaveButton
 import com.asu1.quiz.content.strokeWidth
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
+import com.asu1.utils.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
@@ -56,28 +62,23 @@ fun ConnectItemsQuizCreator(
     onSave: (ConnectItemsQuiz) -> Unit
 ) {
     val quizState by quiz.quizState.collectAsStateWithLifecycle()
-    var startOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
-    var endOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
-    var initOffset by remember { mutableStateOf<Offset?>(null) }
-    var isDragging by remember { mutableStateOf(true) }
-    val color = MaterialTheme.colorScheme.primary
+    val dragState = rememberDragState()
+    val leftDotOffsets = quiz.leftDotOffsets
+    val rightDotOffsets = quiz.rightDotOffsets
     val focusManager = LocalFocusManager.current
-    val dotSizeDp = 20.dp
-    val paddingDp = 4.dp
-    val boxPadding = 16.dp
-    var boxPosition by remember { mutableStateOf(Offset.Zero) }
-    val moveOffsetDp = (dotSizeDp + paddingDp * 2 - boxPadding) / 2
     val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
+    Logger.debug(leftDotOffsets)
+    Logger.debug(dragState)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(boxPadding)
             .onGloballyPositioned { coordinates ->
-                boxPosition = coordinates.positionInRoot()
+                dragState.boxPosition = coordinates.positionInRoot()
             }
     ) {
-        DrawLines(leftDots = quizState.leftDots, rightDots = quizState.rightDots, connections = quizState.connectionAnswerIndex)
+        DrawLines(leftDots = leftDotOffsets, rightDots = rightDotOffsets, connections = quizState.connectionAnswerIndex)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
@@ -139,44 +140,45 @@ fun ConnectItemsQuizCreator(
                                     pointerEvent = { it ->
                                         detectDragGestures(
                                             onDragStart = {
-                                                startOffset =
-                                                    quizState.leftDots[index]
-                                                endOffset =
-                                                    quizState.leftDots[index]
+                                                Logger.debug("START DRAG")
+                                                dragState.startOffset =
+                                                    leftDotOffsets[index]
+                                                dragState.endOffset =
+                                                    leftDotOffsets[index]
                                                 quiz.onQuiz4Update(
                                                     ConnectItemsQuizViewModelStates.ResetConnectionCreator(
                                                         index
                                                     )
                                                 )
-                                                initOffset = null
-                                                isDragging = true
+                                                dragState.initOffset = null
+                                                dragState.isDragging = true
                                             },
                                             onDragEnd = {
-                                                isDragging = false
+                                                dragState.isDragging = false
                                                 quiz.onQuiz4Update(
                                                     ConnectItemsQuizViewModelStates.OnDragEndCreator(
                                                         index,
-                                                        endOffset
+                                                        dragState.endOffset
                                                     )
                                                 )
-                                                startOffset = Offset(0f, 0f)
-                                                endOffset = Offset(0f, 0f)
+                                                dragState.startOffset = Offset(0f, 0f)
+                                                dragState.endOffset = Offset(0f, 0f)
                                             },
                                             onDrag = { change, dragAmount ->
                                                 change.consume()
-                                                if (initOffset == null) {
-                                                    initOffset = change.position
+                                                if (dragState.initOffset == null) {
+                                                    dragState.initOffset = change.position
                                                 }
-                                                initOffset?.let { start ->
-                                                    endOffset = Offset(
-                                                        x = startOffset.x + change.position.x - start.x,
-                                                        y = startOffset.y + change.position.y - start.y
+                                                dragState.initOffset?.let { start ->
+                                                    dragState.endOffset = Offset(
+                                                        x = dragState.startOffset.x + change.position.x - start.x,
+                                                        y = dragState.startOffset.y + change.position.y - start.y
                                                     )
                                                 }
                                             }
                                         )
                                     },
-                                    boxPosition = boxPosition,
+                                    boxPosition = dragState.boxPosition,
                                     dotSize = dotSizeDp,
                                     padding = paddingDp,
                                     moveOffset = moveOffset,
@@ -212,7 +214,7 @@ fun ConnectItemsQuizCreator(
                                             )
                                         )
                                     },
-                                    boxPosition = boxPosition,
+                                    boxPosition = dragState.boxPosition,
                                     dotSize = dotSizeDp,
                                     padding = paddingDp,
                                     moveOffset = moveOffset,
@@ -251,13 +253,14 @@ fun ConnectItemsQuizCreator(
         SaveButton {
             onSave(quizState)
         }
-        if(isDragging) {
+        if(dragState.isDragging) {
+            val color = MaterialTheme.colorScheme.primary
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawLine(
                     color = color,
-                    start = startOffset,
-                    end = endOffset,
-                    strokeWidth = 8f
+                    start = dragState.startOffset,
+                    end = dragState.endOffset,
+                    strokeWidth = strokeWidth
                 )
             }
         }

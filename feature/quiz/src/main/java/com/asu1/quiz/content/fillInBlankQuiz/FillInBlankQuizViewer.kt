@@ -1,4 +1,4 @@
-package com.asu1.quiz.content.fillInBlanklQuiz
+package com.asu1.quiz.content.fillInBlankQuiz
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asu1.models.quizRefactor.FillInBlankQuiz
 import com.asu1.models.sampleFillInBlankQuiz
-import com.asu1.quiz.content.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizBase
 import com.asu1.quiz.content.QuizMode
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.resources.QuizzerAndroidTheme

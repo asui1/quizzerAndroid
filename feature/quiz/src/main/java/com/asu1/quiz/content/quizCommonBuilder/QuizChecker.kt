@@ -1,4 +1,4 @@
-package com.asu1.quiz.content
+package com.asu1.quiz.content.quizCommonBuilder
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

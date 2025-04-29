@@ -1,4 +1,4 @@
-package com.asu1.quiz.content
+package com.asu1.quiz.content.quizCommonBuilder
 
 import androidx.compose.runtime.Composable
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
@@ -10,7 +10,7 @@ import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.quiz.content.connectItemQuiz.ConnectItemsQuizViewer
 import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizViewer
-import com.asu1.quiz.content.fillInBlanklQuiz.FillInBlankQuizViewer
+import com.asu1.quiz.content.fillInBlankQuiz.FillInBlankQuizViewer
 import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizViewer
 import com.asu1.quiz.content.reorderQuiz.ReorderQuizViewer
 import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizViewer

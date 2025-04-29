@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.quizCommonBuilder
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,6 +16,12 @@ import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.serializers.QuizType
+import com.asu1.quiz.content.connectItemQuiz.ConnectItemsQuizCreator
+import com.asu1.quiz.content.dateSelectionQuiz.DateSelectionQuizCreator
+import com.asu1.quiz.content.fillInBlankQuiz.FillInBlankQuizCreator
+import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizCreator
+import com.asu1.quiz.content.reorderQuiz.ReorderQuizCreator
+import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizCreator
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel

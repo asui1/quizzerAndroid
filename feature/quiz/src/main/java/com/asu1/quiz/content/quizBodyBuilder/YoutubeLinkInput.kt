@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.quizBodyBuilder
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.asu1.quiz.content.bodyBuilder
+package com.asu1.quiz.content.quizBodyBuilder
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 @Composable
-fun BuildBody(
+fun QuizBodyViewer(
     quizBody: BodyType
 ) {
     // Skip entirely if there's no body

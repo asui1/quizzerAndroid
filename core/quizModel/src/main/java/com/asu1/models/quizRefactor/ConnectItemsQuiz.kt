@@ -1,12 +1,10 @@
 package com.asu1.models.quizRefactor
 
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.geometry.Offset
 import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
-import com.asu1.utils.getDragIndex
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -16,18 +14,13 @@ import java.util.UUID
 @SerialName("3")
 data class ConnectItemsQuiz(
     override var question: String = "",
-    var answers: List<String> = emptyList(),
-    var connectionAnswers: List<String> = emptyList(),
-    var connectionAnswerIndex: List<Int?> = emptyList(),
+    var answers: List<String> = listOf("", "", ""),
+    var connectionAnswers: List<String> = listOf("", "", ""),
+    var connectionAnswerIndex: List<Int?> = listOf(null, null, null),
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(
 ) {
-    /** Transient view‑state (not serialized) **/
-    @Transient
-    var leftDots: MutableList<Offset> = MutableList(answers.size) { Offset.Zero }
-    @Transient
-    var rightDots: MutableList<Offset> = MutableList(connectionAnswers.size) { Offset.Zero }
     @Transient
     var userConnectionIndex = List(answers.size) { null as Int? }
         .toMutableStateList()
@@ -40,8 +33,6 @@ data class ConnectItemsQuiz(
     override fun initViewState() {
         userConnectionIndex = List(answers.size) { null as Int? }
             .toMutableStateList()
-        leftDots            = MutableList(answers.size) { Offset.Zero }
-        rightDots           = MutableList(connectionAnswers.size) { Offset.Zero }
     }
 
     override fun validateQuiz(): QuizError {
@@ -76,18 +67,12 @@ data class ConnectItemsQuiz(
             connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
                 add(null)
             }
-            leftDots = leftDots.toMutableList().apply {
-                add(Offset.Zero)
-            }
         }
     }
 
     fun addConnectionAnswer(){
         connectionAnswers = connectionAnswers.toMutableList().apply {
             add("")
-            rightDots = rightDots.toMutableList().apply {
-                add(Offset.Zero)
-            }
         }
     }
 
@@ -95,9 +80,6 @@ data class ConnectItemsQuiz(
         answers = answers.toMutableList().apply {
             removeAt(index)
             connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                removeAt(index)
-            }
-            leftDots = leftDots.toMutableList().apply {
                 removeAt(index)
             }
         }
@@ -117,20 +99,6 @@ data class ConnectItemsQuiz(
                     }
                 }
             }
-            rightDots = rightDots.toMutableList().apply {
-                removeAt(index)
-            }
-        }
-    }
-
-    fun onDragEnd(from: Int, offset: Offset, isCreator: Boolean){
-        val connectionIndex = getDragIndex(offset, rightDots)
-        if(isCreator) {
-            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                this[from] = connectionIndex
-            }
-        }else{
-            userConnectionIndex[from] = connectionIndex
         }
     }
 }

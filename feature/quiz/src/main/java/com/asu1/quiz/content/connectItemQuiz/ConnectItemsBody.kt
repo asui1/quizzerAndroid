@@ -19,7 +19,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
-import com.asu1.quiz.creator.DrawLines
 import com.asu1.utils.getDragIndex
 
 @Composable

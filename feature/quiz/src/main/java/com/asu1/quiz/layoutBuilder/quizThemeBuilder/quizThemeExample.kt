@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.sampleQuizList
-import com.asu1.quiz.content.QuizPreview
+import com.asu1.quiz.content.quizCommonBuilder.QuizPreview
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.utils.Logger

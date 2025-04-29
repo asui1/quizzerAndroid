@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.sampleConnectItemsQuiz
-import com.asu1.quiz.content.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.QuizBase
 import com.asu1.quiz.content.QuizMode
 import com.asu1.resources.QuizzerAndroidTheme
 

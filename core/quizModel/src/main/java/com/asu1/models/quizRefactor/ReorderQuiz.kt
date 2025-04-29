@@ -15,7 +15,7 @@ import java.util.UUID
 @SerialName("2")
 data class ReorderQuiz(
     override var question: String = "",
-    val answers: List<String> = emptyList(),       // same JSON key
+    val answers: List<String> = listOf("", "", "", "", ""),       // same JSON key
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {

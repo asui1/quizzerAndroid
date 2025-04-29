@@ -1,4 +1,4 @@
-package com.asu1.quiz.content
+package com.asu1.quiz.content.quizCommonBuilder
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.Quiz
+import com.asu1.quiz.content.QuizMode
+import com.asu1.quiz.content.boxPadding
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
-import com.asu1.quiz.content.bodyBuilder.BuildBody
+import com.asu1.quiz.content.quizBodyBuilder.QuizBodyViewer
 
 @Composable
 fun QuizBase(
@@ -49,7 +51,7 @@ fun QuizBase(
             )
         }
         Spacer(Modifier.height(16.dp))
-        BuildBody(quizBody = quiz.bodyValue)
+        QuizBodyViewer(quizBody = quiz.bodyValue)
         quizBody()
     }
 }

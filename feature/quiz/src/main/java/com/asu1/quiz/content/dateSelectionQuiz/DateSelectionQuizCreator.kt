@@ -1,4 +1,4 @@
-package com.asu1.quiz.creator
+package com.asu1.quiz.content.dateSelectionQuiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,11 +38,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.dropdown.FastCreateDropDownWithTextButton
 import com.asu1.models.quizRefactor.DateSelectionQuiz
-import com.asu1.quiz.content.dateSelectionQuiz.CalendarWithFocusDates
 import com.asu1.quiz.ui.QuestionTextField
-import com.asu1.quiz.content.dateSelectionQuiz.SelectedDatesColumn
+import com.asu1.quiz.content.quizCommonBuilder.SaveButton
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.resources.Months
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.kizitonwose.calendar.core.yearMonth
 import java.time.YearMonth
@@ -208,7 +208,7 @@ fun YearMonthDropDown(
 @Preview(showBackground = true)
 @Composable
 fun PreviewDateSelectionQuizCreator() {
-    com.asu1.resources.QuizzerAndroidTheme {
+    QuizzerAndroidTheme {
         DateSelectionQuizCreator(
             quiz = DateSelectionQuizViewModel(),
             onSave = {}

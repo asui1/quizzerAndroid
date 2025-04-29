@@ -12,8 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.models.sampleShortAnswerQuiz
-import com.asu1.quiz.content.AnswerShower
-import com.asu1.quiz.content.QuizBase
+import com.asu1.quiz.content.quizCommonBuilder.AnswerShower
+import com.asu1.quiz.content.quizCommonBuilder.QuizBase
 import com.asu1.quiz.content.QuizMode
 import com.asu1.quiz.ui.textStyleManager.AnswerTextStyle
 import com.asu1.resources.QuizzerAndroidTheme
