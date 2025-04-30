@@ -34,9 +34,10 @@ fun QuizCreatorBase(
     content: LazyListScope.() -> Unit,
 ){
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(boxPadding)
+            .then(modifier)
     ) {
         header()
         LazyColumn(

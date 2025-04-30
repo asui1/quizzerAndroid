@@ -168,7 +168,6 @@ class MusicListViewModel @Inject constructor(
                 musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekToNext)
             }
             HomeUiEvents.SeekToPrevious -> {
-                Logger.debug("Seeking to previous ${_progress.value}")
                 if(_progress.value!! * duration > 4000){
                     musicServiceHandler.onMediaStateEvents(MediaStateEvents.SeekTo, seekPosition = 0)
                     return@launch
@@ -199,7 +198,6 @@ class MusicListViewModel @Inject constructor(
                 )
             }
             is HomeUiEvents.ChangeItemOrder -> {
-                Logger.debug("Changing item order from ${homeUiEvents.from} to ${homeUiEvents.to}")
                 val musicListSize = _musicList.value.size
                 if (homeUiEvents.from in 0 until musicListSize && homeUiEvents.to in 0 until musicListSize) {
                     val curMusic = _musicList.value[_currentMusicIndex.value!!]

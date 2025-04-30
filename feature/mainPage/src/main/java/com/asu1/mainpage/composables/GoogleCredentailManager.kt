@@ -10,7 +10,6 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import com.asu1.resources.R
-import com.asu1.utils.Logger
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -45,12 +44,10 @@ class GoogleCredentialManager(
     fun requestLogin(login: (email: String, profileUri: String) -> Unit) {
         coroutineScope.launch {
             try {
-                Logger.debug("Getting Login credential")
                 val result = credentialManager.getCredential(
                     request = loginRequest,
                     context = context,
                 )
-                Logger.debug("Received credential: $result")
                 handleSignIn(result) { email, profileUri -> login(email, profileUri) }
             } catch (e: GetCredentialException) {
                 SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
@@ -91,12 +88,10 @@ class GoogleCredentialManager(
             is CustomCredential -> {
                 if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     try {
-                        Logger.debug("Received google id token credential")
                         val googleIdTokenCredential =
                             GoogleIdTokenCredential.createFrom(credential.data)
 
                         val email = googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-                        Logger.debug("Received email: $email")
                         if(email == null) {
                             Log.e("Quizzer", "Received an invalid google id token response")
                             return

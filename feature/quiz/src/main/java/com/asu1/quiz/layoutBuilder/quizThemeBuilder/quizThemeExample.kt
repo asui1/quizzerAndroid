@@ -28,7 +28,6 @@ import com.asu1.models.sampleQuizList
 import com.asu1.quiz.content.quizCommonBuilder.QuizPreview
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.utils.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -58,7 +57,6 @@ fun QuizThemeExample(
     val sampleQuizList = remember { mutableStateListOf<Quiz>() }
 
     LaunchedEffect(Unit) {
-        Logger.debug("LAUNCHED UNIT")
         sampleQuizFlow().collect { quiz ->
             sampleQuizList.add(quiz)
         }

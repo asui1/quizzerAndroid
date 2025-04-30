@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.customComposable.textField.TagSetter
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.utils.Logger
 
 @Composable
 fun QuizLayoutSetTags(
@@ -33,7 +32,6 @@ fun QuizLayoutSetTags(
 
     LaunchedEffect(enabled) {
         if(enabled){
-            Logger.debug("Requesting focus for tags")
             focusRequester.requestFocus()
             keyboardController?.show()
         }

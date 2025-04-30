@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -158,6 +159,7 @@ fun ScoreCardBackground(
 
 const val pageNum = 4
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ScoreCardComposable(
     modifier: Modifier = Modifier,
@@ -222,27 +224,22 @@ fun ScoreCardComposable(
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
-            cardItemWithSemiTransparentBackground(
-                modifier = Modifier,
-                textColor = scoreCard.textColor
-            ) {
-                Text(
-                    text = scoreCard.title,
-                    color = scoreCard.textColor,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = robotoBlack,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Text(
-                    text = quizResult.nickname,
-                    color = scoreCard.textColor,
-                    fontWeight = FontWeight.ExtraBold,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.align(Alignment.End)
-                )
-            }
+            Text(
+                text = scoreCard.title,
+                color = scoreCard.textColor,
+                style = MaterialTheme.typography.headlineSmallEmphasized,
+                fontWeight = FontWeight.Black,
+                fontFamily = robotoBlack,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = quizResult.nickname,
+                color = scoreCard.textColor,
+                fontWeight = FontWeight.ExtraBold,
+                style = MaterialTheme.typography.bodyMediumEmphasized,
+                modifier = Modifier.align(Alignment.End)
+            )
             HorizontalPager(
                 state = pagerState,
                 key = {it},

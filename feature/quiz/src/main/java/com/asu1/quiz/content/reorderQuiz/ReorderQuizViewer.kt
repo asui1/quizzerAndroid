@@ -2,14 +2,12 @@ package com.asu1.quiz.content.reorderQuiz
 
 import android.os.Build
 import android.view.HapticFeedbackConstants
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -50,7 +48,6 @@ fun ReorderQuizViewer(
             itemsIndexed(quiz.shuffledAnswers, key = {_, it -> it }) { index, value ->
                 ReorderableItem(reorderState, key = value) { isDragging ->
                     val display = value.replace(Regex("Q!Z2\\d+$"), "")
-                    val elevation by animateDpAsState(if (isDragging) 2.dp else 1.dp, label = "")
                     SurfaceWithAnswerComposable(
                         modifier         = Modifier.draggableHandle(
                             onDragStarted = {
@@ -62,8 +59,7 @@ fun ReorderQuizViewer(
                                     view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
                             }
                         ),
-                        item             = display,
-                        shadowElevation  = elevation
+                        item             = display
                     )
                 }
                 if(index != quiz.shuffledAnswers.size-1){

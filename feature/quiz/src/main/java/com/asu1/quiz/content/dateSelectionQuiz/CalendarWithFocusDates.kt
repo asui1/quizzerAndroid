@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -104,7 +105,7 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
         else -> BodyTextStyle.contentColor
     }
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
-
+    val blendFraction = 0.3f
     Box(
         modifier = Modifier
             .aspectRatio(1f)
@@ -133,7 +134,7 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
     ) {
         Text(
             text = day.date.dayOfMonth.toString(),
-            color = color
+            color = if(isSelected) lerp(color, MaterialTheme.colorScheme.onPrimaryContainer, blendFraction) else color
         )
     }
 }

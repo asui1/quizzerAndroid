@@ -5,7 +5,6 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.models.serializers.BodyTypeSerializer
 import com.asu1.models.serializers.QuizError
 import com.asu1.models.serializers.QuizType
-import com.asu1.utils.Logger
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -35,7 +34,6 @@ data class MultipleChoiceQuiz(
     override val uuid: String = UUID.randomUUID().toString()
 
     override fun initViewState() {
-        Logger.debug("INITIALIZE MULTIPLE CHOICE QUIZ")
         displayedOptions = if (shuffleAnswers) options.shuffled().toMutableList()
         else options.toMutableList()
         userSelections.clear()

@@ -10,7 +10,6 @@ import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.models.serializers.json
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
-import com.asu1.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,7 +55,6 @@ class LoadLocalQuizViewModel: ViewModel() {
             val directory = context.filesDir
             if (directory.exists() && directory.isDirectory) {
                 val files = directory.listFiles { _, name ->
-                    Logger.debug("Files EXIST: $name")
                     name.endsWith("${email}_quizSave.json") }
                 val loadedQuizzes = mutableListOf<QuizLayoutSerializer>()
                 files?.forEach { file ->
@@ -66,10 +64,6 @@ class LoadLocalQuizViewModel: ViewModel() {
                         loadedQuizzes.add(quiz)
                     }
                 }
-                if (files != null) {
-                    Logger.debug("FOUND: ${files.size}")
-                }
-                Logger.debug("FOUND: ${loadedQuizzes.size}")
                 _localQuizList.update {
                     loadedQuizzes
                 }

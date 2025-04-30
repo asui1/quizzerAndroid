@@ -1,6 +1,5 @@
 package com.asu1.appdata.stringFilter
 
-import com.asu1.utils.Logger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,13 +36,11 @@ class StringFilterRepository @Inject constructor(
 
     suspend fun containsAdminWord(text: String): Boolean {
         val adminWordsToCheck = loadAdminWords()
-        adminWordsToCheck.map { it -> Logger.debug(it) }
         return adminWordsToCheck.any { word -> text.contains(word, ignoreCase = true) }
     }
 
-    // ✅ Use this function to refresh the cache when database updates
-    suspend fun refreshCache() {
-        cachedInappropriateWords = inappropriateWordDao.getAllWords()
-        cachedAdminWords = adminWordDao.getAllWords()
-    }
+//    suspend fun refreshCache() {
+//        cachedInappropriateWords = inappropriateWordDao.getAllWords()
+//        cachedAdminWords = adminWordDao.getAllWords()
+//    }
 }

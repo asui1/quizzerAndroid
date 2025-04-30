@@ -202,10 +202,8 @@ class ScoreCardViewModel: ViewModel() {
             val currentBlendMode = currentState.scoreCard.background.imageBlendMode
             // Toggle between BlendMode.Color and BlendMode.Hue.
             val newBlendMode = if (currentBlendMode == ImageBlendMode.BLENDHUE) {
-                Logger.debug("Change to blend color")
                 ImageBlendMode.BLENDCOLOR
             } else {
-                Logger.debug("Change to blend hue")
                 ImageBlendMode.BLENDHUE
             }
 

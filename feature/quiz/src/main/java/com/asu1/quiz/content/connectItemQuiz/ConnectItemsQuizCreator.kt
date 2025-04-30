@@ -47,7 +47,6 @@ import com.asu1.quiz.content.quizCommonBuilder.QuizCreatorBase
 import com.asu1.quiz.content.strokeWidth
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
-import com.asu1.utils.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
@@ -133,7 +132,6 @@ fun ConnectItemsQuizCreator(
                                 pointerEvent = { it ->
                                     detectDragGestures(
                                         onDragStart = {
-                                            Logger.debug("START DRAG")
                                             dragState.startOffset =
                                                 leftDotOffsets[index]
                                             dragState.endOffset =
@@ -281,6 +279,7 @@ fun DraggableDot(
             .onGloballyPositioned { coordinates ->
                 val globalOffset = coordinates.positionInRoot()
                 // Calculate a new relative offset based on your parameters.
+
                 val relativeOffset = globalOffset - boxPosition + Offset(moveOffset, moveOffset)
                 // Emit the calculated offset into the flow.
                 offsetFlow.tryEmit(relativeOffset)

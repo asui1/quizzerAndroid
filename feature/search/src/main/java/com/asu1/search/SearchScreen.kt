@@ -59,7 +59,6 @@ import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
-import com.asu1.utils.Logger
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.map
@@ -335,7 +334,6 @@ fun SearchTopBar(
                 ),
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        Logger.debug("SearchScreen", "Search: $searchText")
                         search(searchText)
                         focusManager.clearFocus()
                     }

@@ -71,7 +71,6 @@ object BodyTypeSerializer : KSerializer<BodyType> {
             // Decode raw element (could be object or string)
             val rawElem = decoder.decodeJsonElement()
 
-            Logger.debug(rawElem)
             // Unwrap potentially nested JSON-in-string formats
             val obj = when {
                 rawElem is JsonObject -> rawElem

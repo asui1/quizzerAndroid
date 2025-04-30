@@ -1,6 +1,7 @@
 package com.asu1.quiz.viewmodel.quiz
 
 import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.utils.toggle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
@@ -47,11 +48,11 @@ class DateSelectionQuizViewModel: BaseQuizViewModel<DateSelectionQuiz>(
 
     fun updateDate(date: LocalDate) {
         _quizState.update { quiz ->
-            quiz.apply {
-                if (!userDates.add(date)) {
-                    userDates.remove(date)
-                }
-            }
+            val answerDate = quiz.answerDate.toMutableSet()
+            answerDate.toggle(date)
+            quiz.copy(
+                answerDate = answerDate
+            )
         }
     }
 

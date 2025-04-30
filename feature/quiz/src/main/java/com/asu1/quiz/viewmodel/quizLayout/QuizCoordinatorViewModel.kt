@@ -243,14 +243,12 @@ class QuizCoordinatorViewModel : ViewModel() {
     }
 
     fun loadQuiz(quizId: String) {
-        Logger.debug(quizId)
         _quizViewModelState.value = ViewModelState.LOADING
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.api.getQuizData(quizId)
 
                 if (!response.isSuccessful) throw Exception("Response Failed")
-                Logger.debug(response.body()!!)
                 val quizSerialize = response.body() ?: Exception("Response is null")
                 processQuizData(quizSerialize as QuizLayoutSerializer)
                 _quizViewModelState.update {
@@ -265,7 +263,6 @@ class QuizCoordinatorViewModel : ViewModel() {
     private suspend fun processQuizData(quizSerialized: QuizLayoutSerializer) {
         coroutineScope {
             try{
-                Logger.debug("Process Quiz Data")
                 val loadQuizGeneralDeferred = async { quizGeneralViewModel.loadQuizData(quizSerialized.quizData) }
                 val loadQuizThemeDeferred = async { quizThemeViewModel.loadQuizTheme(quizSerialized.quizTheme) }
                 val loadQuizDataDeferred = async { quizContentViewModel.loadQuizContents(quizSerialized.quizData.quizzes) }
@@ -327,7 +324,6 @@ class QuizCoordinatorViewModel : ViewModel() {
         _quizViewModelState.value = ViewModelState.LOADING
         val quizJsonData = Json.encodeToString(toJson())
         val fileName = "${quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid}_${quizGeneralViewModel.quizGeneralUiState.value.quizData.creator}_quizSave.json"
-        Logger.debug("Save File: $fileName")
         val file = File(context.filesDir, fileName)
         file.writeText(quizJsonData)
         _quizViewModelState.value = ViewModelState.IDLE

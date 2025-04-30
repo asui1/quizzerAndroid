@@ -16,7 +16,6 @@ import com.asu1.appdata.stringFilter.InappropriateWord
 import com.asu1.appdata.stringFilter.InappropriateWordDao
 import com.asu1.appdata.suggestion.SearchSuggestion
 import com.asu1.appdata.suggestion.SearchSuggestionDao
-import com.asu1.utils.Logger
 
 const val DATABASE_NAME = "quizzer_database"
 const val PREPOPULATE_DB = "quizzerDB.db"
@@ -41,7 +40,6 @@ abstract class AppDatabase : RoomDatabase() {
                 val currentVersion = getCurrentDatabaseVersion(context, DATABASE_NAME)
 
                 if (currentVersion == 1) {
-                    Logger.debug("DB_UPDATE", "Delete old database")
                     deleteDatabase(context, DATABASE_NAME)
                 }
 

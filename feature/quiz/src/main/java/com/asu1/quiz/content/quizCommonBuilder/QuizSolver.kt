@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -120,11 +121,16 @@ fun QuizViewerPager(
     quizzes: List<Quiz>,
     lastElement: @Composable () -> Unit,
 ) {
+    val flingBehavior = PagerDefaults.flingBehavior(
+        state = pagerState,
+        pagerSnapDistance = PagerSnapDistance.atMost(1)
+    )
     HorizontalPager(
         state = pagerState,
         key = { index -> if (index in quizzes.indices) quizzes[index].uuid else "Add NewQuiz" },
         modifier = modifier,
         beyondViewportPageCount = PagerDefaults.BeyondViewportPageCount,
+        flingBehavior = flingBehavior,
     ) { page ->
         if (page in quizzes.indices) {
             Box(
