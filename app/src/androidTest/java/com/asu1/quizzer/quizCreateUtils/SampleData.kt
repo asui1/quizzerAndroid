@@ -9,4 +9,5 @@ data class QuizBundle(
     val theme: QuizTheme,
     val quizzes: List<Quiz>,
     val titleImage: Int,
+    val overlayImage: Int = 0,
 )
