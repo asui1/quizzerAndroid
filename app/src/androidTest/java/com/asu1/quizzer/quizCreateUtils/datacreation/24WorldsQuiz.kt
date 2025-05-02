@@ -1,5 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
@@ -8,6 +10,7 @@ import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -67,32 +70,42 @@ val lolworldsKr24 = listOf(
     ),
 )
 
-val androidAacDataKo = QuizData(
+val lolWorldsDataKo = QuizData(
     title = "2024 LOL 월챔에 대한 퀴즈",
     description = "2024년 월드 챔피언쉽의 기록을 확인해보는 퀴즈입니다. 당신은 얼마나 잘 기억하고 있나요?",
     tags = setOf("롤", "2024 월즈", "리그 오브 레전드", "월드 챔피언쉽"),
 )
-val lolWorldsKR24Theme = QuizTheme(
+val lolWorlds24Theme = QuizTheme(
     backgroundImage = ImageColor(
-        color         = hexColor("FF2A9DF0"),   // primaryColor
-        color2        = hexColor("FF2A9DF0"),   // backgroundColorFilter
-        colorGradient = hexColor("ffcfe5ff"),   // effectColor
+        color         = hexColor("2A9DF0"),   // primaryColor
+        color2        = hexColor("2A9DF0"),   // backgroundColorFilter
+        colorGradient = hexColor("cfe5ff"),   // effectColor
         state         = ImageColorState.COLOR
     ),
     questionTextStyle = listOf(0, 0, 0),
     bodyTextStyle     = listOf(3, 0, 0),
     answerTextStyle   = listOf(1, 6, 0),
     colorScheme = com.asu1.resources.LightColorScheme.copy(
-        primary            = hexColor("FF2A9DF0"),
-        onPrimary          = hexColor("ffffffff"),  // textColor
-        background         = hexColor("FF2A9DF0"),
-        secondaryContainer = hexColor("ffcfe5ff")
+        primary            = hexColor("2A9DF0"),
+        onPrimary          = hexColor("ffffff"),  // textColor
+        background         = hexColor("2A9DF0"),
+        secondaryContainer = hexColor("cfe5ff")
     )
 )
+val lolworlds24ScoreCard = ScoreCard(
+    textColor = hexColor("ffffff"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.GLOWING_TROPHY,
+        color = hexColor("2A9DF0"),
+        color2 = hexColor("cfe5ff"),
+        effect = Effect.FIREWORKS,
+    ),
+)
 @Suppress("unused")
-val androidAacQuizBundleKo = QuizBundle(
-    data = androidAacDataKo,
-    theme = lolWorldsKR24Theme,
+val lolWorlds24QuizBundleKo = QuizBundle(
+    data = lolWorldsDataKo,
+    theme = lolWorlds24Theme,
     quizzes = lolworldsKr24,
     titleImage = R.drawable.make_them_believe,
+    scoreCard = lolworlds24ScoreCard
 )

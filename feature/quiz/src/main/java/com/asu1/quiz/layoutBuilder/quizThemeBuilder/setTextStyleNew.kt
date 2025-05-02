@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -114,6 +115,8 @@ fun SetTextStyleTabRow(
             .fillMaxWidth()
     ) {
         StyleTabItem(
+            modifier = Modifier
+                .testTag("setTextStyleQuestionStyleTab"),
             index = 0,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
@@ -123,6 +126,8 @@ fun SetTextStyleTabRow(
         )
 
         StyleTabItem(
+            modifier = Modifier
+                .testTag("setTextStyleBodyStyleTab"),
             index = 1,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
@@ -132,6 +137,8 @@ fun SetTextStyleTabRow(
         )
 
         StyleTabItem(
+            modifier = Modifier
+                .testTag("setTextStyleAnswerStyleTab"),
             index = 2,
             selectedTabIndex = selectedTabIndex,
             textComposable = { modifier ->
@@ -144,6 +151,7 @@ fun SetTextStyleTabRow(
 
 @Composable
 private fun StyleTabItem(
+    modifier: Modifier = Modifier,
     index: Int,
     selectedTabIndex: Int,
     textComposable: @Composable (Modifier) -> Unit,
@@ -153,7 +161,7 @@ private fun StyleTabItem(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .clickable { onClick(index, selectedTabIndex == index) }
     ) {
         textComposable(

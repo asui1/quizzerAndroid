@@ -89,7 +89,7 @@ fun FastCreateDropDownWithTextButton(
                                 Modifier.width(with(density) { boxWidth.toDp() })
                             } else Modifier
                         )
-                        .testTag("$testTag${index}")
+                        .testTag("$testTag${index+1}")
                         .background(
                             color = if(index == currentSelection) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
                         ),

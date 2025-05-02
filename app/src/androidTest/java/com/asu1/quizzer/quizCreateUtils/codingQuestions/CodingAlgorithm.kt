@@ -4,6 +4,7 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
 
 val codingApproachQuiz = listOf(
@@ -115,6 +116,7 @@ val codingApproachQuizBundle = QuizBundle(
     theme = codingQuizTheme,
     quizzes = codingApproachQuiz,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )
 
 
@@ -231,4 +233,5 @@ val codingApproachQuizBundleKo = QuizBundle(
     theme = codingQuizTheme,
     quizzes = codingApproachQuizKo,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )

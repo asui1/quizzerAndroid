@@ -1,11 +1,14 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -96,11 +99,22 @@ val iuQuizTheme1 = QuizTheme(
     )
 )
 
+val iuScoreCard = ScoreCard(
+    textColor = hexColor("6c3454"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.GLOWING_TROPHY,
+        color = hexColor("ffffff"),
+        color2 = hexColor("ffffff"),
+        effect = Effect.FIREWORKS,
+    ),
+)
+
 @Suppress("unused")
 val iuQuizBundle1 = QuizBundle(
     data         = iuQuizData1,
     theme        = iuQuizTheme1,
     quizzes      = iuquizzes1,
     titleImage   = R.drawable.iu_ai1,
-    overlayImage = R.drawable.iu_portrait_bg2
+    overlayImage = R.drawable.iu_portrait_bg2,
+    scoreCard = iuScoreCard,
 )

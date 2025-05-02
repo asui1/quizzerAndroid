@@ -108,6 +108,7 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
     val blendFraction = 0.3f
     Box(
         modifier = Modifier
+            .testTag(day.date.toString())
             .aspectRatio(1f)
             .alpha(alpha)
             .then(
@@ -128,8 +129,7 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
             }
             .semantics {
                 contentDescription = "Day ${day.date}"
-            }
-            .testTag(day.date.toString()),
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(

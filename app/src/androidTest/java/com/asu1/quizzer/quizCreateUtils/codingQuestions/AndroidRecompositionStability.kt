@@ -3,6 +3,7 @@ package com.asu1.quizzer.quizCreateUtils.codingQuestions
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
+import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
 import com.asu1.quizzer.test.R
 
@@ -128,6 +129,7 @@ val androidRecompositionStabilityQuizBundle = QuizBundle(
     theme = codingQuizTheme,
     quizzes = androidRecompositionStabilityQuiz,
     titleImage = R.drawable.codinginterview,
+    scoreCard = androidScoreCard,
 )
 
 val androidRecompositionStabilityQuizKo = listOf(
@@ -252,4 +254,5 @@ val androidRecompositionStabilityQuizBundleKo = QuizBundle(
     theme = codingQuizTheme,
     quizzes = androidRecompositionStabilityQuizKo,
     titleImage = R.drawable.codinginterview,
+    scoreCard = androidScoreCard,
 )

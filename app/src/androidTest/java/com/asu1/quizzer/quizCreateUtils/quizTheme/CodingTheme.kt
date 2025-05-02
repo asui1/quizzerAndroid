@@ -1,12 +1,25 @@
 package com.asu1.quizzer.quizCreateUtils.quizTheme
 
 import androidx.compose.ui.graphics.Color
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.scorecard.ScoreCard
 
 fun hexColor(hex: String): Color =
     Color(android.graphics.Color.parseColor("#$hex"))
+
+val codingScoreCard = ScoreCard(
+    textColor = hexColor("32479d"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.LAB_COZY,
+        color = hexColor("000000"),
+        color2 = hexColor("cfe5ff"),
+        effect = Effect.NONE,
+    ),
+)
 
 val codingQuizTheme = QuizTheme(
     backgroundImage = ImageColor(
@@ -44,42 +57,13 @@ val androidQuizTheme = QuizTheme(
     )
 )
 
-//val codingTheme = allInOneForTest(
-//    title = "",
-//    description = "",
-//    tags = setOf(),
-//    titleImage = R.drawable.codinginterview,
-//    colorInt = 3,
-//    quizzes = emptyList(),
-//    bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-//    bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
-//    questionTextStyle = listOf(0, 0, 0),
-//    bodyTextStyle = listOf(3, 0, 0),
-//    answerTextStyle = listOf(1, 6, 0),
-//    primaryColor = "3A53D3",
-//    backgroundImageIndex = 21,
-//    effectIndex = 0,
-//    effectColor = "cfe5ff",
-//    textColor = "32479d",
-//    backgroundColorFilter = "000000",
-//)
-//
-//val androidCodingTheme = allInOneForTest(
-//    title = "",
-//    description = "",
-//    tags = setOf(),
-//    titleImage = R.drawable.android_coding_interview,
-//    colorInt = 3,
-//    quizzes = emptyList(),
-//    bodyImages = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-//    bodyYoutubeLinks = listOf("", "", "", "", "", "", "", "", "", ""),
-//    questionTextStyle = listOf(0, 0, 0),
-//    bodyTextStyle = listOf(3, 0, 0),
-//    answerTextStyle = listOf(1, 5, 0),
-//    primaryColor = "ace1af",
-//    backgroundImageIndex = 22,
-//    effectIndex = 0,
-//    effectColor = "cfe5ff",
-//    textColor = "F5E6DA",
-//    backgroundColorFilter = "93E9BE",
-//)
+val androidScoreCard = ScoreCard(
+    textColor = hexColor("F5E6DA"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.LAB_COZY,
+        color = hexColor("93E9BE"),
+        color2 = hexColor("cfe5ff"),
+        effect = Effect.NONE,
+    ),
+)
+

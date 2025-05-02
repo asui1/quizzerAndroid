@@ -5,6 +5,7 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
 
 val androidLifecycleQuiz = listOf(
@@ -133,6 +134,7 @@ val androidLifecycleQuizBundle = QuizBundle(
     theme = androidQuizTheme,
     quizzes = androidLifecycleQuiz,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )
 
 // ================ KOREAN VERSION =================
@@ -264,4 +266,5 @@ val androidLifecycleQuizBundleKo = QuizBundle(
     theme = androidQuizTheme,
     quizzes = androidLifecycleQuizKo,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )

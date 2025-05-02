@@ -4,6 +4,7 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
 
 val pythonDataStructureQuiz = listOf(
@@ -80,6 +81,7 @@ val pythonDataStructureQuizBundle = QuizBundle(
     theme = androidQuizTheme,
     quizzes = pythonDataStructureQuiz,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = codingScoreCard,
 )
 
 
@@ -157,5 +159,6 @@ val pythonDataStructureQuizBundleKo = QuizBundle(
     theme = androidQuizTheme,
     quizzes = pythonDataStructureQuizKo,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = codingScoreCard,
 )
 

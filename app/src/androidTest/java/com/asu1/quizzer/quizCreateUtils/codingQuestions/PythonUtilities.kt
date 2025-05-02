@@ -5,6 +5,7 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
 
 val pythonUtilityQuiz = listOf(
@@ -107,6 +108,7 @@ val pythonUtilityQuizBundle = QuizBundle(
     theme = codingQuizTheme,
     quizzes = pythonUtilityQuiz,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )
 
 
@@ -208,4 +210,5 @@ val pythonUtilityQuizBundleKo = QuizBundle(
     theme = codingQuizTheme,
     quizzes = pythonUtilityQuizKo,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )

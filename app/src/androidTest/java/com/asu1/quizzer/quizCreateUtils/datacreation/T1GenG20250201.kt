@@ -1,5 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
@@ -7,6 +9,7 @@ import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -159,12 +162,21 @@ val t1GengQuizTheme = QuizTheme(
         secondaryContainer = hexColor("ff93000a")
     )
 )
-
+val t1geng20250201ScoreCard = ScoreCard(
+    textColor = hexColor("ba1a1a"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.CITY,
+        color = hexColor("ffddb6"),
+        color2 = hexColor("93000a"),
+        effect = Effect.RAIN,
+    ),
+)
 // 4) Wrap it all up in a QuizBundle
 @Suppress("unused")
 val t1GengQuizBundle20250201 = QuizBundle(
     data       = t1GengQuizData,
     theme      = t1GengQuizTheme,
     quizzes    = t1GenQuiz20250201,
-    titleImage = R.drawable.t1_geng
+    titleImage = R.drawable.t1_geng,
+    scoreCard = t1geng20250201ScoreCard
 )

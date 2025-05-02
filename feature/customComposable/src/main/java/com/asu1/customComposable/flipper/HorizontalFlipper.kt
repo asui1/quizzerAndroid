@@ -21,8 +21,12 @@ import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 
 @Composable
-fun HorizontalFlipper(items: List<Any>, currentIndex: Int, onNext: (Int) -> Unit, onPrevious: (Int) -> Unit,
-                      key: String = "",
+fun HorizontalFlipper(
+    items: List<Any>,
+    currentIndex: Int,
+    onNext: (Int) -> Unit,
+    onPrevious: (Int) -> Unit,
+    key: String = "",
 ) {
     Row(
         modifier = Modifier

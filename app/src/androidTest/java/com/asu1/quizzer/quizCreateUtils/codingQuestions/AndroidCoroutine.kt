@@ -5,6 +5,7 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
 
 val androidCoroutinesQuiz = listOf(
@@ -136,6 +137,7 @@ val androidCoroutinesQuizBundle = QuizBundle(
     theme = androidQuizTheme,
     quizzes = androidCoroutinesQuiz,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )
 
 val androidCoroutinesQuizKo = listOf(
@@ -267,5 +269,6 @@ val androidCoroutinesQuizBundleKo = QuizBundle(
     theme = androidQuizTheme,
     quizzes = androidCoroutinesQuizKo,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )
 

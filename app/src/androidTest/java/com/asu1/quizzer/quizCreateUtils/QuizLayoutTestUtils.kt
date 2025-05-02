@@ -24,6 +24,11 @@ import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.test.espresso.Espresso.onIdle
+import com.asu1.models.quizRefactor.ConnectItemsQuiz
+import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.MultipleChoiceQuiz
+import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.serializers.BodyType
 import com.asu1.utils.Logger
 import com.asu1.utils.uriToByteArray
@@ -31,11 +36,11 @@ import kotlinx.coroutines.runBlocking
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
-    fun addQuizInit(quiz: TestQuiz, quizType: Int, clickAddAnswerNTimes: Int = 0, clickAddRightAnswerNTimes: Int = 0){
+    fun addQuizInit(quiz: Quiz, quizType: Int, clickAddAnswerNTimes: Int = 0, clickAddRightAnswerNTimes: Int = 0){
         clickOnTag("QuizBuilderScreenAddQuizIconButton")
         clickOnTag("QuizBuilderScreenNewQuizDialogImage${quizType}", true)
         waitFor(200)
-        if(quiz is TestQuiz4) addAnswer(clickAddAnswerNTimes, clickAddRightAnswerNTimes)
+        if(quiz is ConnectItemsQuiz) addAnswer(clickAddAnswerNTimes, clickAddRightAnswerNTimes)
         else addAnswer(clickAddAnswerNTimes)
         inputTextOnTag("QuizQuestionTextField", quiz.question, checkFocus = true)
     }
@@ -55,59 +60,57 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         }
     }
 
-    fun addQuizBody(quiz: TestQuiz, youtubeLink: String = ""){
-        if(quiz.bodyType is BodyType.NONE) return
-        if(quiz.bodyType is BodyType.IMAGE) return
+    fun addQuizBody(quiz: Quiz){
+        if(quiz.bodyValue is BodyType.NONE) return
+        if(quiz.bodyValue is BodyType.IMAGE) return
         clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
-        when(quiz.bodyType.value){
+        when(quiz.bodyValue.value){
             1 -> {
                 clickOnTag("BodyTypeDialogTEXTButton")
                 onIdle()
                 waitFor(100)
-                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyType as BodyType.TEXT).bodyText)
+                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyValue as BodyType.TEXT).bodyText)
             }
             3 -> {
                 clickOnTag("BodyTypeDialogYOUTUBEButton")
-                inputTextOnTag("QuizCreatorBodyYoutubeLinkTextField", youtubeLink, withIme = true)
+                inputTextOnTag("QuizCreatorBodyYoutubeLinkTextField", (quiz.bodyValue as BodyType.YOUTUBE).youtubeId, withIme = true)
                 onIdle()
             }
             4 -> {
                 clickOnTag("BodyTypeDialogCODEButton")
                 onIdle()
                 waitFor(100)
-                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyType as BodyType.CODE).code)
+                inputTextOnTag("QuizCreatorBodyTextField", (quiz.bodyValue as BodyType.CODE).code)
             }
         }
     }
 
     // NEED CODE TO ADD BODY, ADD OR REMOVE ANSWERS
-    fun addQuiz1(quiz: TestQuiz1, youtubeLink: String = ""){
-        val counts = quiz.answers.size - 5
+    fun addMultipleChoiceQuiz(quiz: MultipleChoiceQuiz){
+        val counts = quiz.options.size - 5
         addQuizInit(quiz, 0, counts)
-        addQuizBody(quiz, youtubeLink)
+        addQuizBody(quiz)
         composeTestRule
             .onNodeWithTag("MultipleChoiceQuizCreatorLazyColumn")
             .performScrollToNode(hasTestTag("QuizAnswerTextField0Checkbox"))
         onIdle()
         waitFor(100)
-        for(i in 0 until quiz.answers.size){
-            if(quiz.ans[i]){
+        for(i in 0 until quiz.options.size){
+            if(quiz.correctFlags[i]){
                 clickOnTag("QuizAnswerTextField${i}Checkbox", checkFocus = true)
             }
-            inputTextOnTag("QuizAnswerTextField${i}TextField", quiz.answers[i], checkFocus = true, withIme = true)
+            inputTextOnTag("QuizAnswerTextField${i}TextField", quiz.options[i], checkFocus = true, withIme = true)
         }
         waitFor(500)
         clickOnTag("QuizCreatorSaveButton")
         waitFor(1000)
     }
 
-    // CURRENT CODE NEEDS answerDate to be on screen. No swiping around.
-    fun addQuiz2(quiz: TestQuiz2){
+    fun addDateSelectionQuiz(quiz: DateSelectionQuiz){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
-        clickOnTag("YearMonthDropDownMonthText")
+        clickOnTag("YearMonthDropDownMonth")
         waitFor(500)
-//        YearMonthDropDownMonth1
         clickOnTag("YearMonthDropDownMonth${quiz.centerDate.monthValue}", useUnmergedTree = true)
         for(i in quiz.answerDate){
             waitFor(100)
@@ -117,10 +120,10 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun addQuiz3(quiz: TestQuiz3, youtubeLink: String = ""){
+    fun addReorderQuiz(quiz: ReorderQuiz){
         val counts = quiz.answers.size - 5
         addQuizInit(quiz, 2, counts)
-        addQuizBody(quiz, youtubeLink)
+        addQuizBody(quiz)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizAnswerTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
         }
@@ -128,11 +131,11 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         waitFor(1000)
     }
 
-    fun addQuiz4(quiz: TestQuiz4, youtubeLink: String = ""){
+    fun addConnectItemsQuiz(quiz: ConnectItemsQuiz){
         val leftCounts = quiz.answers.size - 4
         val rightCounts = quiz.connectionAnswers.size - 4
         addQuizInit(quiz, 3, leftCounts, rightCounts)
-        addQuizBody(quiz, youtubeLink)
+        addQuizBody(quiz)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
             if(i == quiz.answers.size - 1){
@@ -197,14 +200,15 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     }
 
     fun setTextStyle(textStyle: List<Int>, targetTag: String){
+        clickOnTag(targetTag + "StyleTab")
         repeat(textStyle[0]) {
-            clickOnTag(targetTag + "FontFlipperNext", checkFocus = true)
+            clickOnTag("SetTextStyleFontFlipperNext", checkFocus = true)
         }
         repeat(textStyle[1]) {
-            clickOnTag(targetTag + "ColorFlipperNext", checkFocus = true)
+            clickOnTag("SetTextStyleColorFlipperNext", checkFocus = true)
         }
         repeat(textStyle[2]) {
-            clickOnTag(targetTag + "BorderFlipperNext", checkFocus = true)
+            clickOnTag("SetTextStyleBorderFlipperNext", checkFocus = true)
         }
     }
 

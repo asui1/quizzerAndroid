@@ -18,12 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,6 +69,7 @@ fun SetColorScheme(
             items(ThemeColorPicker.entries, key = {it.name}) { color ->
                 OverlappingColorCircles(
                     modifier = Modifier
+                        .testTag("QuizLayoutSetColorSchemeButton${color.name}")
                         .then(
                             if (color == selectedColor) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
                             else Modifier
@@ -88,23 +91,26 @@ fun SetColorScheme(
         AnimatedVisibility(
             visible = selectedColor != null,
         ) {
-            ColorPicker(
-                modifier = Modifier
-                    .height(300.dp),
-                initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
-                colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
-                onColorSelected = { color ->
-                    updateQuizTheme(
-                        QuizThemeActions.UpdateColor(
-                            colorType = selectedColor ?: ThemeColorPicker.Primary,
-                            color = color,
+            key(selectedColor){
+                ColorPicker(
+                    modifier = Modifier
+                        .height(300.dp),
+                    initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
+                    colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
+                    onColorSelected = { color ->
+                        updateQuizTheme(
+                            QuizThemeActions.UpdateColor(
+                                colorType = selectedColor ?: ThemeColorPicker.Primary,
+                                color = color,
+                            )
                         )
-                    )
-                },
-                onClose = {
-                    selectedColor = null
-                }
-            )
+                    },
+                    onClose = {
+                        selectedColor = null
+                    },
+                    testTag = "QuizLayoutSetColorSchemeTextField"
+                )
+            }
         }
     }
 }

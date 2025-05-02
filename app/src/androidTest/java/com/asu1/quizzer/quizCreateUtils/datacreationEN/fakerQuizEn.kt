@@ -9,6 +9,7 @@ import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
+import com.asu1.quizzer.quizCreateUtils.datacreation.fakerScoreCard
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
 import java.time.LocalDate
@@ -112,5 +113,6 @@ val fakerQuizBundleEn = QuizBundle(
     data       = fakerQuizDataEn,
     theme      = fakerQuizThemeEn,
     quizzes    = fakerquizzesEn,
-    titleImage = R.drawable.faker
+    titleImage = R.drawable.faker,
+    scoreCard = fakerScoreCard,
 )

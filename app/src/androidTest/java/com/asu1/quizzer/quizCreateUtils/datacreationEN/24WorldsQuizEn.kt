@@ -1,15 +1,13 @@
 package com.asu1.quizzer.quizCreateUtils.datacreationEN
 
-import com.asu1.imagecolor.ImageColor
-import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
-import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
-import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
+import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorlds24Theme
+import com.asu1.quizzer.quizCreateUtils.datacreation.lolworlds24ScoreCard
 import com.asu1.quizzer.test.R
 import java.time.LocalDate
 
@@ -73,28 +71,11 @@ val lolWorldsEN24Data = QuizData(
     tags        = setOf("LoL", "2024 Worlds", "League of Legends", "World Championship")
 )
 
-val lolWorldsEN24Theme = QuizTheme(
-    backgroundImage = ImageColor(
-        color         = hexColor("FF2A9DF0"), // primaryColor
-        color2        = hexColor("FF2A9DF0"), // backgroundColorFilter
-        colorGradient = hexColor("ffcfe5ff"), // effectColor
-        state         = ImageColorState.COLOR
-    ),
-    questionTextStyle = listOf(0, 0, 0),
-    bodyTextStyle     = listOf(3, 0, 0),
-    answerTextStyle   = listOf(1, 6, 0),
-    colorScheme = com.asu1.resources.LightColorScheme.copy(
-        primary            = hexColor("FF2A9DF0"),
-        onPrimary          = hexColor("ffffffff"),
-        background         = hexColor("FF2A9DF0"),
-        secondaryContainer = hexColor("ffcfe5ff")
-    )
-)
-
 @Suppress("unused")
 val lolWorldsEN24Bundle = QuizBundle(
     data       = lolWorldsEN24Data,
-    theme      = lolWorldsEN24Theme,
+    theme      = lolWorlds24Theme,
     quizzes    = lolworldsEn24,
-    titleImage = R.drawable.make_them_believe
+    titleImage = R.drawable.make_them_believe,
+    scoreCard = lolworlds24ScoreCard
 )

@@ -1,5 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
@@ -8,6 +10,7 @@ import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -125,7 +128,7 @@ val t1WorldsQuizDataKo = QuizData(
 )
 
 // 3) build your QuizTheme
-val t1WorldsQuizThemeKo = QuizTheme(
+val t1WorldsQuizTheme = QuizTheme(
     backgroundImage = ImageColor(
         color         = hexColor("FFe4002b"),  // primaryColor
         color2        = hexColor("ff4f99b3"),  // backgroundColorFilter
@@ -142,11 +145,20 @@ val t1WorldsQuizThemeKo = QuizTheme(
         secondaryContainer = hexColor("ffe4002b")
     )
 )
-
+val t1worlds24ScoreCard = ScoreCard(
+    textColor = hexColor("ffd700"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.GLOWING_TROPHY,
+        color = hexColor("4f99b3"),
+        color2 = hexColor("e4002b"),
+        effect = Effect.FIREWORKS,
+    ),
+)
 @Suppress("unused")
 val t1WorldsQuizBundleKo = QuizBundle(
     data       = t1WorldsQuizDataKo,
-    theme      = t1WorldsQuizThemeKo,
+    theme      = t1WorldsQuizTheme,
     quizzes    = worlds24T1Ko,
-    titleImage = R.drawable.t1_final
+    titleImage = R.drawable.t1_final,
+    scoreCard = t1worlds24ScoreCard
 )

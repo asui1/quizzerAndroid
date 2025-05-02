@@ -5,6 +5,7 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
 
 val solidPrinciplesQuiz = listOf(
@@ -167,6 +168,7 @@ val solidPrinciplesQuizBundle = QuizBundle(
     theme = codingQuizTheme,
     quizzes = solidPrinciplesQuiz,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )
 
 // ================ KOREAN VERSION =================
@@ -325,4 +327,5 @@ val solidPrinciplesQuizBundleKo = QuizBundle(
     theme = codingQuizTheme,
     quizzes = solidPrinciplesQuizKorean,
     titleImage = R.drawable.codinginterview,
+    scoreCard = codingScoreCard,
 )

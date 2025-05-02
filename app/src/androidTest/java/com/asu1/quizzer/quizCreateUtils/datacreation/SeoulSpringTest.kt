@@ -1,5 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
@@ -8,6 +10,7 @@ import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -122,6 +125,16 @@ val springQuizTheme = QuizTheme(
     )
 )
 
+val seoulSpringScoreCard = ScoreCard(
+    textColor = hexColor("ffdbc7"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.CITY,
+        color = hexColor("894e24"),
+        color2 = hexColor("512400"),
+        effect = Effect.RAIN,
+    ),
+)
+
 // 4) Wrap it all up in a QuizBundle, including both titleImage and overlayImage
 @Suppress("unused")
 val springQuizBundle = QuizBundle(
@@ -129,5 +142,6 @@ val springQuizBundle = QuizBundle(
     theme        = springQuizTheme,
     quizzes      = seoulSpringQuiz,
     titleImage   = com.asu1.resources.R.drawable.seoul,
-    overlayImage = R.drawable.soldier_back
+    overlayImage = R.drawable.soldier_back,
+    scoreCard = seoulSpringScoreCard
 )

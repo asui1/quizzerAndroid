@@ -76,7 +76,8 @@ fun DateSelectionQuizCreator(
                     append("${quizState.centerDate.format(monthYearFormatter)}")
                 },
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp)
             )
             Text(
                 buildString {
@@ -180,6 +181,7 @@ fun YearMonthDropDown(
             onChangeDropDown = { expanded = it },
             inputStringResourceItems = Months.entries.map { it.monthStringResource },
             currentSelection = yearMonth.monthValue-1,
+            testTag = "YearMonthDropDownMonth",
         )
     }
 }

@@ -1,5 +1,7 @@
 package com.asu1.quizzer.quizCreateUtils.datacreation
 
+import com.asu1.imagecolor.BackgroundBase
+import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.models.quiz.QuizData
@@ -8,6 +10,7 @@ import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
@@ -104,11 +107,21 @@ val fakerQuizTheme = QuizTheme(
     )
 )
 
+val fakerScoreCard = ScoreCard(
+    textColor = hexColor("ffdea8"),
+    background = ImageColor(
+        backgroundBase = BackgroundBase.GLOWING_TROPHY,
+        color = hexColor("ffffff"),
+        color2 = hexColor("e4002b"),
+        effect = Effect.FIREWORKS,
+    ),
+)
 @Suppress("unused")
 val fakerQuizBundle = QuizBundle(
     data       = fakerQuizData,
     theme      = fakerQuizTheme,
     quizzes    = fakerquizzes,
-    titleImage = R.drawable.faker
+    titleImage = R.drawable.faker,
+    scoreCard = fakerScoreCard,
 )
 

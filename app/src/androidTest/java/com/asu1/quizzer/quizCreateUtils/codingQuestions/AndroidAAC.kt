@@ -4,6 +4,7 @@ import com.asu1.models.quiz.QuizData
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
+import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
 
 val androidAacQuiz = listOf(
@@ -138,6 +139,7 @@ val androidAacQuizData = QuizBundle(
     theme = androidQuizTheme,
     quizzes = androidAacQuiz,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )
 
 val androidAacQuizKo = listOf(
@@ -267,10 +269,12 @@ val androidAacDataKo = QuizData(
     description = "안드로이드 AAC의 핵심 개념, ViewModel, LiveData, Room Database 등에 대한 이해도를 테스트하세요.",
     tags = setOf("안드로이드", "AAC", "코딩 인터뷰", "기술 면접")
 )
+
 @Suppress("unused")
 val androidAacQuizBundleKo = QuizBundle(
     data = androidAacDataKo,
     theme = androidQuizTheme,
     quizzes = androidAacQuizKo,
     titleImage = R.drawable.android_coding_interview,
+    scoreCard = androidScoreCard,
 )
