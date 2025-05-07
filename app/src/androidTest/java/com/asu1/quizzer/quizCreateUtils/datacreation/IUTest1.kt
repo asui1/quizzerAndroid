@@ -83,19 +83,19 @@ val iuQuizData1 = QuizData(
 // 3) Build your QuizTheme using the hex values and styles from the old DTO
 val iuQuizTheme1 = QuizTheme(
     backgroundImage = ImageColor(
-        color         = hexColor("FF874b6c"), // primaryColor
-        color2        = hexColor("FFffffff"), // backgroundColorFilter
-        colorGradient = hexColor("ffffffff"), // effectColor
+        color         = hexColor("874b6c"), // primaryColor
+        color2        = hexColor("ffffff"), // backgroundColorFilter
+        colorGradient = hexColor("ffffff"), // effectColor
         state         = ImageColorState.COLOR
     ),
     questionTextStyle = listOf(0, 0, 0),
     bodyTextStyle     = listOf(3, 0, 0),
     answerTextStyle   = listOf(1, 6, 0),
     colorScheme = com.asu1.resources.LightColorScheme.copy(
-        primary            = hexColor("FF874b6c"),
-        onPrimary          = hexColor("ff6c3454"),
-        background         = hexColor("FFffffff"),
-        secondaryContainer = hexColor("ffffffff")
+        primary            = hexColor("874b6c"),
+        onPrimary          = hexColor("6c3454"),
+        background         = hexColor("ffffff"),
+        secondaryContainer = hexColor("ffffff")
     )
 )
 

@@ -3,7 +3,9 @@ package com.asu1.quizzer
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.printToString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
@@ -58,17 +60,21 @@ class MyComposeTest {
         testUtils.clickOnTag("QuizLayoutBuilderAgreePolicyButton")
 
         //SET TITLE
+        testUtils.waitFor(500)
+        composeTestRule.mainClock.advanceTimeBy(4_000L)
+        onIdle()
+        testUtils.waitFor(500)
         testUtils.waitUntilTag("QuizLayoutTitleTextField")
         testUtils.inputTextOnTag("QuizLayoutTitleTextField", testQuizBundle.data.title, withIme = false)
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
 
-        testUtils.waitFor(300)
+        testUtils.waitFor(500)
         //Set Quiz Description
         testUtils.inputTextOnTag("QuizLayoutBuilderDescriptionTextField", testQuizBundle.data.description, withIme = false)
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
 
         //SET TAGS
-        testUtils.waitFor(300)
+        testUtils.waitFor(500)
         testUtils.enterTextsOnTag("TagSetterTextField", testQuizBundle.data.tags.toList(), true)
 
         //SET IMAGE
@@ -84,11 +90,19 @@ class MyComposeTest {
         //Set ColorScheme
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         onIdle()
+        println(
+            composeTestRule
+                .onRoot()
+                .printToString()
+        )
         testUtils.waitFor(1000)
+        onIdle()
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary")
         onIdle()
         testUtils.waitFor(1000)
+        onIdle()
         val primaryColor = testQuizBundle.theme.colorScheme.primary.toRgbHex()
+        println("PrimaryColor Hex: $primaryColor")
         testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextField", primaryColor, true)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
         testUtils.waitFor(1000)

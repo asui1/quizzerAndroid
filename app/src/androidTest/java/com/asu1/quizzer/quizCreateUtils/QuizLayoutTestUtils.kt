@@ -8,6 +8,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -109,7 +110,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addDateSelectionQuiz(quiz: DateSelectionQuiz){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
-        clickOnTag("YearMonthDropDownMonth")
+        clickOnTag("YearMonthDropDownMonth", useUnmergedTree = true)
         waitFor(500)
         clickOnTag("YearMonthDropDownMonth${quiz.centerDate.monthValue}", useUnmergedTree = true)
         for(i in quiz.answerDate){
@@ -224,6 +225,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
     fun clickOnTag(tag: String, checkFocus: Boolean = false, useUnmergedTree: Boolean = false) {
         interactWithNode(tag, checkFocus, useUnmergedTree) {
+            assertHasClickAction()
             performClick()
         }
     }
@@ -255,7 +257,9 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
     private fun interactWithNode(tag: String, checkFocus: Boolean = false, useUnmergedTree: Boolean = false, action: SemanticsNodeInteraction.() -> Unit) {
         onIdle()
-        val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = useUnmergedTree)
+        val node = composeTestRule
+            .onNodeWithTag(tag, useUnmergedTree = useUnmergedTree)
+            .assertExists("$tag not exists.")
         if (checkFocus && !node.isDisplayed()) {
             node.performScrollTo()
             onIdle()

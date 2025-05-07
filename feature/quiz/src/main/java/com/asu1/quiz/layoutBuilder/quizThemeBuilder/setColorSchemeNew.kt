@@ -36,6 +36,9 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.LightColorScheme
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
+import com.asu1.utils.Logger
+
+val size = 50.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,24 +70,27 @@ fun SetColorScheme(
                 .fillMaxWidth(),
         ) {
             items(ThemeColorPicker.entries, key = {it.name}) { color ->
+                val testTag = if(color == ThemeColorPicker.Primary) "QuizLayoutSetColorSchemeButtonPrimary" else "QuizLayout"
                 OverlappingColorCircles(
                     modifier = Modifier
-                        .testTag("QuizLayoutSetColorSchemeButton${color.name}")
-                        .then(
-                            if (color == selectedColor) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-                            else Modifier
-                        )
+                        .testTag(testTag)
                         .clickable {
+                            Logger.debug("Overlapping Color Circles clicked")
                             if(selectedColor == color){
                                 selectedColor = null
                             }else{
                                 selectedColor = color
                                 scrollTo()
                             }
-                        },
+                        }
+                        .then(
+                            if (color == selectedColor) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+                            else Modifier
+                        ),
                     label = stringResource(color.stringResourceId),
                     backgroundColor = color.colorAccessor(currentColors),
                     foregroundColor = color.onColorAccessor(currentColors),
+                    size = size,
                 )
             }
         }

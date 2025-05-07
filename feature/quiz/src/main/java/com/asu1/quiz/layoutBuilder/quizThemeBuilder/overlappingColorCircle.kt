@@ -29,7 +29,8 @@ fun OverlappingColorCircles(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.width(size * 1.2f)
+        modifier = modifier
+            .width(size * 1.2f)
     ) {
         Box(
             modifier = Modifier
