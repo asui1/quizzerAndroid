@@ -88,6 +88,21 @@ class QuizThemeViewModel : ViewModel() {
     }
 
     fun updateColorScheme(name: ThemeColorPicker, color: Color) {
+        // grab the old color
+        val old = when(name) {
+            ThemeColorPicker.Primary          -> _quizTheme.value.colorScheme.primary
+            ThemeColorPicker.PrimaryContainer -> _quizTheme.value.colorScheme.primaryContainer
+            ThemeColorPicker.Secondary        -> _quizTheme.value.colorScheme.secondary
+            ThemeColorPicker.SecondaryContainer -> _quizTheme.value.colorScheme.secondaryContainer
+            ThemeColorPicker.Tertiary -> _quizTheme.value.colorScheme.tertiary
+            ThemeColorPicker.TertiaryContainer -> _quizTheme.value.colorScheme.tertiaryContainer
+            ThemeColorPicker.Error -> _quizTheme.value.colorScheme.error
+            ThemeColorPicker.ErrorContainer -> _quizTheme.value.colorScheme.errorContainer
+            ThemeColorPicker.Surface -> _quizTheme.value.colorScheme.surface
+            ThemeColorPicker.Outline -> _quizTheme.value.colorScheme.outline
+        }
+        if (old == color) return
+
         _quizTheme.update {
             val updatedScheme = when (name) {
                 ThemeColorPicker.Primary -> _quizTheme.value.colorScheme.updatePrimary(color)
