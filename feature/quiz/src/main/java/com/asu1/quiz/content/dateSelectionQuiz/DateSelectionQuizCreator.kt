@@ -126,7 +126,6 @@ fun YearMonthDropDown(
     key: String = "YearMonthDropDown"
 ){
     var expanded by remember { mutableStateOf(false) }
-    var year by remember { mutableStateOf(yearMonth.year.toString()) }
     var yearTextFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
@@ -175,7 +174,7 @@ fun YearMonthDropDown(
             showDropdownMenu = expanded,
             labelText = "${stringResource(R.string.month)}: ${yearMonth.monthValue}",
             onClick = { month ->
-                onYearMonthChange(YearMonth.of(year.toInt(), month+1))
+                onYearMonthChange(yearMonth.withMonth(month + 1))
                 expanded = false
             },
             onChangeDropDown = { expanded = it },

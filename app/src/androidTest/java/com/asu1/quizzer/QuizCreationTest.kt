@@ -25,7 +25,7 @@ import org.junit.Test
 
 
 // Default goes with addbody:true, upload: false
-const val addBody = true
+const val addBody = false
 const val upLoad = false
 
 class MyComposeTest {
@@ -86,7 +86,6 @@ class MyComposeTest {
         testUtils.waitFor(100)
 
         //Set ColorScheme
-        // TODO: 색을 업데이트 하는데 색이 변한 색으로 입력되고 ffffff가 새로 입력되어버림. -> 테스트 코드에서 입력 무시.
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         onIdle()
         testUtils.waitFor(500)
@@ -134,7 +133,7 @@ class MyComposeTest {
         }
 
         //DESIGN SCORECARD
-        testUtils.clickOnTag("QuizBuilderScreenProceedButton")
+        testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         testUtils.waitFor(300)
 
         testUtils.clickOnTag("DesignScoreCardSetTextColorButton")
