@@ -61,6 +61,7 @@ fun FastCreateDropDownWithTextButton(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .testTag(testTag)
                 .clickable{ onChangeDropDown(!showDropdownMenu) }
                 .defaultMinSize(minHeight = 48.dp)
                 .fillMaxWidth(),
@@ -69,7 +70,6 @@ fun FastCreateDropDownWithTextButton(
                 text = labelText,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
-                    .testTag(testTag),
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,

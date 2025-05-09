@@ -110,10 +110,12 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addDateSelectionQuiz(quiz: DateSelectionQuiz){
         addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
+        onIdle()
         clickOnTag("YearMonthDropDownMonth", useUnmergedTree = true)
         waitFor(500)
         clickOnTag("YearMonthDropDownMonth${quiz.centerDate.monthValue}", useUnmergedTree = true)
         for(i in quiz.answerDate){
+            onIdle()
             waitFor(100)
             clickOnTag(i.toString())
         }

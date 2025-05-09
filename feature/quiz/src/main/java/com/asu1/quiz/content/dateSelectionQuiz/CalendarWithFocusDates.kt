@@ -109,6 +109,9 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
     Box(
         modifier = Modifier
             .testTag(day.date.toString())
+            .clickable {
+                onDateClick(day.date)
+            }
             .aspectRatio(1f)
             .alpha(alpha)
             .then(
@@ -124,9 +127,6 @@ fun Day(day: CalendarDay, currentMonth: YearMonth, isSelected: Boolean, onDateCl
                 color = backgroundColor,
                 shape = CircleShape
             )
-            .clickable {
-                onDateClick(day.date)
-            }
             .semantics {
                 contentDescription = "Day ${day.date}"
             },

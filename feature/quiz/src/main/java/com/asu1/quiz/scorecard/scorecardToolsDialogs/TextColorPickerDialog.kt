@@ -11,8 +11,7 @@ import com.asu1.resources.R
 @Composable
 fun TextColorPickerDialog(
     scoreCard: ScoreCard,
-    updateQuizCoordinate: (QuizCoordinatorActions) -> Unit,
-    onDismiss: () -> Unit
+    updateQuizCoordinate: (QuizCoordinatorActions) -> Unit
 ) {
     TextColorPickerModalSheet(
         initialColor = scoreCard.textColor,
@@ -24,7 +23,6 @@ fun TextColorPickerDialog(
             )
         },
         text = stringResource(R.string.select_text_color),
-        colorName = stringResource(R.string.text_color),
-        onClose = onDismiss
+        colorName = stringResource(R.string.text_color)
     )
 }

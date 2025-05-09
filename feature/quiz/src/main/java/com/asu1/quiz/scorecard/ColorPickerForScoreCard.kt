@@ -26,7 +26,6 @@ fun TextColorPickerModalSheet(
     onColorSelected: (Color) -> Unit,
     text: String = "",
     colorName: String = "",
-    onClose: () -> Unit = {},
     toggleBlendMode: @Composable () -> Unit = {},
     resetToTransparent: @Composable () -> Unit = {},
 ){
@@ -54,7 +53,6 @@ fun TextColorPickerModalSheet(
             onColorSelected = { color ->
                 onColorSelected(color)
             },
-            onClose = { onClose() },
             testTag = "DesignScoreCardTextColorPicker"
         )
     }

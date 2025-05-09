@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.graphics.toColorInt
+import com.asu1.utils.Logger
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -51,7 +51,6 @@ fun ColorPicker(
     colorName: String = "",
     testTag: String = "",
     onColorSelected: (Color) -> Unit,
-    onClose: () -> Unit = {},
 ) {
     val controller = rememberColorPickerController()
     var localColor by remember(initialColor) { mutableStateOf(initialColor) }
@@ -59,6 +58,7 @@ fun ColorPicker(
 
     // Initialize color picker with the initial color
     LaunchedEffect(Unit) {
+        Logger.debug("Launched Unit")
         controller.selectByColor(initialColor, false)
         localColor = initialColor
         rgbValue = initialColor.toRgbHex()
@@ -66,11 +66,12 @@ fun ColorPicker(
 
     // Listen for color changes using controller.getColorFlow()
     LaunchedEffect(controller) {
-        controller.getColorFlow(100)
+        controller.getColorFlow(50)
             .collect { colorEnvelope ->
                 val selectedColor =
                     if(colorEnvelope.fromUser) colorEnvelope.color.copy(alpha = 1.0f)
                     else colorEnvelope.color
+                Logger.debug("Controller Change ${selectedColor.toRgbHex()}")
 
                 localColor = selectedColor
                 rgbValue = selectedColor.toRgbHex()
@@ -179,9 +180,6 @@ fun ColorPicker(
                         keyboardType = KeyboardType.Ascii,
                         imeAction = ImeAction.Done
                     ),
-                    keyboardActions = KeyboardActions {
-                        onClose()
-                    },
                     maxLines = 1,
                 )
             }
@@ -239,9 +237,6 @@ fun ColorPicker(
                         keyboardType = KeyboardType.Ascii,
                         imeAction = ImeAction.Done
                     ),
-                    keyboardActions = KeyboardActions {
-                        onClose()
-                    }
                 )
             }
         }

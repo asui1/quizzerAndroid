@@ -3,9 +3,7 @@ package com.asu1.quizzer
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.test.printToString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
@@ -88,22 +86,23 @@ class MyComposeTest {
         testUtils.waitFor(100)
 
         //Set ColorScheme
+        // TODO: 색을 업데이트 하는데 색이 변한 색으로 입력되고 ffffff가 새로 입력되어버림. -> 테스트 코드에서 입력 무시.
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")
         onIdle()
-        println(
-            composeTestRule
-                .onRoot()
-                .printToString()
-        )
+        testUtils.waitFor(500)
+        testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary")
+        onIdle()
+        testUtils.waitFor(500)
+        val primaryColor = testQuizBundle.theme.colorScheme.primary.toRgbHex()
+        println("PrimaryColor Hex: $primaryColor")
+        testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextField", primaryColor, withIme = true)
+        onIdle()
+        composeTestRule.mainClock.advanceTimeBy(2_000L)
         testUtils.waitFor(1000)
         onIdle()
         testUtils.clickOnTag("QuizLayoutSetColorSchemeButtonPrimary")
-        onIdle()
         testUtils.waitFor(1000)
         onIdle()
-        val primaryColor = testQuizBundle.theme.colorScheme.primary.toRgbHex()
-        println("PrimaryColor Hex: $primaryColor")
-        testUtils.replaceTextOnTag("QuizLayoutSetColorSchemeTextField", primaryColor, true)
         testUtils.clickOnTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
         testUtils.waitFor(1000)
 
@@ -124,6 +123,7 @@ class MyComposeTest {
                 val quiz = testQuizBundle.quizzes[i]
                 when (quiz) {
                     is ConnectItemsQuiz -> testUtils.addConnectItemsQuiz(quiz)
+                    //TODO: Date Selection에서 현재 년도가 바뀔때 업데이트 안됨.
                     is DateSelectionQuiz -> testUtils.addDateSelectionQuiz(quiz)
                     is FillInBlankQuiz -> TODO()
                     is MultipleChoiceQuiz -> testUtils.addMultipleChoiceQuiz(quiz)

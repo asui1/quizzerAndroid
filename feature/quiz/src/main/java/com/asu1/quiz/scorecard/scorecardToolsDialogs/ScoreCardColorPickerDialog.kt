@@ -21,8 +21,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun ScoreCardColorPickerDialog(
     colorIndex: Int,
     scoreCard: ScoreCard,
-    updateQuizCoordinate: (QuizCoordinatorActions) -> Unit,
-    onDismiss: () -> Unit
+    updateQuizCoordinate: (QuizCoordinatorActions) -> Unit
 ) {
     TextColorPickerModalSheet(
         initialColor = when(colorIndex) {
@@ -51,7 +50,6 @@ fun ScoreCardColorPickerDialog(
                 else -> R.string.color1
             }
         ),
-        onClose = onDismiss,
         toggleBlendMode = {
             if(colorIndex == 0){
                 ToggleTextWithTabRow(
@@ -90,7 +88,6 @@ fun PreviewScoreCardColorPickerDialog(){
             colorIndex = 0,
             scoreCard = sampleScoreCard,
             updateQuizCoordinate = {},
-            onDismiss = {},
         )
     }
 }

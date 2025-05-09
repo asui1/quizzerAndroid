@@ -97,8 +97,7 @@ fun QuizLayoutSetBackground(
                                 updateQuizTheme(
                                     QuizThemeActions.UpdateBackgroundColor(color)
                                 )
-                            },
-                            onClose = { isOpen = false }
+                            }
                         )
                     }
 

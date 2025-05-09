@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +33,6 @@ fun SetGradientBackground(
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
 ){
     var showGradientDropdown by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -79,9 +77,6 @@ fun SetGradientBackground(
                         QuizThemeActions.UpdateBackgroundColor(color)
                     )
                 },
-                onClose = {
-                    keyboardController?.hide()
-                },
                 modifier = Modifier.weight(1f),
             )
             ColorPicker(
@@ -91,9 +86,6 @@ fun SetGradientBackground(
                     updateQuizTheme(
                         QuizThemeActions.UpdateGradientColor(color)
                     )
-                },
-                onClose = {
-                    keyboardController?.hide()
                 },
                 modifier = Modifier.weight(1f),
             )

@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.colormodel.ThemeColorPicker
 import com.asu1.customComposable.colorPicker.ColorPicker
+import com.asu1.customComposable.colorPicker.toRgbHex
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.LightColorScheme
 import com.asu1.resources.QuizzerAndroidTheme
@@ -97,26 +98,25 @@ fun SetColorScheme(
         AnimatedVisibility(
             visible = selectedColor != null,
         ) {
-            key(selectedColor){
-                ColorPicker(
-                    modifier = Modifier
-                        .height(300.dp),
-                    initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
-                    colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
-                    onColorSelected = { color ->
-                        updateQuizTheme(
-                            QuizThemeActions.UpdateColor(
-                                colorType = selectedColor ?: ThemeColorPicker.Primary,
-                                color = color,
+            if(selectedColor != null)
+                key(selectedColor){
+                    ColorPicker(
+                        modifier = Modifier
+                            .height(300.dp),
+                        initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
+                        colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
+                        onColorSelected = { color ->
+                            Logger.debug("Update Color ${color.toRgbHex()}")
+                            updateQuizTheme(
+                                QuizThemeActions.UpdateColor(
+                                    colorType = selectedColor ?: ThemeColorPicker.Primary,
+                                    color = color,
+                                )
                             )
-                        )
-                    },
-                    onClose = {
-                        selectedColor = null
-                    },
-                    testTag = "QuizLayoutSetColorSchemeTextField"
-                )
-            }
+                        },
+                        testTag = "QuizLayoutSetColorSchemeTextField"
+                    )
+                }
         }
     }
 }

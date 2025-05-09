@@ -79,8 +79,7 @@ fun DesignScoreCardTools(
                     ScoreCardColorPickerDialog(
                         colorIndex = colorIndex,
                         scoreCard = scoreCard,
-                        updateQuizCoordinate = updateQuizCoordinate,
-                        onDismiss = {onDismiss()}
+                        updateQuizCoordinate = updateQuizCoordinate
                     )
                 }
                 ScoreCardDialog.OverlayImagePicker -> {
@@ -93,8 +92,7 @@ fun DesignScoreCardTools(
                 ScoreCardDialog.TextColorPicker -> {
                     TextColorPickerDialog(
                         scoreCard = scoreCard,
-                        updateQuizCoordinate = updateQuizCoordinate,
-                        onDismiss = {onDismiss()}
+                        updateQuizCoordinate = updateQuizCoordinate
                     )
                 }
                 ScoreCardDialog.BackgroundImagePicker -> {
