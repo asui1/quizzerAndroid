@@ -7,10 +7,15 @@ fun <T> MutableCollection<T>.toggle(element: T) {
     if (!add(element)) remove(element)
 }
 
+const val dragOffsetSize = 30
+
 fun getDragIndex(target: Offset, items: List<Offset>) : Int?{
-    if(abs(target.x - items[0].x) > 25) return null
+    Logger.debug("update with $target")
+    Logger.debug(items)
+    if(abs(target.x - items[0].x) > dragOffsetSize) return null
     for(i in items.indices){
-        if(abs(target.y - items[i].y) < 25) {
+        if(abs(target.y - items[i].y) < dragOffsetSize) {
+            Logger.debug(i)
             return i
         }
     }

@@ -13,7 +13,7 @@ import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils
-import com.asu1.quizzer.quizCreateUtils.datacreation.iuQuizBundle1
+import com.asu1.quizzer.quizCreateUtils.sampleQuizBundle
 import org.junit.Rule
 import org.junit.Test
 
@@ -32,7 +32,7 @@ class MyComposeTest {
         composeTestRule.waitForIdle()
         val activity = composeTestRule.activity
         val context = activity.applicationContext
-        val testQuizBundle = iuQuizBundle1
+        val testQuizBundle = sampleQuizBundle
         val instContext = InstrumentationRegistry.getInstrumentation().context
 
         //Move to Create Quiz Layout

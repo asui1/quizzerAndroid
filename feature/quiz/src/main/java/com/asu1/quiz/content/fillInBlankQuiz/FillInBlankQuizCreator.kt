@@ -100,9 +100,11 @@ fun FillInBlankQuizCreator(
         }
         item{
             Spacer(modifier = Modifier.height(8.dp))
-            AddAnswer {
-                quiz.addAnswer()
-            }
+            AddAnswer(
+                onClick = {
+                    quiz.addAnswer()
+                }
+            )
         }
     }
 }

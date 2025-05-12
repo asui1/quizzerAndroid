@@ -3,12 +3,12 @@ package com.asu1.quizzer.quizCreateUtils
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.sampleQuizList
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.datacreation.iuQuizData1
 import com.asu1.quizzer.quizCreateUtils.datacreation.iuQuizTheme1
 import com.asu1.quizzer.quizCreateUtils.datacreation.iuScoreCard
 import com.asu1.quizzer.test.R
-import com.asu1.models.sampleQuizList
 
 data class QuizBundle(
     val data: QuizData,
@@ -20,7 +20,7 @@ data class QuizBundle(
 )
 
 @Suppress("unused")
-val iuQuizBundle1 = QuizBundle(
+val sampleQuizBundle = QuizBundle(
     data         = iuQuizData1,
     theme        = iuQuizTheme1,
     quizzes      = sampleQuizList,

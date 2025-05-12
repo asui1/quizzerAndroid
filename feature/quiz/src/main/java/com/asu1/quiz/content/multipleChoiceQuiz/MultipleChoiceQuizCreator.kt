@@ -120,7 +120,8 @@ private fun AnswerTextField(
             label = stringResource(R.string.answer_label),
             isLast = isLast,
             onNext = onNext,
-            deleteAnswer = deleteAnswer
+            deleteAnswer = deleteAnswer,
+            key = key
         )
     }
 }

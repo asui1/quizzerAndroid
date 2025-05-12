@@ -11,6 +11,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +27,8 @@ fun TextFieldWithDelete(
     onValueChange: (String) -> Unit = {},
     isLast: Boolean = false,
     onNext: () -> Unit = {},
-    deleteAnswer: () -> Unit = {}
+    deleteAnswer: () -> Unit = {},
+    key: String = "",
 ){
     OutlinedTextField(
         modifier = modifier,
@@ -48,6 +50,7 @@ fun TextFieldWithDelete(
             IconButton(
                 onClick = deleteAnswer,
                 modifier = Modifier
+                    .testTag("${key}delete")
                     .padding(start = 8.dp),
             ) {
                 Icon(

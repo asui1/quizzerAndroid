@@ -47,6 +47,7 @@ import com.asu1.quiz.content.quizCommonBuilder.QuizCreatorBase
 import com.asu1.quiz.content.strokeWidth
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModelStates
+import com.asu1.utils.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
@@ -74,10 +75,10 @@ fun ConnectItemsQuizCreator(
         focusManager = focusManager,
         updateQuestion = { it -> quiz.updateQuestion(it) },
         updateBodyState = { it -> quiz.updateBodyState(it) },
-        header = {
+        boxScopeBehind = {
             DrawLines(leftDots = leftDotOffsets, rightDots = rightDotOffsets, connections = quizState.connectionAnswerIndex)
         },
-        footer = {
+        boxScopeOnTop = {
             if(dragState.isDragging) {
                 val color = MaterialTheme.colorScheme.primary
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -132,6 +133,7 @@ fun ConnectItemsQuizCreator(
                                 pointerEvent = { it ->
                                     detectDragGestures(
                                         onDragStart = {
+                                            Logger.debug("On Drag Start $index")
                                             dragState.startOffset =
                                                 leftDotOffsets[index]
                                             dragState.endOffset =
@@ -145,6 +147,7 @@ fun ConnectItemsQuizCreator(
                                             dragState.isDragging = true
                                         },
                                         onDragEnd = {
+                                            Logger.debug("On Drag End $index")
                                             dragState.isDragging = false
                                             quiz.onQuiz4Update(
                                                 ConnectItemsQuizViewModelStates.OnDragEndCreator(
@@ -235,7 +238,8 @@ fun ConnectItemsQuizCreator(
                     AddAnswer(
                         onClick = {
                             quiz.onQuiz4Update(ConnectItemsQuizViewModelStates.AddRight)
-                        }
+                        },
+                        testTag = "QuizCreatorAddAnswerButtonRight",
                     )
                 }
             }
@@ -279,7 +283,6 @@ fun DraggableDot(
             .onGloballyPositioned { coordinates ->
                 val globalOffset = coordinates.positionInRoot()
                 // Calculate a new relative offset based on your parameters.
-
                 val relativeOffset = globalOffset - boxPosition + Offset(moveOffset, moveOffset)
                 // Emit the calculated offset into the flow.
                 offsetFlow.tryEmit(relativeOffset)

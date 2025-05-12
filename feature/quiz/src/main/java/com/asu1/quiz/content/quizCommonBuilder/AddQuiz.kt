@@ -25,7 +25,8 @@ import com.asu1.resources.R
 
 @Composable
 fun AddAnswer(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    testTag: String = "QuizCreatorAddAnswerButton",
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -41,7 +42,7 @@ fun AddAnswer(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .testTag("QuizCreatorAddAnswerButton")
+                .testTag(testTag)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

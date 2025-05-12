@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.hasTestTag
@@ -71,7 +72,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         replaceTextOnTag(
             tag = "FillInBlankQuizTextFieldBody",
             newText = quiz.rawText,
-            withIme = true,
             checkFocus = true,
         )
         for(i in quiz.correctAnswers.indices){
@@ -94,7 +94,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun setAnswer(
         answerSIze: Int,
         defaultSize: Int,
-        removeTag: String = "QuizCreatorRemoveAnswerButton",
+        removeTag: String = "QuizAnswerTextField0delete",
         addTag: String = "QuizCreatorAddAnswerButton",){
         if(answerSIze < defaultSize){
             repeat(defaultSize - answerSIze) {
@@ -194,20 +194,28 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
                 inputTextOnTag("QuizCreatorAnswerRightTextField${i}", quiz.connectionAnswers[i], checkFocus = true)
             }
         }
+
+//        update with Offset(537.7, 981.6) 540 -> 578 981 -> 995 x -> + 38, y + 15
+//        update with Offset(545.0, 1366.1) 1366 -> 1403
+//        update with Offset(547.4, 1203.9) 1203 -> 1200
+//        update with Offset(537.7, 1593.6) 1593.6 -> 1607.9
+//        SnapshotStateList(value=[Offset(578.9, 995.9), Offset(578.9, 1199.9), Offset(578.9, 1403.9), Offset(578.9, 1607.9)])@54832633
         for(i in 0 until quiz.answers.size){
             composeTestRule.onNodeWithTag("QuizCreatorLeftDot$i").performTouchInput {
                 val startPosition = this.center
                 val startPositionRoot = composeTestRule.onNodeWithTag("QuizCreatorLeftDot$i")
                     .fetchSemanticsNode()
                     .positionInRoot
-                val endPosition = composeTestRule.onNodeWithTag("QuizCreatorRightDot${quiz.connectionAnswerIndex[i]}")
+                val connectionAnswerIndex = quiz.connectionAnswerIndex[i] ?: i
+                val endPosition = composeTestRule.onNodeWithTag("QuizCreatorRightDot${connectionAnswerIndex}")
                     .fetchSemanticsNode()
-                    .positionInRoot
+                    .positionInRoot + Offset(40f, 15f)
                 swipe(startPosition, endPosition-startPositionRoot,
                     durationMillis = 1000
                 )
             }
             onIdle()
+            waitFor(500)
         }
     }
 

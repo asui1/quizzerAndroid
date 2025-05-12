@@ -29,8 +29,8 @@ fun QuizCreatorBase(
     focusManager: FocusManager,
     updateQuestion: (String) -> Unit,
     updateBodyState: (BodyType) -> Unit,
-    header: @Composable () -> Unit = {},
-    footer: @Composable () -> Unit = {},
+    boxScopeBehind: @Composable () -> Unit = {},
+    boxScopeOnTop: @Composable () -> Unit = {},
     content: LazyListScope.() -> Unit,
 ){
     Box(
@@ -39,7 +39,7 @@ fun QuizCreatorBase(
             .padding(boxPadding)
             .then(modifier)
     ) {
-        header()
+        boxScopeBehind()
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -68,6 +68,6 @@ fun QuizCreatorBase(
                 onSave()
             }
         )
-        footer()
+        boxScopeOnTop()
     }
 }
