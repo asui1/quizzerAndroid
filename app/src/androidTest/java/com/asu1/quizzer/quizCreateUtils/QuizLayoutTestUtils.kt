@@ -27,9 +27,14 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.test.espresso.Espresso.onIdle
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
+import com.asu1.models.quizRefactor.FillInBlankQuiz
 import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
+import com.asu1.models.quizRefactor.ShortAnswerQuiz
+import com.asu1.models.quizRefactor.connectItemsQuizDefaultSize
+import com.asu1.models.quizRefactor.defaultMultipleChoiceQuizSize
+import com.asu1.models.quizRefactor.reorderQuizDefaultSize
 import com.asu1.models.serializers.BodyType
 import com.asu1.utils.Logger
 import com.asu1.utils.uriToByteArray
@@ -37,33 +42,74 @@ import kotlinx.coroutines.runBlocking
 
 class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
 
-    fun addQuizInit(quiz: Quiz, quizType: Int, clickAddAnswerNTimes: Int = 0, clickAddRightAnswerNTimes: Int = 0){
+    fun addNewQuiz(quizType: Int){
         clickOnTag("QuizBuilderScreenAddQuizIconButton")
         clickOnTag("QuizBuilderScreenNewQuizDialogImage${quizType}", true)
         waitFor(200)
-        if(quiz is ConnectItemsQuiz) addAnswer(clickAddAnswerNTimes, clickAddRightAnswerNTimes)
-        else addAnswer(clickAddAnswerNTimes)
-        inputTextOnTag("QuizQuestionTextField", quiz.question, checkFocus = true)
     }
 
-    fun addAnswer(clickAddAnswerNTimes: Int){
-        repeat(clickAddAnswerNTimes) {
-            clickOnTag("QuizCreatorAddAnswerButton", checkFocus = true)
+    fun addQuiz(quiz: Quiz){
+        addQuizBody(quiz)
+        inputTextOnTag("QuizQuestionTextField", quiz.question, withIme = true, checkFocus = true)
+        when(quiz){
+            is ConnectItemsQuiz -> addConnectItemsQuiz(quiz)
+            is DateSelectionQuiz -> addDateSelectionQuiz(quiz)
+            is FillInBlankQuiz -> addFillInBlankQuiz(quiz)
+            is MultipleChoiceQuiz -> addMultipleChoiceQuiz(quiz)
+            is ReorderQuiz -> addReorderQuiz(quiz)
+            is ShortAnswerQuiz -> addShortAnswerQuiz(quiz)
+        }
+        clickOnTag("QuizCreatorSaveButton")
+        waitFor(1000)
+    }
+
+    fun addFillInBlankQuiz(quiz: FillInBlankQuiz){
+        setAnswer(
+            answerSIze = quiz.correctAnswers.size,
+            defaultSize = 0,
+        )
+        replaceTextOnTag(
+            tag = "FillInBlankQuizTextFieldBody",
+            newText = quiz.rawText,
+            withIme = true,
+            checkFocus = true,
+        )
+        for(i in quiz.correctAnswers.indices){
+            inputTextOnTag(
+                tag = "FillInBlankQuizTextFieldAnswer$i",
+                text = quiz.correctAnswers[i],
+                withIme = true,
+            )
         }
     }
 
-    fun addAnswer(clickAddAnswerLeftNTimes: Int, clickAddAnswerRightNTimes: Int){
-        repeat(clickAddAnswerLeftNTimes) {
-            clickOnTag("QuizCreatorAddAnswerLeftButton", checkFocus = true)
-        }
-        repeat(clickAddAnswerRightNTimes) {
-            clickOnTag("QuizCreatorAddAnswerRightButton", checkFocus = true)
+    fun addShortAnswerQuiz(quiz: ShortAnswerQuiz){
+        inputTextOnTag(
+            tag = "ShortAnswerQuizAnswerTextField",
+            text = quiz.answer,
+            withIme = true,
+        )
+    }
+
+    fun setAnswer(
+        answerSIze: Int,
+        defaultSize: Int,
+        removeTag: String = "QuizCreatorRemoveAnswerButton",
+        addTag: String = "QuizCreatorAddAnswerButton",){
+        if(answerSIze < defaultSize){
+            repeat(defaultSize - answerSIze) {
+                clickOnTag(removeTag, checkFocus = true)
+            }
+        }else if(answerSIze > defaultSize){
+            repeat(answerSIze - defaultSize) {
+                clickOnTag(addTag, checkFocus = true)
+            }
         }
     }
 
     fun addQuizBody(quiz: Quiz){
         if(quiz.bodyValue is BodyType.NONE) return
-        if(quiz.bodyValue is BodyType.IMAGE) return
+        if(quiz.bodyValue is BodyType.IMAGE) TODO("MAKE UP FOR IMAGE")
         clickOnTag("QuizCreatorAddBodyButton", checkFocus = true)
         when(quiz.bodyValue.value){
             1 -> {
@@ -86,11 +132,11 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
         }
     }
 
-    // NEED CODE TO ADD BODY, ADD OR REMOVE ANSWERS
     fun addMultipleChoiceQuiz(quiz: MultipleChoiceQuiz){
-        val counts = quiz.options.size - 5
-        addQuizInit(quiz, 0, counts)
-        addQuizBody(quiz)
+        setAnswer(
+            answerSIze = quiz.options.size,
+            defaultSize = defaultMultipleChoiceQuizSize,
+        )
         composeTestRule
             .onNodeWithTag("MultipleChoiceQuizCreatorLazyColumn")
             .performScrollToNode(hasTestTag("QuizAnswerTextField0Checkbox"))
@@ -102,13 +148,9 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             }
             inputTextOnTag("QuizAnswerTextField${i}TextField", quiz.options[i], checkFocus = true, withIme = true)
         }
-        waitFor(500)
-        clickOnTag("QuizCreatorSaveButton")
-        waitFor(1000)
     }
 
     fun addDateSelectionQuiz(quiz: DateSelectionQuiz){
-        addQuizInit(quiz, 1)
         replaceTextOnTag("YearMonthDropDownYearTextField", quiz.centerDate.year.toString(), checkFocus = true, withIme = true)
         onIdle()
         waitFor(500)
@@ -121,26 +163,28 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             waitFor(100)
             clickOnTag(i.toString())
         }
-        clickOnTag("QuizCreatorSaveButton")
-        waitFor(1000)
     }
 
     fun addReorderQuiz(quiz: ReorderQuiz){
-        val counts = quiz.answers.size - 5
-        addQuizInit(quiz, 2, counts)
-        addQuizBody(quiz)
+        setAnswer(
+            answerSIze = quiz.answers.size,
+            defaultSize = reorderQuizDefaultSize)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizAnswerTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
         }
-        clickOnTag("QuizCreatorSaveButton")
-        waitFor(1000)
     }
 
     fun addConnectItemsQuiz(quiz: ConnectItemsQuiz){
-        val leftCounts = quiz.answers.size - 4
-        val rightCounts = quiz.connectionAnswers.size - 4
-        addQuizInit(quiz, 3, leftCounts, rightCounts)
-        addQuizBody(quiz)
+        setAnswer(
+            answerSIze = quiz.answers.size,
+            defaultSize = connectItemsQuizDefaultSize,
+        )
+        setAnswer(
+            answerSIze = quiz.connectionAnswers.size,
+            defaultSize = connectItemsQuizDefaultSize,
+            removeTag = "QuizCreatorRemoveAnswerButton",
+            addTag = "QuizCreatorAddAnswerButtonRight",
+        )
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizCreatorAnswerLeftTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
             if(i == quiz.answers.size - 1){
@@ -165,8 +209,6 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
             }
             onIdle()
         }
-        clickOnTag("QuizCreatorSaveButton")
-        waitFor(1000)
     }
 
     @Suppress("UNCHECKED_CAST")

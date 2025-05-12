@@ -10,14 +10,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
+const val defaultMultipleChoiceQuizSize = 5
+
 @Serializable
 @SerialName("0")
 data class MultipleChoiceQuiz(
     override var question: String = "",
     @SerialName("answers")
-    val options: List<String> = List(5){""},
+    val options: List<String> = List(defaultMultipleChoiceQuizSize){""},
     @SerialName("ans")
-    val correctFlags: List<Boolean> = List(5){false},
+    val correctFlags: List<Boolean> = List(defaultMultipleChoiceQuizSize){false},
     val shuffleAnswers: Boolean = false,
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,

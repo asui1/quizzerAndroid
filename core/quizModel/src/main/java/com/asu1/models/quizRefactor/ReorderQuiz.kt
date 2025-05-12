@@ -10,11 +10,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
+const val reorderQuizDefaultSize = 5
+
 @Serializable
 @SerialName("2")
 data class ReorderQuiz(
     override var question: String = "",
-    val answers: List<String> = listOf("", "", "", "", ""),       // same JSON key
+    val answers: List<String> = List(reorderQuizDefaultSize){""},
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {

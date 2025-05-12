@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -75,7 +76,9 @@ fun FillInBlankQuizCreator(
         }
         itemsIndexed(quizState.correctAnswers) { index, item ->
             TextFieldWithDelete(
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .testTag("FillInBlankQuizTextFieldAnswer$index")
+                    .fillMaxWidth(0.8f),
                 value = item,
                 onValueChange = {it ->
                     quiz.updateCorrectAnswer(index, it)
@@ -114,6 +117,7 @@ fun FillInBlankField(
         value = textFieldValue,
         onValueChange = onValueChange,
         modifier = Modifier
+            .testTag("FillInBlankQuizTextFieldBody")
             .fillMaxWidth()
             .focusRequester(focusRequester),
         label = { Text("Question") }

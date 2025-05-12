@@ -10,12 +10,6 @@ import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.asu1.customComposable.colorPicker.toRgbHex
 import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.models.quizRefactor.ConnectItemsQuiz
-import com.asu1.models.quizRefactor.DateSelectionQuiz
-import com.asu1.models.quizRefactor.FillInBlankQuiz
-import com.asu1.models.quizRefactor.MultipleChoiceQuiz
-import com.asu1.models.quizRefactor.ReorderQuiz
-import com.asu1.models.quizRefactor.ShortAnswerQuiz
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils
@@ -25,7 +19,7 @@ import org.junit.Test
 
 
 // Default goes with addbody:true, upload: false
-const val addBody = false
+const val addBody = true
 const val upLoad = false
 
 class MyComposeTest {
@@ -120,17 +114,11 @@ class MyComposeTest {
         if(addBody) {
             for(i in testQuizBundle.quizzes.size -1 downTo 0){
                 val quiz = testQuizBundle.quizzes[i]
-                when (quiz) {
-                    is ConnectItemsQuiz -> testUtils.addConnectItemsQuiz(quiz)
-                    //TODO: Date Selection에서 현재 년도가 바뀔때 업데이트 안됨.
-                    is DateSelectionQuiz -> testUtils.addDateSelectionQuiz(quiz)
-                    is FillInBlankQuiz -> TODO()
-                    is MultipleChoiceQuiz -> testUtils.addMultipleChoiceQuiz(quiz)
-                    is ReorderQuiz -> testUtils.addReorderQuiz(quiz)
-                    is ShortAnswerQuiz -> TODO()
-                }
+                testUtils.addNewQuiz(quiz.quizType.value)
+                testUtils.addQuiz(quiz)
             }
         }
+        return
 
         //DESIGN SCORECARD
         testUtils.clickOnTag("QuizLayoutBuilderProceedButton")

@@ -10,13 +10,15 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
+const val connectItemsQuizDefaultSize = 3
+
 @Serializable
 @SerialName("3")
 data class ConnectItemsQuiz(
     override var question: String = "",
-    var answers: List<String> = listOf("", "", ""),
-    var connectionAnswers: List<String> = listOf("", "", ""),
-    var connectionAnswerIndex: List<Int?> = listOf(null, null, null),
+    var answers: List<String> = List(connectItemsQuizDefaultSize){""},
+    var connectionAnswers: List<String> = List(connectItemsQuizDefaultSize){""},
+    var connectionAnswerIndex: List<Int?> = List(connectItemsQuizDefaultSize){null},
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(

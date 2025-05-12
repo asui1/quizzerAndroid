@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,10 +38,11 @@ fun ShortAnswerQuizCreator(
         updateQuestion = { it -> quiz.updateQuestion(it) },
         updateBodyState = { it -> quiz.updateBodyState(it) },
     ) {
-
         item{
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .testTag("ShortAnswerQuizAnswerTextField")
+                    .fillMaxWidth(0.8f),
                 value = quizState.answer,
                 onValueChange = {quiz.updateAnswer(it)},
                 label = { Text(stringResource(R.string.answer_label), fontSize = 12.sp) },
