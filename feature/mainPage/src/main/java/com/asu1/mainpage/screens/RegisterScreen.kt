@@ -50,9 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.textField.TagSetter
 import com.asu1.customComposable.topBar.RowWithAppIconAndName
-import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.uiUtil.keyboardAsState
 import com.asu1.mainpage.viewModels.RegisterViewModel
 import com.asu1.mainpage.viewModels.RegisterViewModelActions
@@ -61,8 +61,6 @@ import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
-import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 const val registerSteps = 3

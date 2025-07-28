@@ -14,8 +14,6 @@ import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,6 +43,7 @@ class RegisterViewModel @Inject constructor(
     val isError: LiveData<Boolean> get() = _isError
 
     fun registerViewModelActions(action: RegisterViewModelActions){
+        @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when(action){
             is RegisterViewModelActions.UndoError -> undoError()
             is RegisterViewModelActions.MoveBack -> moveBack()
@@ -91,7 +90,7 @@ class RegisterViewModel @Inject constructor(
                 _isError.postValue(true)
 
                 // 🚨 Show appropriate toast message
-                val messageRes = when {
+                @Suppress("KotlinConstantConditions") val messageRes = when {
                     containsInappropriateWord -> R.string.nickname_contains_inappropriate_word
                     containsAdminWord -> R.string.nickname_contains_admin_word
                     else -> R.string.can_not_use_this_nickname // Fallback (should not happen)
@@ -125,7 +124,7 @@ class RegisterViewModel @Inject constructor(
                 com.asu1.userdatamodels.UserRegister(
                     _email.value!!,
                     _nickname.value!!,
-                    _tags.value!!.toList(),
+                    _tags.value.toList(),
                     photoUri.value ?: ""
                 )
             )
@@ -144,7 +143,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
     fun toggleTag(tag: String){
-        val tags = _tags.value?.toMutableList() ?: mutableListOf()
+        val tags = _tags.value.toMutableList()
         if(tags.contains(tag)){
             tags.remove(tag)
             _tags.value = tags.toSet()

@@ -61,7 +61,6 @@ import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun  SearchScreen(navController: NavHostController,

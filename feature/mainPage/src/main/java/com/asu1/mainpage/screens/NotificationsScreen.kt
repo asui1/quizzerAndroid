@@ -55,7 +55,6 @@ import com.asu1.resources.R
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun NotificationScreen(

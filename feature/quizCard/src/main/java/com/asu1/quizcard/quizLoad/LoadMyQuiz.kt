@@ -27,13 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
+import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
-import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.activityNavigation.Route
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -41,7 +41,6 @@ import com.asu1.resources.ViewModelState
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun LoadMyQuizScreen(
