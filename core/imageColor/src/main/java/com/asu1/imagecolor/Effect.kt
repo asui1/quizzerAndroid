@@ -1,9 +1,11 @@
 package com.asu1.imagecolor
 
+import androidx.annotation.Keep
 import androidx.core.graphics.BlendModeCompat
 import com.asu1.resources.R
 import kotlinx.serialization.Serializable
 
+@Keep
 enum class EffectTypes(val stringResource: Int){
     NONE(
         R.string.all
@@ -23,6 +25,7 @@ enum class EffectTypes(val stringResource: Int){
     ;
 }
 
+@Keep
 @Serializable
 enum class Effect(
     val stringId: Int,

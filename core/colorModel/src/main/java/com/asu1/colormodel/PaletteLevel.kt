@@ -1,11 +1,13 @@
 package com.asu1.colormodel
 
+import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import com.materialkolor.PaletteStyle
 import com.asu1.resources.R
 
+@Keep
 enum class PaletteLevel(
-    @StringRes val stringResource: Int,
+    @param:StringRes val stringResource: Int,
     val palette: PaletteStyle?
 ){
     TonalSpot(

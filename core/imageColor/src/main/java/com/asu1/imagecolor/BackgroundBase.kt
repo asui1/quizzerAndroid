@@ -1,9 +1,11 @@
 package com.asu1.imagecolor
 
+import androidx.annotation.Keep
 import androidx.compose.ui.graphics.BlendMode
 import com.asu1.resources.R
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 enum class BackgroundBase(val resourceId: Int){
     CITY(R.drawable.empty_city_sky),
@@ -42,6 +44,7 @@ enum class BackgroundBase(val resourceId: Int){
     CITY_CHERRYBLOSSOM(R.drawable.city_cherryblossom),
 }
 
+@Keep
 @Serializable
 enum class ImageBlendMode(val blendMode: BlendMode, val stringResourceId: Int){
     BLENDCOLOR(BlendMode.Color, R.string.blend_color),

@@ -1,11 +1,13 @@
 package com.asu1.colormodel
 
+import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import com.asu1.resources.R
 import com.materialkolor.Contrast
 
+@Keep
 enum class ContrastLevel(
-    @StringRes val stringResource: Int,
+    @param:StringRes val stringResource: Int,
     val contrast: Contrast
 ){
     Default(

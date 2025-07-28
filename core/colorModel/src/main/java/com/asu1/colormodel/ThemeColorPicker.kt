@@ -1,9 +1,11 @@
 package com.asu1.colormodel
 
+import androidx.annotation.Keep
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import com.asu1.resources.R
 
+@Keep
 enum class ThemeColorPicker(
     val stringResourceId: Int,
     val colorAccessor: (ColorScheme) -> Color,
