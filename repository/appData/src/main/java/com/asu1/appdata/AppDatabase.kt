@@ -6,10 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.asu1.appdata.music.Mood
-import com.asu1.appdata.music.Music
-import com.asu1.appdata.music.MusicDao
-import com.asu1.appdata.music.MusicMoodCrossRef
 import com.asu1.appdata.stringFilter.AdminWord
 import com.asu1.appdata.stringFilter.AdminWordDao
 import com.asu1.appdata.stringFilter.InappropriateWord
@@ -21,12 +17,11 @@ const val DATABASE_NAME = "quizzer_database"
 const val PREPOPULATE_DB = "quizzerDB.db"
 
 @Database(
-    entities = [Music::class, Mood::class, MusicMoodCrossRef::class, SearchSuggestion::class, AdminWord::class, InappropriateWord::class],
+    entities = [SearchSuggestion::class, AdminWord::class, InappropriateWord::class],
     version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun musicDao(): MusicDao
     abstract fun searchSuggestionDao(): SearchSuggestionDao
     abstract fun adminWordDao(): AdminWordDao
     abstract fun inappropriateWordDao(): InappropriateWordDao

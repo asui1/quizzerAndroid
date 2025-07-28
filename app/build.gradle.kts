@@ -8,8 +8,12 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.ksp)
+    id("jacoco")
 }
 
+jacoco {
+    toolVersion = "0.8.13"
+}
 
 java {
     toolchain {
@@ -74,6 +78,8 @@ android {
             buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${System.getenv("GOOGLE_CLIENTID_WEB") ?: throw IllegalArgumentException("GOOGLE_CLIENT_ID environment variable not set")}\"")
         }
         debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             isMinifyEnabled = false
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
@@ -121,6 +127,39 @@ android {
     }
 }
 
+tasks.register<JacocoReport>("jacocoMergedReport") {
+    dependsOn("testDebugUnitTest", "connectedDebugAndroidTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R\$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*"
+    )
+
+    val javaClasses = fileTree("${layout.buildDirectory}/intermediates/javac/debug") {
+        exclude(fileFilter)
+    }
+    val kotlinClasses = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+
+    sourceDirectories.setFrom(files("src/main/java"))
+    classDirectories.setFrom(files(javaClasses, kotlinClasses))
+    executionData.setFrom(
+        files(
+            "${layout.buildDirectory}/jacoco/testDebugUnitTest.exec",
+            "${layout.buildDirectory}/outputs/code_coverage/debugAndroidTest/connected/*coverage.ec"
+        )
+    )
+}
 
 dependencies {
     implementation(project(":core:quizCardModel"))

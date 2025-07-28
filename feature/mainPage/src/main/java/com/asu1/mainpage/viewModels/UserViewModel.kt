@@ -16,13 +16,17 @@ import com.asu1.userdatausecase.LogoutToGuestUseCase
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,7 +45,8 @@ class UserViewModel @Inject constructor(
     val userData: MutableLiveData<UserData?> get() = _userData
 
     private val _userActivities = MutableStateFlow<List<UserActivity>>(emptyList())
-    val userActivities: StateFlow<List<UserActivity>> get() = _userActivities.asStateFlow()
+    val userActivities: Flow<PersistentList<UserActivity>> =
+        _userActivities.map { it.toPersistentList() }
 
     fun initLogin(onDone: () -> Unit = {}){
         viewModelScope.launch(Dispatchers.IO) {

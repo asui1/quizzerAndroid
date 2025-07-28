@@ -13,10 +13,14 @@ import com.asu1.appdatausecase.GetNotificationUseCase
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,7 +35,8 @@ class NotificationViewModel @Inject constructor(
     val notificationPages: LiveData<Int> get() = _notificationPages
 
     private val _notificationList = MutableStateFlow<List<Notification>>(emptyList())
-    val notificationList: StateFlow<List<Notification>> get() = _notificationList.asStateFlow()
+    val notificationList: Flow<PersistentList<Notification>> =
+        _notificationList.map { it.toPersistentList() }
 
     private val _currentPage = MutableLiveData(1)
     val currentPage: LiveData<Int> get() = _currentPage

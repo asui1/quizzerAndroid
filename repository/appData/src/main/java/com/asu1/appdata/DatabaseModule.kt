@@ -1,7 +1,6 @@
 package com.asu1.appdata
 
 import android.content.Context
-import com.asu1.appdata.music.MusicDao
 import com.asu1.appdata.stringFilter.AdminWordDao
 import com.asu1.appdata.stringFilter.InappropriateWordDao
 import com.asu1.appdata.suggestion.SearchSuggestionDao
@@ -28,9 +27,6 @@ object DatabaseModule {
 //            .fallbackToDestructiveMigration()
 //            .build()
     }
-
-    @Provides
-    fun provideMusicDao(database: AppDatabase): MusicDao = database.musicDao()
 
     @Provides
     fun provideSearchSuggestionDao(database: AppDatabase): SearchSuggestionDao = database.searchSuggestionDao()

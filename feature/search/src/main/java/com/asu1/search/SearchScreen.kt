@@ -69,7 +69,6 @@ fun  SearchScreen(navController: NavHostController,
                   onQuizClick: (quizId: String) -> Unit = {}) {
     val searchText by searchViewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResult by searchViewModel.searchResult
-        .map { it?.toPersistentList() }
         .collectAsStateWithLifecycle(null)
     val searchSuggestions by searchViewModel.filteredSearchSuggestions.collectAsStateWithLifecycle()
 

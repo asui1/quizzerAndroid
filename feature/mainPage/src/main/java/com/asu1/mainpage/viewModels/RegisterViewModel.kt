@@ -10,9 +10,13 @@ import com.asu1.appdata.stringFilter.StringFilterRepository
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +32,8 @@ class RegisterViewModel @Inject constructor(
     val nickname: MutableLiveData<String?> get() = _nickname
 
     private val _tags = MutableStateFlow<Set<String>>(emptySet())
-    val tags: StateFlow<Set<String>> get() = _tags.asStateFlow()
+    val tags: Flow<PersistentSet<String>> =
+        _tags.map { it.toPersistentSet() }
 
     private val _email = MutableLiveData<String?>(null)
     val email: LiveData<String?> get() = _email

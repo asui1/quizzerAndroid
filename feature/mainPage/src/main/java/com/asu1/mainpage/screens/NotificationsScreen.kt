@@ -64,7 +64,6 @@ fun NotificationScreen(
 ) {
     val notificationPages by notificationViewModel.notificationPages.observeAsState(1)
     val notificationList by notificationViewModel.notificationList
-        .map { it.toPersistentList()}
         .collectAsStateWithLifecycle(
             persistentListOf()
         )

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
@@ -61,7 +62,7 @@ fun MainActivityBottomBar(
             onClick = { setSelectedTab(1) }
         ) {
             Icon(
-                imageVector = if (bottomBarSelection == 1) Icons.AutoMirrored.Filled.TrendingUp else Icons.Outlined.TrendingUp,
+                imageVector = if (bottomBarSelection == 1) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Outlined.TrendingUp,
                 tint = if (bottomBarSelection == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 contentDescription = "Trends",
                 modifier = Modifier.size(defaultIconSize)

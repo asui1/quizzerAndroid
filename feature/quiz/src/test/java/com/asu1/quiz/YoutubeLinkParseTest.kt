@@ -1,6 +1,6 @@
-package com.asu1.quizzer
+package com.asu1.quiz
 
-import com.asu1.quizzer.composables.parseYoutubeLink
+import com.asu1.quiz.content.quizBodyBuilder.parseYoutubeLink
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -18,7 +18,7 @@ class YoutubeLinkParserTest {
         assertEquals(expectedTime, time)
     }
 
-//    https://youtu.be/qvizI1krngU?t=179&si=hoPiOP9OnkpvlIe7
+    //    https://youtu.be/qvizI1krngU?t=179&si=hoPiOP9OnkpvlIe7
     @Test
     fun testParseYoutubeLink_withValidLink2_GetIdWithTime() {
         val link = "https://youtu.be/qvizI1krngU?t=179&si=hoPiOP9OnkpvlIe7"

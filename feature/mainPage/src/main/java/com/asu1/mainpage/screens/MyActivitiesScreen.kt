@@ -53,9 +53,7 @@ fun MyActivitiesScreen(
     navController: NavController,
     userViewModel: UserViewModel = viewModel()
 ) {
-    val userActivities by userViewModel.userActivities.map {
-        it.toPersistentList()
-    }.collectAsStateWithLifecycle(
+    val userActivities by userViewModel.userActivities.collectAsStateWithLifecycle(
         persistentListOf()
     )
     MyActivitiesBody(

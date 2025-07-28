@@ -3,11 +3,16 @@ package com.asu1.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.suggestion.SearchSuggestionRepository
+import com.asu1.quizcardmodel.QuizCard
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,8 +47,9 @@ class SearchViewModel @Inject constructor(
             emptyList()
         )
 
-    private val _searchResult = MutableStateFlow<List<com.asu1.quizcardmodel.QuizCard>?>(null)
-    val searchResult: StateFlow<List<com.asu1.quizcardmodel.QuizCard>?> get() = _searchResult.asStateFlow()
+    private val _searchResult = MutableStateFlow<List<QuizCard>?>(null)
+    val searchResult: Flow<PersistentList<QuizCard>> =
+        _searchResult.map { it?.toPersistentList() ?: persistentListOf() }
 
 
     fun setSearchText(searchText: String){

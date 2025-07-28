@@ -50,9 +50,7 @@ fun LoadMyQuizScreen(
     onLoadQuiz: (Int) -> Unit = {},
     email: String = "",
 ) {
-    val quizList by loadMyQuizViewModel.myQuizList.map{
-        it?.toPersistentList() ?: persistentListOf()
-    }
+    val quizList by loadMyQuizViewModel.myQuizList
         .collectAsStateWithLifecycle(persistentListOf())
     val quizLoadViewModelState by loadMyQuizViewModel.loadMyQuizViewModelState.observeAsState(
         ViewModelState.LOADING

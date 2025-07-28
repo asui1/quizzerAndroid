@@ -78,7 +78,7 @@ fun RegisterScreen(
     val registerStep by registerViewModel.registerStep.observeAsState(0)
     val nickname by registerViewModel.nickname.observeAsState()
     val isError by registerViewModel.isError.observeAsState()
-    val tags by registerViewModel.tags.map { it.toPersistentSet()}
+    val tags by registerViewModel.tags
         .collectAsStateWithLifecycle(
             persistentSetOf()
         )

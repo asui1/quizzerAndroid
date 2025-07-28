@@ -1,7 +1,6 @@
 package com.asu1.quizzer
 
 import android.app.Application
-import com.asu1.appdata.music.MusicRepository
 import com.asu1.appdata.suggestion.SearchSuggestionRepository
 import com.asu1.network.SecurePreferences
 import com.asu1.utils.LanguageSetter
@@ -12,8 +11,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class MyApplication : Application() {
-    @Inject
-    lateinit var musicRepository: MusicRepository
     @Inject
     lateinit var suggestionRepository: SearchSuggestionRepository
 
