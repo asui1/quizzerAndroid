@@ -15,10 +15,20 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.benchmark) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
 }
 
 subprojects {
     // 🔹 Apply only to modules that use Android Library plugin
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    plugins.withId("io.gitlab.arturbosch.detekt") {
+        configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+            toolVersion = "1.23.8"
+            buildUponDefaultConfig = true
+            config.setFrom(files("$rootDir/detekt.yml"))
+        }
+    }
     plugins.withId("com.android.library") {
         extensions.configure<LibraryExtension> {
             compileSdk = 35

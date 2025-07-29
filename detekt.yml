@@ -1,0 +1,18 @@
+build:
+  maxIssues: 0
+
+config:
+  warningsAsErrors: true
+
+complexity:
+  active: true
+  TooManyFunctions:
+      thresholdInFiles: 30
+      thresholdInClasses: 20
+      ignorePrivate: true
+
+output-reports:
+  exclude:
+    - 'TxtOutputReport'
+    - 'XmlOutputReport'
+    - 'MdOutputReport'
