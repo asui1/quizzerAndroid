@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -33,7 +33,7 @@ android {
         versionProps.load(versionFile.inputStream())
     }
 
-//    val localVersionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
+ //    val localVersionCode = versionProps.getProperty("VERSION_CODE")?.toIntOrNull() ?: 1
 //    val versionMain = versionProps.getProperty("VERSION_MAIN")?.toIntOrNull() ?: 1
 //    val versionSub = versionProps.getProperty("VERSION_SUB")?.toIntOrNull() ?: 0
 //    val versionChild = versionProps.getProperty("VERSION_CHILD")?.toIntOrNull() ?: 0
@@ -188,9 +188,6 @@ dependencies {
     implementation(project(":feature:permissionRequest"))
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
-    implementation(project(":feature:musicUi"))
-    testImplementation(project(":feature:musicUi"))
-    androidTestImplementation(project(":feature:musicUi"))
     implementation(project(":feature:mainPage"))
     implementation(project(":feature:splashPage"))
     implementation(project(":feature:search"))

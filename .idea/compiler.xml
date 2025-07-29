@@ -11,6 +11,7 @@
       <module name="quizzerAndroid.feature.customDropdown" target="21" />
       <module name="quizzerAndroid.feature.customEffects" target="21" />
       <module name="quizzerAndroid.feature.customFlipper" target="21" />
+      <module name="quizzerAndroid.feature.musicUi" target="21" />
       <module name="quizzerAndroid.feature.pageIndicator" target="21" />
       <module name="quizzerAndroid.feature.pagerIndicator" target="21" />
       <module name="quizzerAndroid.feature.quizCommon" target="21" />
