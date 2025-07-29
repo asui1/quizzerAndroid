@@ -39,7 +39,10 @@ fun MainActivityTopbar(
             } }) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
-            UserProfilePic(userData, onClick = {
+            UserProfilePic(
+                modifier = Modifier,
+                userData =userData,
+                onClick = {
                 scope.launch {
                     onTopBarProfileClick()
                 }

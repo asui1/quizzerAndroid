@@ -56,14 +56,17 @@ fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary
         primaryContainer = if (isLight) primaryPalette[90]!! else primaryPalette[30]!!,
         onPrimaryContainer = if (isLight) primaryPalette[10]!! else primaryPalette[90]!!,
         inversePrimary = if (isLight) primaryPalette[80]!! else primaryPalette[40]!!,
+
         secondary = if (isLight) secondaryPalette[40]!! else secondaryPalette[80]!!,
         onSecondary = if (isLight) secondaryPalette[100]!! else secondaryPalette[20]!!,
         secondaryContainer = if (isLight) secondaryPalette[90]!! else secondaryPalette[30]!!,
         onSecondaryContainer = if (isLight) secondaryPalette[10]!! else secondaryPalette[90]!!,
+
         tertiary = if (isLight) tertiaryPalette[40]!! else tertiaryPalette[80]!!,
         onTertiary = if (isLight) tertiaryPalette[100]!! else tertiaryPalette[20]!!,
         tertiaryContainer = if (isLight) tertiaryPalette[90]!! else tertiaryPalette[30]!!,
         onTertiaryContainer = if (isLight) tertiaryPalette[10]!! else tertiaryPalette[90]!!,
+
         background = if (isLight) neutralPalette[99]!! else neutralPalette[10]!!,
         onBackground = if (isLight) neutralPalette[10]!! else neutralPalette[90]!!,
         surface = if (isLight) neutralPalette[99]!! else neutralPalette[10]!!,
@@ -71,15 +74,19 @@ fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary
         surfaceVariant = if (isLight) neutralPalette[90]!! else neutralPalette[30]!!,
         onSurfaceVariant = if (isLight) neutralPalette[30]!! else neutralPalette[80]!!,
         surfaceTint = if (isLight) primaryPalette[40]!! else primaryPalette[80]!!,
+
         inverseSurface = if (isLight) neutralPalette[20]!! else neutralPalette[90]!!,
         inverseOnSurface = if (isLight) neutralPalette[95]!! else neutralPalette[20]!!,
+
         error = if (isLight) errorPalette[40]!! else errorPalette[80]!!,
         onError = if (isLight) errorPalette[100]!! else errorPalette[20]!!,
         errorContainer = if (isLight) errorPalette[90]!! else errorPalette[30]!!,
         onErrorContainer = if (isLight) errorPalette[10]!! else errorPalette[90]!!,
+
         outline = if (isLight) neutralPalette[50]!! else neutralPalette[60]!!,
         outlineVariant = if (isLight) neutralPalette[80]!! else neutralPalette[30]!!,
         scrim = neutralPalette[0]!!,
+
         surfaceBright = if (isLight) neutralPalette[98]!! else neutralPalette[24]!!,
         surfaceDim = if (isLight) neutralPalette[87]!! else neutralPalette[6]!!,
         surfaceContainer = if (isLight) neutralPalette[94]!! else neutralPalette[12]!!,
@@ -87,6 +94,22 @@ fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary
         surfaceContainerHighest = if (isLight) neutralPalette[90]!! else neutralPalette[24]!!,
         surfaceContainerLow = if (isLight) neutralPalette[96]!! else neutralPalette[10]!!,
         surfaceContainerLowest = if (isLight) neutralPalette[100]!! else neutralPalette[4]!!,
+
+        // ✅ FIXED ROLES
+        primaryFixed = primaryPalette[90]!!,
+        primaryFixedDim = primaryPalette[80]!!,
+        onPrimaryFixed = primaryPalette[10]!!,
+        onPrimaryFixedVariant = primaryPalette[30]!!, // NEW
+
+        secondaryFixed = secondaryPalette[90]!!,
+        secondaryFixedDim = secondaryPalette[80]!!,
+        onSecondaryFixed = secondaryPalette[10]!!,
+        onSecondaryFixedVariant = secondaryPalette[30]!!, // NEW
+
+        tertiaryFixed = tertiaryPalette[90]!!,
+        tertiaryFixedDim = tertiaryPalette[80]!!,
+        onTertiaryFixed = tertiaryPalette[10]!!,
+        onTertiaryFixedVariant = tertiaryPalette[30]!! // NEW
     )
 }
 

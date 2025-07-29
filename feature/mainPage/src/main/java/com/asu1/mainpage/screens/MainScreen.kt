@@ -303,8 +303,11 @@ fun MainScreen(
 }
 
 @Composable
-fun UserProfilePic(userData: UserViewModel.UserData?, onClick: () -> Unit = {}, modifier: Modifier = Modifier,
-                   iconSIze: Dp = 30.dp) {
+fun UserProfilePic(
+    modifier: Modifier = Modifier,
+    userData: UserViewModel.UserData?,
+    onClick: () -> Unit = {},
+    iconSIze: Dp = 30.dp) {
     val urlToImage = userData?.urlToImage
     IconButton(onClick = onClick, modifier = modifier) {
         if (userData != null) {

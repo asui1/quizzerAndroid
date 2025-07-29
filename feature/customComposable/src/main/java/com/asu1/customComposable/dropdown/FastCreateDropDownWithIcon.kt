@@ -24,12 +24,12 @@ import com.asu1.utils.shaders.ShaderType
 
 @Composable
 fun FastCreateDropDownWithIcon(
+    modifier: Modifier = Modifier,
     showDropdownMenu: Boolean,
     labelText: String = "",
     onClick: (Int) -> Unit = {},
     onChangeDropDown: (Boolean) -> Unit = {},
     inputItems: List<Int> = emptyList(),
-    modifier: Modifier = Modifier,
     imageVector: ImageVector,
     testTag: String = "",
     iconSize: Dp = 32.dp,

@@ -190,8 +190,9 @@ fun YearMonthDropDown(
 @Composable
 fun PreviewDateSelectionQuizCreator() {
     QuizzerAndroidTheme {
+        val quizViewModel: DateSelectionQuizViewModel = viewModel()
         DateSelectionQuizCreator(
-            quiz = DateSelectionQuizViewModel(),
+            quiz = quizViewModel,
             onSave = {}
         )
     }

@@ -23,7 +23,6 @@
             <option value="$PROJECT_DIR$/core/util" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/domain/appDataUseCase" />
-            <option value="$PROJECT_DIR$/domain/imagecolor" />
             <option value="$PROJECT_DIR$/domain/userDataUseCase" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/activityNavigation" />

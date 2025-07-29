@@ -71,8 +71,8 @@ fun QuizBodyViewer(
                         YouTubePlayerView(context).apply {
                             addYouTubePlayerListener(
                                 object : AbstractYouTubePlayerListener() {
-                                    override fun onReady(player: YouTubePlayer) {
-                                        player.cueVideo(
+                                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                                        youTubePlayer.cueVideo(
                                             quizBody.youtubeId,
                                             quizBody.youtubeStartTime.toFloat()
                                         )

@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun OpenCloseColumn(
-    isOpen: Boolean = true,
     modifier: Modifier = Modifier,
+    isOpen: Boolean = true,
     onToggleOpen: () -> Unit = {},
     openWidth: Dp = 90.dp,
     closeWidth: Dp = 35.dp,

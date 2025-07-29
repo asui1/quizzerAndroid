@@ -135,9 +135,10 @@ fun TagSetter(
 @Preview(showBackground = true)
 @Composable
 fun TagSetterPreview(){
+    val focusRequester = remember { FocusRequester() }
     TagSetter(
         tags = setOf("tag1", "tag2", "tag3"),
         onClick = {},
-        focusRequester = FocusRequester()
+        focusRequester = focusRequester
     )
 }

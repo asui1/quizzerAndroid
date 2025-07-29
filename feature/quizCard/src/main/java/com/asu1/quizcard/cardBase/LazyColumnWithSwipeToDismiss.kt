@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,17 +45,23 @@ fun getOrPutDismiss(
     dismissStates: MutableMap<String, SwipeToDismissBoxState>,
     onDismiss: (String) -> Unit
 ): SwipeToDismissBoxState {
-    return dismissStates.getOrPut(uuid) {
+    // ✅ Remember or create state
+    val state = dismissStates.getOrPut(uuid) {
         rememberSwipeToDismissBoxState(
-            confirmValueChange = { state ->
-                if (state == SwipeToDismissBoxValue.EndToStart) {
-                    onDismiss(uuid)
-                }
-                true
-            }
+            initialValue = SwipeToDismissBoxValue.Settled,
+            positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
         )
     }
+
+    // ✅ Observe state changes and call onDismiss
+    LaunchedEffect(state.currentValue) {
+        if (state.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            onDismiss(uuid)
+        }
+    }
+    return state
 }
+
 
 
 @Composable
