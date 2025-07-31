@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
@@ -23,9 +23,9 @@ import com.asu1.quiz.content.multipleChoiceQuiz.MultipleChoiceQuizCreator
 import com.asu1.quiz.content.reorderQuiz.ReorderQuizCreator
 import com.asu1.quiz.content.shortAnswerQuiz.ShortAnswerQuizCreator
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
-import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.DateSelectionQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.FillInBlankViewModel
+import com.asu1.quiz.viewmodel.quiz.MultipleChoiceQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ReorderQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ShortAnswerQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
@@ -34,7 +34,7 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 
 @Composable
 fun QuizCaller(
-    navController: NavHostController,
+    navController: NavController,
     quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     loadIndex:Int,
     quizType: QuizType,

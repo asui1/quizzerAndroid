@@ -2,6 +2,7 @@ package com.asu1.quizzer
 
 import SnackBarManager
 import ToastType
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,8 +12,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,47 +28,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.asu1.activityNavigation.Route
-import com.asu1.activityNavigation.enterFadeInTransition
-import com.asu1.activityNavigation.enterFromRightTransition
-import com.asu1.activityNavigation.exitFadeOutTransition
-import com.asu1.activityNavigation.exitToRightTransition
 import com.asu1.activityNavigation.snackbar.CustomSnackbarHost
-import com.asu1.mainpage.screens.LoginScreen
-import com.asu1.mainpage.screens.MainScreen
-import com.asu1.mainpage.screens.MyActivitiesScreen
-import com.asu1.mainpage.screens.NotificationScreen
-import com.asu1.mainpage.screens.PrivacyPolicy
-import com.asu1.mainpage.screens.RegisterScreen
 import com.asu1.mainpage.viewModels.QuizCardMainViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.quiz.content.quizCommonBuilder.QuizChecker
-import com.asu1.quiz.content.quizCommonBuilder.QuizBuilderScreen
-import com.asu1.quiz.content.quizCommonBuilder.QuizCaller
-import com.asu1.quiz.layoutBuilder.QuizLayoutBuilderScreen
-import com.asu1.quiz.scorecard.DesignScoreCardScreen
-import com.asu1.quiz.scorecard.ScoringScreen
-import com.asu1.quiz.content.quizCommonBuilder.QuizSolver
 import com.asu1.quiz.viewmodel.quizLayout.QuizContentViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizResultViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeViewModel
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
-import com.asu1.quizcard.quizLoad.LoadLocalQuizScreen
 import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
-import com.asu1.quizcard.quizLoad.LoadMyQuizScreen
 import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
-import com.asu1.search.SearchScreen
 import com.asu1.search.SearchViewModel
-import com.asu1.splashpage.InitializationScreen
 import com.asu1.splashpage.InitializationViewModel
 import com.asu1.utils.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -107,460 +83,182 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initInAppUpdate()
+        initViewModelsAndObservers()
+        handleIntent(intent)
+        setContent{
+            QuizzerAndroidTheme {
+                navController = rememberNavController()
+                AppScaffold()
+            }
+        }
+    }
+
+    fun getQuizResult(
+        resultId: String = ""
+    ) {
+        if (resultId.isEmpty()) return
+        quizCoordinatorViewModel.loadQuizResult(resultId)
+        navController.navigate(
+            Route.ScoringScreen
+        ) {
+            popUpTo(Route.Home) { inclusive = false }
+            launchSingleTop = true
+            quizCardMainViewModel.setLoadResultId(null)
+        }
+    }
+
+    fun loadQuiz(quizId: String, doPop: Boolean = false) {
+        quizCoordinatorViewModel.loadQuiz(quizId)
+        navController.navigate(Route.QuizSolver()) {
+            if (doPop) popUpTo(Route.Home) { inclusive = false }
+            launchSingleTop = true
+        }
+        quizCardMainViewModel.setLoadQuizId(null)
+    }
+
+    fun getHome(fetchData: Boolean = true) {
+        quizCardMainViewModel.resetQuizTrends()
+        quizCardMainViewModel.resetUserRanks()
+        if (fetchData) quizCardMainViewModel.fetchQuizCards()
+        navController.navigate(
+            Route.Home
+        ) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    fun navigateToCreateQuizLayout(){
+        if (userViewModel.userData.value?.email == null) {
+            SnackBarManager.showSnackBar(
+                R.string.please_login_first,
+                ToastType.INFO
+            )
+            navController.navigate(
+                Route.Login
+            ) {
+                launchSingleTop = true
+            }
+        } else {
+            quizCoordinatorViewModel.resetQuizData(userViewModel.userData.value?.email)
+            loadLocalQuizViewModel.reset()
+            navController.navigate(
+                Route.CreateQuizLayout
+            ) {
+                launchSingleTop = true
+            }
+        }
+    }
+
+    fun navigateToLoadUserQuiz(){
+        loadMyQuizViewModel.loadUserQuiz(
+            userViewModel.userData.value?.email ?: ""
+        )
+        navController.navigate(
+            Route.LoadUserQuiz
+        ) {
+            launchSingleTop = true
+        }
+    }
+
+    private fun initInAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         updateLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
         ) { result ->
             if (result.resultCode != RESULT_OK) {
-                Logger.debug("Update flow failed! Result code: " + result.resultCode)
-            } else{
+                Logger.debug("Update flow failed! Result code: ${result.resultCode}")
+            } else {
                 initializationViewModel.noUpdateAvailable()
             }
         }
 
         lifecycleScope.launch {
-            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-            // Checks that the platform will allow the specified type of update.
-            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    // This example applies an immediate update. To apply a flexible update
-                    // instead, pass in AppUpdateType.FLEXIBLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+                if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
                 ) {
                     appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
+                        info,
                         updateLauncher,
                         AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
                     )
-                    // Request the update.
-                }else{
+                } else {
                     initializationViewModel.noUpdateAvailable()
                 }
             }
-            if(BuildConfig.isDebug){
-                delay(1000)
+            if (BuildConfig.isDebug) {
+                delay(1_000)
                 initializationViewModel.noUpdateAvailable()
             }
         }
-        handleIntent(intent)
+    }
 
-
+    // 2️⃣ ViewModel wiring & app‑state observing
+    private fun initViewModelsAndObservers() {
         quizCoordinatorViewModel.setViewModels(
-            quizGeneral = quizGeneralViewModel,
-            quizTheme = quizThemeViewModel,
-            quizContent = quizContentViewModel,
-            quizResult = quizResultViewModel,
-            scoreCard = scoreCardViewModel,
+            quizGeneral     = quizGeneralViewModel,
+            quizTheme       = quizThemeViewModel,
+            quizContent     = quizContentViewModel,
+            quizResult      = quizResultViewModel,
+            scoreCard       = scoreCardViewModel
         )
         ProcessLifecycleOwner.get().lifecycle.addObserver(appStateObserver)
+    }
 
-        setContent {
-            val context = LocalContext.current
-            val snackbarHostState = remember { SnackbarHostState() }
+    @Composable
+    private fun AppScaffold() {
+        val snackBarHostState = remember { SnackbarHostState() }
+        val context = LocalContext.current
+        SnackBarListener(
+            hostState = snackBarHostState,
+            context = context,
+        )
 
-            // Observe ToastManager for Toast messages
-            LaunchedEffect(Unit) {
-                SnackBarManager.snackBarMessage.collectLatest { message ->
-                    message?.let {
-                        val prefix = it.second.prefix
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        snackbarHostState.showSnackbar(
-                            message = "$prefix${context.getString(it.first)}",
-                            duration = SnackbarDuration.Short
-                        )
-                        SnackBarManager.snackBarShown()
-                    }
-                }
+        Scaffold(
+            snackbarHost = { CustomSnackbarHost(snackBarHostState) }
+        ) { padding ->
+            Surface(
+                Modifier.padding(padding).fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                QuizNavGraph(
+                    navController = navController,
+                    initializationViewModel = initializationViewModel,
+                    userViewModel = userViewModel,
+                    quizCardMainViewModel = quizCardMainViewModel,
+                    searchViewModel = searchViewModel,
+                    quizCoordinatorViewModel = quizCoordinatorViewModel,
+                    quizGeneralViewModel = quizGeneralViewModel,
+                    quizThemeViewModel = quizThemeViewModel,
+                    scoreCardViewModel = scoreCardViewModel,
+                    loadLocalQuizViewModel = loadLocalQuizViewModel,
+                    loadMyQuizViewModel = loadMyQuizViewModel,
+                    context = context,
+                    getHome = ::getHome,
+                    loadQuiz = ::loadQuiz,
+                    getQuizResult = ::getQuizResult,
+                    navigateToCreateQuizLayout = ::navigateToCreateQuizLayout,
+                    navigateToLoadUserQuiz = ::navigateToLoadUserQuiz,
+                )
             }
+        }
+    }
 
-            navController = rememberNavController()
-            com.asu1.resources.QuizzerAndroidTheme {
-                Scaffold(
-                    snackbarHost = {
-                        CustomSnackbarHost(
-                            hostState = snackbarHostState,
-                            modifier = Modifier
-                        )
-                    }
-                ) { it ->
-                    Surface(
-                        color = MaterialTheme.colorScheme.background,
-                        modifier = Modifier.padding(it).fillMaxSize()
-                    ) {
-                        fun hasVisitedRoute(
-                            navController: NavController,
-                            route: Route
-                        ): Boolean {
-                            val previousEntry = navController.previousBackStackEntry
-                            return previousEntry?.destination?.route == route::class.qualifiedName
-                        }
-
-                        fun getQuizResult(resultId: String = "") {
-                            if (resultId.isEmpty()) return
-                            quizCoordinatorViewModel.loadQuizResult(resultId)
-                            navController.navigate(
-                                Route.ScoringScreen
-                            ) {
-                                popUpTo(Route.Home) { inclusive = false }
-                                launchSingleTop = true
-                                quizCardMainViewModel.setLoadResultId(null)
-                            }
-                        }
-
-                        fun loadQuiz(quizId: String, doPop: Boolean = false) {
-                            quizCoordinatorViewModel.loadQuiz(quizId)
-                            navController.navigate(Route.QuizSolver()) {
-                                if (doPop) popUpTo(Route.Home) { inclusive = false }
-                                launchSingleTop = true
-                            }
-                            quizCardMainViewModel.setLoadQuizId(null)
-                        }
-
-                        fun getHome(fetchData: Boolean = true) {
-                            quizCardMainViewModel.resetQuizTrends()
-                            quizCardMainViewModel.resetUserRanks()
-                            if (fetchData) quizCardMainViewModel.fetchQuizCards()
-                            navController.navigate(
-                                Route.Home
-                            ) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-
-                        fun navigateToCreateQuizLayout(){
-                            if (userViewModel.userData.value?.email == null) {
-                                SnackBarManager.showSnackBar(
-                                    R.string.please_login_first,
-                                    ToastType.INFO
-                                )
-                                navController.navigate(
-                                    Route.Login
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            } else {
-                                quizCoordinatorViewModel.resetQuizData(userViewModel.userData.value?.email)
-                                loadLocalQuizViewModel.reset()
-                                navController.navigate(
-                                    Route.CreateQuizLayout
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        }
-
-                        fun navigateToLoadUserQuiz(){
-                            loadMyQuizViewModel.loadUserQuiz(
-                                userViewModel.userData.value?.email ?: ""
-                            )
-                            navController.navigate(
-                                Route.LoadUserQuiz
-                            ) {
-                                launchSingleTop = true
-                            }
-                        }
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = Route.Init,
-                            enterTransition = { EnterTransition.None },
-                            exitTransition = { ExitTransition.None },
-                        ) {
-                            composable<Route.Init> {
-                                InitializationScreen(
-                                    initViewModel = initializationViewModel,
-                                    userViewModel = userViewModel,
-                                    navigateToHome = {
-                                        getHome(
-                                            fetchData = !BuildConfig.isDebug
-                                        )
-                                    }
-                                )
-                            }
-                            composable<Route.Home> {
-                                MainScreen(
-                                    navController,
-                                    quizCardMainViewModel = quizCardMainViewModel,
-                                    userViewModel = userViewModel,
-                                    navigateTo = {route ->
-                                        if(route is Route.CreateQuizLayout){
-                                            navigateToCreateQuizLayout()
-                                        }
-                                        else if(route is Route.LoadUserQuiz){
-                                            navigateToLoadUserQuiz()
-                                        }
-                                        else if(route is Route.MyActivities){
-                                            userViewModel.getUserActivities()
-                                            navController.navigate(route) {
-                                                launchSingleTop = true
-                                            }
-                                        }
-                                        else{
-                                            navController.navigate(route) {
-                                                launchSingleTop = true
-                                            }
-                                        }
-                                    },
-                                    loadQuiz = { loadQuiz(it) },
-                                    loadQuizResult = { getQuizResult(it) },
-                                    moveHome = { getHome() }
-                                )
-                            }
-                            composable<Route.Search>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) {
-                                SearchScreen(
-                                    navController, searchViewModel,
-                                    onQuizClick = { quizId ->
-                                        loadQuiz(quizId)
-                                    },
-                                )
-                            }
-                            composable<Route.Login>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) {
-                                LoginScreen(navController, userViewModel)
-                            }
-                            composable<Route.PrivacyPolicy>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) {
-                                PrivacyPolicy(navController)
-                            }
-                            composable<Route.Register>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) { backStackEntry ->
-                                val email =
-                                    backStackEntry.toRoute<Route.Register>().email
-                                val profileUri =
-                                    backStackEntry.toRoute<Route.Register>().profileUri
-                                if (email == "" || profileUri == null) {
-                                    return@composable
-                                }
-                                RegisterScreen(
-                                    navController = navController,
-                                    email = email,
-                                    profileUri = profileUri,
-                                    login = {
-                                        userViewModel.login(email, profileUri)
-                                    }
-                                )
-                            }
-                            composable<Route.CreateQuizLayout>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) {
-                                QuizLayoutBuilderScreen(
-                                    navController = navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    navigateToQuizLoad = {
-                                        loadLocalQuizViewModel.loadLocalQuiz(
-                                            context = context,
-                                            email = userViewModel.userData.value?.email
-                                                ?: "GUEST"
-                                        )
-                                        navController.navigate(
-                                            Route.LoadLocalQuiz
-                                        ) {
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                )
-                            }
-                            composable<Route.QuizBuilder>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                QuizBuilderScreen(navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    onMoveToScoringScreen = {
-                                        scoreCardViewModel.updateScoreCard(
-                                            quizGeneralViewModel.quizGeneralUiState.value.quizData,
-                                            quizThemeViewModel.quizTheme.value.colorScheme
-                                        )
-                                        navController.navigate(
-                                            Route.DesignScoreCard
-                                        ) {
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                    navigateToQuizLoad = {
-                                        loadLocalQuizViewModel.loadLocalQuiz(
-                                            context = context,
-                                            email = userViewModel.userData.value?.email
-                                                ?: "GUEST"
-                                        )
-                                        navController.navigate(
-                                            Route.LoadLocalQuiz
-                                        ) {
-                                            launchSingleTop = true
-                                        }
-                                    }
-                                )
-                            }
-                            composable<Route.QuizCaller>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) { backStackEntry ->
-                                val loadIndex =
-                                    backStackEntry.toRoute<Route.QuizCaller>().loadIndex
-                                val quizType =
-                                    backStackEntry.toRoute<Route.QuizCaller>().quizType
-                                val insertIndex =
-                                    backStackEntry.toRoute<Route.QuizCaller>().insertIndex
-                                QuizCaller(
-                                    navController = navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    loadIndex = loadIndex,
-                                    quizType = quizType,
-                                    insertIndex = insertIndex,
-                                )
-                            }
-                            composable<Route.QuizSolver>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitToRightTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitToRightTransition(),
-                            ) {
-                                QuizSolver(
-                                    navController = navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    navigateToScoreCard = {
-                                        if (hasVisitedRoute(navController, Route.QuizBuilder)) {
-                                            SnackBarManager.showSnackBar(
-                                                R.string.can_not_proceed_when_creating_quiz,
-                                                ToastType.INFO
-                                            )
-                                            return@QuizSolver
-                                        }
-                                        quizCoordinatorViewModel.gradeQuiz(
-                                            userViewModel.userData.value?.email ?: "GUEST"
-                                        ) {
-                                            navController.navigate(
-                                                Route.ScoringScreen
-                                            ) {
-                                                popUpTo(Route.Home) { inclusive = false }
-                                                launchSingleTop = true
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                            composable<Route.DesignScoreCard>(
-                                enterTransition = enterFromRightTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFromRightTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                DesignScoreCardScreen(
-                                    navController = navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    onUpload = {
-                                        navController.popBackStack(
-                                            Route.Home,
-                                            inclusive = false
-                                        )
-                                        loadMyQuizViewModel.reset()
-                                        scoreCardViewModel.resetScoreCard()
-                                    })
-                            }
-                            composable<Route.LoadLocalQuiz>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                LoadLocalQuizScreen(
-                                    navController = navController,
-                                    loadLocalQuizViewModel = loadLocalQuizViewModel,
-                                ) { quizData, quizTheme, scoreCard ->
-                                    quizCoordinatorViewModel.loadQuiz(
-                                        quizData = quizData,
-                                        quizTheme = quizTheme,
-                                        scoreCard = scoreCard,
-                                    )
-                                    loadLocalQuizViewModel.loadComplete()
-                                }
-                            }
-                            composable<Route.LoadUserQuiz>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                LoadMyQuizScreen(
-                                    navController = navController,
-                                    loadMyQuizViewModel = loadMyQuizViewModel,
-                                    email = userViewModel.userData.value?.email ?: ""
-                                )
-                            }
-                            composable<Route.MyActivities>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                MyActivitiesScreen(
-                                    navController = navController,
-                                    userViewModel = userViewModel,
-
-                                    )
-                            }
-                            composable<Route.Notifications>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                NotificationScreen(
-                                    navController = navController,
-                                )
-                            }
-                            composable<Route.QuizChecker>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                QuizChecker(
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                )
-                            }
-                            composable<Route.ScoringScreen>(
-                                enterTransition = enterFadeInTransition(),
-                                exitTransition = exitFadeOutTransition(),
-                                popEnterTransition = enterFadeInTransition(),
-                                popExitTransition = exitFadeOutTransition(),
-                            ) {
-                                ScoringScreen(
-                                    navController = navController,
-                                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                                    email = userViewModel.userData.value?.email ?: "GUEST",
-                                    loadQuiz = { quizId ->
-                                        loadQuiz(quizId, doPop = true)
-                                    }
-                                )
-                            }
-                        }
-                    }
+    // 3‑c: compose‑side SnackBar listener
+    @Composable
+    private fun SnackBarListener(hostState: SnackbarHostState, context: Context) {
+        LaunchedEffect(Unit) {
+            SnackBarManager.snackBarMessage.collectLatest { message ->
+                message?.let {
+                    val prefix = it.second.prefix
+                    hostState.currentSnackbarData?.dismiss()
+                    hostState.showSnackbar(
+                        message = "$prefix${context.getString(it.first)}",
+                        duration = SnackbarDuration.Short
+                    )
+                    SnackBarManager.snackBarShown()
                 }
             }
         }

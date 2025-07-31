@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.quizcard.cardBase.QuizCardHorizontalVerticalShareList
 import com.asu1.quizcardmodel.QuizCard
@@ -63,7 +63,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
-fun  SearchScreen(navController: NavHostController,
+fun  SearchScreen(navController: NavController,
                   searchViewModel: SearchViewModel = viewModel(),
                   onQuizClick: (quizId: String) -> Unit = {}) {
     val searchText by searchViewModel.searchQuery.collectAsStateWithLifecycle()
