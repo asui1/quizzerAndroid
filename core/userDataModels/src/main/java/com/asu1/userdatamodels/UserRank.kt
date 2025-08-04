@@ -14,7 +14,8 @@ data class UserRank(
 
 val userRankSample = UserRank(
     nickname = "John Doe",
-    profileImageUri = "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c",
+    profileImageUri =
+        "https://lh3.googleusercontent.com/a/ACg8ocJfoHUjigfS1fBoyEPXLv1pusBvf7WTJAfUoQV8YhPjr4Whq98=s96-c",
     orderScore = 10,
     totalScore = 50,
     quizzesSolved = 5,
