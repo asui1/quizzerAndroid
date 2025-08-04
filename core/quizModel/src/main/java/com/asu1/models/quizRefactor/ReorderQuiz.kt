@@ -10,13 +10,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
-const val reorderQuizDefaultSize = 5
+const val REORDER_QUIZ_DEFAULT_SIZE = 5
 
 @Serializable
 @SerialName("2")
 data class ReorderQuiz(
     override var question: String = "",
-    val answers: List<String> = List(reorderQuizDefaultSize){""},
+    val answers: List<String> = List(REORDER_QUIZ_DEFAULT_SIZE){""},
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz() {
@@ -39,10 +39,10 @@ data class ReorderQuiz(
         }
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank())            return QuizError.EMPTY_QUESTION
-        if (answers.any(String::isBlank))  return QuizError.EMPTY_ANSWER
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        answers.any(String::isBlank) -> QuizError.EMPTY_ANSWER
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean {

@@ -40,10 +40,10 @@ data class DateSelectionQuiz(
         userDates.clear()
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank())          return QuizError.EMPTY_QUESTION
-        if (answerDate.isEmpty())      return QuizError.EMPTY_ANSWER
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError  = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        answerDate.isEmpty() -> QuizError.EMPTY_ANSWER
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean {

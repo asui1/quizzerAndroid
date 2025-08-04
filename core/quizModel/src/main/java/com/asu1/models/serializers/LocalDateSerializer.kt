@@ -6,8 +6,12 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.CompositeDecoder
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDate
 
 object LocalDateSerializer : KSerializer<LocalDate> {
@@ -43,6 +47,7 @@ object LocalDateSerializer : KSerializer<LocalDate> {
     }
 }
 
+@Suppress("unused")
 object LocalDateListSerializer :
     KSerializer<List<LocalDate>> by ListSerializer(LocalDateSerializer)
 

@@ -64,39 +64,6 @@ sealed class BodyType(val value: Int) {
             is YOUTUBE -> R.string.youtube
             is CODE -> R.string.code
         }
-    fun validate() : BodyType {
-        return when(this){
-            is TEXT -> {
-                if(this.bodyText.isEmpty()){
-                    NONE
-                }else{
-                    this
-                }
-            }
-            is IMAGE -> {
-                if(this.bodyImage.width <= 1){
-                    NONE
-                }else{
-                    this
-                }
-            }
-            is YOUTUBE -> {
-                if(this.youtubeId.isEmpty()){
-                    NONE
-                }else{
-                    this
-                }
-            }
-            is CODE ->{
-                if(this.code.isEmpty()){
-                    NONE
-                }else{
-                    this
-                }
-            }
-            else -> NONE
-        }
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

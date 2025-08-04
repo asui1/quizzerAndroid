@@ -6,6 +6,7 @@ import android.util.Base64
 import androidx.core.graphics.createBitmap
 import com.asu1.utils.Logger
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -19,8 +20,8 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.int
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
@@ -65,63 +66,64 @@ object BodyTypeSerializer : KSerializer<BodyType> {
         encoder.encodeJsonElement(jsonElem)
     }
 
-    override fun deserialize(decoder: Decoder): BodyType {
-        return try {
-            require(decoder is JsonDecoder)
-            // Decode raw element (could be object or string)
-            val rawElem = decoder.decodeJsonElement()
-
-            // Unwrap potentially nested JSON-in-string formats
-            val obj = when {
-                rawElem is JsonObject -> rawElem
-                rawElem is JsonPrimitive && rawElem.isString -> {
-                    // Recursively parse string content until we get a JsonObject
-                    var parsed: JsonElement = rawElem
-                    while (parsed is JsonPrimitive && parsed.isString) {
-                        parsed = Json.parseToJsonElement(parsed.content)
-                    }
-                    if (parsed is JsonObject) parsed.jsonObject else return BodyType.NONE
-                }
-                else -> return BodyType.NONE
-            }
-
-            // Extract and normalize type
-            val rawType = obj["type"]?.jsonPrimitive?.content ?: return BodyType.NONE
-            val type = rawType.removePrefix(LEGACY_FQCN)
-
-            // Build the appropriate BodyType
-            return when (type) {
-                "NONE" -> BodyType.NONE
-                "TEXT" -> BodyType.TEXT(obj["bodyText"]?.jsonPrimitive?.content.orEmpty())
-                "IMAGE" -> {
-                    val imgElem = obj["bodyImage"]
-                    val bitmap = when (imgElem) {
-                        is JsonArray -> {
-                            val bytes = imgElem.map { it.jsonPrimitive.int.toByte() }.toByteArray()
-                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: createEmptyBitmap()
-                        }
-                        is JsonPrimitive -> {
-                            val enc = imgElem.content.trim()
-                            if (enc.isEmpty() || enc == "[]") createEmptyBitmap()
-                            else {
-                                val data = Base64.decode(enc, Base64.DEFAULT)
-                                BitmapFactory.decodeByteArray(data, 0, data.size) ?: createEmptyBitmap()
-                            }
-                        }
-                        else -> createEmptyBitmap()
-                    }
-                    BodyType.IMAGE(bitmap)
-                }
-                "YOUTUBE" -> BodyType.YOUTUBE(
-                    obj["youtubeId"]?.jsonPrimitive?.content.orEmpty(),
-                    obj["youtubeStartTime"]?.jsonPrimitive?.int ?: 0
-                )
-                "CODE" -> BodyType.CODE(obj["code"]?.jsonPrimitive?.content.orEmpty())
-                else -> BodyType.NONE
-            }
-        } catch (e: Exception) {
-            Logger.debug("Body Type deserialization failed : $e")
+    override fun deserialize(decoder: Decoder): BodyType =
+        if (decoder !is JsonDecoder) {
             BodyType.NONE
+        } else {
+            try {
+                val rawElem = decoder.decodeJsonElement()
+                val obj = rawElem.unwrapToJsonObject()
+                val rawType = obj?.getString("type")
+                val type = rawType?.removePrefix(LEGACY_FQCN)
+
+                when (type) {
+                    "NONE" -> BodyType.NONE
+                    "TEXT" -> BodyType.TEXT(obj.getString("bodyText").orEmpty())
+                    "IMAGE" -> BodyType.IMAGE(obj.getImageBitmap())
+                    "YOUTUBE" -> BodyType.YOUTUBE(
+                        obj.getString("youtubeId").orEmpty(),
+                        obj.getInt("youtubeStartTime") ?: 0
+                    )
+                    "CODE" -> BodyType.CODE(obj.getString("code").orEmpty())
+                    else -> BodyType.NONE
+                }
+            } catch (e: SerializationException) {
+                Logger.debug("BodyType deserialization failed (serialization): $e")
+                BodyType.NONE
+            } catch (e: IllegalArgumentException) {
+                Logger.debug("BodyType deserialization failed (invalid value): $e")
+                BodyType.NONE
+            }
+        }
+
+    private fun JsonElement.unwrapToJsonObject(): JsonObject? {
+        var current: JsonElement = this
+        while (current is JsonPrimitive && current.isString) {
+            current = runCatching { Json.parseToJsonElement(current.content) }.getOrNull() ?: return null
+        }
+        return current as? JsonObject
+    }
+
+    private fun JsonObject.getString(key: String): String? =
+        this[key]?.jsonPrimitive?.contentOrNull
+
+    private fun JsonObject.getInt(key: String): Int? =
+        this[key]?.jsonPrimitive?.intOrNull
+
+    private fun JsonObject.getImageBitmap(): Bitmap {
+        val imgElem = this["bodyImage"]
+        return when (imgElem) {
+            is JsonArray -> {
+                val bytes = imgElem.mapNotNull { it.jsonPrimitive.intOrNull?.toByte() }.toByteArray()
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: createEmptyBitmap()
+            }
+            is JsonPrimitive -> {
+                val enc = imgElem.content.trim()
+                if (enc.isEmpty() || enc == "[]") return createEmptyBitmap()
+                val data = Base64.decode(enc, Base64.DEFAULT)
+                BitmapFactory.decodeByteArray(data, 0, data.size) ?: createEmptyBitmap()
+            }
+            else -> createEmptyBitmap()
         }
     }
 

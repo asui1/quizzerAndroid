@@ -32,10 +32,10 @@ data class ShortAnswerQuiz(
         userAnswer = ""
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank())    return QuizError.EMPTY_QUESTION
-        if (answer.isBlank())      return QuizError.EMPTY_ANSWER
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError  = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        answer.isBlank() -> QuizError.EMPTY_ANSWER
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean {

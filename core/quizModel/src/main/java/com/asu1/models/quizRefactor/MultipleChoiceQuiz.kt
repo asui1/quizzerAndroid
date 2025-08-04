@@ -10,16 +10,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
-const val defaultMultipleChoiceQuizSize = 5
+const val DEFAULT_MULTIPLE_CHOICE_QUIZ_SIZE = 5
 
 @Serializable
 @SerialName("0")
 data class MultipleChoiceQuiz(
     override var question: String = "",
     @SerialName("answers")
-    val options: List<String> = List(defaultMultipleChoiceQuizSize){""},
+    val options: List<String> = List(DEFAULT_MULTIPLE_CHOICE_QUIZ_SIZE){""},
     @SerialName("ans")
-    val correctFlags: List<Boolean> = List(defaultMultipleChoiceQuizSize){false},
+    val correctFlags: List<Boolean> = List(DEFAULT_MULTIPLE_CHOICE_QUIZ_SIZE){false},
     val shuffleAnswers: Boolean = false,
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
@@ -42,11 +42,11 @@ data class MultipleChoiceQuiz(
         repeat(options.size) { userSelections.add(false) }
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank())                  return QuizError.EMPTY_QUESTION
-        if (options.any { it.isBlank() })       return QuizError.EMPTY_ANSWER
-        if (correctFlags.none { it })           return QuizError.EMPTY_OPTION
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        options.any { it.isBlank() } -> QuizError.EMPTY_ANSWER
+        correctFlags.none { it } -> QuizError.EMPTY_OPTION
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean {

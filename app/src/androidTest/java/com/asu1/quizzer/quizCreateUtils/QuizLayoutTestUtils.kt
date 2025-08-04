@@ -33,9 +33,9 @@ import com.asu1.models.quizRefactor.MultipleChoiceQuiz
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.quizRefactor.ReorderQuiz
 import com.asu1.models.quizRefactor.ShortAnswerQuiz
-import com.asu1.models.quizRefactor.connectItemsQuizDefaultSize
-import com.asu1.models.quizRefactor.defaultMultipleChoiceQuizSize
-import com.asu1.models.quizRefactor.reorderQuizDefaultSize
+import com.asu1.models.quizRefactor.CONNECT_ITEMS_QUIZ_DEFAULT_SIZE
+import com.asu1.models.quizRefactor.DEFAULT_MULTIPLE_CHOICE_QUIZ_SIZE
+import com.asu1.models.quizRefactor.REORDER_QUIZ_DEFAULT_SIZE
 import com.asu1.models.serializers.BodyType
 import com.asu1.utils.Logger
 import com.asu1.utils.uriToByteArray
@@ -135,7 +135,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addMultipleChoiceQuiz(quiz: MultipleChoiceQuiz){
         setAnswer(
             answerSIze = quiz.options.size,
-            defaultSize = defaultMultipleChoiceQuizSize,
+            defaultSize = DEFAULT_MULTIPLE_CHOICE_QUIZ_SIZE,
         )
         composeTestRule
             .onNodeWithTag("MultipleChoiceQuizCreatorLazyColumn")
@@ -168,7 +168,7 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addReorderQuiz(quiz: ReorderQuiz){
         setAnswer(
             answerSIze = quiz.answers.size,
-            defaultSize = reorderQuizDefaultSize)
+            defaultSize = REORDER_QUIZ_DEFAULT_SIZE)
         for(i in 0 until quiz.answers.size){
             inputTextOnTag("QuizAnswerTextField${i}", quiz.answers[i], checkFocus = true, withIme = true)
         }
@@ -177,11 +177,11 @@ class QuizLayoutTestUtils(private val composeTestRule: ComposeTestRule) {
     fun addConnectItemsQuiz(quiz: ConnectItemsQuiz){
         setAnswer(
             answerSIze = quiz.answers.size,
-            defaultSize = connectItemsQuizDefaultSize,
+            defaultSize = CONNECT_ITEMS_QUIZ_DEFAULT_SIZE,
         )
         setAnswer(
             answerSIze = quiz.connectionAnswers.size,
-            defaultSize = connectItemsQuizDefaultSize,
+            defaultSize = CONNECT_ITEMS_QUIZ_DEFAULT_SIZE,
             removeTag = "QuizCreatorRemoveAnswerButton",
             addTag = "QuizCreatorAddAnswerButtonRight",
         )

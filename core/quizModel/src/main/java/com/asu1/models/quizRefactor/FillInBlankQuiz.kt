@@ -63,10 +63,10 @@ data class FillInBlankQuiz(
         repeat(correctAnswers.size){ userAnswers.add("") }
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank()) return QuizError.EMPTY_QUESTION
-        if (correctAnswers.isEmpty()) return QuizError.EMPTY_ANSWER
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError  = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        correctAnswers.isEmpty() -> QuizError.EMPTY_ANSWER
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean =

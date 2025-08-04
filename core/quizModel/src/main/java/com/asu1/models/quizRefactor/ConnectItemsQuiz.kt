@@ -10,15 +10,15 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
 
-const val connectItemsQuizDefaultSize = 3
+const val CONNECT_ITEMS_QUIZ_DEFAULT_SIZE = 3
 
 @Serializable
 @SerialName("3")
 data class ConnectItemsQuiz(
     override var question: String = "",
-    var answers: List<String> = List(connectItemsQuizDefaultSize){""},
-    var connectionAnswers: List<String> = List(connectItemsQuizDefaultSize){""},
-    var connectionAnswerIndex: List<Int?> = List(connectItemsQuizDefaultSize){null},
+    var answers: List<String> = List(CONNECT_ITEMS_QUIZ_DEFAULT_SIZE){""},
+    var connectionAnswers: List<String> = List(CONNECT_ITEMS_QUIZ_DEFAULT_SIZE){""},
+    var connectionAnswerIndex: List<Int?> = List(CONNECT_ITEMS_QUIZ_DEFAULT_SIZE){null},
     @Serializable(with = BodyTypeSerializer::class)
     override var bodyValue: BodyType = BodyType.NONE,
 ) : Quiz(
@@ -37,13 +37,11 @@ data class ConnectItemsQuiz(
             .toMutableStateList()
     }
 
-    override fun validateQuiz(): QuizError {
-        if (question.isBlank()) return QuizError.EMPTY_QUESTION
-        if (answers.any(String::isBlank) || connectionAnswers.any(String::isBlank))
-            return QuizError.EMPTY_ANSWER
-        if (connectionAnswerIndex.all { it == null })
-            return QuizError.EMPTY_OPTION
-        return QuizError.NO_ERROR
+    override fun validateQuiz(): QuizError = when {
+        question.isBlank() -> QuizError.EMPTY_QUESTION
+        answers.any(String::isBlank) || connectionAnswers.any(String::isBlank) -> QuizError.EMPTY_ANSWER
+        connectionAnswerIndex.all { it == null } -> QuizError.EMPTY_OPTION
+        else -> QuizError.NO_ERROR
     }
 
     override fun gradeQuiz(): Boolean =
@@ -88,18 +86,16 @@ data class ConnectItemsQuiz(
     }
 
     fun deleteConnectionAnswerAt(index: Int){
-        connectionAnswers = connectionAnswers.toMutableList().apply {
-            removeAt(index)
-            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                for(i in indices){
-                    this[i]?.let{
-                        if (it == index) {
-                            this[i] = null
-                        } else if (it > index) {
-                            this[i] = it - 1
-                        }
-                    }
-                }
+        if (index !in connectionAnswers.indices) return
+        // Remove the answer
+        connectionAnswers = connectionAnswers.take(index) + connectionAnswers.drop(index + 1)
+
+        // Adjust the indexes: equal → null, greater → minus one, else unchanged
+        connectionAnswerIndex = connectionAnswerIndex.map { value ->
+            when {
+                value == index -> null
+                value != null && value > index -> value - 1
+                else -> value
             }
         }
     }

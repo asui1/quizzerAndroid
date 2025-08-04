@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import com.asu1.imagecolor.ColorSchemeSerializer
 import com.asu1.imagecolor.ImageColor
 import com.asu1.imagecolor.ImageColorState
+import com.asu1.resources.LightColorScheme
 import kotlinx.serialization.Serializable
 
 interface QuizThemeInterface {
@@ -26,5 +27,5 @@ data class QuizTheme(
     override var questionTextStyle: List<Int> = listOf(0, 5, 1, 0, 0),
     override var bodyTextStyle: List<Int> = listOf(0, 7, 3, 1, 0),
     override var answerTextStyle: List<Int> = listOf(0, 0, 0, 2, 0),
-    @Serializable(with = ColorSchemeSerializer::class) override var colorScheme: ColorScheme = com.asu1.resources.LightColorScheme,
+    @Serializable(with = ColorSchemeSerializer::class) override var colorScheme: ColorScheme = LightColorScheme,
 ) : QuizThemeInterface

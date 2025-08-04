@@ -44,6 +44,17 @@ data class ScoreCard (
 
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = imageStateval
+        result = 31 * result + (quizUuid?.hashCode() ?: 0)
+        result = 31 * result + title.hashCode()
+        result = 31 * result + solver.hashCode()
+        result = 31 * result + background.hashCode()
+        result = 31 * result + textColor.hashCode()
+        result = 31 * result + colorScheme.hashCode()
+        return result
+    }
 }
 
 val sampleScoreCard = ScoreCard(
