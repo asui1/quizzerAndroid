@@ -2,16 +2,43 @@ build:
   maxIssues: 0
 
 config:
+  validation: true
   warningsAsErrors: true
+  # If you ever have custom/extended properties you want to skip validation for, you can set:
+  # excludes: 'customRuleSet>.*'
 
+processors:
+  active: true
+
+# Complexity tuning (including LongParameterList for Compose-heavy signatures)
 complexity:
   active: true
   TooManyFunctions:
-      thresholdInFiles: 30
-      thresholdInClasses: 20
-      ignorePrivate: true
+    thresholdInFiles: 30
+    thresholdInClasses: 20
+    ignorePrivate: true
+  LongParameterList:
+    functionThreshold: 15        # allow longer parameter lists in composables / complex functions
+    ignoreDefaultParameters: true
 
+# Style tweaks (example: avoid noise from preview annotated functions)
+style:
+  MagicNumber:
+    active: false
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']  # Compose preview functions often look unused. :contentReference[oaicite:3]{index=3}
+
+# Naming rules (Compose-friendly adjustments)
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']  # let @Composable Unit-returning functions use PascalCase. :contentReference[oaicite:4]{index=4}
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Z0-9]*'  # allows UPPER_SNAKE_CASE like DEFAULT_DELAY_MS
+
+# Reports: keep your existing exclusions
 output-reports:
+  active: true
   exclude:
     - 'TxtOutputReport'
     - 'XmlOutputReport'

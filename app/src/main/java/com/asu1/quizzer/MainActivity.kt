@@ -1,7 +1,6 @@
 package com.asu1.quizzer
 
 import SnackBarManager
-import ToastType
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -30,7 +29,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.asu1.activityNavigation.Route
 import com.asu1.activityNavigation.snackbar.CustomSnackbarHost
 import com.asu1.mainpage.viewModels.QuizCardMainViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
@@ -43,7 +41,6 @@ import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.resources.R
 import com.asu1.splashpage.InitializationViewModel
 import com.asu1.utils.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -55,6 +52,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
+private const val DEFAULT_DELAY_MS = 1_000L
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,9 +72,19 @@ class MainActivity : ComponentActivity() {
     private val loadLocalQuizViewModel: LoadLocalQuizViewModel by viewModels()
     private val initializationViewModel: InitializationViewModel by viewModels()
 
+
     private lateinit var navController: NavHostController
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var updateLauncher: ActivityResultLauncher<IntentSenderRequest>
+
+    val quizNavCoordinator: QuizNavCoordinator = QuizNavCoordinator(
+        navController = navController,
+        quizCoordinatorViewModel = quizCoordinatorViewModel,
+        quizCardMainViewModel = quizCardMainViewModel,
+        userViewModel = userViewModel,
+        loadLocalQuizViewModel = loadLocalQuizViewModel,
+        loadMyQuizViewModel = loadMyQuizViewModel
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,74 +97,6 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
                 AppScaffold()
             }
-        }
-    }
-
-    fun getQuizResult(
-        resultId: String = ""
-    ) {
-        if (resultId.isEmpty()) return
-        quizCoordinatorViewModel.loadQuizResult(resultId)
-        navController.navigate(
-            Route.ScoringScreen
-        ) {
-            popUpTo(Route.Home) { inclusive = false }
-            launchSingleTop = true
-            quizCardMainViewModel.setLoadResultId(null)
-        }
-    }
-
-    fun loadQuiz(quizId: String, doPop: Boolean = false) {
-        quizCoordinatorViewModel.loadQuiz(quizId)
-        navController.navigate(Route.QuizSolver()) {
-            if (doPop) popUpTo(Route.Home) { inclusive = false }
-            launchSingleTop = true
-        }
-        quizCardMainViewModel.setLoadQuizId(null)
-    }
-
-    fun getHome(fetchData: Boolean = true) {
-        quizCardMainViewModel.resetQuizTrends()
-        quizCardMainViewModel.resetUserRanks()
-        if (fetchData) quizCardMainViewModel.fetchQuizCards()
-        navController.navigate(
-            Route.Home
-        ) {
-            popUpTo(0) { inclusive = true }
-            launchSingleTop = true
-        }
-    }
-
-    fun navigateToCreateQuizLayout(){
-        if (userViewModel.userData.value?.email == null) {
-            SnackBarManager.showSnackBar(
-                R.string.please_login_first,
-                ToastType.INFO
-            )
-            navController.navigate(
-                Route.Login
-            ) {
-                launchSingleTop = true
-            }
-        } else {
-            quizCoordinatorViewModel.resetQuizData(userViewModel.userData.value?.email)
-            loadLocalQuizViewModel.reset()
-            navController.navigate(
-                Route.CreateQuizLayout
-            ) {
-                launchSingleTop = true
-            }
-        }
-    }
-
-    fun navigateToLoadUserQuiz(){
-        loadMyQuizViewModel.loadUserQuiz(
-            userViewModel.userData.value?.email ?: ""
-        )
-        navController.navigate(
-            Route.LoadUserQuiz
-        ) {
-            launchSingleTop = true
         }
     }
 
@@ -186,7 +127,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             if (BuildConfig.isDebug) {
-                delay(1_000)
+                delay(DEFAULT_DELAY_MS)
                 initializationViewModel.noUpdateAvailable()
             }
         }
@@ -220,13 +161,9 @@ class MainActivity : ComponentActivity() {
                 Modifier.padding(padding).fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                QuizNavGraph(
+                QuizNavGraphManager(
                     navController = navController,
-                    getHome = ::getHome,
-                    loadQuiz = ::loadQuiz,
-                    getQuizResult = ::getQuizResult,
-                    navigateToCreateQuizLayout = ::navigateToCreateQuizLayout,
-                    navigateToLoadUserQuiz = ::navigateToLoadUserQuiz,
+                    quizNavCoordinator = quizNavCoordinator,
                 )
             }
         }

@@ -36,13 +36,9 @@ import com.asu1.search.SearchScreen
 import com.asu1.splashpage.InitializationScreen
 
 @Composable
-fun QuizNavGraph(
+fun QuizNavGraphManager(
     navController: NavHostController,
-    getHome: (Boolean) -> Unit,
-    loadQuiz: (String, Boolean) -> Unit,
-    getQuizResult: (String) -> Unit,
-    navigateToCreateQuizLayout: () -> Unit,
-    navigateToLoadUserQuiz: () -> Unit
+    quizNavCoordinator: QuizNavCoordinator,
 ) {
     NavHost(
         navController    = navController,
@@ -51,19 +47,15 @@ fun QuizNavGraph(
         exitTransition   = { ExitTransition.None }
     ) {
         initializationRoute(
-            getHome = getHome
+            getHome = { fetchData -> quizNavCoordinator.getHome(fetchData) }
         )
         homeRoute(
             navController = navController,
-            navigateToCreateQuizLayout = navigateToCreateQuizLayout,
-            navigateToLoadUserQuiz = navigateToLoadUserQuiz,
-            getHome = {getHome(true)},
-            loadQuiz = { it -> loadQuiz(it, false)},
-            getQuizResult = getQuizResult,
+            quizNavCoordinator = quizNavCoordinator,
         )
         searchRoute(
             navController = navController,
-            loadQuiz = { it -> loadQuiz(it, false) },
+            loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
         )
         loginRoute(navController)
         privacyPolicyRoute(navController)
@@ -79,7 +71,7 @@ fun QuizNavGraph(
         notificationsRoute(navController)
         quizCheckerRoute()
         scoringScreenRoute(navController,
-            loadQuiz = {it -> loadQuiz(it, true)}
+            loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
         )
     }
 }
@@ -100,28 +92,24 @@ fun NavGraphBuilder.initializationRoute(
 
 fun NavGraphBuilder.homeRoute(
     navController: NavController,
-    navigateToCreateQuizLayout: () -> Unit,
-    navigateToLoadUserQuiz: () -> Unit,
-    getHome: () -> Unit,
-    loadQuiz: (String) -> Unit,
-    getQuizResult: (String) -> Unit
+    quizNavCoordinator: QuizNavCoordinator,
 ) {
     composable<Route.Home> {
         MainScreen(
             navController = navController,
             navigateTo = { route ->
                 when (route) {
-                    is Route.CreateQuizLayout -> navigateToCreateQuizLayout()
-                    is Route.LoadUserQuiz -> navigateToLoadUserQuiz()
+                    is Route.CreateQuizLayout -> { quizNavCoordinator.navigateToCreateQuizLayout() }
+                    is Route.LoadUserQuiz -> { quizNavCoordinator.navigateToLoadUserQuiz() }
                     is Route.MyActivities -> {
                         navController.navigate(route) { launchSingleTop = true }
                     }
                     else -> navController.navigate(route) { launchSingleTop = true }
                 }
             },
-            loadQuiz = loadQuiz,
-            loadQuizResult = getQuizResult,
-            moveHome = getHome
+            loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
+            loadQuizResult = { id -> quizNavCoordinator.getQuizResult(id) },
+            moveHome = { quizNavCoordinator.getHome(true)}
         )
     }
 }

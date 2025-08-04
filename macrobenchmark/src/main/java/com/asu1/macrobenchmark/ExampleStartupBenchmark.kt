@@ -1,19 +1,17 @@
 package com.asu1.macrobenchmark
 
 import android.content.Intent
-import android.net.Uri
-import androidx.benchmark.macro.CompilationMode
-import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
+import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
 
 
 /**
@@ -35,7 +33,7 @@ class ExampleStartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun benchmark_startup() = benchmarkRule.measureRepeated(
+    fun benchmarkStartup() = benchmarkRule.measureRepeated(
         packageName = "com.asu1.quizzer",
         metrics = listOf(StartupTimingMetric()),
         iterations = 5,
@@ -47,27 +45,33 @@ class ExampleStartupBenchmark {
     }
 
     @Test
-    fun benchmark_getquiz() = benchmarkRule.measureRepeated(
+    fun benchmarkGetQuiz() = benchmarkRule.measureRepeated(
         packageName = "com.asu1.quizzer",
         metrics = listOf(StartupTimingMetric()),
         iterations = 5,
         startupMode = StartupMode.COLD
     ){
         pressHome()
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://quizzer.co.kr?resultId=b0867d48334c84b00834226d93b87ebfeec5daac4443539567078e268752c832"))
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "https://quizzer.co.kr?resultId=b0867d48334c84b00834226d93b87ebfeec5daac4443539567078e268752c832".toUri()
+        )
         startActivityAndWait(intent)
         device.wait(Until.hasObject(By.text("메인으로")), 20_000)
     }
 
     @Test
-    fun benchmark_getresult() = benchmarkRule.measureRepeated(
+    fun benchmarkGetResult() = benchmarkRule.measureRepeated(
         packageName = "com.asu1.quizzer",
         metrics = listOf(StartupTimingMetric()),
         iterations = 5,
         startupMode = StartupMode.COLD
     ){
         pressHome()
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://quizzer.co.kr?quizId=688c0185-1b4b-5064-8431-bfc00414f208"))
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "https://quizzer.co.kr?quizId=688c0185-1b4b-5064-8431-bfc00414f208".toUri()
+        )
         startActivityAndWait(intent)
         device.wait(Until.hasObject(By.text("선택된")), 20_000)
     }
