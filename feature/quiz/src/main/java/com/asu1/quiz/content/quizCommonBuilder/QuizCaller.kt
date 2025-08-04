@@ -35,11 +35,11 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 @Composable
 fun QuizCaller(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     loadIndex:Int,
     quizType: QuizType,
     insertIndex: Int,
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizTheme = quizState.quizTheme
     val quizzes = quizState.quizContentState.quizzes

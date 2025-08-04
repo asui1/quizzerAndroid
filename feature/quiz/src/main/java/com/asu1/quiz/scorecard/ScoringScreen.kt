@@ -54,6 +54,7 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.uiUtil.disableImmersiveMode
 import com.asu1.customComposable.uiUtil.enableImmersiveMode
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 
@@ -61,10 +62,11 @@ import com.asu1.resources.ViewModelState
 @Composable
 fun ScoringScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
-    email: String = "GUEST",
     loadQuiz: (String) -> Unit = {},
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    val email: String = userViewModel.userData.value?.email ?: "GUEST"
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizzes = quizState.quizContentState.quizzes
     val quizResult = quizState.quizResult

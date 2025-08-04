@@ -30,6 +30,8 @@ import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
+import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
@@ -45,15 +47,21 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun LoadMyQuizScreen(
     navController: NavController,
-    loadMyQuizViewModel: LoadMyQuizViewModel = viewModel(),
-    onLoadQuiz: (Int) -> Unit = {},
-    email: String = "",
 ) {
+    val loadMyQuizViewModel: LoadMyQuizViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val email: String = userViewModel.userData.value?.email ?: ""
     val quizList by loadMyQuizViewModel.myQuizList
         .collectAsStateWithLifecycle(persistentListOf())
     val quizLoadViewModelState by loadMyQuizViewModel.loadMyQuizViewModelState.observeAsState(
         ViewModelState.LOADING
     )
+    fun onLoadQuiz(index: Int){
+        quizCoordinatorViewModel.loadQuiz(
+            quizList[index].id
+        )
+    }
 
     LoadMyQuizBody(
         onMoveHome = {

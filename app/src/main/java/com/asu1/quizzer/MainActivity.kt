@@ -44,7 +44,6 @@ import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
-import com.asu1.search.SearchViewModel
 import com.asu1.splashpage.InitializationViewModel
 import com.asu1.utils.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -64,8 +63,6 @@ class MainActivity : ComponentActivity() {
     private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
-    // CAN BE INITIALIZED LATER
-    private val searchViewModel: SearchViewModel by viewModels()
     private val quizCoordinatorViewModel: QuizCoordinatorViewModel by viewModels()
     private val quizGeneralViewModel: QuizGeneralViewModel by viewModels()
     private val quizContentViewModel: QuizContentViewModel by viewModels()
@@ -225,17 +222,6 @@ class MainActivity : ComponentActivity() {
             ) {
                 QuizNavGraph(
                     navController = navController,
-                    initializationViewModel = initializationViewModel,
-                    userViewModel = userViewModel,
-                    quizCardMainViewModel = quizCardMainViewModel,
-                    searchViewModel = searchViewModel,
-                    quizCoordinatorViewModel = quizCoordinatorViewModel,
-                    quizGeneralViewModel = quizGeneralViewModel,
-                    quizThemeViewModel = quizThemeViewModel,
-                    scoreCardViewModel = scoreCardViewModel,
-                    loadLocalQuizViewModel = loadLocalQuizViewModel,
-                    loadMyQuizViewModel = loadMyQuizViewModel,
-                    context = context,
                     getHome = ::getHome,
                     loadQuiz = ::loadQuiz,
                     getQuizResult = ::getQuizResult,

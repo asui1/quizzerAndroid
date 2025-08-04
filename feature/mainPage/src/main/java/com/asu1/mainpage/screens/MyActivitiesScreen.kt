@@ -50,8 +50,8 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun MyActivitiesScreen(
     navController: NavController,
-    userViewModel: UserViewModel = viewModel()
 ) {
+    val userViewModel: UserViewModel = viewModel()
     val userActivities by userViewModel.userActivities.collectAsStateWithLifecycle(
         persistentListOf()
     )

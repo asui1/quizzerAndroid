@@ -39,8 +39,8 @@ import com.asu1.utils.setTopBarColor
 
 @Composable
 fun QuizChecker(
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
 ){
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizzes = quizState.quizContentState.quizzes
     val quizTheme = quizState.quizTheme

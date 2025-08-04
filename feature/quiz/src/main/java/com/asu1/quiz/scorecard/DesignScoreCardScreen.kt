@@ -38,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.OpenCloseColumn
 import com.asu1.customComposable.animations.UploadingAnimation
 import com.asu1.customComposable.uiUtil.disableImmersiveMode
@@ -45,6 +46,8 @@ import com.asu1.customComposable.uiUtil.enableImmersiveMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
+import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
+import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import kotlinx.collections.immutable.PersistentList
@@ -56,10 +59,11 @@ val colorNames: List<Int> = listOf(R.string.background_newline,
 
 @Composable
 fun DesignScoreCardScreen(
-    navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
-    onUpload: () -> Unit = { }
+    navController: NavController
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val loadMyQuizViewModel: LoadMyQuizViewModel = viewModel()
+    val scoreCardViewModel: ScoreCardViewModel = viewModel()
     val quizUIState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val scoreCardState = quizUIState.scoreCardState
     val windowInfo = LocalWindowInfo.current
@@ -76,6 +80,11 @@ fun DesignScoreCardScreen(
     val localActivity = LocalActivity.current
     val scope = rememberCoroutineScope()
     val quizQuestions = remember(Unit){quizCoordinatorViewModel.getQuestions()}
+    fun onUpload(){
+        navController.popBackStack(Route.Home, inclusive = false)
+        loadMyQuizViewModel.reset()
+        scoreCardViewModel.resetScoreCard()
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -119,7 +128,7 @@ fun DesignScoreCardScreen(
                 immerseMode,
                 onUpload = {
                     scope.launch {
-                        quizCoordinatorViewModel.tryUpload(navController, onUpload)
+                        quizCoordinatorViewModel.tryUpload(navController, { onUpload() })
                     }
                 },
                 questions = quizQuestions,

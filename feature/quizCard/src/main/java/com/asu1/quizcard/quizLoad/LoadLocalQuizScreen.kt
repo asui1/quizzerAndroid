@@ -29,6 +29,7 @@ import com.asu1.customComposable.topBar.RowWithAppIconAndName
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
+import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
@@ -41,9 +42,9 @@ import java.util.Base64
 @Composable
 fun LoadLocalQuizScreen(
     navController: NavController,
-    loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel(),
-    onClickLoad: (quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard) -> Unit = { _, _, _ -> },
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
     val quizSerializerList by loadLocalQuizViewModel.localQuizList.collectAsStateWithLifecycle()
     val quizList = remember(quizSerializerList?.size ?: 0){quizSerializerList?.map{
         QuizCard(
@@ -57,6 +58,18 @@ fun LoadLocalQuizScreen(
     } ?: emptyList()}
     val loadComplete by loadLocalQuizViewModel.loadLocalQuizViewModelState.observeAsState()
     val context = LocalContext.current
+    fun onClickLoad(
+        quizData: QuizDataSerializer,
+        quizTheme: QuizTheme,
+        scoreCard: ScoreCard
+    ){
+        quizCoordinatorViewModel.loadQuiz(
+            quizData = quizData,
+            quizTheme = quizTheme,
+            scoreCard = scoreCard
+        )
+        loadLocalQuizViewModel.loadComplete()
+    }
 
     LaunchedEffect(loadComplete) {
         if (loadComplete == ViewModelState.SUCCESS) {

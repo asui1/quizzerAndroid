@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -31,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
@@ -43,9 +46,9 @@ import com.asu1.utils.setTopBarColor
 fun QuizSolver(
     modifier: Modifier = Modifier,
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
-    navigateToScoreCard: () -> Unit = {},
+    hasVisitedRoute: Boolean,
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizzes = quizState.quizContentState.quizzes
     val quizTheme = quizState.quizTheme
@@ -58,7 +61,26 @@ fun QuizSolver(
     ){
         quizzes.size + 1
     }
+    val userViewModel: UserViewModel = viewModel()
 
+    val navigateToScoreCard = remember {
+        {
+            if (hasVisitedRoute) {
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_proceed_when_creating_quiz,
+                    ToastType.INFO
+                )
+            } else {
+                val email = userViewModel.userData.value?.email ?: "GUEST"
+                quizCoordinatorViewModel.gradeQuiz(email) {
+                    navController.navigate(Route.ScoringScreen) {
+                        popUpTo(Route.Home) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    }
     LaunchedEffect(viewModelState) {
         if(viewModelState == ViewModelState.ERROR){
             navController.popBackStack()

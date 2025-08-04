@@ -66,11 +66,16 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.serializers.QuizType
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.ui.QuizLayoutBottomBar
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
+import com.asu1.quiz.viewmodel.quizLayout.QuizThemeViewModel
+import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
+import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -82,10 +87,13 @@ const val scale = 0.66f
 @Composable
 fun QuizBuilderScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
-    onMoveToScoringScreen: () -> Unit = {},
-    navigateToQuizLoad: () -> Unit = {},
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val quizGeneralViewModel: QuizGeneralViewModel = viewModel()
+    val quizThemeViewModel: QuizThemeViewModel = viewModel()
+    val scoreCardViewModel: ScoreCardViewModel = viewModel()
+    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizzes = quizState.quizContentState.quizzes
     val quizTheme = quizState.quizTheme
@@ -110,7 +118,22 @@ fun QuizBuilderScreen(
     val screenWidth = remember(windowInfo, density) {
         with(density) { windowInfo.containerSize.width.toDp() }
     }
+    val onMoveToScoringScreen = remember {
+        {
+            scoreCardViewModel.updateScoreCard(
+                quizGeneralViewModel.quizGeneralUiState.value.quizData,
+                quizThemeViewModel.quizTheme.value.colorScheme
+            )
+            navController.navigate(Route.DesignScoreCard) { launchSingleTop = true }
+        }
+    }
 
+    val onLoadLocalQuiz = remember {
+        {
+            loadLocalQuizViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
+            navController.navigate(Route.LoadLocalQuiz) { launchSingleTop = true }
+        }
+    }
     LaunchedEffect(Unit) {
         snapLayoutInfoProvider.scrollToItem(initialIndex)
     }
@@ -198,7 +221,7 @@ fun QuizBuilderScreen(
                             IconButton(
                                 modifier = Modifier.width(30.dp),
                                 onClick = {
-                                    navigateToQuizLoad()
+                                    onLoadLocalQuiz()
                                 }
                             ) {
                                 Icon(

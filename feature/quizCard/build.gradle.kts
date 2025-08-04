@@ -18,6 +18,8 @@ dependencies {
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
+    implementation(project(":feature:quiz"))
+    implementation(project(":feature:mainPage"))
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.runtime.android)
