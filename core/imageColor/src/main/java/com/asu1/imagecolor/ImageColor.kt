@@ -58,5 +58,4 @@ data class ImageColor(
         result = 31 * result + overlayImage.hashCode()
         return result
     }
-
 }

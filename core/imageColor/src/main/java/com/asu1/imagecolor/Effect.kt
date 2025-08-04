@@ -43,7 +43,7 @@ enum class Effect(
         iconRes = "\uD83D\uDDD9",
         typeLabel = EffectTypes.NONE,
     ),
-    FIREWORKS(R.string.firework, fireworks,
+    FIREWORKS(R.string.firework, com.asu1.imagecolor.FIREWORKS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -54,7 +54,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF86",
         typeLabel = EffectTypes.CELEBRATION,
     ),
-    FIREWORKS2(R.string.fireworks2, fireworks2,
+    FIREWORKS2(R.string.fireworks2, com.asu1.imagecolor.FIREWORKS2,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -65,7 +65,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF86",
         typeLabel = EffectTypes.CELEBRATION,
     ),
-    MOON(R.string.moon, moon,
+    MOON(R.string.moon, com.asu1.imagecolor.MOON,
         BlendModeCompat.MODULATE,
         listOf(
             EffectGraphicsInfo(
@@ -78,7 +78,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF19",
         typeLabel = EffectTypes.NATURE,
     ),
-    SHOOTING_STAR(R.string.shooting_star, shootingstar,
+    SHOOTING_STAR(R.string.shooting_star, com.asu1.imagecolor.SHOOTING_STAR,
         BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
@@ -95,7 +95,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF20",
         typeLabel = EffectTypes.NATURE,
     ),
-    SNOWFLAKES(R.string.snow, snowflakes,
+    SNOWFLAKES(R.string.snow, com.asu1.imagecolor.SNOWFLAKES,
         BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
@@ -106,7 +106,7 @@ enum class Effect(
         iconRes = "❄\uFE0F",
         typeLabel = EffectTypes.NATURE,
     ),
-    CLOUDS(R.string.cloud, clouds,
+    CLOUDS(R.string.cloud, com.asu1.imagecolor.CLOUDS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -117,7 +117,7 @@ enum class Effect(
         iconRes = "☁\uFE0F",
         typeLabel = EffectTypes.NATURE,
     ),
-    FLOWERS(R.string.flowers, flowers,
+    FLOWERS(R.string.flowers, com.asu1.imagecolor.FLOWERS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -128,7 +128,7 @@ enum class Effect(
         typeLabel = EffectTypes.NATURE,
     ),
     HORIZONTAL_FLOWERS(R.string.horizontal_flowers,
-        horizontalFlowers, BlendModeCompat.SRC_ATOP,
+        com.asu1.imagecolor.HORIZONTAL_FLOWERS, BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -138,7 +138,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF38",
         typeLabel = EffectTypes.NATURE,
     ),
-    NOTES(R.string.music_notes, notes,
+    NOTES(R.string.music_notes, com.asu1.imagecolor.NOTES,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -149,7 +149,7 @@ enum class Effect(
         iconRes = "\uD83C\uDFB5",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    RAIN(R.string.rain, rain,
+    RAIN(R.string.rain, com.asu1.imagecolor.RAIN,
         BlendModeCompat.MULTIPLY,
         listOf(
             EffectGraphicsInfo(
@@ -160,7 +160,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF27\uFE0F",
         typeLabel = EffectTypes.NATURE,
     ),
-    CHRISTMAS(R.string.christmas, christmas,
+    CHRISTMAS(R.string.christmas, com.asu1.imagecolor.CHRISTMAS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -172,7 +172,7 @@ enum class Effect(
         typeLabel = EffectTypes.CELEBRATION,
     ),
     CHRISTMASBELL(R.string.bell,
-        christmasbell, BlendModeCompat.COLOR,
+        CHRISTMAS_BELL, BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -192,7 +192,7 @@ enum class Effect(
         iconRes = "\uD83D\uDD14",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    BUBBLES(R.string.bubbles, bubbles,
+    BUBBLES(R.string.bubbles, com.asu1.imagecolor.BUBBLES,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -204,7 +204,7 @@ enum class Effect(
         iconRes = "\uD83E\uDEE7",
         typeLabel = EffectTypes.EMOTION,
     ),
-    BUBBLES2(R.string.bubbles2, bubbles2,
+    BUBBLES2(R.string.bubbles2, com.asu1.imagecolor.BUBBLES2,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -214,7 +214,7 @@ enum class Effect(
         iconRes = "\uD83E\uDEE7",
         typeLabel = EffectTypes.EMOTION,
     ),
-    HEARTS(R.string.hearts, hearts,
+    HEARTS(R.string.hearts, com.asu1.imagecolor.HEARTS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -230,7 +230,7 @@ enum class Effect(
         iconRes = "\uD83D\uDC97",
         typeLabel = EffectTypes.EMOTION,
     ),
-    HEARTS2(R.string.hearts2, hearts2,
+    HEARTS2(R.string.hearts2, com.asu1.imagecolor.HEARTS2,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -241,7 +241,7 @@ enum class Effect(
         typeLabel = EffectTypes.EMOTION,
     ),
     WREATH(R.string.wreath,
-        wreath, BlendModeCompat.COLOR,
+        com.asu1.imagecolor.WREATH, BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
                 progress = 0f,
@@ -251,7 +251,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF3F",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    HOURGLASS(R.string.hourglass, hourglass,
+    HOURGLASS(R.string.hourglass, com.asu1.imagecolor.HOURGLASS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -264,7 +264,7 @@ enum class Effect(
         iconRes = "⏳",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    COMPUTATION(R.string.computation, computation,
+    COMPUTATION(R.string.computation, com.asu1.imagecolor.COMPUTATION,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -275,7 +275,7 @@ enum class Effect(
         iconRes = "\uD83D\uDCBB",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    WINGS(R.string.wings, wings,
+    WINGS(R.string.wings, com.asu1.imagecolor.WINGS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -286,7 +286,7 @@ enum class Effect(
         iconRes = "\uD83E\uDEBD",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    FLOWS(R.string.flows, flows,
+    FLOWS(R.string.flows, com.asu1.imagecolor.FLOWS,
         BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
@@ -296,7 +296,7 @@ enum class Effect(
         iconRes = "⛆",
         typeLabel = EffectTypes.EMOTION,
     ),
-    FIREPILLAR(R.string.fire_pillar, firePillar,
+    FIREPILLAR(R.string.fire_pillar, FIRE_PILLAR,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -306,7 +306,7 @@ enum class Effect(
         iconRes = "\uD83D\uDD25",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    FLOWERS2(R.string.flowers2, flowers2,
+    FLOWERS2(R.string.flowers2, com.asu1.imagecolor.FLOWERS2,
         BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
@@ -317,7 +317,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF38",
         typeLabel = EffectTypes.NATURE,
     ),
-    TRAIN(R.string.train, train,
+    TRAIN(R.string.train, com.asu1.imagecolor.TRAIN,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -327,7 +327,7 @@ enum class Effect(
         iconRes = "\uD83D\uDE86",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    BRAINSTORMING(R.string.brainstorming, brainstorming,
+    BRAINSTORMING(R.string.brainstorming, com.asu1.imagecolor.BRAINSTORMING,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -338,7 +338,7 @@ enum class Effect(
         iconRes = "\uD83E\uDDE0",
         typeLabel = EffectTypes.NATURE,
     ),
-    AIRBALLOON(R.string.air_balloon, airBalloon,
+    AIRBALLOON(R.string.air_balloon, AIR_BALLOON,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -349,7 +349,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF88",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    BALLOON(R.string.balloons, balloons,
+    BALLOON(R.string.balloons, BALLOONS,
         BlendModeCompat.SRC_ATOP,
         listOf(
             EffectGraphicsInfo(
@@ -359,7 +359,7 @@ enum class Effect(
         iconRes = "\uD83C\uDF88",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    BUS(R.string.bus, bus,
+    BUS(R.string.bus, com.asu1.imagecolor.BUS,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(
@@ -370,7 +370,7 @@ enum class Effect(
         iconRes = "\uD83D\uDE8C",
         typeLabel = EffectTypes.OBJECTS,
     ),
-    TRAVEL(R.string.travel, travel,
+    TRAVEL(R.string.travel, com.asu1.imagecolor.TRAVEL,
         BlendModeCompat.COLOR,
         listOf(
             EffectGraphicsInfo(

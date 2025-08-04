@@ -22,13 +22,13 @@ subprojects {
     // 🔹 Apply only to modules that use Android Library plugin
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
-    plugins.withId("io.gitlab.arturbosch.detekt") {
-        configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-            toolVersion = "1.23.8"
-            buildUponDefaultConfig = true
-            config.setFrom(files("$rootDir/detekt.yml"))
-        }
+    extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        toolVersion = "1.23.8"
+        buildUponDefaultConfig = true
+        parallel = true
+        config.setFrom(rootProject.file("detekt.yml"))
     }
+
     plugins.withId("com.android.library") {
         extensions.configure<LibraryExtension> {
             compileSdk = 35
@@ -62,4 +62,18 @@ subprojects {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
+}
+
+// aggregate task to run detekt across all subprojects
+tasks.register("detektAll") {
+    group = "verification"
+    description = "Run detekt on all subprojects"
+    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "detekt" } })
+}
+
+// optional: alias so `./gradlew detekt` runs all
+tasks.register("detekt") {
+    group = "verification"
+    description = "Alias to run detekt across all subprojects"
+    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "detekt" } })
 }

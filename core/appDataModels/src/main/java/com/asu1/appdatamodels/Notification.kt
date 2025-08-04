@@ -33,11 +33,17 @@ data class Notification(
     }
 }
 
+val body = buildString {
+    repeat(4) {
+        append("This is example notification. This will have lots of text to represent it as a notification. ")
+    }
+}.trim()
+
 val sampleNotification = Notification(
     title = "1.0.11 Notification",
     date = "2025.02.27",
     id = 1,
-    body = "This is example notification. This will have lots of text to represent it as a notification. This is example notification. This will have lots of text to represent it as a notification. This is example notification. This will have lots of text to represent it as a notification. This is example notification. This will have lots of text to represent it as a notification.",
+    body = body,
 )
 
 val sampleNotificationList = listOf(

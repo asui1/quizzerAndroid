@@ -26,5 +26,4 @@ object ColorSerializer : KSerializer<Color> {
         val value = if(this.contains("#")) this.substring(1, 9).toLong(16) else this.toLong(16)
         return Color(value.toInt())
     }
-
 }

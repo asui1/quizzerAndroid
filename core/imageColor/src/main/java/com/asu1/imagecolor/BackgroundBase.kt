@@ -50,5 +50,3 @@ enum class ImageBlendMode(val blendMode: BlendMode, val stringResourceId: Int){
     BLENDCOLOR(BlendMode.Color, R.string.blend_color),
     BLENDHUE(BlendMode.Hue, R.string.blend_hue)
 }
-
-//TODO: ADD IMAGE TYPE FILTERS.
