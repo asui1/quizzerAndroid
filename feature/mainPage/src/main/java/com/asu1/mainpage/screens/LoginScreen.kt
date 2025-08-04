@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.customComposable.text.TextDivider
 import com.asu1.activityNavigation.Route
@@ -40,9 +41,9 @@ import com.asu1.utils.getAppVersion
 @Composable
 fun LoginScreen(
     navController: NavController,
-    userViewModel: UserViewModel
 ) {
     val context = LocalContext.current
+    val userViewModel: UserViewModel = viewModel()
     val isUserLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
     val credentialManager = remember{GoogleCredentialManager(context)}
 
@@ -66,7 +67,7 @@ fun LoginScreen(
                     navController.navigate(
                         Route.Register(
                             email,
-                            profileUri.toString()
+                            profileUri
                         )
                     ){
                         launchSingleTop = true

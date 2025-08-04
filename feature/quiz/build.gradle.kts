@@ -21,6 +21,8 @@ dependencies {
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
+    implementation(project(":feature:quizCard"))
+    implementation(project(":feature:mainPage"))
 
     implementation(libs.core.ktx)
     implementation(libs.uuid.creator)

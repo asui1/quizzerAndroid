@@ -64,8 +64,8 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun  SearchScreen(navController: NavController,
-                  searchViewModel: SearchViewModel = viewModel(),
                   onQuizClick: (quizId: String) -> Unit = {}) {
+    val searchViewModel: SearchViewModel = viewModel()
     val searchText by searchViewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResult by searchViewModel.searchResult
         .collectAsStateWithLifecycle(null)

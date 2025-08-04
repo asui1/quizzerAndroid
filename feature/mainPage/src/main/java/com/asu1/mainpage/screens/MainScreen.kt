@@ -85,14 +85,14 @@ import kotlin.random.Random
 @Composable
 fun MainScreen(
     navController: NavController,
-    quizCardMainViewModel: QuizCardMainViewModel = viewModel(),
-    inquiryViewModel: InquiryViewModel = viewModel(),
-    userViewModel: UserViewModel = viewModel(),
     navigateTo: (Route) -> Unit = { },
     loadQuiz: (String) -> Unit = { },
     loadQuizResult: (String) -> Unit = { },
     moveHome: () -> Unit = {},
 ) {
+    val quizCardMainViewModel: QuizCardMainViewModel = viewModel()
+    val inquiryViewModel: InquiryViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
     val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
     val quizTrends by quizCardMainViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
     val userRanks by quizCardMainViewModel.visibleUserRanks.collectAsStateWithLifecycle()
@@ -276,7 +276,10 @@ fun MainScreen(
                                         SettingItems(
                                             stringResourceId = R.string.my_activities,
                                             vectorIcon = Icons.Default.BarChart,
-                                            onClick = {navigateTo(Route.MyActivities)}
+                                            onClick = {
+                                                userViewModel.getUserActivities()
+                                                navigateTo(Route.MyActivities)
+                                            }
                                         ),
                                         SettingItems(
                                             stringResourceId = R.string.notification,

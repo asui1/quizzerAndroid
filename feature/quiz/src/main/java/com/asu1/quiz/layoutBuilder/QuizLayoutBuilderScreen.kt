@@ -73,14 +73,18 @@ import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import com.asu1.utils.LanguageSetter
 import kotlinx.coroutines.launch
+import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
+import com.asu1.mainpage.viewModels.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizLayoutBuilderScreen(
     navController: NavController,
-    quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel(),
     navigateToQuizLoad: () -> Unit = {},
 ) {
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
@@ -176,7 +180,13 @@ fun QuizLayoutBuilderScreen(
                     step = step,
                     quizData = quizData,
                     quizTheme = quizTheme,
-                    navigateToQuizLoad = navigateToQuizLoad,
+                    navigateToQuizLoad = {
+                        loadLocalQuizViewModel.loadLocalQuiz(
+                            context = context,
+                            email = userViewModel.userData.value?.email ?: "GUEST"
+                        )
+                        navigateToQuizLoad()
+                    },
                     moveBackToHome = {
                         navController.popBackStack(Route.Home, inclusive = false)
                     },

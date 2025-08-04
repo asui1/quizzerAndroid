@@ -25,11 +25,12 @@ import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 
 @Composable
-fun InitializationScreen(initViewModel: InitializationViewModel = viewModel(),
-                         userViewModel: UserViewModel = viewModel(),
-                         navigateToHome: () -> Unit = {},
-                         ) {
-    val initializationState by initViewModel.initializationState.observeAsState()
+fun InitializationScreen(
+    navigateToHome: () -> Unit = {},
+) {
+    val initializationViewModel: InitializationViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel()
+    val initializationState by initializationViewModel.initializationState.observeAsState()
 
     LaunchedEffect(initializationState){
         when(initializationState){
@@ -38,7 +39,7 @@ fun InitializationScreen(initViewModel: InitializationViewModel = viewModel(),
             InitializationState.GETTING_USER_DATA -> {
                 userViewModel.initLogin(
                     onDone = {
-                        initViewModel.updateInitializationState(InitializationState.DONE)
+                        initializationViewModel.updateInitializationState(InitializationState.DONE)
                     }
                 )
             }

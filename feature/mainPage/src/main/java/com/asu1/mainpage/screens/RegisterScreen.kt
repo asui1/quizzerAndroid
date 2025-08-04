@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.textField.TagSetter
@@ -56,6 +57,7 @@ import com.asu1.customComposable.topBar.RowWithAppIconAndName
 import com.asu1.customComposable.uiUtil.keyboardAsState
 import com.asu1.mainpage.viewModels.RegisterViewModel
 import com.asu1.mainpage.viewModels.RegisterViewModelActions
+import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter
@@ -71,8 +73,8 @@ fun RegisterScreen(
     registerViewModel: RegisterViewModel = hiltViewModel(),
     email: String = "",
     profileUri: String = "",
-    login: () -> Unit = {},
 ){
+    val userViewModel: UserViewModel = viewModel()
     val registerStep by registerViewModel.registerStep.observeAsState(0)
     val nickname by registerViewModel.nickname.observeAsState()
     val isError by registerViewModel.isError.observeAsState()
@@ -99,7 +101,7 @@ fun RegisterScreen(
             1 -> pagerState.animateScrollToPage(1)
             3 -> {
                 coroutineScope.launch {
-                    launch { login() }
+                    launch { userViewModel.login(email, profileUri) }
                     launch {
                         navController.navigate(Route.Home) {
                             popUpTo(Route.Home) { inclusive = false }
