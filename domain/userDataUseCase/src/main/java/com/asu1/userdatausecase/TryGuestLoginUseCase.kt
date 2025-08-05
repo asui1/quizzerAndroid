@@ -29,5 +29,4 @@ class TryGuestLoginUseCase @Inject constructor(
         }
         return@coroutineScope null
     }
-
 }

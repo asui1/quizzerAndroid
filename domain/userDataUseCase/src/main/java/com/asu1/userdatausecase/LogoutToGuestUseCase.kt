@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.asu1.userdatausecase
 
 import com.asu1.resources.UserLoginInfo
@@ -21,5 +23,4 @@ class LogoutToGuestUseCase @Inject constructor(
 
         return@coroutineScope null
     }
-
 }
