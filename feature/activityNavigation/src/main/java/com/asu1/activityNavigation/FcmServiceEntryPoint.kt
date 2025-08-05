@@ -9,5 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface FcmServiceEntryPoint {
     fun saveFcmTokenUseCase(): SaveFcmTokenUseCase
+    @Suppress("unused")
     fun sendEmailTokenUseCase(): SaveFcmTokenUseCase
 }

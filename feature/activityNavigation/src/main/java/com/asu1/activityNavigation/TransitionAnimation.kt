@@ -13,15 +13,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavBackStackEntry
 
-const val durations = 300
+const val TRANSITION_DURATION = 300
 fun enterFadeInTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) {
     return {
         fadeIn(
             animationSpec = tween(
-                durations, easing = LinearEasing
+                TRANSITION_DURATION, easing = LinearEasing
             )
         ) + slideIntoContainer(
-            animationSpec = tween(durations, easing = EaseIn),
+            animationSpec = tween(TRANSITION_DURATION, easing = EaseIn),
             towards = AnimatedContentTransitionScope.SlideDirection.Start
         )
     }
@@ -31,18 +31,18 @@ fun exitFadeOutTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.
     return {
         fadeOut(
             animationSpec = tween(
-                durations, easing = LinearEasing
+                TRANSITION_DURATION, easing = LinearEasing
             )
         ) + slideOutOfContainer(
-            animationSpec = tween(durations, easing = EaseOut),
+            animationSpec = tween(TRANSITION_DURATION, easing = EaseOut),
             towards = AnimatedContentTransitionScope.SlideDirection.End
         ) }
 }
 
 fun enterFromRightTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) {
-    return { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(durations)) }
+    return { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(TRANSITION_DURATION)) }
 }
 
 fun exitToRightTransition(): (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) {
-    return { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durations)) }
+    return { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(TRANSITION_DURATION)) }
 }

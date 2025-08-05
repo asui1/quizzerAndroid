@@ -40,15 +40,16 @@ class QuizzerFirebaseMessagingService: FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             val result =saveFcmTokenUseCase(token)
             if(result.isFailure){
-//                enqueueFcmRetryWork(token)
+                enqueueFcmRetryWork(token)
             }
         }
     }
 
+    @Suppress("unused")
     private fun enqueueFcmRetryWork(token: String) {
         val inputData = workDataOf("fcm_token" to token)
 
-        val retryRequest = OneTimeWorkRequestBuilder<FcmRetryWorker>()
+        val retryRequest = OneTimeWorkRequestBuilder<FcmRetryManager>()
             .setInitialDelay(5, TimeUnit.SECONDS)
             .setInputData(inputData)
             .build()
