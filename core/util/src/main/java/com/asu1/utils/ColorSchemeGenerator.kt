@@ -21,6 +21,12 @@ fun tonalPalette(color: Color): Map<Int, Color> {
     return colors
 }
 
+private fun Map<Int, Color>.role(
+    lightKey: Int,
+    darkKey: Int,
+    isLight: Boolean
+): Color = this[if (isLight) lightKey else darkKey]!!
+
 fun computeOnColor(hct: Hct): Double{
     val tone = hct.tone
     val computedOnTone = if (tone < 50) {
@@ -43,78 +49,81 @@ fun computeOnColorToColor(color: Color): Color {
     return Color(computedHct.toInt())
 }
 
+@Suppress("ComplexMethod", "LongMethod")
 fun toScheme(isLight: Boolean = true, primary: Color, secondary: Color, tertiary: Color): ColorScheme {
-    val primaryPalette = tonalPalette(primary)
-    val secondaryPalette = tonalPalette(secondary)
-    val tertiaryPalette = tonalPalette(tertiary)
-    val errorPalette = tonalPalette(Color.Red)
-    val neutralPalette = tonalPalette(Color.Gray)
+    val pp: Map<Int, Color> = tonalPalette(primary)
+    val sp: Map<Int, Color> = tonalPalette(secondary)
+    val tp: Map<Int, Color> = tonalPalette(tertiary)
+    val np: Map<Int, Color> = tonalPalette(Color.Gray)
+    val ep: Map<Int, Color> = tonalPalette(Color.Red)
 
     return ColorScheme(
-        primary = if (isLight) primaryPalette[40]!! else primaryPalette[80]!!,
-        onPrimary = if (isLight) primaryPalette[100]!! else primaryPalette[20]!!,
-        primaryContainer = if (isLight) primaryPalette[90]!! else primaryPalette[30]!!,
-        onPrimaryContainer = if (isLight) primaryPalette[10]!! else primaryPalette[90]!!,
-        inversePrimary = if (isLight) primaryPalette[80]!! else primaryPalette[40]!!,
+        primary                = pp.role(40, 80, isLight),
+        onPrimary              = pp.role(100, 20, isLight),
+        primaryContainer       = pp.role(90, 30, isLight),
+        onPrimaryContainer     = pp.role(10, 90, isLight),
+        inversePrimary         = pp.role(80, 40, isLight),
 
-        secondary = if (isLight) secondaryPalette[40]!! else secondaryPalette[80]!!,
-        onSecondary = if (isLight) secondaryPalette[100]!! else secondaryPalette[20]!!,
-        secondaryContainer = if (isLight) secondaryPalette[90]!! else secondaryPalette[30]!!,
-        onSecondaryContainer = if (isLight) secondaryPalette[10]!! else secondaryPalette[90]!!,
+        secondary              = sp.role(40, 80, isLight),
+        onSecondary            = sp.role(100, 20, isLight),
+        secondaryContainer     = sp.role(90, 30, isLight),
+        onSecondaryContainer   = sp.role(10, 90, isLight),
 
-        tertiary = if (isLight) tertiaryPalette[40]!! else tertiaryPalette[80]!!,
-        onTertiary = if (isLight) tertiaryPalette[100]!! else tertiaryPalette[20]!!,
-        tertiaryContainer = if (isLight) tertiaryPalette[90]!! else tertiaryPalette[30]!!,
-        onTertiaryContainer = if (isLight) tertiaryPalette[10]!! else tertiaryPalette[90]!!,
+        tertiary               = tp.role(40, 80, isLight),
+        onTertiary             = tp.role(100, 20, isLight),
+        tertiaryContainer      = tp.role(90, 30, isLight),
+        onTertiaryContainer    = tp.role(10, 90, isLight),
 
-        background = if (isLight) neutralPalette[99]!! else neutralPalette[10]!!,
-        onBackground = if (isLight) neutralPalette[10]!! else neutralPalette[90]!!,
-        surface = if (isLight) neutralPalette[99]!! else neutralPalette[10]!!,
-        onSurface = if (isLight) neutralPalette[10]!! else neutralPalette[90]!!,
-        surfaceVariant = if (isLight) neutralPalette[90]!! else neutralPalette[30]!!,
-        onSurfaceVariant = if (isLight) neutralPalette[30]!! else neutralPalette[80]!!,
-        surfaceTint = if (isLight) primaryPalette[40]!! else primaryPalette[80]!!,
+        background             = np.role(99, 10, isLight),
+        onBackground           = np.role(10, 90, isLight),
+        surface                = np.role(99, 10, isLight),
+        onSurface              = np.role(10, 90, isLight),
+        surfaceVariant         = np.role(90, 30, isLight),
+        onSurfaceVariant       = np.role(30, 80, isLight),
+        surfaceTint            = pp.role(40, 80, isLight),
 
-        inverseSurface = if (isLight) neutralPalette[20]!! else neutralPalette[90]!!,
-        inverseOnSurface = if (isLight) neutralPalette[95]!! else neutralPalette[20]!!,
+        inverseSurface         = np.role(20, 90, isLight),
+        inverseOnSurface       = np.role(95, 20, isLight),
 
-        error = if (isLight) errorPalette[40]!! else errorPalette[80]!!,
-        onError = if (isLight) errorPalette[100]!! else errorPalette[20]!!,
-        errorContainer = if (isLight) errorPalette[90]!! else errorPalette[30]!!,
-        onErrorContainer = if (isLight) errorPalette[10]!! else errorPalette[90]!!,
+        error                  = ep.role(40, 80, isLight),
+        onError                = ep.role(100, 20, isLight),
+        errorContainer         = ep.role(90, 30, isLight),
+        onErrorContainer       = ep.role(10, 90, isLight),
 
-        outline = if (isLight) neutralPalette[50]!! else neutralPalette[60]!!,
-        outlineVariant = if (isLight) neutralPalette[80]!! else neutralPalette[30]!!,
-        scrim = neutralPalette[0]!!,
+        outline                = np.role(50, 60, isLight),
+        outlineVariant         = np.role(80, 30, isLight),
+        scrim                  = np[0]!!,
 
-        surfaceBright = if (isLight) neutralPalette[98]!! else neutralPalette[24]!!,
-        surfaceDim = if (isLight) neutralPalette[87]!! else neutralPalette[6]!!,
-        surfaceContainer = if (isLight) neutralPalette[94]!! else neutralPalette[12]!!,
-        surfaceContainerHigh = if (isLight) neutralPalette[92]!! else neutralPalette[17]!!,
-        surfaceContainerHighest = if (isLight) neutralPalette[90]!! else neutralPalette[24]!!,
-        surfaceContainerLow = if (isLight) neutralPalette[96]!! else neutralPalette[10]!!,
-        surfaceContainerLowest = if (isLight) neutralPalette[100]!! else neutralPalette[4]!!,
+        surfaceBright          = np.role(98, 24, isLight),
+        surfaceDim             = np.role(87, 6, isLight),
+        surfaceContainer       = np.role(94, 12, isLight),
+        surfaceContainerHigh   = np.role(92, 17, isLight),
+        surfaceContainerHighest= np.role(90, 24, isLight),
+        surfaceContainerLow    = np.role(96, 10, isLight),
+        surfaceContainerLowest = np.role(100, 4, isLight),
 
-        // ✅ FIXED ROLES
-        primaryFixed = primaryPalette[90]!!,
-        primaryFixedDim = primaryPalette[80]!!,
-        onPrimaryFixed = primaryPalette[10]!!,
-        onPrimaryFixedVariant = primaryPalette[30]!!, // NEW
+        // fixed roles always from the "light" keys (but you could inline np[90]!! etc. if you prefer)
+        primaryFixed           = pp[90]!!,
+        primaryFixedDim        = pp[80]!!,
+        onPrimaryFixed         = pp[10]!!,
+        onPrimaryFixedVariant  = pp[30]!!,
 
-        secondaryFixed = secondaryPalette[90]!!,
-        secondaryFixedDim = secondaryPalette[80]!!,
-        onSecondaryFixed = secondaryPalette[10]!!,
-        onSecondaryFixedVariant = secondaryPalette[30]!!, // NEW
+        secondaryFixed         = sp[90]!!,
+        secondaryFixedDim      = sp[80]!!,
+        onSecondaryFixed       = sp[10]!!,
+        onSecondaryFixedVariant= sp[30]!!,
 
-        tertiaryFixed = tertiaryPalette[90]!!,
-        tertiaryFixedDim = tertiaryPalette[80]!!,
-        onTertiaryFixed = tertiaryPalette[10]!!,
-        onTertiaryFixedVariant = tertiaryPalette[30]!! // NEW
+        tertiaryFixed          = tp[90]!!,
+        tertiaryFixedDim       = tp[80]!!,
+        onTertiaryFixed        = tp[10]!!,
+        onTertiaryFixedVariant = tp[30]!!
     )
 }
 
-fun randomDynamicColorScheme(seedColor: Color, paletteLevel: PaletteStyle, contrastLevel: Contrast, isDark: Boolean): ColorScheme {
-    return dynamicColorScheme(seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
+fun randomDynamicColorScheme(
+    seedColor: Color, paletteLevel: PaletteStyle,
+    contrastLevel: Contrast, isDark: Boolean): ColorScheme {
+    return dynamicColorScheme(primary = seedColor, isDark = isDark, isAmoled = Random.nextBoolean(),
         style = paletteLevel,
         contrastLevel = contrastLevel.value,
     )

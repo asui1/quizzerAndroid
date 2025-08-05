@@ -14,10 +14,3 @@ fun setTopBarColor(view: View, color: Color){
         window.statusBarColor = color.toArgb()
     }
 }
-
-fun setBottomBarColor(view: View, color: Color){
-    if (!view.isInEditMode) {
-        val window = (view.context as Activity).window
-        window.navigationBarColor = color.toArgb()
-    }
-}

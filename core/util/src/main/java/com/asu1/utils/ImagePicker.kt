@@ -41,33 +41,41 @@ suspend fun uriToByteArray(context: Context, uri: Uri, maxWidth: Dp?, maxHeight:
     }
 }
 
-fun resizeBitmap(bitmap: Bitmap, maxWidth: Dp?, maxHeight: Dp?): Bitmap {
-    if(maxWidth == null || maxHeight == null) {
-        return bitmap
-    }
-    val width = bitmap.width
-    val height = bitmap.height
-    val newWidth: Int
-    val newHeight: Int
+fun resizeBitmap(
+    bitmap: Bitmap,
+    maxWidth: Dp?,
+    maxHeight: Dp?
+): Bitmap {
+    Logger.debug("update with bitmap size=${bitmap.width}x${bitmap.height}")
+    Logger.debug("constraints: maxWidth=$maxWidth, maxHeight=$maxHeight")
 
-    val titleSize = 200
-    val aspectRatio = maxWidth / maxHeight
-
-    if (width > height * aspectRatio) {
-        newWidth = (height * aspectRatio).toInt()
-        newHeight = height
+    val result: Bitmap = if (maxWidth == null || maxHeight == null) {
+        // no constraints → leave as is
+        bitmap
     } else {
-        newWidth = width
-        newHeight = (width / aspectRatio).toInt()
-    }
+        val width = bitmap.width
+        val height = bitmap.height
+        val titleSize = 200
+        val aspectRatio = maxWidth / maxHeight
 
-    val xOffset = (width - newWidth) / 2
-    val yOffset = (height - newHeight) / 2
-    val changedBitmap = Bitmap.createBitmap(bitmap, xOffset, yOffset, newWidth, newHeight)
-    if(maxWidth == 200.dp) {
-        return changedBitmap.scale(titleSize, titleSize)
+        // compute the crop dimensions
+        val (newWidth, newHeight) = if (width > height * aspectRatio) {
+            ( (height * aspectRatio).toInt() to height )
+        } else {
+            ( width to (width / aspectRatio).toInt() )
+        }
+
+        // center‐crop
+        val xOffset = (width - newWidth) / 2
+        val yOffset = (height - newHeight) / 2
+        val cropped = Bitmap.createBitmap(bitmap, xOffset, yOffset, newWidth, newHeight)
+
+        // then scale; only one branch here
+        if (maxWidth == 200.dp) {
+            cropped.scale(titleSize, titleSize)
+        } else {
+            cropped.scale(newWidth, newHeight)
+        }
     }
-    else{
-        return bitmap.scale(newWidth, newHeight)
-    }
+    return result
 }
