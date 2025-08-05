@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,17 +19,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.utils.shaders.ShaderType
@@ -37,72 +32,99 @@ import com.asu1.utils.shaders.ShaderType
 @Composable
 fun FastCreateDropDownWithTextButton(
     modifier: Modifier = Modifier,
-    showDropdownMenu: Boolean,
+    expanded: Boolean,
     labelText: String = "",
-    onClick: (Int) -> Unit = {},
-    onChangeDropDown: (Boolean) -> Unit = {},
-    inputStringResourceItems: List<Int> = emptyList(),
+    onToggleExpanded: (Boolean) -> Unit = {},
+    onItemSelected: (Int) -> Unit = {},
+    itemResIds: List<Int> = emptyList(),
     testTag: String = "",
-    currentSelection: Int = -1,
+    selectedIndex: Int = -1,
 ) {
-    var boxWidth by remember { mutableIntStateOf(0) }
-    val density = LocalDensity.current
-
-    Box(
-        contentAlignment = Alignment.Center,
+    // BoxWithConstraints gives us maxWidth in Dp, so no need for boxWidth+density
+    BoxWithConstraints(
         modifier = modifier
-            .onGloballyPositioned() { coordinates ->
-                boxWidth = coordinates.size.width
-            }
             .padding(4.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp))
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .testTag(testTag)
-                .clickable{ onChangeDropDown(!showDropdownMenu) }
-                .defaultMinSize(minHeight = 48.dp)
-                .fillMaxWidth(),
-        ) {
-            Text(
-                text = labelText,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-            )
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Open Background gradient selector"
-            )
-        }
+        val menuWidth = maxWidth
 
-        DropdownMenu(
-            expanded = showDropdownMenu,
-            onDismissRequest = { onChangeDropDown(false) },
-        ) {
-            inputStringResourceItems.withIndex().forEach { (index, item) ->
-                DropdownMenuItem(
-                    modifier = Modifier
-                        .then(
-                            if (boxWidth > 0) {
-                                Modifier.width(with(density) { boxWidth.toDp() })
-                            } else Modifier
-                        )
-                        .testTag("$testTag${index+1}")
-                        .background(
-                            color = if(index == currentSelection) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                        ),
-                    text = {
-                        Text(
-                            text = stringResource(item),
-                        )
-                    },
-                    onClick = {
-                        onClick(index)
-                    }
-                )
+        // 1) the “button” row
+        DropDownButtonRow(
+            labelText = labelText,
+            expanded = expanded,
+            onToggle = { onToggleExpanded(!expanded) },
+            testTag = testTag
+        )
+
+        // 2) the actual dropdown
+        DropDownMenuContent(
+            expanded = expanded,
+            width = menuWidth,
+            itemResIds = itemResIds,
+            selectedIndex = selectedIndex,
+            testTag = testTag,
+            onItemClick = { index ->
+                onItemSelected(index)
+                onToggleExpanded(false)
             }
+        )
+    }
+}
+
+@Composable
+private fun DropDownButtonRow(
+    labelText: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    testTag: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 48.dp)
+            .testTag(testTag)
+            .clickable(onClick = onToggle),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = labelText, style = MaterialTheme.typography.bodyMedium)
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = if (expanded) "Collapse" else "Expand"
+        )
+    }
+}
+
+@Composable
+private fun DropDownMenuContent(
+    expanded: Boolean,
+    width: Dp,
+    itemResIds: List<Int>,
+    selectedIndex: Int,
+    testTag: String,
+    onItemClick: (Int) -> Unit
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { onItemClick(selectedIndex) },
+        modifier = Modifier.width(width)
+    ) {
+        itemResIds.forEachIndexed { index, resId ->
+            DropdownMenuItem(
+                text = {
+                    Text(text = stringResource(resId))
+                },
+                onClick = { onItemClick(index) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("$testTag${index + 1}")
+                    .background(
+                        if (index == selectedIndex)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.surfaceContainer
+                    )
+            )
         }
     }
 }
@@ -112,11 +134,11 @@ fun FastCreateDropDownWithTextButton(
 fun PreviewFastCreateDropDownWithTextButton() {
     QuizzerAndroidTheme {
         FastCreateDropDownWithTextButton(
-            showDropdownMenu = true,
+            expanded = true,
             labelText = "Select",
-            onClick = { },
-            onChangeDropDown = { },
-            inputStringResourceItems = ShaderType.entries.map { it.shaderName },
+            onItemSelected = { },
+            onToggleExpanded = { },
+            itemResIds = ShaderType.entries.map { it.shaderName },
             testTag = "DesignScoreCardDropDown",
         )
     }

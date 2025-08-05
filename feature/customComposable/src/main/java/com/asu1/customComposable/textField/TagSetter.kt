@@ -47,89 +47,116 @@ fun TagSetter(
     onClick: (String) -> Unit,
     focusRequester: FocusRequester = FocusRequester(),
 ) {
-    var tag by remember { mutableStateOf("") }
-
-    fun onAddTag() {
-        if (tag.isNotEmpty()) {
-            onClick(tag)
-            tag = ""
-        }
-    }
+    var currentTag by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(R.string.select_tags),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        FlowRow(
+        TagSetterHeader()
+
+        TagList(
+            tags = tags,
+            onTagClicked = onClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 2.dp),
-        ) {
-            tags?.forEach { tag ->
-                key(tag) {
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Button(
-                            onClick = {
-                                onClick(tag)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // 살짝 강조된 배경
-                                contentColor = MaterialTheme.colorScheme.primary
-                            ),
-                            shape = RoundedCornerShape(15), // pill shape
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.padding(4.dp)
-                        ) {
-                            Text(
-                                text = tag,
-                                style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
-                                fontWeight = FontWeight.ExtraBold
-                            )
-                        }
-                    }
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        TagInputField(
+            tagValue = currentTag,
+            onValueChange = { if (it.length <= 20) currentTag = it },
+            onAddTag = {
+                if (currentTag.isNotEmpty()) {
+                    onClick(currentTag)
+                    currentTag = ""
+                }
+            },
+            focusRequester = focusRequester
+        )
+    }
+}
+
+@Composable
+private fun TagSetterHeader() {
+    Text(
+        text = stringResource(R.string.select_tags),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(bottom = 4.dp)
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TagList(
+    tags: Set<String>?,
+    onTagClicked: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FlowRow(modifier = modifier) {
+        tags.orEmpty().forEach { tag ->
+            key(tag) {
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    TagChip(tag = tag, onClick = { onTagClicked(tag) })
                 }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = tag,
-            onValueChange = {
-                if(it.length <= 20)  tag = it
-            },
-            label = { Text(stringResource(R.string.enter_tag)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .testTag("TagSetterTextField"),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onAddTag()
-                }
-            ),
-            trailingIcon = {
-                TextButton(onClick = {
-                    if (tag.isNotEmpty()) {
-                        onClick(tag)
-                        tag = ""
-                    }
-                }) {
-                    Text("+")
-                }
-            }
+    }
+}
+
+@Composable
+private fun TagChip(
+    tag: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+            contentColor = MaterialTheme.colorScheme.primary
+        ),
+        shape = RoundedCornerShape(15.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        modifier = Modifier.padding(4.dp)
+    ) {
+        Text(
+            text = tag,
+            style = QuizzerTypographyDefaults.quizzerBodyMediumBold,
+            fontWeight = FontWeight.ExtraBold
         )
     }
+}
+
+@Composable
+private fun TagInputField(
+    tagValue: String,
+    onValueChange: (String) -> Unit,
+    onAddTag: () -> Unit,
+    focusRequester: FocusRequester
+) {
+    TextField(
+        value = tagValue,
+        onValueChange = onValueChange,
+        label = { Text(stringResource(R.string.enter_tag)) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+            .testTag("TagSetterTextField"),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onAddTag() }),
+        trailingIcon = {
+            TextButton(onClick = onAddTag) {
+                Text("+")
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)

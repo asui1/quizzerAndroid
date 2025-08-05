@@ -4,6 +4,7 @@ import SnackBarManager
 import ToastType
 import android.content.ClipData
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,8 +45,8 @@ import com.asu1.resources.R
 import com.asu1.utils.generateUniqueId
 import kotlinx.coroutines.launch
 
-const val resultUrlBase = "${BASE_URL}?resultId="
-const val quizUrlBase = "${BASE_URL}?quizId="
+const val RESULT_URL_BASE = "${BASE_URL}?resultId="
+const val QUIZ_URL_BASE = "${BASE_URL}?quizId="
 
 @Composable
 fun ShareDialog(
@@ -53,12 +54,19 @@ fun ShareDialog(
     userName: String = "Guest",
     onDismiss: () -> Unit = { },
 ){
-    val quizUrl = remember(quizId){ quizUrlBase + quizId}
-    val resultUrl = remember(quizId){ resultUrlBase + generateUniqueId(quizId, userName) }
-    val shareLink = if(userName == "Guest") quizUrl else resultUrl
+    val quizUrl = remember(quizId){ QUIZ_URL_BASE + quizId}
+    val resultUrl = remember(quizId){ RESULT_URL_BASE + generateUniqueId(quizId, userName) }
     val clipboard: Clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
 
+    fun copyAndClose(url: String, @StringRes msgRes: Int) {
+        scope.launch {
+            val clip = ClipData.newPlainText(url, url)
+            clipboard.setClipEntry(ClipEntry(clip))
+            SnackBarManager.showSnackBar(msgRes, ToastType.SUCCESS)
+            onDismiss()
+        }
+    }
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
@@ -66,83 +74,32 @@ fun ShareDialog(
             .wrapContentHeight()
             .padding(vertical = 16.dp, horizontal = 24.dp)
     ){
-        Text(
-            text = stringResource(R.string.share),
-            style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp),
-        )
+        ShareDialogHeader()
+
         Spacer(modifier = Modifier.height(8.dp))
+
         RowWithShares(
-            shareLink = shareLink,
+            shareLink = if (userName == "Guest") quizUrl else resultUrl,
             onDismiss = onDismiss,
-            modifier = Modifier
-                .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            modifier  = Modifier
+                .border(1.dp,
+                    MaterialTheme.colorScheme.outline,
+                    RoundedCornerShape(8.dp))
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-                .clickable {
-                    scope.launch {
-                        val clip = ClipData.newPlainText(resultUrl, resultUrl)
-                        clipboard.setClipEntry(ClipEntry(clip))
-                    }
-                    SnackBarManager.showSnackBar(
-                        message = R.string.link_copied_to_clipboard,
-                        type = ToastType.SUCCESS,
-                    )
-                    onDismiss()
-                },
-        ) {
-            Icon(
-                imageVector = Icons.Default.ContentCopy,
-                contentDescription = "Copy Quiz Link",
+
+        Spacer(Modifier.height(8.dp))
+
+        // 3) Copy‐link rows
+        CopyLinkRow(
+            textRes = R.string.copy_quiz_link,
+            onClick = { copyAndClose(quizUrl, R.string.link_copied_to_clipboard) }
+        )
+
+        if (userName != "Guest") {
+            CopyLinkRow(
+                textRes = R.string.copy_quiz_result_link,
+                onClick = { copyAndClose(resultUrl, R.string.link_copied_to_clipboard) }
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.copy_quiz_link),
-                style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .fillMaxWidth(),
-                maxLines = 1,
-            )
-        }
-        if(userName != "Guest"){
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .clickable {
-                        scope.launch {
-                            val clip = ClipData.newPlainText(resultUrl, resultUrl)
-                            clipboard.setClipEntry(ClipEntry(clip))
-                        }
-                        SnackBarManager.showSnackBar(
-                            message = R.string.link_copied_to_clipboard,
-                            type = ToastType.SUCCESS,
-                        )
-                        onDismiss()
-                    },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ContentCopy,
-                    contentDescription = "Copy Quiz Result Link",
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.copy_quiz_result_link),
-                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .fillMaxWidth(),
-                    maxLines = 1,
-                )
-            }
         }
     }
 }
@@ -189,6 +146,43 @@ fun RowWithShares(
                 iconSize = 40.dp,
             )
         }
+    }
+}
+
+@Composable
+private fun ShareDialogHeader() {
+    Text(
+        text = stringResource(R.string.share),
+        style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp)
+    )
+}
+
+@Composable
+private fun CopyLinkRow(
+    @StringRes textRes: Int,
+    onClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp)
+    ) {
+        Icon(
+            imageVector    = Icons.Default.ContentCopy,
+            contentDescription = null
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text  = stringResource(textRes),
+            style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
+            modifier = Modifier.weight(1f),
+            maxLines = 1
+        )
     }
 }
 

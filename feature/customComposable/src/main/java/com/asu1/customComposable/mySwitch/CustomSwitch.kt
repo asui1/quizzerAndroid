@@ -1,4 +1,4 @@
-package com.asu1.customComposable.Switch
+package com.asu1.customComposable.mySwitch
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

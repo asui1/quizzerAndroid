@@ -57,7 +57,9 @@ fun FastCreateDropDownWithIcon(
                 DropdownMenuItem(
                     modifier = Modifier.testTag("$testTag${index}")
                         .background(
-                            color = if(index == currentSelection) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                            color = if(index == currentSelection)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainer,
                         ),
                     text = {
                         Text(

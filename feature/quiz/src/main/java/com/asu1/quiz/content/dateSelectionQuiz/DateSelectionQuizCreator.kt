@@ -171,15 +171,15 @@ fun YearMonthDropDown(
         Spacer(modifier = Modifier.width(8.dp))
         FastCreateDropDownWithTextButton(
             modifier = Modifier.weight(1f),
-            showDropdownMenu = expanded,
+            expanded = expanded,
             labelText = "${stringResource(R.string.month)}: ${yearMonth.monthValue}",
-            onClick = { month ->
+            onItemSelected = { month ->
                 onYearMonthChange(yearMonth.withMonth(month + 1))
                 expanded = false
             },
-            onChangeDropDown = { expanded = it },
-            inputStringResourceItems = Months.entries.map { it.monthStringResource },
-            currentSelection = yearMonth.monthValue-1,
+            onToggleExpanded = { expanded = it },
+            itemResIds = Months.entries.map { it.monthStringResource },
+            selectedIndex = yearMonth.monthValue-1,
             testTag = "YearMonthDropDownMonth",
         )
     }

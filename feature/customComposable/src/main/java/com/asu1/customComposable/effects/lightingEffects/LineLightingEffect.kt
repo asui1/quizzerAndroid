@@ -1,4 +1,4 @@
-package com.asu1.customComposable.effects.LightingEffects
+package com.asu1.customComposable.effects.lightingEffects
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

@@ -53,17 +53,17 @@ fun SetGradientBackground(
                 modifier = Modifier.width(16.dp)
             )
             FastCreateDropDownWithTextButton(
-                showDropdownMenu = showGradientDropdown,
+                expanded = showGradientDropdown,
                 labelText = stringResource(backgroundImageColor.shaderType.shaderName),
-                onClick = { index ->
+                onItemSelected = { index ->
                     updateQuizTheme(
                         QuizThemeActions.UpdateGradientType(ShaderType.entries[index])
                     )
                     showGradientDropdown = false
                 },
-                onChangeDropDown = { showGradientDropdown = it },
-                inputStringResourceItems = ShaderType.entries.map { it.shaderName },
-                currentSelection = backgroundImageColor.shaderType.index,
+                onToggleExpanded = { showGradientDropdown = it },
+                itemResIds = ShaderType.entries.map { it.shaderName },
+                selectedIndex = backgroundImageColor.shaderType.index,
             )
         }
         Row(

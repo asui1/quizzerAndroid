@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.asu1.customComposable.effects
 
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis

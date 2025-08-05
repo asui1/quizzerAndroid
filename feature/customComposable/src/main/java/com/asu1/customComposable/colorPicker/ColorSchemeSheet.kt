@@ -31,68 +31,60 @@ import kotlinx.coroutines.launch
 @Composable
 fun ColorSchemeSheet(
     colorScheme: ColorScheme,
-){
+) {
     val clipboard = LocalClipboard.current
-    val primaryColor = colorScheme.primary
-    val secondaryColor = colorScheme.secondary
-    val tertiaryColor = colorScheme.tertiary
-    val colors = remember(colorScheme.primaryContainer, colorScheme.secondaryContainer, colorScheme.tertiaryContainer){
-        listOf(
-            colorScheme.onPrimary,
-            colorScheme.onSecondary,
-            colorScheme.onTertiary,
+    ColorSchemeGrid(
+        modifier = Modifier.height(200.dp),
+        colorScheme, clipboard)
+}
 
-            colorScheme.primaryContainer,
-            colorScheme.onPrimaryContainer,
-            colorScheme.secondaryContainer,
-            colorScheme.onSecondaryContainer,
-            colorScheme.tertiaryContainer,
-            colorScheme.onTertiaryContainer,
-
-            colorScheme.error,
-            colorScheme.onError,
-            colorScheme.errorContainer,
-            colorScheme.onErrorContainer,
-            colorScheme.inverseSurface,
-            colorScheme.inversePrimary,
-
-            colorScheme.surface,
-            colorScheme.surfaceDim,
-            colorScheme.onSurface,
-            colorScheme.outline,
-            colorScheme.surfaceContainer,
-            colorScheme.inverseOnSurface,
-        )}
-    val colorsKey = remember(colorScheme.primaryContainer, colorScheme.secondaryContainer, colorScheme.tertiaryContainer) {
-        colors.hashCode()
-    }
+@Composable
+private fun ColorSchemeGrid(
+    modifier: Modifier = Modifier,
+    colorScheme: ColorScheme,
+    clipboard: Clipboard,
+) {
+    val colors = remember(colorScheme) { buildColorList(colorScheme) }
+    val key = remember(colors) { colors.hashCode() }
 
     LazyVerticalGrid(
-        modifier = Modifier.height(200.dp),
+        modifier = modifier,
         columns = GridCells.Fixed(6),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 2.dp),
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 2.dp)
     ) {
-        item{
-            ColorCircle(primaryColor, clipboard)
-        }
-        item(key = colorsKey){
-            ColorCircle(colors[0], clipboard)
-        }
-        item{
-            ColorCircle(secondaryColor, clipboard)
-        }
-        item(key = colorsKey+1){
-            ColorCircle(colors[1], clipboard)
-        }
-        item{
-            ColorCircle(tertiaryColor, clipboard)
-        }
-        itemsIndexed(colors.subList(2, colors.size), key = { index, _ -> colorsKey + index + 2 }) { index, color ->
-            ColorCircle(color, clipboard)
+        itemsIndexed(colors, key = { index, _ -> key + index }) { _, color ->
+            ColorCircle(color = color, clipboard = clipboard)
         }
     }
 }
+
+private fun buildColorList(scheme: ColorScheme): List<Color> = listOf(
+    scheme.primary,
+    scheme.onPrimary,
+    scheme.secondary,
+    scheme.onSecondary,
+    scheme.tertiary,
+    scheme.onTertiary,
+    scheme.primaryContainer,
+    scheme.onPrimaryContainer,
+    scheme.secondaryContainer,
+    scheme.onSecondaryContainer,
+    scheme.tertiaryContainer,
+    scheme.onTertiaryContainer,
+    scheme.error,
+    scheme.onError,
+    scheme.errorContainer,
+    scheme.onErrorContainer,
+    scheme.inverseSurface,
+    scheme.inversePrimary,
+    scheme.surface,
+    scheme.surfaceDim,
+    scheme.onSurface,
+    scheme.outline,
+    scheme.surfaceContainer,
+    scheme.inverseOnSurface,
+)
 
 @Composable
 private fun ColorCircle(color: Color, clipboard: Clipboard) {

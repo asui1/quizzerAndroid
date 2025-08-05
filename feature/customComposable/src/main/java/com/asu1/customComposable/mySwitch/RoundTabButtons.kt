@@ -1,4 +1,4 @@
-package com.asu1.customComposable.Switch
+package com.asu1.customComposable.mySwitch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +33,9 @@ fun RoundTab(
         modifier = Modifier
             .padding(4.dp)
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(20.dp))
-            .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, RoundedCornerShape(20.dp))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primary
+                else Color.Transparent, RoundedCornerShape(20.dp))
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .wrapContentWidth()
             .clickable { onClick() }

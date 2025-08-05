@@ -31,6 +31,7 @@ dependencies {
     implementation(project(":core:util"))
     implementation(project(":core:imageColor"))
     implementation(project(":feature:activityNavigation"))
+    implementation(libs.activity.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
