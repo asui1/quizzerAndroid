@@ -20,17 +20,20 @@ object AppDataModule {
     }
 
     @Provides
-    fun provideGetOnBoardingNotificationUseCase(appDataRepository: AppDataRepository): GetOnBoardingNotificationUseCase {
+    fun provideGetOnBoardingNotificationUseCase(appDataRepository: AppDataRepository):
+            GetOnBoardingNotificationUseCase {
         return GetOnBoardingNotificationUseCase(appDataRepository)
     }
 
     @Provides
-    fun provideCloseOnBoardingNotificationUseCase(appDataRepository: AppDataRepository): CloseOnBoardingNotificationUseCase {
+    fun provideCloseOnBoardingNotificationUseCase(appDataRepository: AppDataRepository):
+            CloseOnBoardingNotificationUseCase {
         return CloseOnBoardingNotificationUseCase(appDataRepository)
     }
 
     @Provides
-    fun provideGetNotificationPageNumber(appDataRepository: AppDataRepository): GetNotificationPageNumberUseCase {
+    fun provideGetNotificationPageNumber(appDataRepository: AppDataRepository):
+            GetNotificationPageNumberUseCase {
         return GetNotificationPageNumberUseCase(appDataRepository)
     }
 }

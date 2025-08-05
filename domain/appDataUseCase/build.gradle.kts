@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":repository:appData"))
     implementation(project(":core:appDataModels"))
     implementation(project(":core:util"))
+    implementation(libs.androidx.datastore.core)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
