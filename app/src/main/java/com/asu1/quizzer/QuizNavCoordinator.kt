@@ -3,7 +3,7 @@ package com.asu1.quizzer
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.asu1.activityNavigation.Route
-import com.asu1.mainpage.viewModels.QuizCardMainViewModel
+import com.asu1.mainpage.viewModels.QuizCardViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
@@ -14,7 +14,7 @@ import com.asu1.resources.R
 class QuizNavCoordinator(
     private val navController: NavHostController,
     private val quizCoordinatorViewModel: QuizCoordinatorViewModel,
-    private val quizCardMainViewModel: QuizCardMainViewModel,
+    private val quizCardViewModel: QuizCardViewModel,
     private val userViewModel: UserViewModel,
     private val loadLocalQuizViewModel: LoadLocalQuizViewModel,
     private val loadMyQuizViewModel: LoadMyQuizViewModel,
@@ -26,7 +26,7 @@ class QuizNavCoordinator(
             popUpTo(Route.Home) { inclusive = false }
             launchSingleTop = true
         }
-        quizCardMainViewModel.setLoadResultId(null)
+        quizCardViewModel.setLoadResultId(null)
     }
 
     fun loadQuiz(quizId: String, doPop: Boolean = false) {
@@ -35,13 +35,13 @@ class QuizNavCoordinator(
             if (doPop) popUpTo(Route.Home) { inclusive = false }
             launchSingleTop = true
         }
-        quizCardMainViewModel.setLoadQuizId(null)
+        quizCardViewModel.setLoadQuizId(null)
     }
 
     fun getHome(fetchData: Boolean = true) {
-        quizCardMainViewModel.resetQuizTrends()
-        quizCardMainViewModel.resetUserRanks()
-        if (fetchData) quizCardMainViewModel.fetchQuizCards()
+        quizCardViewModel.resetQuizTrends()
+        quizCardViewModel.resetUserRanks()
+        if (fetchData) quizCardViewModel.fetchQuizCards()
         navController.navigate(Route.Home) {
             // clearer than popUpTo(0): use start destination or home directly
             popUpTo(navController.graph.findStartDestination().id) { inclusive = true }

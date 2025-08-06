@@ -1,6 +1,7 @@
 package com.asu1.mainpage.composables
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.animations.UserRankAnimation
 import com.asu1.mainpage.screens.UriImageButton
@@ -44,25 +47,49 @@ fun UserRankComposable(
     userRank: UserRank,
     rank: Int
 ) {
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeight = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.height.toDp() }
-    }
-    val screenWidth = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.width.toDp() }
-    }
-    val minSize = remember(screenWidth){
-        kotlin.comparisons.minOf(
-            kotlin.comparisons.minOf(screenWidth, screenHeight).times(0.2f),
-            200.dp
+    val screenInfo = rememberScreenInfo()
+    val backgroundColor = if (rank % 2 == 1)
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    else
+        Color.Transparent
+
+    RankCard(backgroundColor) {
+        RankRow(
+            rank = rank,
+            profileUri = userRank.profileImageUri,
+            nickname = userRank.nickname,
+            orderScore = userRank.orderScore,
+            totalScore = userRank.totalScore,
+            quizzesSolved = userRank.quizzesSolved,
+            minSize = screenInfo.minSize
         )
     }
-    val backgroundColor = when(rank%2){
-        0 -> Color.Transparent
-        1 -> MaterialTheme.colorScheme.surfaceContainerHigh
-        else -> Color.Transparent
-    }
+}
+
+// --- State holder for screen dimensions ---
+@Immutable
+private data class ScreenInfo(
+    val width: Dp,
+    val height: Dp,
+    val minSize: Dp
+)
+
+@Composable
+private fun rememberScreenInfo(): ScreenInfo {
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    val heightDp = with(density) { windowInfo.containerSize.height.toDp() }
+    val widthDp = with(density) { windowInfo.containerSize.width.toDp() }
+    val minSize = minOf((minOf(widthDp, heightDp) * 0.2f), 200.dp)
+    return remember(widthDp, heightDp) { ScreenInfo(widthDp, heightDp, minSize) }
+}
+
+// --- Card container ---
+@Composable
+private fun RankCard(
+    backgroundColor: Color,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         modifier = Modifier
@@ -70,64 +97,101 @@ fun UserRankComposable(
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text(
-                text = when (rank) {
-                    1 -> "\uD83E\uDD47"
-                    2 -> "\uD83E\uDD48"
-                    3 -> "\uD83E\uDD49"
-                    else -> "${rank}."
-                },
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.width(40.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            UriImageButton(
-                urlToImage = userRank.profileImageUri,
-                modifier = Modifier
-                    .size(minSize)
-                    .clip(shape = RoundedCornerShape(16.dp)),
-                nickname = userRank.nickname[0]
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(minSize)
-            ) {
-                Text(
-                    text = userRank.nickname,
-                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.weight(2f))
-                Text(
-                    text = buildString {
-                        append(stringResource(R.string.points))
-                        append("${userRank.orderScore} / ${userRank.totalScore}")
-                    },
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = buildString {
-                        append(stringResource(R.string.solved_quizzes))
-                        append(userRank.quizzesSolved)
-                    },
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+        Column(modifier = Modifier.padding(8.dp), content = content)
+    }
+}
+
+// --- Main row showing rank label, profile image, and user info ---
+@Composable
+private fun RankRow(
+    rank: Int,
+    profileUri: String,
+    nickname: String,
+    orderScore: Int,
+    totalScore: Int,
+    quizzesSolved: Int,
+    minSize: Dp
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        RankLabel(rank)
+        Spacer(Modifier.width(8.dp))
+        ProfileImage(uri = profileUri, initial = nickname.first(), size = minSize)
+        Spacer(Modifier.width(8.dp))
+        UserInfoColumn(
+            nickname = nickname,
+            orderScore = orderScore,
+            totalScore = totalScore,
+            quizzesSolved = quizzesSolved,
+            height = minSize
+        )
+    }
+}
+
+@Composable
+private fun RankLabel(rank: Int) {
+    val label = when (rank) {
+        1 -> "\uD83E\uDD47"
+        2 -> "\uD83E\uDD48"
+        3 -> "\uD83E\uDD49"
+        else -> "$rank."
+    }
+    Text(
+        text = label,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier.width(40.dp)
+    )
+}
+
+@Composable
+private fun ProfileImage(
+    uri: String,
+    initial: Char,
+    size: Dp
+) {
+    UriImageButton(
+        urlToImage = uri,
+        nickname = initial,
+        modifier = Modifier
+            .size(size)
+            .clip(RoundedCornerShape(16.dp))
+    )
+}
+
+@Composable
+private fun UserInfoColumn(
+    nickname: String,
+    orderScore: Int,
+    totalScore: Int,
+    quizzesSolved: Int,
+    height: Dp
+) {
+    Column(
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+    ) {
+        Text(
+            text = nickname,
+            style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.weight(2f))
+        Text(
+            text = stringResource(R.string.points) + " $orderScore / $totalScore",
+            style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = stringResource(R.string.solved_quizzes) + " $quizzesSolved",
+            style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

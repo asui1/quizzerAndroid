@@ -26,6 +26,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,51 +48,95 @@ class UserViewModel @Inject constructor(
     val userActivities: Flow<PersistentList<UserActivity>> =
         _userActivities.map { it.toPersistentList() }
 
-    fun initLogin(onDone: () -> Unit = {}){
+    fun initLogin(onDone: () -> Unit = {}) {
         viewModelScope.launch(Dispatchers.IO) {
-            try{
-                val userInfo = initLoginUseCase(LanguageSetter.isKo)
-                if(userInfo != null){
-                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
-                    ))
-                    if(userInfo.email.contains("@gmail")){
-                        _isUserLoggedIn.postValue(true)
-                    }
-                    onDone()
-                }
-                else{
-                    throw Exception("Init login failed")
-                }
+            val userInfo = try {
+                initLoginUseCase(LanguageSetter.isKo)
+            } catch (e: IOException) {
+                Logger.debug("Network error during init login", e)
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,
+                    ToastType.ERROR
+                )
+                return@launch
+            } catch (e: HttpException) {
+                Logger.debug("Server error during init login: HTTP ${e.code()}", e)
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,
+                    ToastType.ERROR
+                )
+                return@launch
             }
-            catch (e: Exception){
-                Logger.debug("Init login failed ${e.message}")
-                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
+
+            if (userInfo == null) {
+                Logger.debug("Init login failed: no user info returned")
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,   // create a string like “Unable to log you in”
+                    ToastType.ERROR
+                )
+                return@launch
             }
+
+            _userData.postValue(
+                UserData(
+                    email      = userInfo.email,
+                    nickname   = userInfo.nickname,
+                    urlToImage = userInfo.urlToImage,
+                    tags       = userInfo.tags?.toPersistentSet() ?: persistentSetOf()
+                )
+            )
+
+            _isUserLoggedIn.postValue(userInfo.email.contains("@gmail"))
+            onDone()
         }
     }
 
-    fun login(email: String, profileUri: String){
+
+    fun login(email: String, profileUri: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            try{
-                val userInfo = loginWithEmailUseCase(email, profileUri)
-                if(userInfo != null){
-                    _isUserLoggedIn.postValue(true)
-                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
-                    ))
-                    SnackBarManager.showSnackBar(R.string.logged_in, ToastType.SUCCESS)
-                }
-                else{
-                    throw Exception("Login failed")
-                }
+            val userInfo = try {
+                loginWithEmailUseCase(email, profileUri)
+            } catch (e: IOException) {
+                Logger.debug("Network error during login", e)
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,
+                    ToastType.ERROR
+                )
+                return@launch
+            } catch (e: HttpException) {
+                Logger.debug("Server error during login: HTTP ${e.code()}", e)
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,
+                    ToastType.ERROR
+                )
+                return@launch
             }
-            catch (e: Exception){
-                Logger.debug("Login failed ${e.message}")
-                SnackBarManager.showSnackBar(R.string.can_not_access_server, ToastType.ERROR)
+
+            if (userInfo == null) {
+                Logger.debug("Login failed: no user info returned")
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,  // e.g. “Unable to log you in”
+                    ToastType.ERROR
+                )
+                return@launch
             }
+
+            _isUserLoggedIn.postValue(true)
+            _userData.postValue(
+                UserData(
+                    email      = userInfo.email,
+                    nickname   = userInfo.nickname,
+                    urlToImage = userInfo.urlToImage,
+                    tags       = userInfo.tags?.toPersistentSet() ?: persistentSetOf()
+                )
+            )
+            SnackBarManager.showSnackBar(
+                R.string.logged_in,
+                ToastType.SUCCESS
+            )
         }
     }
+
 
     fun getUserActivities(){
         if(_userData.value == null){
@@ -117,9 +163,11 @@ class UserViewModel @Inject constructor(
                 else{
                     SnackBarManager.showSnackBar(R.string.failed_to_delete_user, ToastType.ERROR)
                 }
-            }
-            catch (e: Exception){
-                Logger.debug("Delete user failed ${e.message}")
+            } catch (e: IOException) {
+                Logger.debug("Network error during sign out", e)
+                SnackBarManager.showSnackBar(R.string.failed_to_delete_user, ToastType.ERROR)
+            } catch (e: HttpException) {
+                Logger.debug("Server error during sign out: HTTP ${e.code()}", e)
                 SnackBarManager.showSnackBar(R.string.failed_to_delete_user, ToastType.ERROR)
             }
         }
@@ -127,25 +175,49 @@ class UserViewModel @Inject constructor(
 
     fun logOut() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val userInfo = logoutToGuestUseCase()
-                if(userInfo != null){
-                    _isUserLoggedIn.postValue(false)
-                    _userData.postValue(UserData(userInfo.email, userInfo.nickname, userInfo.urlToImage,
-                        userInfo.tags?.toPersistentSet() ?: persistentSetOf()
-                    ))
-                    SnackBarManager.showSnackBar(R.string.logged_out, ToastType.SUCCESS)
-                }
-                else{
-                    throw Exception("Logout failed")
-                }
+            val userInfo = try {
+                logoutToGuestUseCase()
+            } catch (e: IOException) {
+                Logger.debug("Network error during logout", e)
+                SnackBarManager.showSnackBar(
+                    R.string.failed_request,
+                    ToastType.ERROR
+                )
+                return@launch
+            } catch (e: HttpException) {
+                Logger.debug("Server error during logout: HTTP ${e.code()}", e)
+                SnackBarManager.showSnackBar(
+                    R.string.failed_request,
+                    ToastType.ERROR
+                )
+                return@launch
             }
-            catch (e: Exception){
-                Logger.debug("Logout failed ${e.message}")
-                SnackBarManager.showSnackBar(R.string.failed_request, ToastType.ERROR)
+
+            if (userInfo == null) {
+                Logger.debug("Logout failed: no user info returned")
+                SnackBarManager.showSnackBar(
+                    R.string.can_not_access_server,  // e.g. “Unable to log you out”
+                    ToastType.ERROR
+                )
+                return@launch
             }
+
+            _isUserLoggedIn.postValue(false)
+            _userData.postValue(
+                UserData(
+                    email      = userInfo.email,
+                    nickname   = userInfo.nickname,
+                    urlToImage = userInfo.urlToImage,
+                    tags       = userInfo.tags?.toPersistentSet() ?: persistentSetOf()
+                )
+            )
+            SnackBarManager.showSnackBar(
+                R.string.logged_out,
+                ToastType.SUCCESS
+            )
         }
     }
+
 
     data class UserData(
         val email: String?,

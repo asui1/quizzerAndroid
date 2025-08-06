@@ -2,11 +2,14 @@ package com.asu1.mainpage.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -15,22 +18,23 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -121,87 +125,114 @@ fun MyActivitiesBody(
 fun UserActivityItem(userActivity: UserActivity) {
     val imageUrl = "${BASE_URL_API}images/${userActivity.quizId}.png"
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxWidth()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val (quizTitle, quizImage, quizSolvedDate, quizProgressBar, quizProgessData) = createRefs()
-        val startBarrier = createEndBarrier(quizImage)
-        GlideImage(
-            imageModel = {imageUrl},
-            modifier = Modifier.size(60.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .constrainAs(quizImage){
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                },
-            failure = {
-                Image(
-                    painter = painterResource(id = R.drawable.question2),
-                    contentDescription = "Image for quiz ${userActivity.quizTitle}",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            },
+        ActivityImage(
+            modifier = Modifier.size(60.dp),
+            imageUrl = imageUrl,
+            quizTitle = userActivity.quizTitle
         )
-        Text(
-            userActivity.quizTitle,
-            modifier = Modifier.constrainAs(quizTitle){
-                start.linkTo(quizImage.end, margin = 4.dp)
-                top.linkTo(parent.top)
-            },
-            style = QuizzerTypographyDefaults.quizzerBodySmallBold
-        )
-
-        Text(
-            "${userActivity.correctCount} / ${userActivity.totalCount}",
-            modifier = Modifier.constrainAs(quizProgessData){
-                start.linkTo(quizImage.end, margin = 4.dp)
-                top.linkTo(quizTitle.bottom, margin = 4.dp)
-            },
-            style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.ExtraBold
-        )
-        QuizProgressBar(
-            modifier = Modifier.constrainAs(quizProgressBar) {
-                start.linkTo(startBarrier, margin = 4.dp)
-                top.linkTo(quizProgessData.bottom)
-                end.linkTo(parent.end, margin = 4.dp)
-                width = Dimension.fillToConstraints
-            },
-            solved = userActivity.correctCount,
-            total = userActivity.totalCount,
-        )
-        Text(
-            userActivity.solvedDate,
-            modifier = Modifier.constrainAs(quizSolvedDate){
-                start.linkTo(quizImage.end, margin = 4.dp)
-                top.linkTo(quizProgressBar.bottom, margin = 4.dp)
-                bottom.linkTo(parent.bottom)
-            },
-            style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            ActivityTitle(title = userActivity.quizTitle)
+            Spacer(modifier = Modifier.height(4.dp))
+            ActivityProgressInfo(
+                correct = userActivity.correctCount,
+                total = userActivity.totalCount
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            ActivityProgressBar(
+                solved = userActivity.correctCount,
+                total = userActivity.totalCount
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            ActivitySolvedDate(date = userActivity.solvedDate)
+        }
     }
 }
 
 @Composable
-fun QuizProgressBar(
+private fun ActivityImage(
     modifier: Modifier = Modifier,
+    imageUrl: String,
+    quizTitle: String,
+) {
+    GlideImage(
+        imageModel = { imageUrl },
+        modifier = modifier
+            .clip(RoundedCornerShape(4.dp)),
+        failure = {
+            Image(
+                painter = painterResource(id = R.drawable.question2),
+                contentDescription = "Image for quiz $quizTitle",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+    )
+}
+
+@Composable
+private fun ActivityTitle(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = title,
+        style = QuizzerTypographyDefaults.quizzerBodySmallBold,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+private fun ActivityProgressInfo(
+    correct: Int,
+    total: Int,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "$correct / $total",
+        style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.ExtraBold,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun ActivityProgressBar(
     solved: Int,
     total: Int,
+    modifier: Modifier = Modifier
 ) {
-    val progress = remember(solved, total) {
-        if (total == 0) 0f else (solved.toFloat() / total.toFloat()).coerceIn(0f, 1f)
-    }
-    androidx.compose.material3.LinearProgressIndicator(
-        progress = { progress},
-        modifier = modifier
-            .height(6.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp)),
-        color = MaterialTheme.colorScheme.primary,
-        trackColor = MaterialTheme.colorScheme.surfaceVariant
+    LinearProgressIndicator(
+    progress = { if (total > 0) solved / total.toFloat() else 0f },
+    modifier = modifier
+                .fillMaxWidth()
+                .height(4.dp),
+    color = ProgressIndicatorDefaults.linearColor,
+    trackColor = ProgressIndicatorDefaults.linearTrackColor,
+    strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+    )
+}
+
+@Composable
+private fun ActivitySolvedDate(
+    date: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = date,
+        style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier.fillMaxWidth()
     )
 }
 

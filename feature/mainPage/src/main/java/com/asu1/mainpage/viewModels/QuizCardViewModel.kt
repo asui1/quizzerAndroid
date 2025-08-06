@@ -22,8 +22,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import retrofit2.HttpException
+import java.io.IOException
 
-class QuizCardMainViewModel : ViewModel() {
+class QuizCardViewModel : ViewModel() {
 
     private val _loadResultId = MutableLiveData<String?>(null)
     val loadResultId: MutableLiveData<String?> get() = _loadResultId
@@ -84,6 +86,7 @@ class QuizCardMainViewModel : ViewModel() {
         _loadQuizId.value = quizId
     }
 
+    @Suppress("unused")
     fun tryUpdate(index: Int){
         if(index == 0){
             if(_quizCards.value.isEmpty()){
@@ -111,9 +114,18 @@ class QuizCardMainViewModel : ViewModel() {
                     Logger.debug("Failed to get user ranks")
                     SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
                 }
-            } catch (e: Exception) {
-                Logger.debug("Failed to get user ranks", e)
-                SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
+            } catch (e: IOException) {
+                Logger.debug("Network error fetching user ranks", e)
+                SnackBarManager.showSnackBar(
+                    R.string.failed_to_get_user_ranks,
+                    ToastType.ERROR
+                )
+            } catch (e: HttpException) {
+                Logger.debug("Server error fetching user ranks: HTTP ${e.code()}", e)
+                SnackBarManager.showSnackBar(
+                    R.string.failed_to_get_user_ranks,
+                    ToastType.ERROR
+                )
             }
         }
     }
@@ -125,14 +137,22 @@ class QuizCardMainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getTrends(language)
-                if (response.isSuccessful && response.body() != null) {
-                    _quizTrends.value = response.body()!!.searchResult
-                    _visibleQuizTrends.value = response.body()!!.searchResult.take(userRankPageCount)
-                } else {
-                    throw IllegalStateException("Failed to fetch trends: ${response.errorBody()?.string()}")
+
+                check(response.isSuccessful && response.body() != null) {
+                    "Failed to fetch trends: ${response.errorBody()?.string().orEmpty()}"
                 }
-            } catch (e: Exception) {
-                Logger.debug("Failed to fetch quiz trends", e)
+                val result = response.body()!!.searchResult
+                _quizTrends.value = result
+                _visibleQuizTrends.value = result.take(trendPageCount)
+
+            }  catch (e: IllegalStateException) {
+                Logger.debug("Fetch trends precondition failed: ${e.message}")
+            } catch (e: IOException) {
+                // Network I/O error
+                Logger.debug("Network error fetching quiz trends", e)
+            } catch (e: HttpException) {
+                // Protocol error (non‐2xx status codes)
+                Logger.debug("Server error fetching quiz trends: HTTP ${e.code()}", e)
             }
         }
     }

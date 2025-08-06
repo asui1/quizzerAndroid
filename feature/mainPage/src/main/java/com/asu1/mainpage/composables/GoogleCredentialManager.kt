@@ -24,7 +24,6 @@ class GoogleCredentialManager(
     private val loginGoogleIdOption : GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(true)
         .setAutoSelectEnabled(true)
-//        .setServerClientId("1057835741492-4kv4svps22604n2nv0k9dj1m0vf7dokf.apps.googleusercontent.com")
         .setServerClientId(com.asu1.network.SecurePreferences.GOOGLE_CLIENT_ID)
         .build()
     private val loginRequest : GetCredentialRequest = GetCredentialRequest.Builder()
@@ -33,7 +32,6 @@ class GoogleCredentialManager(
     private val registerGoogleIdOption : GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setAutoSelectEnabled(true)
-//        .setServerClientId("1057835741492-4kv4svps22604n2nv0k9dj1m0vf7dokf.apps.googleusercontent.com")
         .setServerClientId(com.asu1.network.SecurePreferences.GOOGLE_CLIENT_ID)
         .build()
     private val registerRequest : GetCredentialRequest = GetCredentialRequest.Builder()
@@ -67,7 +65,8 @@ class GoogleCredentialManager(
                     GoogleIdTokenCredential.createFrom(result.credential.data)
 
                 val email =
-                    googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
+                    googleIdTokenCredential.data.getString(
+                        "com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
                 if (email == null) {
                     SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
 
@@ -82,38 +81,40 @@ class GoogleCredentialManager(
         }
     }
 
-    fun handleSignIn(result: GetCredentialResponse, login: (email: String, profileUri: String) -> Unit) {
-        // Handle the successfully returned credential.
-        when (val credential = result.credential) {
-            is CustomCredential -> {
-                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                    try {
-                        val googleIdTokenCredential =
-                            GoogleIdTokenCredential.createFrom(credential.data)
+    fun handleSignIn(
+        result: GetCredentialResponse,
+        login: (email: String, profileUri: String) -> Unit
+    ) {
+        val raw = result.credential
+        if (raw is CustomCredential &&
+            raw.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+        ) {
+            // 1) Parse token (logs & yields null on failure)
+            val idToken = try {
+                GoogleIdTokenCredential.createFrom(raw.data)
+            } catch (e: GoogleIdTokenParsingException) {
+                Log.e("Quizzer", "Failed to parse Google ID token", e)
+                null
+            }
 
-                        val email = googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-                        if(email == null) {
-                            Log.e("Quizzer", "Received an invalid google id token response")
-                            return
-                        }
-                        val profileUri = googleIdTokenCredential.profilePictureUri
-                        login(email, profileUri.toString())
+            if (idToken != null) {
+                // 2) Extract & validate email
+                val email = idToken.data
+                    .getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
 
-
-
-                    } catch (e: GoogleIdTokenParsingException) {
-                        Log.e("Quizzer", "Received an invalid google id token response", e)
-                    }
+                if (!email.isNullOrBlank()) {
+                    // 3) Happy path
+                    val profileUri = idToken.profilePictureUri?.toString().orEmpty()
+                    login(email, profileUri)
                 } else {
-                    // Catch any unrecognized custom credential type here.
-                    Log.e("Quizzer", "Unexpected type of credential")
+                    Log.e(
+                        "Quizzer",
+                        "Received invalid Google ID token response: missing or blank email"
+                    )
                 }
             }
-
-            else -> {
-                // Catch any unrecognized credential type here.
-                Log.e("Quizzer", "Unexpected type of credential")
-            }
+        } else {
+            Log.e("Quizzer", "Unexpected credential or type: $raw")
         }
     }
 }

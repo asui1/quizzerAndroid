@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -9,6 +11,12 @@ plugins {
 
 android {
     namespace = "com.asu1.mainpage"
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    }
 }
 
 dependencies {
@@ -27,6 +35,7 @@ dependencies {
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
     implementation(project(":feature:quizCard"))
+    implementation(project(":feature:quiz"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -67,4 +76,5 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(kotlin("test"))
 }

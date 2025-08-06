@@ -129,7 +129,8 @@ fun annotatedPolicyEn(): AnnotatedString{
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("1. Purpose of Collecting and Using Personal Information\n")
         }
-        append("Quizzer (hereinafter referred to as \"the App\") highly values user privacy and collects and uses personal information for the following purposes:\n\n")
+        append("Quizzer (hereinafter referred to as \"the App\") highly values user privacy and collects ")
+        append("and uses personal information for the following purposes:\n\n")
         append("• User identification and provision of app services\n")
         append("• Communication with users via email\n")
         append("• Analyzing in-app activity information to improve services\n\n")
@@ -151,12 +152,15 @@ fun annotatedPolicyEn(): AnnotatedString{
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("3. Retention and Use Period of Personal Information\n")
         }
-        append("Collected personal information is retained and used until the purpose of use is achieved or the user requests deletion. Upon user request, the collected personal information will be promptly deleted.\n\n")
+        append("Collected personal information is retained " +
+                "and used until the purpose of use is achieved or the user requests deletion. " +
+                "Upon user request, the collected personal information will be promptly deleted.\n\n")
 
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("4. Provision of Personal Information to Third Parties\n")
         }
-        append("The App does not provide personal information to third parties without the prior consent of the user.\n\n")
+        append("The App does not provide personal information " +
+                "to third parties without the prior consent of the user.\n\n")
 
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("5. Measures to Ensure the Safety of Personal Information\n")
@@ -169,14 +173,16 @@ fun annotatedPolicyEn(): AnnotatedString{
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("6. Personal Information Protection Officer\n")
         }
-        append("For inquiries related to personal information, please contact the Personal Information Protection Officer below.\n")
+        append("For inquiries related to personal information, " +
+                "please contact the Personal Information Protection Officer below.\n")
         append("Officer: [Name of Personal Information Protection Officer]\n")
         append("Contact: whwkd122@gmail.com\n\n")
 
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("7. Changes to the Privacy Policy\n")
         }
-        append("If there are any changes to the privacy policy, the changes will be notified through the app's notice board.\n\n")
+        append("If there are any changes to the privacy policy, " +
+                "the changes will be notified through the app's notice board.\n\n")
         append("This policy is effective as of August 4, 2024.")
     }
 }

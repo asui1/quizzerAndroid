@@ -44,71 +44,75 @@ fun UserSettingsScreen(
     userData: UserViewModel.UserData?,
     settingItems: PersistentList<SettingItems>,
     isLoggedIn: Boolean = false,
-    logOut: () -> Unit = { },
-    onSignOut: () -> Unit = {},
-    ) {
+    onLogOut: () -> Unit = {},
+    onSignOut: () -> Unit = {}
+) {
     val context = LocalContext.current
     val version = remember { context.getAppVersion() }
     var showLogoutDialog by remember { mutableStateOf(false) }
-    if(showLogoutDialog){
+    // Dialog handler
+    if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
-                logOut()
+                onLogOut()
                 showLogoutDialog = false
             },
             onDismiss = { showLogoutDialog = false }
         )
     }
-    val logOutItems = remember{
-        persistentListOf(
-            SettingItems(
-                stringResourceId = R.string.logout,
-                vectorIcon = Icons.AutoMirrored.Filled.Logout,
-                onClick = {showLogoutDialog = true}
-            ),
-        )
-    }
-    val signOutItems = remember {
-        persistentListOf(
-            SettingItems(
-                stringResourceId = R.string.sign_out,
-                vectorIcon = Icons.Default.DeleteForever,
-                onClick = onSignOut
+
+    // Build settings groups dynamically
+    val groups = remember(isLoggedIn, settingItems, showLogoutDialog) {
+        buildList {
+            if (isLoggedIn) add(
+                persistentListOf(
+                    SettingItems(
+                        stringResourceId = R.string.logout,
+                        vectorIcon = Icons.AutoMirrored.Filled.Logout,
+                        onClick = { showLogoutDialog = true }
+                    )
+                )
             )
-        )
+            add(settingItems)
+            if (isLoggedIn) add(
+                persistentListOf(
+                    SettingItems(
+                        stringResourceId = R.string.sign_out,
+                        vectorIcon = Icons.Default.DeleteForever,
+                        onClick = onSignOut
+                    )
+                )
+            )
+        }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
     ) {
         ProfileCardSection(userData)
 
-        if(isLoggedIn) {
+        groups.forEachIndexed { index, items ->
             SettingsGroupCard(
-                modifier = Modifier.padding(bottom = 16.dp),
-                items = logOutItems
+                items = items,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = if (index < groups.lastIndex) 16.dp else 8.dp)
             )
         }
-
-        SettingsGroupCard(
-            modifier = Modifier.padding(bottom = 16.dp),
-            items = settingItems,
-        )
-
-        Text(
-            "${stringResource(R.string.app_version)}: $version",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Light,
-        )
-
-        if(isLoggedIn) {
-            SettingsGroupCard(
-                modifier = Modifier.padding(vertical = 16.dp),
-                items = signOutItems
-            )
-        }
+        VersionInfo(version)
     }
+}
+
+@Composable
+private fun VersionInfo(version: String) {
+    Text(
+        text = stringResource(R.string.app_version) + ": " + version,
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.Light,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
 }
 
 @Preview(showBackground = true)

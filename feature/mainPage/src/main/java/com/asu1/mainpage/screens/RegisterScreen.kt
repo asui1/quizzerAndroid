@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -23,15 +21,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -41,10 +40,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -61,106 +57,134 @@ import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter
-import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 
-const val registerSteps = 3
+const val REGISTER_STEPS = 3
 
 @Composable
 fun RegisterScreen(
     navController: NavHostController,
-    registerViewModel: RegisterViewModel = hiltViewModel(),
-    email: String = "",
-    profileUri: String = "",
-){
+    email: String,
+    profileUri: String
+) {
+    val registerViewModel: RegisterViewModel = hiltViewModel()
     val userViewModel: UserViewModel = viewModel()
-    val registerStep by registerViewModel.registerStep.observeAsState(0)
-    val nickname by registerViewModel.nickname.observeAsState()
-    val isError by registerViewModel.isError.observeAsState()
-    val tags by registerViewModel.tags
-        .collectAsStateWithLifecycle(
-            persistentSetOf()
-        )
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { registerSteps-1 },
-    )
-    val coroutineScope = rememberCoroutineScope()
-    val progress by animateFloatAsState(targetValue = registerStep / (registerSteps-1).toFloat(),
-        label = "Register Progress"
-    )
 
-    LaunchedEffect(Unit){
+    val state = rememberRegisterState(
+        registerViewModel = registerViewModel,
+        email = email,
+        profileUri = profileUri
+    )
+    val onEvent: (RegisterViewModelActions) -> Unit = { registerViewModel.registerViewModelActions(it) }
+    val isError = registerViewModel.isError.observeAsState()
+
+    RegisterScreenContent(
+        state = state,
+        onNavigateBack = { navController.popBackStack(Route.Login, false) },
+        onNavigateHome = { navController.navigate(Route.Home) { popUpTo(Route.Home) { inclusive = false } } },
+        onLogin = { userViewModel.login(email, profileUri) },
+        onEvent = onEvent,
+        isError = isError.value ?: false,
+    )
+}
+
+@Stable
+data class RegisterState(
+    val step: Int,
+    val nickname: String?,
+    val tags: Set<String>
+)
+
+@Composable
+private fun rememberRegisterState(
+    registerViewModel: RegisterViewModel,
+    email: String,
+    profileUri: String
+): RegisterState {
+    val step by registerViewModel.registerStep.observeAsState(0)
+    val nickname by registerViewModel.nickname.observeAsState()
+    val tags by registerViewModel.tags.collectAsStateWithLifecycle(persistentSetOf())
+
+    // init once
+    LaunchedEffect(email, profileUri) {
         registerViewModel.registerViewModelActions(RegisterViewModelActions.IdInit(email, profileUri))
     }
 
-    LaunchedEffect(registerStep) {
-        when(registerStep){
-            0 -> pagerState.animateScrollToPage(0)
-            1 -> pagerState.animateScrollToPage(1)
-            3 -> {
-                coroutineScope.launch {
-                    launch { userViewModel.login(email, profileUri) }
-                    launch {
-                        navController.navigate(Route.Home) {
-                            popUpTo(Route.Home) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                }
-            }
-        }
+    return remember(step, nickname, tags) {
+        RegisterState(step = step, nickname = nickname, tags = tags)
     }
-    BackHandler {
-        if(registerStep == 0){
-            navController.popBackStack(
-                Route.Login,
-                inclusive = false
-            )
-        }else{
-            registerViewModel.moveBack()
-        }
-    }
-    Scaffold(
-        topBar = { RowWithAppIconAndName() },
+}
+
+@Composable
+private fun RegisterScreenContent(
+    state: RegisterState,
+    onNavigateBack: () -> Unit,
+    onNavigateHome: () -> Unit,
+    onLogin: () -> Unit,
+    onEvent: (RegisterViewModelActions) -> Unit,
+    isError: Boolean,
+) {
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { REGISTER_STEPS - 1 })
+    val scope = rememberCoroutineScope()
+    val progress by animateFloatAsState(
+        targetValue = state.step / (REGISTER_STEPS - 1).toFloat(),
+        label = "Register Progress"
     )
-    { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            Text(
-                text = stringResource(R.string.register),
-                style = QuizzerTypographyDefaults.quizzerTitleMediumBold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            LinearProgressIndicator(
-                progress = {progress},
-                modifier = Modifier.fillMaxWidth()
-            )
+
+    BackHandler {
+        if (state.step == 0) onNavigateBack()
+        else scope.launch { onEvent(RegisterViewModelActions.MoveBack) }
+    }
+
+    // step changes pager
+    LaunchedEffect(state.step) {
+        if (state.step < REGISTER_STEPS - 1) {
+            pagerState.animateScrollToPage(state.step)
+        } else {
+            onLogin()
+            onNavigateHome()
+        }
+    }
+
+    Scaffold(topBar = { RowWithAppIconAndName() }) { paddingValues ->
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+        ) {
+            RegisterHeader(progress)
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (page) {
-                    0 -> UsageAgreement(
-                        onProceed = {
-                            registerViewModel.agreeTerms()
-                        }
-                    )
-
+                    0 -> UsageAgreement(onProceed = { onEvent(RegisterViewModelActions.AgreeTerms) })
                     1 -> EnterRegisterInputData(
-                        nickname = nickname ?: "",
-                        registerViewModelAction = {action ->
-                            registerViewModel.registerViewModelActions(action)
-                        },
-                        isError = isError == true,
-                        tags = tags,
-                        registerStep = registerStep
+                        state = state,
+                        isError = isError,
+                        onAction = onEvent
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun RegisterHeader(progress: Float) {
+    Text(
+        text = stringResource(R.string.register),
+        style = QuizzerTypographyDefaults.quizzerTitleMediumBold,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+    LinearProgressIndicator(
+        progress = { progress },
+        modifier = Modifier.fillMaxWidth(),
+        color = ProgressIndicatorDefaults.linearColor,
+        trackColor = ProgressIndicatorDefaults.linearTrackColor,
+        strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+    )
 }
 
 @Composable
@@ -222,129 +246,124 @@ fun UsageAgreementPreview() {
 
 @Composable
 fun EnterRegisterInputData(
-    nickname : String = "",
-    registerViewModelAction: (RegisterViewModelActions) -> Unit = {},
-    isError : Boolean = false,
-    registerStep: Int = 1,
-    tags: PersistentSet<String> = persistentSetOf<String>(),
+    state: RegisterState,
+    isError: Boolean,
+    onAction: (RegisterViewModelActions) -> Unit
 ) {
-    // Nickname Input UI
-    val focusRequester = remember("Nickname") { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var localNickname by remember { mutableStateOf(TextFieldValue(text = nickname)) }
+    // Handle keyboard hide/back logic
     val isKeyboardOpen by keyboardAsState()
-    val stacks = remember { mutableIntStateOf(0) }
+    var stackCount by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(isKeyboardOpen) {
-        if(!isKeyboardOpen && stacks.intValue > 0){
-            stacks.intValue--
-            if(stacks.intValue == 0){
-                keyboardController?.hide()
-            }
-            registerViewModelAction(RegisterViewModelActions.MoveBack)
-        }
-        else{
-            stacks.intValue++
+        if (isKeyboardOpen) {
+            stackCount++
+        } else if (stackCount > 0) {
+            stackCount--
+            onAction(RegisterViewModelActions.MoveBack)
         }
     }
 
     Column(
-        verticalArrangement = Arrangement.Bottom,
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
     ) {
-        LazyColumn(
-            reverseLayout = true,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(16.dp)
-                .weight(1f)
-        ) {
-            item("tags") {
-                AnimatedVisibility(
-                    visible = registerStep > 1,
-                ) {
-                    Spacer(
-                        modifier = Modifier.height(32.dp)
-                    )
-                    TagSetting(
-                        tags = tags,
-                        toggleTag = {tag ->
-                            registerViewModelAction(RegisterViewModelActions.ToggleTag(tag))
-                        },
-                        register = {
-                            registerViewModelAction(RegisterViewModelActions.Register)
-                        },
-                        modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                    )
-                    Spacer(
-                        modifier = Modifier.height(32.dp)
-                    )
-                }
-            }
+        AnimatedVisibility(visible = state.step > 1) {
+            TagSettingSection(
+                tags = state.tags,
+                onToggleTag = { tag -> onAction(RegisterViewModelActions.ToggleTag(tag)) },
+                onRegister = { onAction(RegisterViewModelActions.Register) }
+            )
+        }
 
-            item("nickname") {
-                TextField(
-                    value = localNickname,
-                    enabled = registerStep == 1,
-                    onValueChange = { textfieldvalue ->
-                        if (textfieldvalue.text.length <= 12) {
-                            localNickname = textfieldvalue
-                            registerViewModelAction(RegisterViewModelActions.UndoError)
-                        }
-                    },
-                    isError = isError,
-                    label = {
-                        if (isError) Text(
-                            text = stringResource(R.string.can_not_use_this_nickname),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        else
-                            Text(text = stringResource(R.string.nickname))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            if (localNickname.text.length <= 12)
-                                registerViewModelAction(RegisterViewModelActions.SetNickName(localNickname.text))
-                        }
-                    ),
-                    supportingText = {
-                        Text(text = buildString {
-                            append(stringResource(R.string.length))
-                            append("${localNickname.text.length}/12")
-                        })
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.enter_your_nickname),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
+        NicknameInputSection(
+            nickname = state.nickname.orEmpty(),
+            isError = isError,
+            onNicknameChange = { text ->
+                onAction(RegisterViewModelActions.UndoError)
+                onAction(RegisterViewModelActions.SetNickName(text))
+            },
+            onProceed = {
+                onAction(RegisterViewModelActions.SetNickName(state.nickname.orEmpty()))
             }
+        )
+    }
+}
+
+@Composable
+private fun TagSettingSection(
+    tags: Set<String>,
+    onToggleTag: (String) -> Unit,
+    onRegister: () -> Unit
+) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        TagSetter(
+            tags = tags,
+            onClick = onToggleTag
+        )
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onRegister, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.register))
         }
     }
-    LaunchedEffect(registerStep){
-        if(registerStep == 1){
-            focusRequester.requestFocus()
-            localNickname = localNickname.copy(selection = TextRange(localNickname.text.length))
-            keyboardController?.show()
+}
+
+@Composable
+private fun NicknameInputSection(
+    nickname: String,
+    isError: Boolean,
+    onNicknameChange: (String) -> Unit,
+    onProceed: () -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+    ) {
+        TextField(
+            value = nickname,
+            onValueChange = onNicknameChange,
+            isError = isError,
+            label = { Text(stringResource(R.string.nickname)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
+                onProceed()
+                keyboardController?.hide()
+            })
+        )
+        if (isError) {
+            Text(
+                text = stringResource(R.string.can_not_use_this_nickname),
+                color = MaterialTheme.colorScheme.error,
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium
+            )
         }
+    }
+    // Auto-focus on first step
+    LaunchedEffect(nickname) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun NicknameInputPreview() {
+    val state = rememberRegisterState(
+        registerViewModel = hiltViewModel(),
+        email = "Test@Test.com",
+        profileUri = "ThisIsTestUri",
+    )
     com.asu1.resources.QuizzerAndroidTheme {
         EnterRegisterInputData(
-            nickname = "nickname"
+            state = state,
+            isError = false,
+            onAction = {},
         )
     }
 }

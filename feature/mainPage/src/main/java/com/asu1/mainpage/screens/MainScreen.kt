@@ -2,45 +2,37 @@ package com.asu1.mainpage.screens
 
 import SnackBarManager
 import ToastType
-import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -51,17 +43,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.asu1.activityNavigation.Route
-import com.asu1.appdatamodels.SettingItems
 import com.asu1.customComposable.dialog.DialogComposable
-import com.asu1.mainpage.composables.InquiryBottomSheetContent
 import com.asu1.mainpage.composables.MainActivityBottomBar
 import com.asu1.mainpage.composables.MainActivityTopbar
-import com.asu1.mainpage.composables.SignoutBottomSheetContent
-import com.asu1.mainpage.composables.UserRankComposableList
-import com.asu1.mainpage.viewModels.InquiryViewModel
-import com.asu1.mainpage.viewModels.QuizCardMainViewModel
+import com.asu1.mainpage.viewModels.QuizCardViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.quizcard.cardBase.VerticalQuizCardLargeColumn
+import com.asu1.quizcardmodel.QuizCard
+import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.resources.UserBackground1
@@ -72,12 +60,8 @@ import com.asu1.resources.UserBackground5
 import com.asu1.resources.UserBackground6
 import com.asu1.resources.UserBackground7
 import com.asu1.resources.UserBackground8
-import com.asu1.utils.setTopBarColor
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import com.asu1.userdatamodels.UserRank
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 
@@ -85,224 +69,172 @@ import kotlin.random.Random
 @Composable
 fun MainScreen(
     navController: NavController,
-    navigateTo: (Route) -> Unit = { },
-    loadQuiz: (String) -> Unit = { },
-    loadQuizResult: (String) -> Unit = { },
-    moveHome: () -> Unit = {},
+    navigateTo: (Route) -> Unit,
+    loadQuiz: (String) -> Unit,
+    loadQuizResult: (String) -> Unit,
+    moveHome: () -> Unit
 ) {
-    val quizCardMainViewModel: QuizCardMainViewModel = viewModel()
-    val inquiryViewModel: InquiryViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
-    val quizCards by quizCardMainViewModel.quizCards.collectAsStateWithLifecycle()
-    val quizTrends by quizCardMainViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
-    val userRanks by quizCardMainViewModel.visibleUserRanks.collectAsStateWithLifecycle()
-    val userData by userViewModel.userData.observeAsState()
-    val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { 4 },
+    // 1) collect all state and effects into one state holder
+    val state = rememberMainScreenState(
+        quizCardViewModel = viewModel(),
+        userViewModel         = viewModel(),
+        loadQuiz = loadQuiz,
+        loadQuizResult = loadQuizResult,
     )
-    val coroutineScope = rememberCoroutineScope()
-    val loadQuizId by quizCardMainViewModel.loadQuizId.observeAsState()
-    val loadResultId by quizCardMainViewModel.loadResultId.observeAsState()
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-    val view = LocalView.current
+
+    // 2) render UI based on state
+    MainScreenUI(
+        state           = state,
+        navController   = navController,
+        navigateTo      = navigateTo,
+        loadQuiz        = loadQuiz,
+        moveHome        = moveHome
+    )
+}
+
+// --- State holder encapsulates all mutable state & side effects ---
+@Immutable  // data classes are automatically considered immutable
+data class MainScreenState(
+    val pagerState: PagerState,
+    val quizState:  QuizState,
+    val userState:  UserState
+)
+
+@Immutable
+data class QuizState(
+    val cards:   List<QuizCardsWithTag>,
+    val trends:  List<QuizCard>,
+    val ranks:   List<UserRank>
+)
+
+@Immutable
+data class UserState(
+    val data:       UserViewModel.UserData?,
+    val isLoggedIn: Boolean
+)
+
+@Composable
+private fun rememberMainScreenState(
+    quizCardViewModel: QuizCardViewModel,
+    userViewModel:         UserViewModel,
+    loadQuiz: (String) -> Unit,
+    loadQuizResult: (String) -> Unit,
+): MainScreenState {
+    // 1) your pager
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
+
+    // 2) collect all quiz‐related bits
+    val quizCards    by quizCardViewModel.quizCards.collectAsStateWithLifecycle()
+    val quizTrends   by quizCardViewModel.visibleQuizTrends.collectAsStateWithLifecycle()
+    val userRanks    by quizCardViewModel.visibleUserRanks.collectAsStateWithLifecycle()
+
+    // 3) collect all user‐related bits
+    val userData   by userViewModel.userData.observeAsState()
+    val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
+
+    // 4) triggers to load detail screens
+    val loadQuizId   by quizCardViewModel.loadQuizId.observeAsState()
+    val loadResultId by quizCardViewModel.loadResultId.observeAsState()
+
+    // 5) launch the side‐effects
+    LaunchedEffect(loadQuizId)   { loadQuizId?.let { loadQuiz(it) } }
+    LaunchedEffect(loadResultId) { loadResultId?.let { loadQuizResult(it) } }
+
+    // 6) build your sub‐state objects
+    val quizState = remember(quizCards, quizTrends, userRanks) {
+        QuizState(
+            cards  = quizCards,
+            trends = quizTrends,
+            ranks  = userRanks
+        )
+    }
+    val userState = remember(userData, isLoggedIn) {
+        UserState(
+            data       = userData,
+            isLoggedIn = isLoggedIn
+        )
+    }
+
+    // 7) return the new MainScreenState
+    return remember(pagerState, quizState, userState) {
+        MainScreenState(
+            pagerState = pagerState,
+            quizState  = quizState,
+            userState  = userState
+        )
+    }
+}
+
+// --- Pure UI, all logic lifted out ---
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainScreenUI(
+    state: MainScreenState,
+    navController: NavController,
+    navigateTo: (Route) -> Unit,
+    loadQuiz: (String) -> Unit,
+    moveHome: () -> Unit
+) {
     val scope = rememberCoroutineScope()
-    var backPressedTime by remember { mutableLongStateOf(0L) }
-    val context = LocalContext.current
+    val activity = LocalActivity.current
+    val lastBackPress = rememberSaveable { mutableLongStateOf(0L) }
 
-    fun updateSelectedTab(index: Int) {
-        coroutineScope.launch {
-            withContext(Dispatchers.Main) {
-                pagerState.scrollToPage(index)
-            }
-            quizCardMainViewModel.tryUpdate(index)
-        }
-    }
 
-    BackHandler(
-    ) {
-        if(pagerState.currentPage != 0){
-            updateSelectedTab(0)
-            return@BackHandler
-        }
-        val currentTime = System.currentTimeMillis()
-        SnackBarManager.showSnackBar(R.string.press_back_again_to_exit, ToastType.INFO)
-        if (currentTime - backPressedTime < 3000) {
-            (context as? Activity)?.finish()
+    BackHandler {
+        if (state.pagerState.currentPage != 0) {
+            scope.launch { state.pagerState.scrollToPage(0) }
         } else {
-            backPressedTime = currentTime
-            scope.launch {
-                delay(3000)
-                backPressedTime = 0L
+            val now = System.currentTimeMillis()
+            SnackBarManager.showSnackBar(R.string.press_back_again_to_exit, ToastType.INFO)
+            if (now - lastBackPress.longValue < 3000) {
+                activity?.finish()
             }
-        }
-    }
-
-    LaunchedEffect(loadQuizId) {
-        withContext(Dispatchers.Main) {
-            if (loadQuizId != null) {
-                loadQuiz(loadQuizId!!)
-            }
-        }
-    }
-
-    LaunchedEffect(loadResultId) {
-        withContext(Dispatchers.Main) {
-            if (loadResultId != null) {
-                loadQuizResult(loadResultId!!)
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Main) {
-            setTopBarColor(
-                view = view,
-                color = primaryContainer
-            )
+            lastBackPress.longValue = now
         }
     }
 
     Scaffold(
-        topBar = {
+        topBar    = {
             MainActivityTopbar(
-                navController,
+                navController = navController,
                 onTopBarProfileClick = {
-                    if (isLoggedIn) {
-                        updateSelectedTab(3)
+                    if (state.userState.isLoggedIn) {
+                        scope.launch {
+                            state.pagerState.scrollToPage(3)
+                        }
                     } else {
                         navController.navigate(Route.Login) {
                             launchSingleTop = true
                         }
                     }
                 },
-                userData = userData,
-                resetHome = moveHome,
+                userData = state.userState.data,
+                resetHome = moveHome
             )
         },
         bottomBar = {
-            MainActivityBottomBar(
-                bottomBarSelection = pagerState.currentPage,
-
-                setSelectedTab ={updateSelectedTab(it)},
-                navigateToCreateQuizLayout = {navigateTo(Route.CreateQuizLayout)}
-            )
-        },
-        content = { paddingValues ->
-            HorizontalPager(
-                state = pagerState,
-                userScrollEnabled = false,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-            ){page ->
-                when(page){
-                    0 -> {
-                        HomeScreen(
-                            quizCards = quizCards,
-                            loadQuiz = loadQuiz,
-                            moveToPrivacyPolicy = {
-                                navController.navigate(Route.PrivacyPolicy){
-                                    launchSingleTop = true
-                                }
-                            }
-                        )
-                    }
-                    1 -> {
-                        VerticalQuizCardLargeColumn(
-                            quizCards = quizTrends,
-                            onClick = loadQuiz,
-                            getMoreTrends = {
-                                quizCardMainViewModel.getMoreQuizTrends()
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    2 -> {
-                        UserRankComposableList(
-                            userRanks = userRanks,
-                            getMoreUserRanks = {
-                                quizCardMainViewModel.getMoreUserRanks()
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
-                    3 ->{
-                        var showInquiry by remember { mutableStateOf(false) }
-                        var showSignOut by remember { mutableStateOf(false) }
-                        if(showInquiry) {
-                            ModalBottomSheet(onDismissRequest = {showInquiry = false },
-                                modifier = Modifier.imePadding()
-                            ) {
-                                InquiryBottomSheetContent(
-                                    onDismissRequest = { showInquiry = false
-                                    },
-                                    userData = userData,
-                                    isDone = false,
-                                    onSendInquiry = { email, type, text ->
-                                        inquiryViewModel.sendInquiry(email, type, text)
-                                        showInquiry = false
-                                    }
-                                )
-                            }
-                        }
-                        else if(showSignOut && isLoggedIn) {
-                            ModalBottomSheet(onDismissRequest = {showSignOut = false },
-                                modifier = Modifier.imePadding()) {
-                                SignoutBottomSheetContent(
-                                    onDismissRequest = { showSignOut = false
-                                        userViewModel.logOut()
-                                    },
-                                    userData = userData,
-                                    isDone = false,
-                                    onSendSignOut = { email ->
-                                        userViewModel.signOut(email)
-                                        showSignOut = false
-                                    }
-                                )
-                            }
-                        }
-
-                        UserSettingsScreen(
-                            settingItems =
-                                remember{
-                                    persistentListOf(
-                                        SettingItems(
-                                            stringResourceId = R.string.my_quizzes,
-                                            vectorIcon = Icons.AutoMirrored.Filled.List,
-                                            onClick = {navigateTo(Route.LoadUserQuiz)}
-                                        ),
-                                        SettingItems(
-                                            stringResourceId = R.string.my_activities,
-                                            vectorIcon = Icons.Default.BarChart,
-                                            onClick = {
-                                                userViewModel.getUserActivities()
-                                                navigateTo(Route.MyActivities)
-                                            }
-                                        ),
-                                        SettingItems(
-                                            stringResourceId = R.string.notification,
-                                            vectorIcon = Icons.Default.Notifications,
-                                            onClick = {navigateTo(Route.Notifications)}
-                                        ),
-                                        SettingItems(
-                                            stringResourceId = R.string.inquiry,
-                                            vectorIcon = Icons.AutoMirrored.Filled.HelpOutline,
-                                            onClick = {showInquiry = true}
-                                        ),
-                                    )
-                                },
-                            isLoggedIn = isLoggedIn,
-                            userData = userData,
-                            logOut = { userViewModel.logOut() },
-                            onSignOut = { showSignOut = true },
-                        )
-                    }
-                }
+            MainActivityBottomBar(state.pagerState.currentPage,
+                { scope.launch { state.pagerState.scrollToPage(it) } },
+                { navigateTo(Route.CreateQuizLayout) }) }
+    ) { padding ->
+        HorizontalPager(
+            state = state.pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) { page ->
+            when (page) {
+                0 -> HomePage(state.quizState.cards, loadQuiz, navController)
+                1 -> TrendsPage(state.quizState.trends, loadQuiz)
+                2 -> RanksPage(state.quizState.ranks)
+                3 -> SettingsPage(
+                    userData = state.userState.data,
+                    isLoggedIn = state.userState.isLoggedIn,
+                    navigateTo
+                )
             }
         }
-    )
+    }
 }
 
 @Composable

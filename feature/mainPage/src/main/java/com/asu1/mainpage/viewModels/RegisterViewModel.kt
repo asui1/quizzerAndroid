@@ -171,5 +171,4 @@ sealed class RegisterViewModelActions{
     data class IdInit(val email: String, val photoUri: String): RegisterViewModelActions()
     data class SetNickName(val nickName: String): RegisterViewModelActions()
     data class ToggleTag(val tag: String): RegisterViewModelActions()
-
 }

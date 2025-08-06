@@ -1,5 +1,6 @@
 package com.asu1.mainpage.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -79,12 +81,13 @@ fun LoginScreen(
 }
 
 @Composable
-private fun LoginBody(
-    onClickSignIn: () -> Unit = {},
-    onClickRegister: () -> Unit = {},
+fun LoginBody(
+    onClickSignIn: () -> Unit,
+    onClickRegister: () -> Unit
 ) {
     val context = LocalContext.current
     val version = remember { context.getAppVersion() }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,64 +95,94 @@ private fun LoginBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // Replace with your app icon resource
-            contentDescription = "App Icon",
-            modifier = Modifier.fillMaxWidth(0.8f)
-                .widthIn(max = 600.dp),
-            contentScale = ContentScale.FillWidth,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+        AppLogo()
+        Spacer(Modifier.height(40.dp))
+
+        SectionDivider(
+            textRes = R.string.login,
+            textStyle = QuizzerTypographyDefaults.quizzerHeadlineMediumBold
         )
-        Spacer(modifier = Modifier.height(40.dp))
-        TextDivider(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = {
-                Text(
-                    text = stringResource(R.string.login),
-                    style = QuizzerTypographyDefaults.quizzerHeadlineMediumBold,
-                )
-            }
+        Spacer(Modifier.height(8.dp))
+
+        SignInButton(onClickSignIn)
+        Spacer(Modifier.height(48.dp))
+
+        SectionDivider(
+            textRes = R.string.no_account,
+            textStyle = QuizzerTypographyDefaults.quizzerBodyMediumNormal
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Image(
-            painter = painterResource(id = R.drawable.android_neutral_rd_si),
-            contentDescription = "Sign in with Google",
-            modifier = Modifier
-                .clickable{
-                    onClickSignIn()
-                },
-        )
-        Spacer(modifier = Modifier.height(48.dp))
-        TextDivider(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = {
-                Text(
-                    text = stringResource(R.string.no_account),
-                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
-                )
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Image(
-            painter = painterResource(id = R.drawable.android_neutral_rd_na), // Replace with your drawable resource
-            contentDescription = "Continue with Google",
-            modifier = Modifier
-                .size(45.dp)
-                .clickable {
-                    onClickRegister()
-                },
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            version,
-            style = QuizzerTypographyDefaults.quizzerLabelSmallLight
-        )
+        Spacer(Modifier.height(16.dp))
+
+        RegisterButton(onClickRegister)
+        Spacer(Modifier.height(32.dp))
+
+        VersionText(version)
     }
+}
+
+@Composable
+private fun AppLogo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+        contentDescription = "App Icon",
+        modifier = modifier
+            .fillMaxWidth(0.8f)
+            .widthIn(max = 600.dp),
+        contentScale = ContentScale.FillWidth,
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+    )
+}
+
+@Composable
+private fun SectionDivider(
+    @StringRes textRes: Int,
+    textStyle: TextStyle,
+    modifier: Modifier = Modifier
+) {
+    TextDivider(
+        modifier = modifier.padding(horizontal = 16.dp),
+        text = {
+            Text(
+                text = stringResource(textRes),
+                style = textStyle
+            )
+        }
+    )
+}
+
+@Composable
+private fun SignInButton(onClick: () -> Unit) {
+    Image(
+        painter = painterResource(id = R.drawable.android_neutral_rd_si),
+        contentDescription = "Sign in with Google",
+        modifier = Modifier.clickable(onClick = onClick)
+    )
+}
+
+@Composable
+private fun RegisterButton(onClick: () -> Unit) {
+    Image(
+        painter = painterResource(id = R.drawable.android_neutral_rd_na),
+        contentDescription = "Continue with Google",
+        modifier = Modifier
+            .size(45.dp)
+            .clickable(onClick = onClick)
+    )
+}
+
+@Composable
+private fun VersionText(version: String) {
+    Text(
+        text = version,
+        style = QuizzerTypographyDefaults.quizzerLabelSmallLight
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
     LoginBody(
+        onClickRegister = {},
+        onClickSignIn = {},
     )
 }

@@ -30,7 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.activityNavigation.snackbar.CustomSnackbarHost
-import com.asu1.mainpage.viewModels.QuizCardMainViewModel
+import com.asu1.mainpage.viewModels.QuizCardViewModel
 import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizContentViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
@@ -59,7 +59,7 @@ private const val DEFAULT_DELAY_MS = 1_000L
 class MainActivity : ComponentActivity() {
 
     // NEED INITIALIZATION WITH HIGH PRIORITY
-    private val quizCardMainViewModel: QuizCardMainViewModel by viewModels()
+    private val quizCardViewModel: QuizCardViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
     private val quizCoordinatorViewModel: QuizCoordinatorViewModel by viewModels()
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
     val quizNavCoordinator: QuizNavCoordinator = QuizNavCoordinator(
         navController = navController,
         quizCoordinatorViewModel = quizCoordinatorViewModel,
-        quizCardMainViewModel = quizCardMainViewModel,
+        quizCardViewModel = quizCardViewModel,
         userViewModel = userViewModel,
         loadLocalQuizViewModel = loadLocalQuizViewModel,
         loadMyQuizViewModel = loadMyQuizViewModel
@@ -221,10 +221,10 @@ class MainActivity : ComponentActivity() {
                 val resultId = it.getQueryParameter("resultId") ?: ""
                 val quizId = it.getQueryParameter("quizId") ?: ""
                 if(resultId.isNotEmpty()){
-                    quizCardMainViewModel.setLoadResultId(resultId)
+                    quizCardViewModel.setLoadResultId(resultId)
                 }
                 if(quizId.isNotEmpty()){
-                    quizCardMainViewModel.setLoadQuizId(quizId)
+                    quizCardViewModel.setLoadQuizId(quizId)
                 }
             }
         }

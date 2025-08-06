@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.quizcard.cardBase.HorizontalQuizCardItemLarge
 import com.asu1.quizcard.cardBase.HorizontalQuizCardItemVertical
 import com.asu1.quizcardmodel.QuizCardsWithTag
@@ -50,6 +52,23 @@ val tabTitles = persistentListOf(
     R.string.entertainment,
     R.string.history
 )
+
+@Composable
+fun HomePage(
+    cards: List<QuizCardsWithTag>,
+    loadQuiz: (String) -> Unit,
+    navController: NavController
+) {
+    HomeScreen(
+        quizCards = cards,
+        loadQuiz = loadQuiz,
+        moveToPrivacyPolicy = {
+            navController.navigate(Route.PrivacyPolicy) {
+                launchSingleTop = true
+            }
+        }
+    )
+}
 
 @Composable
 fun HomeScreen(
@@ -79,28 +98,6 @@ fun HomeScreen(
     }
 
     Column(modifier.fillMaxSize()) {
-        //TODO: CONTENTS NEEDED FOR EACH TABS
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .onSizeChanged { rowWidth = it.width } // Capture total Row width
-//        ) {
-//            Row(
-//                modifier = Modifier
-//                    .horizontalScroll(scrollState),
-//                horizontalArrangement = Arrangement.spacedBy(4.dp)
-//            ) {
-//                tabTitles.forEachIndexed { index, title ->
-//                    RoundTab(
-//                        title = stringResource(title),
-//                        isSelected = pagerState.currentPage == index,
-//                        onClick = {
-//                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
-//                        }
-//                    )
-//                }
-//            }
-//        }
         // Swipeable Pages
         HorizontalPager(
             state = pagerState,
