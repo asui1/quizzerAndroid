@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.content.QuizMode
-import com.asu1.quiz.content.boxPadding
+import com.asu1.quiz.content.BOX_PADDING
 import com.asu1.quiz.ui.textStyleManager.QuestionTextStyle
 import com.asu1.quiz.content.quizBodyBuilder.QuizBodyViewer
 
@@ -30,7 +30,7 @@ fun QuizViewerBase(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(boxPadding),
+            .padding(BOX_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (mode == QuizMode.Checker) {

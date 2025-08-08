@@ -42,12 +42,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.customComposable.textField.TextFieldWithDelete
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
-import com.asu1.quiz.content.dotSizeDp
-import com.asu1.quiz.content.moveOffsetDp
-import com.asu1.quiz.content.paddingDp
+import com.asu1.quiz.content.DOT_SIZE_DP
+import com.asu1.quiz.content.MOVE_OFFSET_DP
+import com.asu1.quiz.content.PADDING_SIZE_DP
 import com.asu1.quiz.content.quizCommonBuilder.AddAnswer
 import com.asu1.quiz.content.quizCommonBuilder.QuizCreatorBase
-import com.asu1.quiz.content.strokeWidth
+import com.asu1.quiz.content.STROKE_WIDTH
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizViewModel
 import com.asu1.quiz.viewmodel.quiz.ConnectItemsQuizAction
 import kotlinx.coroutines.FlowPreview
@@ -63,7 +63,7 @@ fun ConnectItemsQuizCreator(
     val dragState = rememberDragState()
     val leftDotOffsets = quizVm.leftDotOffsets
     val rightDotOffsets = quizVm.rightDotOffsets
-    val moveOffset = with(LocalDensity.current) { moveOffsetDp.toPx() }
+    val moveOffset = with(LocalDensity.current) { MOVE_OFFSET_DP.toPx() }
 
     QuizCreatorBase(
         modifier = Modifier
@@ -213,8 +213,8 @@ private fun AnswerWithDotRow(
                 }
             ) },
             boxPosition = dragState.boxPosition,
-            dotSize = dotSizeDp,
-            padding = paddingDp,
+            dotSize = DOT_SIZE_DP,
+            padding = PADDING_SIZE_DP,
             moveOffset = moveOffset,
             key = "QuizCreatorLeftDot$index"
         )
@@ -240,8 +240,8 @@ private fun DotWithAnswerRow(
                     UpdateRightDotOffset(index, offset)) },
             pointerEvent = {  }, // no drag from right side
             boxPosition = dragState.boxPosition,
-            dotSize = dotSizeDp,
-            padding = paddingDp,
+            dotSize = DOT_SIZE_DP,
+            padding = PADDING_SIZE_DP,
             moveOffset = moveOffset,
             key = "QuizCreatorRightDot$index"
         )
@@ -266,7 +266,7 @@ private fun DragLineOverlay(dragState: DragState) {
                 color = color,
                 start = dragState.startOffset,
                 end = dragState.endOffset,
-                strokeWidth = strokeWidth
+                strokeWidth = STROKE_WIDTH
             )
         }
     }
@@ -336,7 +336,7 @@ fun DrawLines(
                 color = color,
                 start = start,
                 end = end,
-                strokeWidth = strokeWidth
+                strokeWidth = STROKE_WIDTH
             )
         }
     }

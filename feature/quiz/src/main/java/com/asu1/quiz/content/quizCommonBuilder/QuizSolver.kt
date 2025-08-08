@@ -39,6 +39,7 @@ import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
+import com.asu1.models.sampleQuizList
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R
@@ -268,6 +269,19 @@ fun QuizSubmit(
 @Preview(showBackground = true)
 @Composable
 fun QuizSolverPreview() {
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+    ){
+        sampleQuizList.size
+    }
+    QuizSolverScreen(
+        modifier = Modifier,
+        quizzes = sampleQuizList,
+        pagerState = pagerState,
+        quizData = QuizData(),
+        quizTheme = QuizTheme(),
+        navigateToScoreCard = {},
+    )
 }
 
 @Preview(showBackground = true)

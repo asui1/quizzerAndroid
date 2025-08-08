@@ -20,7 +20,8 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.network.RetrofitInstance
-import com.asu1.network.getErrorMessage
+import com.asu1.network.requireSuccess
+import com.asu1.network.runApi
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.GenerateWith
 import com.asu1.resources.R
@@ -33,6 +34,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,12 +44,16 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import retrofit2.HttpException
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.util.Base64
+import kotlin.coroutines.cancellation.CancellationException
 
 class QuizCoordinatorViewModel : ViewModel() {
     private var _quizViewModelState = MutableStateFlow(ViewModelState.IDLE)
@@ -200,15 +206,27 @@ class QuizCoordinatorViewModel : ViewModel() {
         }
     }
 
-    fun loadQuizResult(resultId: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = RetrofitInstance.api.getResult(resultId)
-                if (!response.isSuccessful) throw Exception("Response Failed")
-                val quizResult = response.body() ?: throw Exception("Quiz Result is null")
+    fun loadQuizResult(resultId: String) {
+        viewModelScope.launch {
+            val result = runApi {
+                withContext(Dispatchers.IO) {
+                    RetrofitInstance.api
+                        .getResult(resultId)
+                        .requireSuccess() // throws HttpException or NoSuchElementException
+                }
+            }
+
+            result.onSuccess { quizResult ->
                 processQuizResult(quizResult)
-            } catch (e: Exception) {
-                handleFailure("Failed to load quiz result: ${e.message}")
+            }.onFailure { e ->
+                when (e) {
+                    is CancellationException      -> throw e
+                    is HttpException              -> handleFailure("HTTP ${e.code()} – ${e.message()}")
+                    is IOException                -> handleFailure("Network error – ${e.message}")
+                    is NoSuchElementException     -> handleFailure(e.message ?: "No quiz result found")
+                    is SerializationException     -> handleFailure("Invalid quiz result format ${e.message}")
+                    else                          -> handleFailure("Unexpected error: ${e.message}")
+                }
             }
         }
     }
@@ -224,61 +242,74 @@ class QuizCoordinatorViewModel : ViewModel() {
         _quizViewModelState.value = ViewModelState.IDLE
     }
 
-    fun loadQuiz(quizData: QuizDataSerializer, quizTheme: QuizTheme, scoreCard: ScoreCard){
-        _quizViewModelState.update {
-            ViewModelState.LOADING
-        }
+    fun loadQuiz(
+        quizData: QuizDataSerializer,
+        quizTheme: QuizTheme,
+        scoreCard: ScoreCard
+    ) {
+        _quizViewModelState.value = ViewModelState.LOADING
+
         viewModelScope.launch {
-            try{
-                quizGeneralViewModel.loadQuizData(quizData)
-                quizThemeViewModel.loadQuizTheme(quizTheme)
-                scoreCardViewModel.loadScoreCard(scoreCard)
-                _quizViewModelState.update {
-                    ViewModelState.IDLE
+            val result = runApi {
+                // If these do CPU/disk work, keep them off Main
+                withContext(Dispatchers.Default) {
+                    quizGeneralViewModel.loadQuizData(quizData)
+                    quizThemeViewModel.loadQuizTheme(quizTheme)
+                    scoreCardViewModel.loadScoreCard(scoreCard)
                 }
-            } catch (e: Exception){
-                handleFailure("Failed to load Local Quiz $e")
+            }
+
+            result.onSuccess {
+                _quizViewModelState.value = ViewModelState.IDLE
+            }.onFailure { e ->
+                // runApi already rethrows CancellationException, so no need to handle it here
+                handleFailure(e.message ?: "Unexpected error while loading quiz.")
             }
         }
     }
 
     fun loadQuiz(quizId: String) {
         _quizViewModelState.value = ViewModelState.LOADING
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = RetrofitInstance.api.getQuizData(quizId)
 
-                if (!response.isSuccessful) throw Exception("Response Failed")
-                val quizSerialize = response.body() ?: Exception("Response is null")
-                processQuizData(quizSerialize as QuizLayoutSerializer)
-                _quizViewModelState.update {
-                    ViewModelState.IDLE
+        viewModelScope.launch {
+            val result = runApi {
+                withContext(Dispatchers.IO) {
+                    RetrofitInstance.api
+                        .getQuizData(quizId)
+                        .requireSuccess()   // throws HttpException / NoSuchElementException
                 }
-            } catch (e: Exception) {
-                handleFailure("Failed to load quiz: ${e.message}")
+            }
+
+            result.onSuccess { body ->
+                processQuizData(body)       // body is QuizLayoutSerializer
+                _quizViewModelState.value = ViewModelState.IDLE
+            }.onFailure { e ->
+                // NOTE: your current runApi wraps errors into RuntimeException(NetworkError.toString()).
+                // So we only have a message here. If you want typed handling, return NetworkError instead.
+                handleFailure(e.message ?: "Unexpected error while loading quiz.")
             }
         }
     }
 
     private suspend fun processQuizData(quizSerialized: QuizLayoutSerializer) {
-        coroutineScope {
-            try{
-                val loadQuizGeneralDeferred = async { quizGeneralViewModel.loadQuizData(quizSerialized.quizData) }
-                val loadQuizThemeDeferred = async { quizThemeViewModel.loadQuizTheme(quizSerialized.quizTheme) }
-                val loadQuizDataDeferred = async { quizContentViewModel.loadQuizContents(quizSerialized.quizData.quizzes) }
-                val loadScoreCardDeferred = async { scoreCardViewModel.loadScoreCard(quizSerialized.scoreCard) }
-
-                // Await all deferred tasks
-                loadQuizGeneralDeferred.await()
-                loadQuizThemeDeferred.await()
-                loadQuizDataDeferred.await()
-                loadScoreCardDeferred.await()
-                _quizViewModelState.value = ViewModelState.IDLE
-            } catch (e: Exception){
-                _quizViewModelState.update { ViewModelState.ERROR }
-                Logger.debug("Quiz Data Process Fail: $e")
-                SnackBarManager.showSnackBar(R.string.failed_to_load_quiz, ToastType.ERROR)
+        val result = runApi {
+            supervisorScope {
+                awaitAll(
+                    async { quizGeneralViewModel.loadQuizData(quizSerialized.quizData) },
+                    async { quizThemeViewModel.loadQuizTheme(quizSerialized.quizTheme) },
+                    async { quizContentViewModel.loadQuizContents(quizSerialized.quizData.quizzes) },
+                    async { scoreCardViewModel.loadScoreCard(quizSerialized.scoreCard) },
+                )
             }
+        }
+
+        result.onSuccess {
+            _quizViewModelState.value = ViewModelState.IDLE
+        }.onFailure { e ->
+            // runApi already rethrows CancellationException, so it won't reach here.
+            _quizViewModelState.value = ViewModelState.ERROR
+            Logger.debug("Quiz data process failed: ${e.message}")
+            SnackBarManager.showSnackBar(R.string.failed_to_load_quiz, ToastType.ERROR)
         }
     }
 
@@ -293,33 +324,26 @@ class QuizCoordinatorViewModel : ViewModel() {
     }
 
     private fun uploadQuizLayout(onUpload: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val jsonQuizData = toJson()
-                val response = RetrofitInstance.api.addQuiz(jsonQuizData)
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        SnackBarManager.showSnackBar(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
-                        onUpload()
-                        _quizViewModelState.value = ViewModelState.IDLE
-                    } else {
-                        _quizViewModelState.value = ViewModelState.IDLE
-                        val errorMessage = response.errorBody()?.string()?.let {
-                            getErrorMessage(
-                                it
-                            )
-                        }
-                        Logger.debug("Failed to upload quiz from server $errorMessage")
-                        SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
-                    }
-                }
-            } catch (e: Exception) {
-                Logger.debug("Failed to upload quiz exception ${e.message}")
+        _quizViewModelState.value = ViewModelState.LOADING
+
+        viewModelScope.launch {
+            val result = runApi {
+                val json = toJson()
+                RetrofitInstance.api.addQuiz(json).requireSuccess()
+            }
+
+            result.onSuccess {
+                SnackBarManager.showSnackBar(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
+                onUpload()
+                _quizViewModelState.value = ViewModelState.IDLE
+            }.onFailure { err ->
+                Logger.debug("Upload failed: ${err.message}")
                 _quizViewModelState.value = ViewModelState.IDLE
                 SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
             }
         }
     }
+
     fun saveLocal(context: Context) {
         _quizViewModelState.value = ViewModelState.LOADING
         val quizJsonData = Json.encodeToString(toJson())
@@ -366,28 +390,37 @@ class QuizCoordinatorViewModel : ViewModel() {
     }
     fun gradeQuiz(email: String, onDone: () -> Unit) {
         val (correctCount, corrections) = quizContentViewModel.gradeQuiz()
-        val result = SendQuizResult(
+        val uuid = quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid
+        if (uuid == null) {
+            Logger.debug("gradeQuiz: missing quiz UUID")
+            SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
+            return
+        }
+
+        val payload = SendQuizResult(
             email = email,
-            quizUuid = quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid!!,
+            quizUuid = uuid,
             correctProb = correctCount,
-            correction = corrections,
+            correction = corrections
         )
 
         viewModelScope.launch {
-            try{
-                val response = RetrofitInstance.api.submitQuiz(result)
-                if(!response.isSuccessful) throw Exception("Response Failed")
+            val result = runApi {
+                withContext(Dispatchers.IO) {
+                    RetrofitInstance.api.submitQuiz(payload).requireSuccess()
+                }
+            }
 
-                val quizResult = response.body() ?: throw Exception("Response is null")
-                onDone()
+            result.onSuccess { quizResult ->
                 quizResultViewModel.updateQuizResult(quizResult)
-
-            } catch (e: Exception) {
+                onDone()
+            }.onFailure { e ->
                 SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
-                Logger.debug("Quiz result response was unsuccessful or null, $e")
+                Logger.debug("gradeQuiz failed: ${e.message}")
             }
         }
     }
+
     fun updateQuizCoordinator(action: QuizCoordinatorActions){
         when(action){
             is QuizCoordinatorActions.UpdateQuizAnswer -> {

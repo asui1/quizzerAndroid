@@ -7,26 +7,26 @@ import kotlinx.coroutines.flow.update
 class ReorderQuizViewModel : BaseQuizViewModel<ReorderQuiz>(
     ReorderQuiz()
 ) {
-    override val _quizState: MutableStateFlow<ReorderQuiz> = MutableStateFlow(ReorderQuiz())
+    override val mutableQuizState: MutableStateFlow<ReorderQuiz> = MutableStateFlow(ReorderQuiz())
 
     init {
         resetQuiz()
     }
 
     override fun viewerInit() {
-        this._quizState.value.initViewState()
+        this.mutableQuizState.value.initViewState()
     }
 
     override fun loadQuiz(quiz: ReorderQuiz) {
-        this._quizState.value = quiz
+        this.mutableQuizState.value = quiz
     }
 
     override fun resetQuiz() {
-        this._quizState.value = ReorderQuiz()
+        this.mutableQuizState.value = ReorderQuiz()
     }
 
     fun updateAnswerAt(index: Int, newAnswer: String) {
-        val state = _quizState.value
+        val state = mutableQuizState.value
         if (index !in state.answers.indices) return
 
         // build the new list once, outside of the lambda
@@ -34,14 +34,14 @@ class ReorderQuizViewModel : BaseQuizViewModel<ReorderQuiz>(
             .toMutableList()
             .apply { this[index] = newAnswer }
 
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             // lambda only does the immutable copy
             quiz.copy(answers = newAnswers)
         }
     }
 
     fun removeAnswerAt(index: Int) {
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             if (quiz.answers.size <= 3 || index !in quiz.answers.indices) return@update quiz
 
             val newAnswers = quiz.answers
@@ -53,7 +53,7 @@ class ReorderQuizViewModel : BaseQuizViewModel<ReorderQuiz>(
     }
 
     fun addAnswer() {
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             val newAnswers = quiz.answers + ""
 
             quiz.copy(answers = newAnswers)

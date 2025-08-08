@@ -2,6 +2,7 @@ package com.asu1.quiz.scorecard
 
 import SnackBarManager
 import ToastType
+import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -41,22 +42,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.dialog.ShareDialog
+import com.asu1.customComposable.uiUtil.disableImmersiveMode
+import com.asu1.customComposable.uiUtil.enableImmersiveMode
+import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.models.quiz.QuizResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.activityNavigation.Route
-import com.asu1.customComposable.uiUtil.disableImmersiveMode
-import com.asu1.customComposable.uiUtil.enableImmersiveMode
-import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
+import kotlinx.collections.immutable.PersistentList
+
+/* ------- helpers ------- */
+val BTN_HEIGHT: Dp = 36.dp
+val BTN_WIDTH: Dp = 150.dp
+val SPACER: Dp = 8.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,122 +73,157 @@ fun ScoringScreen(
     navController: NavController,
     loadQuiz: (String) -> Unit = {},
 ) {
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
-    val email: String = userViewModel.userData.value?.email ?: "GUEST"
-    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
-    val quizzes = quizState.quizContentState.quizzes
-    val quizResult = quizState.quizResult
-    val scoreCard = quizState.scoreCardState.scoreCard
-    val quizViewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
-    var showShareBottomSheet by remember{ mutableStateOf(false) }
-    var immerseMode by remember { mutableStateOf(false) }
-    val localActivity = LocalActivity.current
-    var movingToQuizChecker = false
-    val quizQuestions = remember(Unit){quizCoordinatorViewModel.getQuestions()}
+    val coordinator: QuizCoordinatorViewModel = viewModel()
+    val userVm: UserViewModel = viewModel()
+    val email = userVm.userData.value?.email ?: "GUEST"
+    val ui by coordinator.quizUIState.collectAsStateWithLifecycle()
+    val vmState by coordinator.quizViewModelState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(quizViewModelState){
-        if(quizViewModelState == ViewModelState.ERROR){
-            navController.popBackStack(Route.Home, inclusive = false)
-        }
-    }
+    var showShare by remember { mutableStateOf(false) }
+    var immerse by remember { mutableStateOf(false) }
+    var movingToChecker by remember { mutableStateOf(false) }
+    val activity = LocalActivity.current
+    val questions = remember { coordinator.getQuestions() }
 
-    DisposableEffect(key1 = Unit) {
-        onDispose {
-            localActivity?.disableImmersiveMode()
-            if(!movingToQuizChecker){
-                quizCoordinatorViewModel.updateQuizCoordinator(
-                    QuizCoordinatorActions.ResetQuizResult
-                )
-            }
-        }
-    }
+    ScreenEffects(
+        vmState = vmState,
+        activity = activity,
+        movingToChecker = movingToChecker,
+        onError = { navController.popBackStack(Route.Home, inclusive = false) },
+        onDisposeReset = { coordinator.updateQuizCoordinator(QuizCoordinatorActions.ResetQuizResult) }
+    )
 
-    AnimatedContent(
-        targetState = quizViewModelState,
-        transitionSpec = {
-            fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
-        },
-        label = "Design Scorecard",
-
-        ) { targetState ->
-        when(targetState) {
-            ViewModelState.LOADING -> {
-                LoadingAnimation()
-            }
-            else -> {
-                if(scoreCard.quizUuid != null)
-                    MaterialTheme(
-                        colorScheme = scoreCard.colorScheme
-                    ) {
-                        if(showShareBottomSheet) {
-                            ModalBottomSheet(onDismissRequest = {showShareBottomSheet = false },
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                modifier = Modifier.imePadding()
-                            ) {
-                                ShareDialog(
-                                    quizId = scoreCard.quizUuid ?: "",
-                                    userName = email,
-                                    onDismiss = {
-                                        showShareBottomSheet = false
-                                    }
-                                )
-                            }
-                        }
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    if(immerseMode) {
-                                        localActivity?.disableImmersiveMode()
-                                    }else{
-                                        localActivity?.enableImmersiveMode()
-                                    }
-                                    immerseMode = !immerseMode
-                                }
-                        ) {
-                            ScoreCardComposable(
-                                scoreCard = scoreCard,
-                                quizResult = quizResult!!,
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                quizQuestions = quizQuestions,
-                            )
-                            if(!immerseMode){
-                                Spacer(modifier = Modifier.height(8.dp))
-                                ScoringScreenBottomRow(
-                                    scoreCard,
-                                    loadQuiz,
-                                    onClickMoveHome = {
-                                        quizCoordinatorViewModel.updateQuizCoordinator(
-                                            QuizCoordinatorActions.ResetQuiz
-                                        )
-                                        navController.navigate(Route.Home) {
-                                            launchSingleTop = true
-                                            popUpTo(Route.Home) {
-                                                inclusive = true
-                                            }
-                                        }
-                                    },
-                                    showShareBottomSheet = { showShareBottomSheet = true },
-                                    isResultView = quizzes.isEmpty(),
-                                    navigateToQuizChecker = {
-                                        movingToQuizChecker = true
-                                        navController.navigate(Route.QuizChecker){
-                                            launchSingleTop = true
-                                        }
-                                    }
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                        }
+    AnimatedState(
+        state = vmState,
+        loading = { LoadingAnimation() }
+    ) {
+        val scoreCard = ui.scoreCardState.scoreCard
+        MaterialTheme(colorScheme = scoreCard.colorScheme) {
+            ScoringContent(
+                scoreCard = scoreCard,
+                quizResult = requireNotNull(ui.quizResult),
+                questions = questions,
+                isResultView = ui.quizContentState.quizzes.isEmpty(),
+                immerse = immerse,
+                onToggleImmerse = {
+                    if (immerse) activity?.disableImmersiveMode() else activity?.enableImmersiveMode()
+                    immerse = !immerse
+                },
+                onMoveHome = {
+                    coordinator.updateQuizCoordinator(QuizCoordinatorActions.ResetQuiz)
+                    navController.navigate(Route.Home) {
+                        launchSingleTop = true; popUpTo(Route.Home) { inclusive = true }
                     }
-            }
+                },
+                onShare = { showShare = true },
+                onGoChecker = {
+                    movingToChecker = true
+                    navController.navigate(Route.QuizChecker) { launchSingleTop = true }
+                },
+                loadQuiz = loadQuiz
+            )
+            ShareSheet(
+                visible = showShare,
+                quizId = scoreCard.quizUuid.orEmpty(),
+                userName = email,
+                onDismiss = { showShare = false }
+            )
         }
+    }
+}
+
+/* ---------- Helpers (can live below, not counted toward the screen) ---------- */
+
+@Composable
+private fun ScreenEffects(
+    vmState: ViewModelState,
+    activity: Activity?,
+    movingToChecker: Boolean,
+    onError: () -> Unit,
+    onDisposeReset: () -> Unit,
+) {
+    LaunchedEffect(vmState) { if (vmState == ViewModelState.ERROR) onError() }
+    DisposableEffect(Unit) {
+        onDispose {
+            activity?.disableImmersiveMode()
+            if (!movingToChecker) onDisposeReset()
+        }
+    }
+}
+
+@Composable
+private fun AnimatedState(
+    state: ViewModelState,
+    loading: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    AnimatedContent(
+        targetState = state,
+        transitionSpec = { fadeIn(tween(500)) togetherWith fadeOut(tween(500)) },
+        label = "ScoringScreen"
+    ) { s -> if (s == ViewModelState.LOADING) loading() else content() }
+}
+
+@Composable
+private fun ScoringContent(
+    scoreCard: ScoreCard,
+    quizResult: QuizResult,
+    questions: PersistentList<String>,
+    isResultView: Boolean,
+    immerse: Boolean,
+    onToggleImmerse: () -> Unit,
+    onMoveHome: () -> Unit,
+    onShare: () -> Unit,
+    onGoChecker: () -> Unit,
+    loadQuiz: (String) -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onToggleImmerse
+            )
+    ) {
+        ScoreCardComposable(
+            scoreCard = scoreCard,
+            quizResult = quizResult,
+            quizQuestions = questions,
+            modifier = Modifier.fillMaxWidth().weight(1f)
+        )
+        if (!immerse) {
+            Spacer(Modifier.height(8.dp))
+            ScoringScreenBottomRow(
+                scoreCard = scoreCard,
+                loadQuiz = loadQuiz,
+                onClickMoveHome = onMoveHome,
+                showShareBottomSheet = onShare,
+                isResultView = isResultView,
+                navigateToQuizChecker = onGoChecker
+            )
+            Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShareSheet(
+    visible: Boolean,
+    quizId: String,
+    userName: String,
+    onDismiss: () -> Unit
+) {
+    if (!visible) return
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        modifier = Modifier.imePadding()
+    ) {
+        ShareDialog(quizId = quizId, userName = userName, onDismiss = onDismiss)
     }
 }
 
@@ -197,71 +241,75 @@ private fun ScoringScreenBottomRow(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
-        if(isResultView){
-            Button(
-                onClick = {
-                    if (scoreCard.quizUuid != null) {
-                        loadQuiz(scoreCard.quizUuid!!)
-                    } else {
-                        SnackBarManager.showSnackBar(
-                            message = R.string.can_not_load_quiz,
-                            type = ToastType.ERROR,
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .height(height = 36.dp)
-                    .width(150.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.solve_again),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }else{
-            Button(
-                onClick = {
-                    navigateToQuizChecker()
-                },
-                modifier = Modifier
-                    .height(height = 36.dp)
-                    .width(150.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.check_answer),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
+        PrimaryActionButton(
+            isResultView = isResultView,
+            quizUuid = scoreCard.quizUuid,
+            loadQuiz = loadQuiz,
+            navigateToQuizChecker = navigateToQuizChecker,
+        )
 
-        Spacer(
-            modifier = Modifier.width(8.dp)
+        Spacer(Modifier.width(SPACER))
+
+        SizedButton(
+            text = stringResource(R.string.move_home),
+            onClick = onClickMoveHome,
         )
-        Button(
-            onClick = {
-                onClickMoveHome()
-            },
-            modifier = Modifier
-                .height(height = 36.dp)
-                .width(150.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.move_home),
-                style = MaterialTheme.typography.bodySmall
-            )
+
+        Spacer(Modifier.width(SPACER))
+
+        ShareButton(onClick = showShareBottomSheet)
+    }
+}
+
+@Composable
+private fun PrimaryActionButton(
+    isResultView: Boolean,
+    quizUuid: String?,
+    loadQuiz: (String) -> Unit,
+    navigateToQuizChecker: () -> Unit,
+) {
+    val onClick = remember(isResultView, quizUuid) {
+        if (isResultView) {
+            {
+                if (quizUuid != null) {
+                    loadQuiz(quizUuid)
+                } else {
+                    SnackBarManager.showSnackBar(
+                        message = R.string.can_not_load_quiz,
+                        type = ToastType.ERROR
+                    )
+                }
+            }
+        } else {
+            { navigateToQuizChecker() }
         }
-        Spacer(
-            modifier = Modifier.width(8.dp)
+    }
+    val textRes = if (isResultView) R.string.solve_again else R.string.check_answer
+
+    SizedButton(text = stringResource(textRes), onClick = onClick)
+}
+
+@Composable
+private fun SizedButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.height(BTN_HEIGHT).width(BTN_WIDTH)
+    ) {
+        Text(text = text, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+private fun ShareButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Default.Share,
+            contentDescription = "Share",
+            modifier = Modifier.size(24.dp)
         )
-        IconButton(onClick = {
-            showShareBottomSheet()
-        }) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share",
-                modifier = Modifier.size(24.dp)
-            )
-        }
     }
 }
 

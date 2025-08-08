@@ -44,15 +44,6 @@ import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModelActions
 import com.asu1.resources.R
 import com.asu1.utils.shaders.ShaderType
 
-sealed class ScoreCardDialog {
-    object None : ScoreCardDialog()
-    object ColorPicker : ScoreCardDialog()
-    object OverlayImagePicker : ScoreCardDialog()
-    object TextColorPicker : ScoreCardDialog()
-    object BackgroundImagePicker : ScoreCardDialog()
-    object EffectPicker : ScoreCardDialog()
-}
-
 @Composable
 fun DesignScoreCardTools(
     updateQuizCoordinate: (QuizCoordinatorActions) -> Unit = {},
@@ -108,6 +99,15 @@ fun DesignScoreCardTools(
             }
         },
     )
+}
+
+sealed class ScoreCardDialog {
+    object None : ScoreCardDialog()
+    object ColorPicker : ScoreCardDialog()
+    object OverlayImagePicker : ScoreCardDialog()
+    object TextColorPicker : ScoreCardDialog()
+    object BackgroundImagePicker : ScoreCardDialog()
+    object EffectPicker : ScoreCardDialog()
 }
 
 @Composable

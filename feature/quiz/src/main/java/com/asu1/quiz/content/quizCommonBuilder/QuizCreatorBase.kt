@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.Quiz
-import com.asu1.quiz.content.boxPadding
+import com.asu1.quiz.content.BOX_PADDING
 import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
 import com.asu1.quiz.ui.QuestionTextField
 import com.asu1.quiz.viewmodel.quiz.QuizAction
@@ -36,7 +36,7 @@ fun QuizCreatorBase(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(boxPadding)
+            .padding(BOX_PADDING)
             .then(modifier)
     ) {
         boxScopeBehind()

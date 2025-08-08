@@ -2,6 +2,7 @@ package com.asu1.quiz.viewmodel.quizLayout
 
 import SnackBarManager
 import ToastType
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
@@ -119,18 +120,23 @@ class QuizContentViewModel: ViewModel() {
     }
 
     fun updateConnectItemsQuiz(quizIndex: Int, items: List<Int?>) {
-        _quizContentState.update { currentState ->
-            val updatedQuizzes = currentState.quizzes.toMutableList()
-            try {
-                (updatedQuizzes[quizIndex] as? ConnectItemsQuiz)?.let {
-                    it.userConnectionIndex.clear()
-                    it.userConnectionIndex.addAll(items)
-                    currentState.copy(quizzes = updatedQuizzes)
-                } ?: currentState
-            } catch (e: Exception) {
-                Logger.debug("Failed to update quiz 4: ${e.message}")
-                currentState
+        _quizContentState.update { state ->
+            val quizzes = state.quizzes.toMutableList()
+            val quiz = quizzes.getOrNull(quizIndex) as? ConnectItemsQuiz ?: return@update state
+
+            // ensure runtime list exists & sized
+            quiz.ensureUserConnections()
+
+            // update in place (runtime-only)
+            val list = quiz.userConnectionIndex
+            if (list.size != items.size) {
+                list.clear(); list.addAll(MutableList(items.size) { null })
+            } else {
+                list.clear(); list.addAll(items)
             }
+
+            // no need to replace quiz; transient field won’t be serialized anyway
+            state.copy(quizzes = quizzes)
         }
     }
 
@@ -181,6 +187,12 @@ class QuizContentViewModel: ViewModel() {
             corrections.add(correct)
         }
         return Pair(currentScore, corrections)
+    }
+}
+
+fun ConnectItemsQuiz.ensureUserConnections() {
+    if (userConnectionIndex.size != answers.size) {
+        userConnectionIndex = MutableList(answers.size) { null }.toMutableStateList()
     }
 }
 

@@ -1,7 +1,6 @@
 package com.asu1.quiz.viewmodel.quizLayout
 
 import android.graphics.Bitmap
-import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.Effect
 import com.asu1.imagecolor.ImageBlendMode
 import com.asu1.imagecolor.ImageColorState
-import com.asu1.models.quiz.QuizData
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.resources.ViewModelState
 import com.asu1.utils.Logger
@@ -51,6 +49,8 @@ class ScoreCardViewModel: ViewModel() {
 
     fun updateColor(color: Color, index: Int) {
         try {
+            require(index in 0..2) { "Invalid background color index: $index" }
+
             _scoreCardState.update { currentState ->
                 val currentBackground = currentState.scoreCard.background
                 val updatedBackground = when (index) {
@@ -58,13 +58,16 @@ class ScoreCardViewModel: ViewModel() {
                     2 -> currentBackground.copy(colorGradient = color)
                     else -> currentBackground.copy(color = color)
                 }
-                currentState.copy(scoreCard = currentState.scoreCard.copy(background = updatedBackground))
+                currentState.copy(
+                    scoreCard = currentState.scoreCard.copy(background = updatedBackground)
+                )
             }
-        } catch (e: Exception) {
-            Logger.debug("Failed to update color: ${e.message}")
+        } catch (e: IllegalArgumentException) {
+            Logger.debug("Invalid color index: ${e.message}")
+        } catch (e: IllegalStateException) {
+            Logger.debug("ScoreCard state update failed: ${e.message}")
         }
     }
-
 
     fun updateBackgroundImage(image: Bitmap?){
         if(image == null){
@@ -96,18 +99,6 @@ class ScoreCardViewModel: ViewModel() {
                         backgroundBase = base,
                         state = ImageColorState.BASEIMAGE
                     )
-                )
-            )
-        }
-    }
-
-    fun updateScoreCard(quizData: QuizData, colorScheme: ColorScheme) {
-        _scoreCardState.update { currentState ->
-            currentState.copy(
-                scoreCard = currentState.scoreCard.copy(
-                    title = quizData.title,
-                    solver = quizData.creator,
-                    colorScheme = colorScheme,
                 )
             )
         }

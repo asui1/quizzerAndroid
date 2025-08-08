@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,8 +37,8 @@ import com.asu1.imagecolor.BackgroundBase
 import com.asu1.imagecolor.ImageColorState
 import com.asu1.resources.LightPrimary
 import com.asu1.resources.QuizzerAndroidTheme
-import com.asu1.utils.images.createEmptyBitmap
 import com.asu1.resources.R
+import com.asu1.utils.images.createEmptyBitmap
 
 @Composable
 fun ImagePickerWithBaseImages(
@@ -51,67 +51,115 @@ fun ImagePickerWithBaseImages(
     width: Dp = 200.dp,
     height: Dp = 200.dp,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .size(width = width * 0.7f, height = height * 0.7f)
-            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
-            .border(2.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp)
-    ) {
-        Text(
-            stringResource(R.string.background),
+    val cardShape = RoundedCornerShape(16.dp)
+    val boxModifier = modifier
+        .size(width = width * 0.7f, height = height * 0.7f)
+        .background(MaterialTheme.colorScheme.surface, shape = cardShape)
+        .border(2.dp, MaterialTheme.colorScheme.outline, shape = cardShape)
+        .padding(16.dp)
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = boxModifier) {
+        Text(stringResource(R.string.background),
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(8.dp))
+
+        BaseImageGrid(
+            imageColorState = imageColorState,
+            currentSelection = currentSelection,
+            currentImage = currentImage,
+            width = width,
+            onPickBase = onBaseImageSelected,
+            onPickImage = onImageSelected,
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("BaseImagePickerLazyVerticalGrid")
-        ) {
-            item(
-                key = currentImage
-            ){
-                val isSelected = (imageColorState == ImageColorState.IMAGE)
-                ImageGetter(
-                    image = currentImage,
-                    onImageUpdate = onImageSelected,
-                    modifier = Modifier
-                        .aspectRatio(0.6f)
-                        .then(if (isSelected) Modifier.border(BorderStroke(4.dp,
-                            LightPrimary
-                        )) else Modifier),
-                    width = width  * 0.18f
-                )
-            }
-            itemsIndexed(
-                BackgroundBase.entries.toTypedArray(),
-                key = { _, item -> item }
-            ) { index, item ->
-                val isSelected = (imageColorState == ImageColorState.BASEIMAGE && item == currentSelection)
-                Image(
-                    painter = painterResource(id = item.resourceId),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .aspectRatio(0.6f)
-                        .clip(RoundedCornerShape(4.dp)) // Apply rounded corners
-                        .then(
-                            if (isSelected) Modifier.border(
-                                BorderStroke(4.dp, LightPrimary),
-                                RoundedCornerShape(4.dp) // Make border rounded too
-                            ) else Modifier
-                        )
-                        .clickable { onBaseImageSelected(item) }
-                        .testTag("DesignScoreCardBaseImage$index")
-                )
-            }
+    }
+}
+
+/* ---------- Pieces ---------- */
+
+@Composable
+private fun BaseImageGrid(
+    imageColorState: ImageColorState,
+    currentSelection: BackgroundBase,
+    currentImage: Bitmap,
+    width: Dp,
+    onPickBase: (BackgroundBase) -> Unit,
+    onPickImage: (Bitmap?) -> Unit,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("BaseImagePickerLazyVerticalGrid")
+    ) {
+        // Current custom image
+        item(key = currentImage.hashCode()) { // prefer stable id if you have one
+            CurrentImageItem(
+                bitmap = currentImage,
+                selected = imageColorState == ImageColorState.IMAGE,
+                width = width,
+                onPick = onPickImage
+            )
         }
 
+        // Built-in base images
+        items(
+            items = BackgroundBase.entries,
+            key = { it } // enums are stable keys
+        ) { base ->
+            BaseImageItem(
+                base = base,
+                selected = imageColorState == ImageColorState.BASEIMAGE && base == currentSelection,
+                onPick = { onPickBase(base) }
+            )
+        }
     }
+}
+
+@Composable
+private fun CurrentImageItem(
+    bitmap: Bitmap,
+    selected: Boolean,
+    width: Dp,
+    onPick: (Bitmap?) -> Unit,
+) {
+    val borderMod = if (selected) {
+        Modifier.border(BorderStroke(4.dp, LightPrimary))
+    } else Modifier
+
+    ImageGetter(
+        image = bitmap,
+        onImageUpdate = onPick,
+        modifier = Modifier
+            .aspectRatio(0.6f)
+            .then(borderMod),
+        width = width * 0.18f
+    )
+}
+
+@Composable
+private fun BaseImageItem(
+    base: BackgroundBase,
+    selected: Boolean,
+    onPick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(4.dp)
+    val borderMod = if (selected) {
+        Modifier.border(BorderStroke(4.dp, LightPrimary), shape)
+    } else Modifier
+
+    Image(
+        painter = painterResource(id = base.resourceId),
+        contentDescription = null,
+        contentScale = ContentScale.FillBounds,
+        modifier = Modifier
+            .padding(4.dp)
+            .aspectRatio(0.6f)
+            .clip(shape)
+            .then(borderMod)
+            .clickable(onClick = onPick)
+            .testTag("DesignScoreCardBaseImage_${base.ordinal}")
+    )
 }
 
 @Preview(showBackground = true)

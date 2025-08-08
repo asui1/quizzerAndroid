@@ -7,34 +7,34 @@ import kotlinx.coroutines.flow.update
 class FillInBlankViewModel: BaseQuizViewModel<FillInBlankQuiz>(
     FillInBlankQuiz()
 ) {
-    override val _quizState: MutableStateFlow<FillInBlankQuiz> = MutableStateFlow(FillInBlankQuiz())
+    override val mutableQuizState: MutableStateFlow<FillInBlankQuiz> = MutableStateFlow(FillInBlankQuiz())
 
     init {
         resetQuiz()
     }
     override fun loadQuiz(quiz: FillInBlankQuiz) {
-        this._quizState.value = quiz
+        this.mutableQuizState.value = quiz
     }
 
     override fun resetQuiz() {
-        this._quizState.value = FillInBlankQuiz()
+        this.mutableQuizState.value = FillInBlankQuiz()
     }
 
     override fun viewerInit() {
-        _quizState.value.initViewState()
+        mutableQuizState.value.initViewState()
     }
 
     fun deleteCorrectAnswer(index: Int) {
-        val updated = _quizState.value.copy()
+        val updated = mutableQuizState.value.copy()
         updated.removeCorrectAnswer(index)
-        _quizState.value = updated
+        mutableQuizState.value = updated
     }
 
     fun updateCorrectAnswer(index: Int, newAnswer: String){
-        val correctAnswer = _quizState.value.correctAnswers.toMutableList().apply {
+        val correctAnswer = mutableQuizState.value.correctAnswers.toMutableList().apply {
             this[index] = newAnswer
         }
-        _quizState.update { state ->
+        mutableQuizState.update { state ->
             state.copy(
                 correctAnswers = correctAnswer
             )
@@ -42,14 +42,14 @@ class FillInBlankViewModel: BaseQuizViewModel<FillInBlankQuiz>(
     }
 
     fun updateRawText(newRawText: String){
-        val updated = _quizState.value.copy()
+        val updated = mutableQuizState.value.copy()
         updated.updateRawText(newRawText)
-        _quizState.value = updated
+        mutableQuizState.value = updated
     }
 
     fun addAnswer(){
-        val updated = _quizState.value.copy()
+        val updated = mutableQuizState.value.copy()
         updated.addCorrectAnswer()
-        _quizState.value = updated
+        mutableQuizState.value = updated
     }
 }

@@ -10,26 +10,26 @@ import java.time.YearMonth
 class DateSelectionQuizViewModel: BaseQuizViewModel<DateSelectionQuiz>(
     DateSelectionQuiz()
 ) {
-    override val _quizState: MutableStateFlow<DateSelectionQuiz> = MutableStateFlow(DateSelectionQuiz())
+    override val mutableQuizState: MutableStateFlow<DateSelectionQuiz> = MutableStateFlow(DateSelectionQuiz())
 
     init {
         resetQuiz()
     }
 
     override fun viewerInit() {
-        this._quizState.value.initViewState()
+        this.mutableQuizState.value.initViewState()
     }
 
     override fun loadQuiz(quiz: DateSelectionQuiz) {
-        this._quizState.value = quiz
+        this.mutableQuizState.value = quiz
     }
 
     override fun resetQuiz() {
-        this._quizState.value = DateSelectionQuiz()
+        this.mutableQuizState.value = DateSelectionQuiz()
     }
 
     fun updateCenterDate(newCenter: YearMonth) {
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             // compute the valid window
             val lower = newCenter.minusYears(quiz.yearRange.toLong()).atDay(1)
             val upper = newCenter.plusYears(quiz.yearRange.toLong()).atEndOfMonth()
@@ -47,7 +47,7 @@ class DateSelectionQuizViewModel: BaseQuizViewModel<DateSelectionQuiz>(
     }
 
     fun updateDate(date: LocalDate) {
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             val answerDate = quiz.answerDate.toMutableSet()
             answerDate.toggle(date)
             quiz.copy(

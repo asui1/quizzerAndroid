@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
     ConnectItemsQuiz()
 ) {
-    override val _quizState: MutableStateFlow<ConnectItemsQuiz> = MutableStateFlow(ConnectItemsQuiz())
+    override val mutableQuizState: MutableStateFlow<ConnectItemsQuiz> = MutableStateFlow(ConnectItemsQuiz())
     val leftDotOffsets  = mutableStateListOf<Offset>()
     val rightDotOffsets = mutableStateListOf<Offset>()
 
@@ -21,105 +21,80 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
         return getDragIndex(offset, rightDotOffsets)
     }
 
-    fun onQuiz4Update(quiz4ViewModelStates: ConnectItemsQuizAction){
-        when(quiz4ViewModelStates){
-            ConnectItemsQuizAction.AddLeft -> {
-                this._quizState.update { it.copy().apply { addAnswer() } }
-                leftDotOffsets.add(Offset.Zero)
-            }
-            ConnectItemsQuizAction.AddRight -> {
-                this._quizState.update { it.copy().apply { addConnectionAnswer() } }
-                rightDotOffsets.add(Offset.Zero)
-            }
-            is ConnectItemsQuizAction.RemoveLeft -> {
-                if(this._quizState.value.answers.size <= 2){
-                    return
-                }
-                this._quizState.update {
-                    it.copy().apply {
-                        deleteAnswerAt(quiz4ViewModelStates.index)
-                    }
-                }
-                leftDotOffsets.removeLastOrNull()
-            }
-            is ConnectItemsQuizAction.RemoveRight -> {
-                if(this._quizState.value.connectionAnswers.size <= 2){
-                    return
-                }
-                this._quizState.update {
-                    it.copy().apply {
-                        deleteConnectionAnswerAt(quiz4ViewModelStates.index)
-                    }
-                }
-                rightDotOffsets.removeLastOrNull()
-            }
-            is ConnectItemsQuizAction.UpdateLeftDotOffset -> {
-                if(quiz4ViewModelStates.index in leftDotOffsets.indices)
-                    leftDotOffsets[quiz4ViewModelStates.index] = quiz4ViewModelStates.offset
-            }
-            is ConnectItemsQuizAction.UpdateRightDotOffset -> {
-                if(quiz4ViewModelStates.index in rightDotOffsets.indices)
-                    rightDotOffsets[quiz4ViewModelStates.index] = quiz4ViewModelStates.offset
-            }
-            is ConnectItemsQuizAction.OnDragEndCreator -> {
-                this._quizState.update {
-                    it.copy().apply {
-                        connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                            this[quiz4ViewModelStates.from] = onDragEnd(quiz4ViewModelStates.offset)
-                        }
-                    }
-                }
-            }
-            is ConnectItemsQuizAction.OnDragEndViewer -> {
-                this._quizState.update {
-                    it.copy().apply {
-                        userConnectionIndex[quiz4ViewModelStates.from] = onDragEnd(quiz4ViewModelStates.offset)
-                    }
-                }
-            }
-            is ConnectItemsQuizAction.ResetConnectionCreator -> {
-                this._quizState.update {
-                    it.copy().apply{
-                        connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
-                            this.set(quiz4ViewModelStates.index, null)
-                        }
-                    }
-                }
-            }
-            is ConnectItemsQuizAction.ResetConnectionViewer -> {
-                this._quizState.update {
-                    it.copy().apply{
-                        userConnectionIndex[quiz4ViewModelStates.index] = null
-                    }
-                }
-            }
-            is ConnectItemsQuizAction.UpdateLeftAnswerAt -> {
-                this._quizState.update {
-                    it.copy().apply{
-                        answers = answers.toMutableList().apply {
-                            this[quiz4ViewModelStates.index] = quiz4ViewModelStates.text
-                        }
-                    }
-                }
-            }
-            is ConnectItemsQuizAction.UpdateRightAnswerAt -> {
-                this._quizState.update {
-                    it.copy().apply{
-                        connectionAnswers = connectionAnswers.toMutableList().apply {
-                            this[quiz4ViewModelStates.index] = quiz4ViewModelStates.text
-                        }
-                    }
-                }
-            }
-        }
+    // --- tiny utils ---
+    private inline fun updateQuiz(mutator: ConnectItemsQuiz.() -> Unit) {
+        mutableQuizState.update { it.copy().apply(mutator) }
+    }
+    private fun <T> MutableList<T>.setIfInBounds(i: Int, v: T) { if (i in indices) this[i] = v }
+    private fun <T> MutableList<T>.removeIfInBounds(i: Int) { if (i in indices) removeAt(i) }
+    private fun <T> MutableList<T?>.setNullIfInBounds(i: Int) { if (i in indices) this[i] = null }
+
+    // --- action entry ---
+    fun onQuiz4Update(action: ConnectItemsQuizAction) = when (action) {
+        ConnectItemsQuizAction.AddLeft  -> addLeft()
+        ConnectItemsQuizAction.AddRight -> addRight()
+
+        is ConnectItemsQuizAction.RemoveLeft  -> removeLeft(action.index)
+        is ConnectItemsQuizAction.RemoveRight -> removeRight(action.index)
+
+        is ConnectItemsQuizAction.UpdateLeftDotOffset  ->
+            leftDotOffsets.setIfInBounds(action.index, action.offset)
+        is ConnectItemsQuizAction.UpdateRightDotOffset ->
+            rightDotOffsets.setIfInBounds(action.index, action.offset)
+
+        is ConnectItemsQuizAction.OnDragEndCreator ->
+            updateQuiz { connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                setIfInBounds(action.from, onDragEnd(action.offset))
+            } }
+        is ConnectItemsQuizAction.OnDragEndViewer  ->
+            updateQuiz { userConnectionIndex.setIfInBounds(action.from, onDragEnd(action.offset)) }
+
+        is ConnectItemsQuizAction.ResetConnectionCreator ->
+            updateQuiz { connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+                setNullIfInBounds(action.index)
+            } }
+        is ConnectItemsQuizAction.ResetConnectionViewer ->
+            updateQuiz { userConnectionIndex.setNullIfInBounds(action.index) }
+
+        is ConnectItemsQuizAction.UpdateLeftAnswerAt  ->
+            updateQuiz { answers = answers.toMutableList().apply {
+                setIfInBounds(action.index, action.text)
+            } }
+        is ConnectItemsQuizAction.UpdateRightAnswerAt ->
+            updateQuiz { connectionAnswers = connectionAnswers.toMutableList().apply {
+                setIfInBounds(action.index, action.text)
+            } }
+    }
+
+    // --- helpers below keep main function short ---
+    private fun addLeft() {
+        updateQuiz { addAnswer() }
+        leftDotOffsets.add(Offset.Zero)
+    }
+
+    private fun addRight() {
+        updateQuiz { addConnectionAnswer() }
+        rightDotOffsets.add(Offset.Zero)
+    }
+
+    private fun removeLeft(index: Int) {
+        if (mutableQuizState.value.answers.size <= 2) return
+        updateQuiz { deleteAnswerAt(index) }
+        leftDotOffsets.removeIfInBounds(index) // ✅ keep dots aligned
+    }
+
+    private fun removeRight(index: Int) {
+        if (mutableQuizState.value.connectionAnswers.size <= 2) return
+        updateQuiz { deleteConnectionAnswerAt(index) }
+        rightDotOffsets.removeIfInBounds(index) // ✅ keep dots aligned
     }
 
     override fun viewerInit() {
-        this._quizState.value.initViewState()
+        this.mutableQuizState.value.initViewState()
     }
 
     override fun loadQuiz(quiz: ConnectItemsQuiz) {
-        this._quizState.value = quiz
+        this.mutableQuizState.value = quiz
         this.leftDotOffsets.apply {
             clear()
             repeat(quiz.answers.size) { add(Offset.Zero) }
@@ -131,14 +106,14 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
     }
 
     override fun resetQuiz() {
-        this._quizState.value = ConnectItemsQuiz()
+        this.mutableQuizState.value = ConnectItemsQuiz()
         this.leftDotOffsets.apply {
             clear()
-            repeat(_quizState.value.answers.size) { add(Offset.Zero) }
+            repeat(mutableQuizState.value.answers.size) { add(Offset.Zero) }
         }
         this.rightDotOffsets.apply {
             clear()
-            repeat(_quizState.value.connectionAnswers.size) { add(Offset.Zero) }
+            repeat(mutableQuizState.value.connectionAnswers.size) { add(Offset.Zero) }
         }
     }
 }

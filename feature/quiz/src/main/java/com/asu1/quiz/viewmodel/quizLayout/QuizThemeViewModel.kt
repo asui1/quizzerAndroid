@@ -87,37 +87,37 @@ class QuizThemeViewModel : ViewModel() {
         }
     }
 
-    fun updateColorScheme(name: ThemeColorPicker, color: Color) {
-        // grab the old color
-        val old = when(name) {
-            ThemeColorPicker.Primary          -> _quizTheme.value.colorScheme.primary
-            ThemeColorPicker.PrimaryContainer -> _quizTheme.value.colorScheme.primaryContainer
-            ThemeColorPicker.Secondary        -> _quizTheme.value.colorScheme.secondary
-            ThemeColorPicker.SecondaryContainer -> _quizTheme.value.colorScheme.secondaryContainer
-            ThemeColorPicker.Tertiary -> _quizTheme.value.colorScheme.tertiary
-            ThemeColorPicker.TertiaryContainer -> _quizTheme.value.colorScheme.tertiaryContainer
-            ThemeColorPicker.Error -> _quizTheme.value.colorScheme.error
-            ThemeColorPicker.ErrorContainer -> _quizTheme.value.colorScheme.errorContainer
-            ThemeColorPicker.Surface -> _quizTheme.value.colorScheme.surface
-            ThemeColorPicker.Outline -> _quizTheme.value.colorScheme.outline
-        }
-        if (old == color) return
+    private fun ColorScheme.get(name: ThemeColorPicker): Color = when (name) {
+        ThemeColorPicker.Primary            -> primary
+        ThemeColorPicker.PrimaryContainer   -> primaryContainer
+        ThemeColorPicker.Secondary          -> secondary
+        ThemeColorPicker.SecondaryContainer -> secondaryContainer
+        ThemeColorPicker.Tertiary           -> tertiary
+        ThemeColorPicker.TertiaryContainer  -> tertiaryContainer
+        ThemeColorPicker.Error              -> error
+        ThemeColorPicker.ErrorContainer     -> errorContainer
+        ThemeColorPicker.Surface            -> surface
+        ThemeColorPicker.Outline            -> outline
+    }
 
-        _quizTheme.update {
-            val updatedScheme = when (name) {
-                ThemeColorPicker.Primary -> _quizTheme.value.colorScheme.updatePrimary(color)
-                ThemeColorPicker.PrimaryContainer -> _quizTheme.value.colorScheme.updatePrimaryContainer(color)
-                ThemeColorPicker.Secondary -> _quizTheme.value.colorScheme.updateSecondary(color)
-                ThemeColorPicker.SecondaryContainer -> _quizTheme.value.colorScheme.updateSecondaryContainer(color)
-                ThemeColorPicker.Tertiary -> _quizTheme.value.colorScheme.updateTertiary(color)
-                ThemeColorPicker.TertiaryContainer -> _quizTheme.value.colorScheme.updateTertiaryContainer(color)
-                ThemeColorPicker.Error -> _quizTheme.value.colorScheme.updateError(color)
-                ThemeColorPicker.ErrorContainer -> _quizTheme.value.colorScheme.updateErrorContainer(color)
-                ThemeColorPicker.Surface -> _quizTheme.value.colorScheme.updateSurfaceGroup(color)
-                ThemeColorPicker.Outline -> _quizTheme.value.colorScheme.updateOutline(color)
-            }
-            it.copy(colorScheme = updatedScheme)
-        }
+    private fun ColorScheme.update(name: ThemeColorPicker, color: Color): ColorScheme = when (name) {
+        ThemeColorPicker.Primary            -> updatePrimary(color)
+        ThemeColorPicker.PrimaryContainer   -> updatePrimaryContainer(color)
+        ThemeColorPicker.Secondary          -> updateSecondary(color)
+        ThemeColorPicker.SecondaryContainer -> updateSecondaryContainer(color)
+        ThemeColorPicker.Tertiary           -> updateTertiary(color)
+        ThemeColorPicker.TertiaryContainer  -> updateTertiaryContainer(color)
+        ThemeColorPicker.Error              -> updateError(color)
+        ThemeColorPicker.ErrorContainer     -> updateErrorContainer(color)
+        ThemeColorPicker.Surface            -> updateSurfaceGroup(color)
+        ThemeColorPicker.Outline            -> updateOutline(color)
+    }
+
+    fun updateColorScheme(name: ThemeColorPicker, color: Color) {
+        val scheme = _quizTheme.value.colorScheme
+        if (scheme.get(name) == color) return
+
+        _quizTheme.update { it.copy(colorScheme = scheme.update(name, color)) }
         initTextStyleManager()
     }
 

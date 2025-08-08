@@ -4,7 +4,7 @@ import com.asu1.quiz.content.quizBodyBuilder.parseYoutubeLink
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class YoutubeLinkParserTest {
+class YoutubeLinkParseTest {
 
     @Test
     fun testParseYoutubeLink_withValidLink_GetIDWithTime() {

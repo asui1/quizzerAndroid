@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 abstract class BaseQuizViewModel<Q: Quiz>(initialQuiz: Q) : ViewModel() {
-    protected open val _quizState: MutableStateFlow<Q> = MutableStateFlow(initialQuiz)
-    val quizState: StateFlow<Q> get() = _quizState.asStateFlow()
+    protected open val mutableQuizState: MutableStateFlow<Q> = MutableStateFlow(initialQuiz)
+    val quizState: StateFlow<Q> get() = mutableQuizState.asStateFlow()
 
     fun onAction(action: QuizAction) {
         when (action) {
@@ -31,7 +31,7 @@ abstract class BaseQuizViewModel<Q: Quiz>(initialQuiz: Q) : ViewModel() {
     }
 
     fun updateQuestion(newQuestion: String) {
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             @Suppress("UNCHECKED_CAST")
             (quiz.cloneQuiz(question = newQuestion) as Q)
         }
@@ -41,7 +41,7 @@ abstract class BaseQuizViewModel<Q: Quiz>(initialQuiz: Q) : ViewModel() {
     abstract fun resetQuiz()
     abstract fun viewerInit()
     fun updateBodyState(bodyType: BodyType){
-        _quizState.update { quiz ->
+        mutableQuizState.update { quiz ->
             @Suppress("UNCHECKED_CAST")
             (quiz.cloneQuiz(bodyType = bodyType) as Q)
         }

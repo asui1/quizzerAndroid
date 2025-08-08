@@ -7,26 +7,26 @@ import kotlinx.coroutines.flow.update
 class ShortAnswerQuizViewModel : BaseQuizViewModel<ShortAnswerQuiz>(
     ShortAnswerQuiz()
 ) {
-    override val _quizState: MutableStateFlow<ShortAnswerQuiz> = MutableStateFlow(ShortAnswerQuiz())
+    override val mutableQuizState: MutableStateFlow<ShortAnswerQuiz> = MutableStateFlow(ShortAnswerQuiz())
 
     init {
         resetQuiz()
     }
 
     override fun resetQuiz(){
-        _quizState.value = ShortAnswerQuiz()
+        mutableQuizState.value = ShortAnswerQuiz()
     }
 
     override fun loadQuiz(quiz: ShortAnswerQuiz){
-        _quizState.value = quiz
+        mutableQuizState.value = quiz
     }
 
     override fun viewerInit(){
-        _quizState.value.initViewState()
+        mutableQuizState.value.initViewState()
     }
 
     fun updateAnswer(newAnswer:String){
-        _quizState.update {
+        mutableQuizState.update {
             it.copy(
                 answer = newAnswer
             )
