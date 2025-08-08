@@ -1,8 +1,10 @@
 package com.asu1.quiz.content.fillInBlankQuiz
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -12,8 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,76 +40,100 @@ import com.asu1.resources.R
 
 @Composable
 fun FillInBlankQuizCreator(
-    quiz: FillInBlankViewModel,
+    quizVm: FillInBlankViewModel = viewModel(),
     onSave: (FillInBlankQuiz) -> Unit
 ) {
-    val quizState by quiz.quizState.collectAsStateWithLifecycle()
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-    var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
+    val quizState       by quizVm.quizState.collectAsStateWithLifecycle()
+    val focusManager    = LocalFocusManager.current
+    val focusRequester  = remember { FocusRequester() }
 
+    // keep textFieldValue in sync with viewModel.rawText
+    var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
     LaunchedEffect(quizState.rawText) {
-        if (quizState.rawText != textFieldValue.text) {
-            if (textFieldValue.composition == null) {
-                textFieldValue = textFieldValue.copy(
-                    text      = quizState.rawText,
-                    selection = TextRange(quizState.rawText.length)
-                )
-            }
+        if (quizState.rawText != textFieldValue.text && textFieldValue.composition == null) {
+            textFieldValue = textFieldValue.copy(
+                text      = quizState.rawText,
+                selection = TextRange(quizState.rawText.length)
+            )
         }
     }
 
     QuizCreatorBase(
-        quiz = quizState,
-        testTag = "MultipleChoiceQuizCreatorLazyColumn",
-        onSave = { onSave(quizState) },
-        focusManager = focusManager,
-        updateQuestion = { it -> quiz.updateQuestion(it) },
-        updateBodyState = { it -> quiz.updateBodyState(it) },
+        quiz            = quizState,
+        testTag         = "FillInBlankQuizCreatorLazyColumn",
+        onSave          = { onSave(quizState) },
+        updateQuiz = { action -> quizVm.onAction(action) },
     ) {
-        item{
-            FillInBlankField(
-                textFieldValue = textFieldValue,
-                onValueChange = { newTfv: TextFieldValue ->
-                    textFieldValue = newTfv
-                    quiz.updateRawText(newTfv.text)
-                },
-                focusRequester = focusRequester,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        itemsIndexed(quizState.correctAnswers) { index, item ->
-            TextFieldWithDelete(
-                modifier = Modifier
-                    .testTag("FillInBlankQuizTextFieldAnswer$index")
-                    .fillMaxWidth(0.8f),
-                value = item,
-                onValueChange = {it ->
-                    quiz.updateCorrectAnswer(index, it)
-                },
-                label = "${stringResource(R. string. answer_label)} ${index+1}",
-                isLast = index == quizState.correctAnswers.size-1,
-                onNext = {
-                    if(index == quizState.correctAnswers.size-1){
-                        focusManager.clearFocus()
-                    }else{
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                },
-                deleteAnswer = {
-                    quiz.deleteCorrectAnswer(index)
-                },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item{
-            Spacer(modifier = Modifier.height(8.dp))
-            AddAnswer(
-                onClick = {
-                    quiz.addAnswer()
-                }
-            )
-        }
+        fillInBlankEditor(
+            textFieldValue   = textFieldValue,
+            onTextChange     = { tfv ->
+                textFieldValue = tfv
+                quizVm.updateRawText(tfv.text)
+            },
+            focusRequester   = focusRequester,
+            answers          = quizState.correctAnswers,
+            onAnswerChange   = { idx, text -> quizVm.updateCorrectAnswer(idx, text) },
+            onAnswerDelete   = quizVm::deleteCorrectAnswer,
+            onAddAnswer      = quizVm::addAnswer,
+            focusManager     = focusManager
+        )
+    }
+}
+
+private fun LazyListScope.fillInBlankEditor(
+    textFieldValue: TextFieldValue,
+    onTextChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
+    answers: List<String>,
+    onAnswerChange: (Int, String) -> Unit,
+    onAnswerDelete: (Int) -> Unit,
+    onAddAnswer: () -> Unit,
+    focusManager: FocusManager
+) {
+    item {
+        FillInBlankField(
+            textFieldValue = textFieldValue,
+            onValueChange = onTextChange,
+            focusRequester = focusRequester
+        )
+        Spacer(Modifier.height(16.dp))
+    }
+    itemsIndexed(answers) { index, answer ->
+        CorrectAnswerRow(
+            index         = index,
+            answer        = answer,
+            onValueChange = { onAnswerChange(index, it) },
+            onDelete      = { onAnswerDelete(index) },
+            focusManager  = focusManager
+        )
+        Spacer(Modifier.height(8.dp))
+    }
+    item {
+        AddAnswer(onClick = onAddAnswer)
+    }
+}
+
+@Composable
+private fun CorrectAnswerRow(
+    index: Int,
+    answer: String,
+    onValueChange: (String) -> Unit,
+    onDelete: () -> Unit,
+    focusManager: FocusManager
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(0.8f)
+    ) {
+        TextFieldWithDelete(
+            value = answer,
+            onValueChange = onValueChange,
+            label = "${stringResource(R.string.answer_label)} ${index + 1}",
+            isLast = false,
+            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+            deleteAnswer = onDelete,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -133,7 +161,7 @@ fun PreviewFillInBlankQuizCreator() {
     fillInBlankViewModel.loadQuiz(sampleFillInBlankQuiz)
     QuizzerAndroidTheme {
         FillInBlankQuizCreator(
-            quiz = fillInBlankViewModel,
+            quizVm = fillInBlankViewModel,
             onSave = {}
         )
     }

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.asu1.resources.QuizzerAndroidTheme
 
 @Composable
-fun cardItemWithSemiTransparentBackground(
+fun CardItemWithSemiTransparentBackground(
     modifier: Modifier = Modifier,
     textColor: Color,
     content: @Composable ColumnScope.() -> Unit,
@@ -47,7 +47,7 @@ fun cardItemWithSemiTransparentBackground(
 fun CardItemWithSemiTransparentBackgroundPreview(
 ){
     QuizzerAndroidTheme {
-        cardItemWithSemiTransparentBackground(
+        CardItemWithSemiTransparentBackground(
             textColor = Color.Blue
         ) {
             Text(

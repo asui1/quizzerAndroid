@@ -21,17 +21,17 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
         return getDragIndex(offset, rightDotOffsets)
     }
 
-    fun onQuiz4Update(quiz4ViewModelStates: ConnectItemsQuizViewModelStates){
+    fun onQuiz4Update(quiz4ViewModelStates: ConnectItemsQuizAction){
         when(quiz4ViewModelStates){
-            ConnectItemsQuizViewModelStates.AddLeft -> {
+            ConnectItemsQuizAction.AddLeft -> {
                 this._quizState.update { it.copy().apply { addAnswer() } }
                 leftDotOffsets.add(Offset.Zero)
             }
-            ConnectItemsQuizViewModelStates.AddRight -> {
+            ConnectItemsQuizAction.AddRight -> {
                 this._quizState.update { it.copy().apply { addConnectionAnswer() } }
                 rightDotOffsets.add(Offset.Zero)
             }
-            is ConnectItemsQuizViewModelStates.RemoveLeft -> {
+            is ConnectItemsQuizAction.RemoveLeft -> {
                 if(this._quizState.value.answers.size <= 2){
                     return
                 }
@@ -42,7 +42,7 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                 }
                 leftDotOffsets.removeLastOrNull()
             }
-            is ConnectItemsQuizViewModelStates.RemoveRight -> {
+            is ConnectItemsQuizAction.RemoveRight -> {
                 if(this._quizState.value.connectionAnswers.size <= 2){
                     return
                 }
@@ -53,15 +53,15 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                 }
                 rightDotOffsets.removeLastOrNull()
             }
-            is ConnectItemsQuizViewModelStates.UpdateLeftDotOffset -> {
+            is ConnectItemsQuizAction.UpdateLeftDotOffset -> {
                 if(quiz4ViewModelStates.index in leftDotOffsets.indices)
                     leftDotOffsets[quiz4ViewModelStates.index] = quiz4ViewModelStates.offset
             }
-            is ConnectItemsQuizViewModelStates.UpdateRightDotOffset -> {
+            is ConnectItemsQuizAction.UpdateRightDotOffset -> {
                 if(quiz4ViewModelStates.index in rightDotOffsets.indices)
                     rightDotOffsets[quiz4ViewModelStates.index] = quiz4ViewModelStates.offset
             }
-            is ConnectItemsQuizViewModelStates.OnDragEndCreator -> {
+            is ConnectItemsQuizAction.OnDragEndCreator -> {
                 this._quizState.update {
                     it.copy().apply {
                         connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
@@ -70,14 +70,14 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                     }
                 }
             }
-            is ConnectItemsQuizViewModelStates.OnDragEndViewer -> {
+            is ConnectItemsQuizAction.OnDragEndViewer -> {
                 this._quizState.update {
                     it.copy().apply {
                         userConnectionIndex[quiz4ViewModelStates.from] = onDragEnd(quiz4ViewModelStates.offset)
                     }
                 }
             }
-            is ConnectItemsQuizViewModelStates.ResetConnectionCreator -> {
+            is ConnectItemsQuizAction.ResetConnectionCreator -> {
                 this._quizState.update {
                     it.copy().apply{
                         connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
@@ -86,31 +86,29 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
                     }
                 }
             }
-            is ConnectItemsQuizViewModelStates.ResetConnectionViewer -> {
+            is ConnectItemsQuizAction.ResetConnectionViewer -> {
                 this._quizState.update {
                     it.copy().apply{
                         userConnectionIndex[quiz4ViewModelStates.index] = null
                     }
                 }
             }
-        }
-    }
-
-    fun updateAnswerAt(index: Int, answer: String){
-        this._quizState.update {
-            it.copy().apply {
-                answers = answers.toMutableList().apply {
-                    this[index] = answer
+            is ConnectItemsQuizAction.UpdateLeftAnswerAt -> {
+                this._quizState.update {
+                    it.copy().apply{
+                        answers = answers.toMutableList().apply {
+                            this[quiz4ViewModelStates.index] = quiz4ViewModelStates.text
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    fun updateConnectionAnswerAt(index: Int, answer: String){
-        this._quizState.update {
-            it.copy().apply {
-                connectionAnswers = connectionAnswers.toMutableList().apply {
-                    this[index] = answer
+            is ConnectItemsQuizAction.UpdateRightAnswerAt -> {
+                this._quizState.update {
+                    it.copy().apply{
+                        connectionAnswers = connectionAnswers.toMutableList().apply {
+                            this[quiz4ViewModelStates.index] = quiz4ViewModelStates.text
+                        }
+                    }
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.asu1.quiz.layoutBuilder.quizThemeBuilder
 
-import androidx.compose.animation.AnimatedVisibility
+import android.graphics.Bitmap
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,87 +41,117 @@ fun QuizLayoutSetBackground(
     modifier: Modifier = Modifier,
     backgroundImageColor: ImageColor,
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
-    scrollTo: () -> Unit = {},
-){
+    scrollTo: () -> Unit = {}
+) {
     var isOpen by remember { mutableStateOf(false) }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by
+    remember { mutableIntStateOf(backgroundImageColor.state.ordinal) }
+
+    // Keep tab in sync with incoming state
     LaunchedEffect(backgroundImageColor.state) {
         selectedTabIndex = when (backgroundImageColor.state) {
-            ImageColorState.COLOR -> 0
+            ImageColorState.COLOR    -> 0
             ImageColorState.GRADIENT -> 1
-            ImageColorState.IMAGE -> 2
-            else -> 0
+            ImageColorState.IMAGE    -> 2
+            else                     -> 0
         }
     }
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(4.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(4.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            stringResource(R.string.background),
-            fontWeight = FontWeight.ExtraBold,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        BackgroundSecondaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            updateQuizTheme = updateQuizTheme,
-            onClick = { clickedSame ->
-                if(clickedSame){
-                    isOpen = !isOpen
-                }else{
-                    isOpen = true
-                }
-                if(isOpen) scrollTo()
+        BackgroundSectionHeader()
+        BackgroundTabRow(
+            selectedIndex = selectedTabIndex,
+            onTabSelected = { idx, same ->
+                selectedTabIndex = idx
+                isOpen = same.not() || !isOpen
+                if (isOpen) scrollTo()
             }
         )
-        AnimatedVisibility(
-            visible = isOpen
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                when (selectedTabIndex) {
-                    0 -> {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        ColorPicker(
-                            initialColor = backgroundImageColor.color,
-                            colorName = stringResource(R.string.background),
-                            onColorSelected = { color ->
-                                updateQuizTheme(
-                                    QuizThemeActions.UpdateBackgroundColor(color)
-                                )
-                            }
-                        )
-                    }
-
-                    1 -> {
-                        SetGradientBackground(
-                            backgroundImageColor = backgroundImageColor,
-                            updateQuizTheme = updateQuizTheme,
-                        )
-                    }
-
-                    2 -> {
-                        ImageGetter(
-                            image = backgroundImageColor.imageData,
-                            onImageUpdate = { bitmap ->
-                                updateQuizTheme(
-                                    QuizThemeActions.UpdateBackgroundImage(bitmap)
-                                )
-                            }
-                        )
-                    }
-                }
-            }
+        if (isOpen) {
+            BackgroundContent(
+                selectedTab = selectedTabIndex,
+                background   = backgroundImageColor,
+                updateTheme  = updateQuizTheme
+            )
         }
     }
+}
+
+@Composable
+private fun BackgroundSectionHeader() {
+    Text(
+        text       = stringResource(R.string.background),
+        fontWeight = FontWeight.ExtraBold,
+        modifier   = Modifier.padding(vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun BackgroundTabRow(
+    selectedIndex: Int,
+    onTabSelected: (index: Int, clickedSame: Boolean) -> Unit
+) {
+    BackgroundSecondaryTabRow(
+        selectedTabIndex = selectedIndex,
+        updateQuizTheme  = {}, // already handled upstream
+        onClick = { clickedSame ->
+            onTabSelected(selectedIndex, clickedSame)
+        }
+    )
+}
+
+@Composable
+private fun BackgroundContent(
+    selectedTab: Int,
+    background:  ImageColor,
+    updateTheme: (QuizThemeActions) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        when (selectedTab) {
+            0 ->  {
+                Spacer(modifier = Modifier.height(4.dp))
+                ColorPicker(
+                    initialColor = background.color,
+                    colorName = stringResource(R.string.background),
+                    onColorSelected = { color ->
+                        updateTheme(
+                            QuizThemeActions.UpdateBackgroundColor(color)
+                        )
+                    }
+                )
+            }
+            1 ->                         SetGradientBackground(
+                backgroundImageColor = background,
+                updateQuizTheme = updateTheme,
+            )
+            2 -> ImageBackgroundPicker(
+                image       = background.imageData,
+                onImagePick = { bmp -> updateTheme(QuizThemeActions.UpdateBackgroundImage(bmp)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImageBackgroundPicker(
+    image: Bitmap,
+    onImagePick: (Bitmap) -> Unit
+) {
+    ImageGetter(
+        image         = image,
+        onImageUpdate = onImagePick
+    )
 }
 
 @Composable

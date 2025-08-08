@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.material.kolor)
     implementation (libs.compose.charts)
+    implementation(libs.androidx.runtime.saveable)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

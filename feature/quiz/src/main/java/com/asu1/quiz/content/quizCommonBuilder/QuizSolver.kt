@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,8 @@ import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.models.quiz.QuizData
+import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
@@ -46,24 +49,26 @@ import com.asu1.utils.setTopBarColor
 fun QuizSolver(
     modifier: Modifier = Modifier,
     navController: NavController,
-    hasVisitedRoute: Boolean,
+    hasVisitedRoute: Boolean
 ) {
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
-    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
-    val quizzes = quizState.quizContentState.quizzes
-    val quizTheme = quizState.quizTheme
-    val quizData = quizState.quizGeneralUiState.quizData
-    val viewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
-    val colorScheme = quizTheme.colorScheme
-    val view = LocalView.current
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-    ){
-        quizzes.size + 1
-    }
-    val userViewModel: UserViewModel = viewModel()
+    // 1) Collect state & prepare helpers
+    val coordinatorVm: QuizCoordinatorViewModel = viewModel()
+    val quizState by coordinatorVm.quizUIState.collectAsStateWithLifecycle()
+    val userVm: UserViewModel = viewModel()
 
-    val navigateToScoreCard = remember {
+    // 2) Extract pieces of state
+    val quizzes     = quizState.quizContentState.quizzes
+    val quizTheme   = quizState.quizTheme
+    val quizData    = quizState.quizGeneralUiState.quizData
+    val viewModelState by coordinatorVm.quizViewModelState.collectAsStateWithLifecycle()
+
+    // 3) Pager state
+    val pagerState = rememberPagerState(
+        initialPage = 0
+    ) { quizzes.size + 1 }
+
+    // 4) Navigation to scoring
+    val navigateToScoreCard = remember(hasVisitedRoute) {
         {
             if (hasVisitedRoute) {
                 SnackBarManager.showSnackBar(
@@ -71,8 +76,8 @@ fun QuizSolver(
                     ToastType.INFO
                 )
             } else {
-                val email = userViewModel.userData.value?.email ?: "GUEST"
-                quizCoordinatorViewModel.gradeQuiz(email) {
+                val email = userVm.userData.value?.email ?: "GUEST"
+                coordinatorVm.gradeQuiz(email) {
                     navController.navigate(Route.ScoringScreen) {
                         popUpTo(Route.Home) { inclusive = false }
                         launchSingleTop = true
@@ -81,58 +86,112 @@ fun QuizSolver(
             }
         }
     }
+
+    // 5) Side effects
+    QuizSolverSideEffects(
+        viewModelState = viewModelState,
+        color         = quizTheme.colorScheme.primaryContainer,
+        navController = navController
+    )
+
+    // 6) UI
+    MaterialTheme(colorScheme = quizTheme.colorScheme) {
+        QuizSolverScreen(
+            modifier            = modifier,
+            quizzes             = quizzes,
+            pagerState          = pagerState,
+            quizData            = quizData,
+            quizTheme           = quizTheme,
+            navigateToScoreCard = navigateToScoreCard
+        )
+    }
+}
+
+@Composable
+private fun QuizSolverSideEffects(
+    viewModelState: ViewModelState,
+    color: Color,
+    navController: NavController
+) {
+    val view = LocalView.current
+
+    // Pop back on error
     LaunchedEffect(viewModelState) {
-        if(viewModelState == ViewModelState.ERROR){
+        if (viewModelState == ViewModelState.ERROR) {
             navController.popBackStack()
         }
     }
 
-    LaunchedEffect(colorScheme.primaryContainer) {
-        setTopBarColor(
-            view = view,
-            color = colorScheme.primaryContainer
-        )
+    // Update status bar / top bar color
+    LaunchedEffect(color) {
+        setTopBarColor(view = view, color = color)
     }
+}
 
-    MaterialTheme(
-        colorScheme = colorScheme
-    ) {
-        Scaffold { paddingValues ->
-            Box(
-                modifier = modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                ImageColorBackground(
-                    imageColor = quizTheme.backgroundImage,
-                    modifier = Modifier.fillMaxSize()
-                )
-                AnimatedContent(
-                    targetState = quizzes.isEmpty(),
-                    modifier = Modifier.fillMaxSize(),
-                    label = "Animation for Loading Quiz Solver",
-                ) { isEmpty ->
-                    if (isEmpty) {
-                        LoadingAnimation()
-                    } else {
-                        QuizViewerPager(
-                            pagerState = pagerState,
-                            quizSize = quizzes.size,
-                            quizzes = quizzes,
-                            modifier = Modifier.fillMaxSize(),
-                            lastElement = {
-                                QuizSubmit(
-                                    title = quizData.title,
-                                    modifier = Modifier.fillMaxSize(),
-                                    onSubmit = navigateToScoreCard
-                                )
-                            },
-                        )
-                    }
+@Composable
+private fun QuizSolverScreen(
+    modifier: Modifier,
+    quizzes: List<Quiz>,
+    pagerState: PagerState,
+    quizData: QuizData,
+    quizTheme: QuizTheme,
+    navigateToScoreCard: () -> Unit
+) {
+    Scaffold { padding ->
+        Box(
+            modifier = modifier
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            // 1) Background
+            ImageColorBackground(
+                imageColor = quizTheme.backgroundImage,
+                modifier   = Modifier.fillMaxSize()
+            )
+
+            // 2) Main content: loading or pager
+            AnimatedContent(
+                targetState = quizzes.isEmpty(),
+                modifier    = Modifier.fillMaxSize(),
+                label       = "QuizSolverLoadingToggle"
+            ) { isEmpty ->
+                if (isEmpty) {
+                    LoadingAnimation(modifier = Modifier.fillMaxSize())
+                } else {
+                    QuizSolverPager(
+                        pagerState          = pagerState,
+                        quizzes             = quizzes,
+                        quizData            = quizData,
+                        onSubmit            = navigateToScoreCard,
+                        modifier            = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun QuizSolverPager(
+    pagerState: PagerState,
+    quizzes: List<Quiz>,
+    quizData: QuizData,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    QuizViewerPager(
+        pagerState  = pagerState,
+        quizSize    = quizzes.size,
+        quizzes     = quizzes,
+        modifier    = modifier,
+        lastElement = {
+            QuizSubmit(
+                title    = quizData.title,
+                modifier = Modifier.fillMaxSize(),
+                onSubmit = onSubmit
+            )
+        }
+    )
 }
 
 @Composable

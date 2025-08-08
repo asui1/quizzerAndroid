@@ -48,9 +48,7 @@ fun MultipleChoiceQuizCreator(
         quiz = quizState,
         testTag = "MultipleChoiceQuizCreatorLazyColumn",
         onSave = { onSave(quizState) },
-        focusManager = focusManager,
-        updateQuestion = { it -> quiz.updateQuestion(it) },
-        updateBodyState = { it -> quiz.updateBodyState(it) },
+        updateQuiz = { action -> quiz.onAction(action) },
     ) {
         items(quizState.options.size) { index ->
             AnswerTextField(

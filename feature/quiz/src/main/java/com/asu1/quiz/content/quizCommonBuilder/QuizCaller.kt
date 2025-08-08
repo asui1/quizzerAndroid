@@ -35,113 +35,102 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 @Composable
 fun QuizCaller(
     navController: NavController,
-    loadIndex:Int,
+    loadIndex: Int,
     quizType: QuizType,
-    insertIndex: Int,
+    insertIndex: Int
 ) {
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
-    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
-    val quizTheme = quizState.quizTheme
-    val quizzes = quizState.quizContentState.quizzes
+    // 1) Shared viewModel & state
+    val coordinatorVm: QuizCoordinatorViewModel = viewModel()
+    val uiState by coordinatorVm.quizUIState.collectAsStateWithLifecycle()
+    val theme   = uiState.quizTheme
+    val quizzes = uiState.quizContentState.quizzes
 
-    val quiz: Quiz? = if (loadIndex != -1 && quizzes.size > loadIndex
-    ) {
-        quizzes[loadIndex]
-    } else {
-        null
-    }
+    // 2) Determine existing quiz or null for new
+    val existingQuiz: Quiz? = quizzes.getOrNull(loadIndex)
 
-    fun onSave(newQuiz: Quiz){
+    // 3) onSave handler for both update & add
+    val onSave: (Quiz) -> Unit = { newQuiz ->
         newQuiz.initViewState()
-        if(quiz != null){
-            quizCoordinatorViewModel.updateQuizCoordinator(
+        if (existingQuiz != null) {
+            coordinatorVm.updateQuizCoordinator(
                 QuizCoordinatorActions.UpdateQuizAt(newQuiz, loadIndex)
             )
-        }
-        else{
-            quizCoordinatorViewModel.updateQuizCoordinator(
+        } else {
+            coordinatorVm.updateQuizCoordinator(
                 QuizCoordinatorActions.AddQuizAt(newQuiz, insertIndex)
             )
         }
         navController.popBackStack()
     }
 
-    MaterialTheme(
-        colorScheme = quizTheme.colorScheme
-    ) {
-        when(quizType){
-            QuizType.QUIZ1 -> {
-                val multipleChoiceQuizViewModel: MultipleChoiceQuizViewModel = viewModel(key="Quiz1ViewModel")
-                if(quiz != null){
-                    multipleChoiceQuizViewModel.loadQuiz(quiz as MultipleChoiceQuiz)
-                }
-                MultipleChoiceQuizCreator(
-                    quiz = multipleChoiceQuizViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ2 -> {
-                val dateSelectionQuizViewModel: DateSelectionQuizViewModel = viewModel(key="Quiz2ViewModel")
-                if(quiz != null){
-                    dateSelectionQuizViewModel.loadQuiz(quiz as DateSelectionQuiz)
-                }
-                DateSelectionQuizCreator(
-                    quiz = dateSelectionQuizViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ3 -> {
-                val quiz3ViewModel: ReorderQuizViewModel = viewModel(key="Quiz3ViewModel")
-                if(quiz != null){
-                    quiz3ViewModel.loadQuiz(quiz as ReorderQuiz)
-                }
-                ReorderQuizCreator(
-                    quiz = quiz3ViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ4 -> {
-                val quiz4ViewModel: ConnectItemsQuizViewModel = viewModel(key="Quiz4ViewModel")
-                if(quiz != null){
-                    quiz4ViewModel.loadQuiz(quiz as ConnectItemsQuiz)
-                }
-                ConnectItemsQuizCreator(
-                    quiz = quiz4ViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ5 -> {
-                val shortAnswerQuizViewModel: ShortAnswerQuizViewModel = viewModel(key = "Quiz5ViewModel")
-                if(quiz != null){
-                    shortAnswerQuizViewModel.loadQuiz(quiz as ShortAnswerQuiz)
-                }
-                ShortAnswerQuizCreator(
-                    quiz = shortAnswerQuizViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
-            QuizType.QUIZ6 -> {
-                val fillInBlankViewModel: FillInBlankViewModel = viewModel(key = "Quiz6ViewModel")
-                if(quiz != null){
-                    fillInBlankViewModel.loadQuiz(quiz as FillInBlankQuiz)
-                }
-                FillInBlankQuizCreator(
-                    quiz = fillInBlankViewModel,
-                    onSave = {
-                        onSave(it)
-                    },
-                )
-            }
+    MaterialTheme(colorScheme = theme.colorScheme) {
+        QuizCreatorDispatcher(
+            quizType      = quizType,
+            existingQuiz  = existingQuiz,
+            onSave        = onSave
+        )
+    }
+}
+
+@Composable
+private fun QuizCreatorDispatcher(
+    quizType: QuizType,
+    existingQuiz: Quiz?,
+    onSave: (Quiz) -> Unit
+) {
+    when (quizType) {
+        QuizType.QUIZ1 -> {
+            val vm: MultipleChoiceQuizViewModel = viewModel(key = "Quiz1ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as MultipleChoiceQuiz) }
+            MultipleChoiceQuizCreator(
+                quiz = vm,
+                onSave = { onSave(it) }
+            )
+        }
+
+        QuizType.QUIZ2 -> {
+            val vm: DateSelectionQuizViewModel = viewModel(key = "Quiz2ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as DateSelectionQuiz) }
+            DateSelectionQuizCreator(
+                quizVm = vm,
+                onSave = { onSave(it) }
+            )
+        }
+
+        QuizType.QUIZ3 -> {
+            val vm: ReorderQuizViewModel = viewModel(key = "Quiz3ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as ReorderQuiz) }
+            ReorderQuizCreator(
+                quiz = vm,
+                onSave = { onSave(it) }
+            )
+        }
+
+        QuizType.QUIZ4 -> {
+            val vm: ConnectItemsQuizViewModel = viewModel(key = "Quiz4ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as ConnectItemsQuiz) }
+            ConnectItemsQuizCreator(
+                quizVm = vm,
+                onSave = { onSave(it) }
+            )
+        }
+
+        QuizType.QUIZ5 -> {
+            val vm: ShortAnswerQuizViewModel = viewModel(key = "Quiz5ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as ShortAnswerQuiz) }
+            ShortAnswerQuizCreator(
+                quiz = vm,
+                onSave = { onSave(it) }
+            )
+        }
+
+        QuizType.QUIZ6 -> {
+            val vm: FillInBlankViewModel = viewModel(key = "Quiz6ViewModel")
+            existingQuiz?.let { vm.loadQuiz(it as FillInBlankQuiz) }
+            FillInBlankQuizCreator(
+                quizVm = vm,
+                onSave = { onSave(it) }
+            )
         }
     }
 }

@@ -1,11 +1,12 @@
 package com.asu1.quiz.content.quizBodyBuilder
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -42,79 +43,102 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 fun YoutubeLinkInput(
     youtubeId: String,
     startTime: Int,
-    onYoutubeUpdate: (String, Int) -> Unit,
+    onYoutubeUpdate: (String, Int) -> Unit
 ) {
-    val context = LocalContext.current
-    var link by remember { mutableStateOf("") }
-
-    val clipboardManager = LocalClipboard.current
-    val clipboardText = remember { clipboardManager.nativeClipboard.primaryClip.toString()}
-
+    // 1) control UI mode: input vs viewer
     if (youtubeId.isEmpty()) {
-        Column(modifier = Modifier
+        YoutubeLinkField(onLoad = { link ->
+            val (id, time) = parseYoutubeLink(link)
+            onYoutubeUpdate(id, time)
+        })
+    } else {
+        YoutubeLinkViewer(
+            youtubeId = youtubeId,
+            startTime = startTime,
+            onDelete  = { onYoutubeUpdate("", 0) }
+        )
+    }
+}
+
+@Composable
+private fun YoutubeLinkField(
+    onLoad: (String) -> Unit
+) {
+    val context          = LocalContext.current
+    var linkText by remember { mutableStateOf("") }
+    val clipboardManager = LocalClipboard.current
+    val clipboardText    = remember { clipboardManager.nativeClipboard.primaryClip.toString() }
+
+    Column(
+        Modifier
             .fillMaxWidth()
             .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextField(
-                value = link,
-                onValueChange = { link = it },
-                label = { Text(stringResource(R.string.enter_youtube_link)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("QuizCreatorBodyYoutubeLinkTextField"),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        val (id, time) = parseYoutubeLink(link)
-                        onYoutubeUpdate(id, time)
-                    }
-                ),
-                placeholder = {
-                    if (clipboardText.isNotEmpty()) {
-                        Text(clipboardText)
-                    }
-                }
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextField(
+            value          = linkText,
+            onValueChange  = { linkText = it },
+            label          = { Text(stringResource(R.string.enter_youtube_link)) },
+            placeholder    = { if (clipboardText.isNotEmpty()) Text(clipboardText) },
+            modifier       = Modifier
+                .fillMaxWidth()
+                .testTag("QuizCreatorBodyYoutubeLinkTextField"),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { onLoad(linkText) }
             )
-            TextButton(
-                onClick = {
-                    val (id, time) = parseYoutubeLink(link)
-                    if(id == "") {
-                        Toast.makeText(context,
-                            context.getString(R.string.invalid_youtube_link), Toast.LENGTH_SHORT).show()
-                        return@TextButton
-                    }
-                    onYoutubeUpdate(id, time)
-                },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                Text(stringResource(R.string.load_video))
+        )
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = {
+            val (id, _) = parseYoutubeLink(linkText)
+            if (id.isEmpty()) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.invalid_youtube_link),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                onLoad(linkText)
             }
+        }) {
+            Text(stringResource(R.string.load_video))
         }
-    } else {
-        Row(modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.End,
+    }
+}
+
+@Composable
+private fun YoutubeLinkViewer(
+    youtubeId: String,
+    startTime: Int,
+    onDelete: () -> Unit
+) {
+    val context = LocalContext.current
+    Box(modifier = Modifier.fillMaxSize()) {
+        // delete overlay
+        IconButton(
+            onClick = onDelete,
+            modifier = Modifier.align(Alignment.TopEnd)
         ) {
-            IconButton(
-                onClick = {
-                    onYoutubeUpdate("DELETE", 0)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.RemoveCircleOutline,
-                    contentDescription = stringResource(R.string.delete_current_quiz_s_youtube)
-                )
-            }
+            Icon(
+                Icons.Default.RemoveCircleOutline,
+                contentDescription = stringResource(R.string.delete_current_quiz_s_youtube)
+            )
         }
-        AndroidView(factory = {
-            val youTubePlayerView = YouTubePlayerView(context)
-            youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                override fun onReady(youTubePlayer: YouTubePlayer) {
-                    youTubePlayer.cueVideo(youtubeId, startTime.toFloat())
+        // player view
+        AndroidView(
+            factory = {
+                YouTubePlayerView(context).apply {
+                    addYouTubePlayerListener(
+                        object : AbstractYouTubePlayerListener() {
+                            override fun onReady(youTubePlayer: YouTubePlayer) {
+                                youTubePlayer.cueVideo(youtubeId, startTime.toFloat())
+                            }
+                        }
+                    )
                 }
-            })
-            youTubePlayerView
-        }, modifier = Modifier.fillMaxSize())
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 

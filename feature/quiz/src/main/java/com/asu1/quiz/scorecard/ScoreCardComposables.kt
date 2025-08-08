@@ -1,13 +1,13 @@
 package com.asu1.quiz.scorecard
 
-import androidx.compose.animation.AnimatedVisibility
+import android.graphics.Bitmap
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -44,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -63,7 +63,6 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
 import com.asu1.resources.NotoSans
 import com.asu1.resources.R
-import com.asu1.resources.robotoBlack
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -74,90 +73,97 @@ fun ScoreCardBackground(
     backgroundImageColor: ImageColor,
     modifier: Modifier = Modifier,
 ) {
-    val baseBackgroundResourceId = remember(backgroundImageColor.backgroundBase){
-        backgroundImageColor.backgroundBase.resourceId
-    }
+    val fill = Modifier.fillMaxSize()
 
-    val colorFilter = remember(backgroundImageColor.color, backgroundImageColor.imageBlendMode){
-        ColorFilter.tint(backgroundImageColor.color, blendMode = backgroundImageColor.imageBlendMode.blendMode)
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        when(backgroundImageColor.state) {
-            ImageColorState.IMAGE -> {
-                val bitmap = remember(backgroundImageColor.imageData) {
-                    backgroundImageColor.imageData.asImageBitmap().apply {
-                        prepareToDraw()
-                    }
-                }
-                Image(
-                    bitmap = bitmap,
-                    colorFilter = colorFilter,
-                    contentDescription = "ScoreCard Background",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-
-            ImageColorState.COLOR -> {
-                Image(
-                    painter = ColorPainter(backgroundImageColor.color),
-                    contentDescription = "ScoreCard Background",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            ImageColorState.BASEIMAGE -> {
-                Image(
-                    painter = painterResource(id = baseBackgroundResourceId),
-                    colorFilter = colorFilter,
-                    contentDescription = "ScoreCard Background",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            ImageColorState.GRADIENT -> {
-                GradientBrush(
-                    color = backgroundImageColor.color,
-                    color2 = backgroundImageColor.colorGradient,
-                    shaderType = backgroundImageColor.shaderType,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
-
-        if(backgroundImageColor.effect != Effect.NONE){
-            EffectBuilder(
-                color = backgroundImageColor.color2,
-                resourceUrl = backgroundImageColor.effect.resourceUrl,
-                blendModeCompat = backgroundImageColor.effect.blendMode,
-                effectGraphicsInfos =
-                    backgroundImageColor.effectGraphics.ifEmpty {
-                        backgroundImageColor.effect.defaultEffectGraphicsInfos
-                    },
-            )
-        }
-        if(backgroundImageColor.overlayImage.width > 1){
-            val bitmap = remember(backgroundImageColor.overlayImage) {
-                backgroundImageColor.overlayImage.asImageBitmap().apply {
-                    prepareToDraw()
-                }
-            }
-            Image(
-                bitmap = bitmap,
-                contentDescription = "ScoreCard Background",
-
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
+    Box(modifier.then(fill)) {
+        BackgroundLayer(backgroundImageColor, fill)
+        EffectsLayer(backgroundImageColor)
+        OverlayImageLayer(backgroundImageColor, fill)
     }
 }
 
+@Composable
+private fun BackgroundLayer(bg: ImageColor, modifier: Modifier) {
+    val baseResId = remember(bg.backgroundBase) { bg.backgroundBase.resourceId }
+    val colorFilter = remember(bg.color, bg.imageBlendMode) {
+        ColorFilter.tint(bg.color, blendMode = bg.imageBlendMode.blendMode)
+    }
 
-const val pageNum = 4
+    when (bg.state) {
+        ImageColorState.IMAGE -> ImageBitmapLayer(bg.imageData, colorFilter, modifier)
+        ImageColorState.COLOR -> Image(
+            painter = ColorPainter(bg.color),
+            contentDescription = "ScoreCard Background",
+            modifier = modifier
+        )
+        ImageColorState.BASEIMAGE -> Image(
+            painter = painterResource(id = baseResId),
+            colorFilter = colorFilter,
+            contentDescription = "ScoreCard Background",
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+        )
+        ImageColorState.GRADIENT -> GradientBrush(
+            color = bg.color,
+            color2 = bg.colorGradient,
+            shaderType = bg.shaderType,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+private fun ImageBitmapLayer(
+    bytes: Bitmap,
+    colorFilter: ColorFilter?,
+    modifier: Modifier
+) {
+    // `remember` on the raw bytes; if you can provide a stable id/hash, prefer that
+    val bitmap = remember(bytes) {
+        bytes.asImageBitmap().apply { prepareToDraw() }
+    }
+    Image(
+        bitmap = bitmap,
+        colorFilter = colorFilter,
+        contentDescription = "ScoreCard Background",
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun EffectsLayer(bg: ImageColor) {
+    if (bg.effect == Effect.NONE) return
+
+    // Prefer stable defaults without allocation in composition
+    val graphics = remember(bg.effect, bg.effectGraphics) {
+        bg.effectGraphics.ifEmpty { bg.effect.defaultEffectGraphicsInfos }
+    }
+    EffectBuilder(
+        color = bg.color2,
+        resourceUrl = bg.effect.resourceUrl,
+        blendModeCompat = bg.effect.blendMode,
+        effectGraphicsInfos = graphics,
+    )
+}
+
+@Composable
+private fun OverlayImageLayer(bg: ImageColor, modifier: Modifier) {
+    // Cheap guard to avoid decoding 1x1 (or empty) placeholder
+    if (bg.overlayImage.width <= 1) return
+
+    val overlayBitmap = remember(bg.overlayImage) {
+        bg.overlayImage.asImageBitmap().apply { prepareToDraw() }
+    }
+    Image(
+        bitmap = overlayBitmap,
+        contentDescription = "ScoreCard Overlay",
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    )
+}
+
+const val PAGE_NUMBER = 4
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -166,137 +172,173 @@ fun ScoreCardComposable(
     scoreCard: ScoreCard,
     quizResult: QuizResult = sampleResult,
     pagerInit: Int = 0,
-    quizQuestions: PersistentList<String> = persistentListOf<String>(),
-){
-    val pagerState = rememberPagerState(
-        initialPage = pagerInit,
-    ){
-        pageNum
-    }
-    val redded = remember(scoreCard.textColor){
-        rotateHue(scoreCard.textColor, -30f)
-    }
-    val greened = remember(scoreCard.textColor){
-        rotateHue(scoreCard.textColor, 30f)
-    }
-    val showHorizontalIndicator by remember{
-        derivedStateOf{
-            pagerState.currentPage != 3
+    quizQuestions: PersistentList<String> = persistentListOf()
+) {
+    // 1️⃣ State & derived colors
+    val pagerState = rememberPagerState(initialPage = pagerInit, pageCount = { PAGE_NUMBER })
+    val reddish    = remember(scoreCard.textColor) { rotateHue(scoreCard.textColor, -30f) }
+    val greenish  = remember(scoreCard.textColor) { rotateHue(scoreCard.textColor,  30f) }
+    val showIndicator by remember { derivedStateOf { pagerState.currentPage != PAGE_NUMBER - 1 } }
+
+    ScoreCardContainer(modifier, scoreCard) {
+        ScoreCardHeader(scoreCard, quizResult.nickname)
+        ScoreCardPager(
+            pagerState    = pagerState,
+            textColor     = scoreCard.textColor,
+            errorColor    = reddish,
+            correctColor  = greenish,
+            quizResult    = quizResult,
+            quizQuestions = quizQuestions
+        )
+        if (showIndicator) {
+            ScoreCardFooterIndicator(
+                pagerState   = pagerState,
+                indicatorColor = scoreCard.textColor
+            )
         }
     }
+}
 
+@Composable
+private fun ScoreCardContainer(
+    modifier: Modifier,
+    scoreCard: ScoreCard,
+    content: @Composable BoxScope.() -> Unit
+) {
     Box(
-        contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .animateContentSize()
             .fillMaxSize()
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = 16.dp,
-                    bottomEnd = 16.dp,
-                )
-            )
-            .layout { measurable, constraints ->
-                val placeable = measurable.measure(constraints)
-                val width = placeable.width
-                val height = placeable.height
-                val ratio = width.toFloat() / height
-
-                if (ratio > 0.7f) {
-                    val newWidth = (height * 0.7f).toInt()
-                    layout(newWidth, height) {
-                        placeable.placeRelative(0, 0)
-                    }
-                } else {
-                    layout(width, height) {
-                        placeable.placeRelative(0, 0)
-                    }
-                }
-            }
+            .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+            .aspectLimiter(maxRatio = 0.7f),
+        contentAlignment = Alignment.BottomCenter
     ) {
-        ScoreCardBackground(
-            backgroundImageColor = scoreCard.background,
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Transparent)
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Text(
-                text = scoreCard.title,
-                color = scoreCard.textColor,
-                style = MaterialTheme.typography.headlineSmallEmphasized,
-                fontWeight = FontWeight.Black,
-                fontFamily = robotoBlack,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Text(
-                text = quizResult.nickname,
-                color = scoreCard.textColor,
-                fontWeight = FontWeight.ExtraBold,
-                style = MaterialTheme.typography.bodyMediumEmphasized,
-                modifier = Modifier.align(Alignment.End)
-            )
-            HorizontalPager(
-                state = pagerState,
-                key = {it},
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Transparent)
-            ){ page ->
-                if(page < 3) {
-                    cardItemWithSemiTransparentBackground(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(horizontal = 8.dp),
-                        textColor = scoreCard.textColor
-                    ) {
-                        when (page) {
-                            1 -> {
-                                AnswerCorrection(
-                                    correction = quizResult.correction,
-                                    textColor = scoreCard.textColor,
-                                    errorColor = redded,
-                                    correctColor = greened,
-                                    questions = quizQuestions,
-                                )
-                            }
-                            2 -> {
-                                PointDistribution(
-                                    distribution = quizResult.distribution,
-                                    percent = quizResult.percent,
-                                    textColor = scoreCard.textColor,
-                                    selectedIndex = quizResult.correction.count { it },
-                                    selectedColor = greened,
-                                )
-                            }
-                            else -> {
-                                Score(
-                                    scoreCardTextColor = scoreCard.textColor,
-                                    correctQuestions = quizResult.correction.count { it },
-                                    totalQuestions = quizResult.correction.size,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+        ScoreCardBackground(backgroundImageColor = scoreCard.background)
+        content()
+    }
+}
+
+private fun Modifier.aspectLimiter(maxRatio: Float): Modifier = this.then(
+    Modifier.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val w = placeable.width
+        val h = placeable.height
+        val ratio = w.toFloat() / h
+        if (ratio > maxRatio) {
+            val newWidth = (h * maxRatio).toInt()
+            layout(newWidth, h) { placeable.placeRelative(0, 0) }
+        } else {
+            layout(w, h) { placeable.placeRelative(0, 0) }
         }
-        AnimatedVisibility(visible = showHorizontalIndicator){
-            HorizontalPageIndicator(
-                pageCount = pageNum,
-                currentPage = pagerState.currentPage,
-                targetPage = pagerState.targetPage,
-                currentPageOffsetFraction = pagerState.currentPageOffsetFraction,
-                modifier = Modifier
-                    .padding(bottom = 8.dp),
-                indicatorColor = scoreCard.textColor,
+    }
+)
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ScoreCardHeader(
+    scoreCard: ScoreCard,
+    nickname: String
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement   = Arrangement.spacedBy(4.dp),
+        horizontalAlignment   = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text      = scoreCard.title,
+            color     = scoreCard.textColor,
+            style     = MaterialTheme.typography.headlineSmallEmphasized,
+            fontWeight= FontWeight.Black
+        )
+        Text(
+            text      = nickname,
+            color     = scoreCard.textColor,
+            style     = MaterialTheme.typography.bodyMediumEmphasized,
+            fontWeight= FontWeight.ExtraBold,
+            modifier  = Modifier.align(Alignment.End)
+        )
+    }
+}
+
+@Composable
+private fun ScoreCardPager(
+    pagerState: PagerState,
+    textColor: Color,
+    errorColor: Color,
+    correctColor: Color,
+    quizResult: QuizResult,
+    quizQuestions: PersistentList<String>
+) {
+    HorizontalPager(
+        state    = pagerState,
+        key      = { it },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp)
+    ) { page ->
+        ScoreCardPage(
+            page           = page,
+            textColor      = textColor,
+            errorColor     = errorColor,
+            correctColor   = correctColor,
+            quizResult     = quizResult,
+            quizQuestions  = quizQuestions
+        )
+    }
+}
+
+@Composable
+private fun ScoreCardPage(
+    page: Int,
+    textColor: Color,
+    errorColor: Color,
+    correctColor: Color,
+    quizResult: QuizResult,
+    quizQuestions: PersistentList<String>
+) {
+    // reuse your existing `cardItemWithSemiTransparentBackground` wrapper
+    CardItemWithSemiTransparentBackground(
+        textColor = textColor
+    ) {
+        when (page) {
+            0 -> Score(
+                scoreCardTextColor = textColor,
+                correctQuestions   = quizResult.correction.count { it },
+                totalQuestions     = quizResult.correction.size
+            )
+            1 -> AnswerCorrection(
+                correction   = quizResult.correction,
+                textColor    = textColor,
+                errorColor   = errorColor,
+                correctColor = correctColor,
+                questions    = quizQuestions
+            )
+            2 -> PointDistribution(
+                distribution      = quizResult.distribution,
+                percent           = quizResult.percent,
+                textColor         = textColor,
+                selectedIndex     = quizResult.correction.count { it },
+                selectedColor     = correctColor
             )
         }
     }
+}
+
+@Composable
+private fun ScoreCardFooterIndicator(
+    pagerState: PagerState,
+    indicatorColor: Color
+) {
+    HorizontalPageIndicator(
+        pageCount                       = PAGE_NUMBER,
+        currentPage                     = pagerState.currentPage,
+        currentPageOffsetFraction       = pagerState.currentPageOffsetFraction,
+        modifier                        = Modifier.padding(bottom = 8.dp),
+        indicatorColor                  = indicatorColor,
+        targetPage = pagerState.targetPage,
+    )
 }
 
 @Composable

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,104 +21,128 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun QuizLayoutSetQuizTheme(
-    quizTheme: QuizTheme = QuizTheme(),
-    isTitleImageSet: Boolean = false,
-    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit = {},
-    step: LayoutSteps = LayoutSteps.THEME,
-){
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    quizTheme: QuizTheme,
+    isTitleImageSet: Boolean,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
+    step: LayoutSteps
+) {
+    // 1️⃣ State & helpers
+    val listState      = rememberLazyListState()
+    val scrollToIndex  = rememberScrollToIndex(listState)
 
-    fun scrollTo(index: Int){
-        coroutineScope.launch {
-            delay(300)
-            listState.animateScrollToItem(index, scrollOffset = 0) // For QuizThemeExample
-        }
-    }
-
+    // 2️⃣ The content list
     LazyColumn(
-        state = listState,
+        state    = listState,
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        item("ColorSchemeGen") {
-            GenerateNewColorScheme(
-                isTitleImageSet = isTitleImageSet,
-                generateColorScheme = { quizCoordinatorAction ->
-                    updateQuizCoordinator(quizCoordinatorAction)
-                },
-                scrollTo = { scrollTo(0) },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item("Example") {
-            QuizThemeExample(
-                quizTheme = quizTheme,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        if (step == LayoutSteps.THEME) {
-            item("Background") {
-                QuizLayoutSetBackground(
-                    modifier = Modifier,
-                    backgroundImageColor = quizTheme.backgroundImage,
-                    updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizTheme(
-                                quizThemeAction
-                            )
-                        )
-                    },
-                    scrollTo = { scrollTo(2) },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        item { ColorSchemeGenSection(isTitleImageSet, updateQuizCoordinator, scrollToIndex(0)) }
+        item { Spacer(Modifier.height(8.dp)) }
 
-            item("ColorSchemeSet") {
-                SetColorScheme(
-                    modifier = Modifier,
-                    currentColors = quizTheme.colorScheme,
-                    updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizTheme(
-                                quizThemeAction
-                            )
-                        )
-                    },
-                    scrollTo = { scrollTo(3) },
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        item { ThemeExampleSection(quizTheme) }
+        item { Spacer(Modifier.height(8.dp)) }
+
+        if (step == LayoutSteps.THEME) {
+            item { BackgroundSection(quizTheme, updateQuizCoordinator, scrollToIndex(2)) }
+            item { Spacer(Modifier.height(16.dp)) }
+
+            item { ColorSchemeSetSection(quizTheme, updateQuizCoordinator, scrollToIndex(3)) }
+            item { Spacer(Modifier.height(8.dp)) }
         }
 
         if (step == LayoutSteps.TEXTSTYLE) {
-            item("SetTextStyle") {
-                QuizLayoutSetTextStyle(
-                    modifier = Modifier,
-                    questionStyle = quizTheme.questionTextStyle,
-                    bodyStyle = quizTheme.bodyTextStyle,
-                    answerStyle = quizTheme.answerTextStyle,
-                    updateQuizTheme = { quizThemeAction ->
-                        updateQuizCoordinator(
-                            QuizCoordinatorActions.UpdateQuizTheme(
-                                quizThemeAction))
-                    },
-                    scrollTo = { scrollTo(3) },
-                )
+            item { TextStyleSection(quizTheme, updateQuizCoordinator, scrollToIndex(3)) }
+        }
+    }
+}
+
+@Composable
+private fun rememberScrollToIndex(
+    listState: LazyListState
+): (Int) -> () -> Unit {
+    val scope = rememberCoroutineScope()
+    return { index ->
+        {
+            scope.launch {
+                delay(300) // allow collapse/animation
+                listState.animateScrollToItem(index)
             }
         }
     }
 }
 
+@Composable
+private fun ColorSchemeGenSection(
+    isTitleImageSet: Boolean,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
+    onExpand: () -> Unit
+) {
+    GenerateNewColorScheme(
+        isTitleImageSet = isTitleImageSet,
+        generateColorScheme = { quizCoordinatorAction ->
+            updateQuizCoordinator(quizCoordinatorAction)
+        },
+        scrollTo = onExpand,
+    )
+}
 
+@Composable
+private fun ThemeExampleSection(quizTheme: QuizTheme) {
+    QuizThemeExample(quizTheme = quizTheme)
+}
 
+@Composable
+private fun BackgroundSection(
+    quizTheme: QuizTheme,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
+    onExpand: () -> Unit
+) {
+    QuizLayoutSetBackground(
+        backgroundImageColor = quizTheme.backgroundImage,
+        updateQuizTheme      = { action -> updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(action)) },
+        scrollTo             = onExpand
+    )
+}
+
+@Composable
+private fun ColorSchemeSetSection(
+    quizTheme: QuizTheme,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
+    onExpand: () -> Unit
+) {
+    SetColorScheme(
+        currentColors     = quizTheme.colorScheme,
+        updateQuizTheme   = { action -> updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(action)) },
+        scrollTo          = onExpand
+    )
+}
+
+@Composable
+private fun TextStyleSection(
+    quizTheme: QuizTheme,
+    updateQuizCoordinator: (QuizCoordinatorActions) -> Unit,
+    onExpand: () -> Unit
+) {
+    QuizLayoutSetTextStyle(
+        questionStyle       = quizTheme.questionTextStyle,
+        bodyStyle           = quizTheme.bodyTextStyle,
+        answerStyle         = quizTheme.answerTextStyle,
+        updateQuizTheme     = { action -> updateQuizCoordinator(QuizCoordinatorActions.UpdateQuizTheme(action)) },
+        scrollTo            = onExpand
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewQuizLayoutSetQuizTheme(){
     QuizzerAndroidTheme {
-        QuizLayoutSetQuizTheme()
+        QuizLayoutSetQuizTheme(
+            quizTheme = QuizTheme(),
+            isTitleImageSet = false,
+            updateQuizCoordinator = {},
+            step = LayoutSteps.THEME
+        )
     }
 }
 

@@ -1,11 +1,11 @@
 package com.asu1.quiz.content.quizBodyBuilder
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,109 +44,128 @@ import com.asu1.customComposable.imageGetter.ImageGetter
 import com.asu1.models.serializers.BodyType
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
-import com.asu1.utils.Logger
 
 @Composable
 fun QuizBodyBuilder(
     bodyState: BodyType,
-    updateBody: (BodyType) -> Unit,
-){
-    var showBodyDialog by remember { mutableStateOf(false) }
+    updateBody: (BodyType) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
 
-    if (showBodyDialog) {
+    // 1) show body-type picker dialog
+    if (showDialog) {
         BodyTypeDialog(
-            onDismissRequest = { showBodyDialog = false },
-            onBodyTypeSelected = {bodyState ->
-                updateBody(bodyState)
-                showBodyDialog = false
-            },
+            onDismissRequest = { showDialog = false },
+            onBodyTypeSelected = { type ->
+                updateBody(type)
+                showDialog = false
+            }
         )
     }
 
+    // 2) main content container
     Box(
-        contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth(),
-    ){
-        @Suppress("REDUNDANT_ELSE_IN_WHEN")
-        when(bodyState){
-            is BodyType.TEXT -> {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("QuizCreatorBodyTextField"),
-                    value = bodyState.bodyText,
-                    onValueChange = {it ->
-                        updateBody(
-                            BodyType.TEXT(it)
-                        )
-                    },
-                    label = { Text(stringResource(R.string.body_text)) }
-                )
-            }
-            is BodyType.IMAGE -> {
-                ImageGetter(
-                    image = bodyState.bodyImage,
-                    onImageUpdate = { bitmap ->
-                        updateBody(
-                            BodyType.IMAGE(bitmap)
-                        )
-                    },
-                )
-            }
-            is BodyType.YOUTUBE -> {
-                YoutubeLinkInput(
-                    youtubeId = bodyState.youtubeId,
-                    startTime = bodyState.youtubeStartTime,
-                    onYoutubeUpdate = { youtubeId, startTime ->
-                        updateBody(
-                            BodyType.YOUTUBE(youtubeId, startTime)
-                        )
-                    }
-                )
-            }
-            is BodyType.CODE -> {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("QuizCreatorBodyTextField"),
-                    value = bodyState.code,
-                    onValueChange = {it ->
-                        updateBody(
-                            BodyType.CODE(it)
-                        )
-                    },
-                    label = { Text(stringResource(R.string.code)) }
-                )
-            }
-            is BodyType.NONE -> {
-                TextButton(
-                    modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
-                    onClick = {showBodyDialog = true},
-                ) {
-                    Text(stringResource(R.string.add_body))
-                }
-            }
-            else ->{
-                Logger.debug("QUIZBODYBUILDER", "NOT IMPLEMENTED BODY TYPE UI")
-            }
+        contentAlignment = Alignment.Center
+    ) {
+        // 2a) the content for each body type
+        Box(modifier = Modifier.matchParentSize()) {
+            BodyTypeContent(
+                bodyState = bodyState,
+                updateBody = updateBody,
+                onRequestDialog = { showDialog = true }
+            )
         }
-        if(bodyState != BodyType.NONE) {
-            Row(
-                modifier = Modifier.fillMaxWidth().align(Alignment.TopEnd),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = {
-                        updateBody(BodyType.NONE)
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.RemoveCircleOutline,
-                        contentDescription = stringResource(R.string.delete_body)
-                    )
-                }
-            }
+        // 2b) delete button overlay
+        if (bodyState != BodyType.NONE) {
+            DeleteBodyButton(
+                modifier = Modifier.align(Alignment.TopEnd),
+                onDelete = { updateBody(BodyType.NONE) })
         }
+    }
+}
+
+@Composable
+private fun BodyTypeContent(
+    bodyState: BodyType,
+    updateBody: (BodyType) -> Unit,
+    onRequestDialog: () -> Unit
+) {
+    when (bodyState) {
+        is BodyType.TEXT -> TextBodyField(bodyState.bodyText) { updateBody(BodyType.TEXT(it)) }
+        is BodyType.CODE -> TextBodyField(bodyState.code)     { updateBody(BodyType.CODE(it)) }
+        is BodyType.IMAGE -> ImageBodyField(bodyState.bodyImage) { updateBody(BodyType.IMAGE(it)) }
+        is BodyType.YOUTUBE -> YouTubeBodyField(
+            id = bodyState.youtubeId,
+            start = bodyState.youtubeStartTime
+        ) { id, start -> updateBody(BodyType.YOUTUBE(id, start)) }
+        BodyType.NONE       -> AddBodyButton(onClick = onRequestDialog)
+    }
+}
+
+@Composable
+private fun TextBodyField(
+    text: String,
+    onTextChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = text,
+        onValueChange = onTextChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("QuizCreatorBodyTextField"),
+        label = { Text(stringResource(R.string.body_text)) }
+    )
+}
+
+@Composable
+private fun ImageBodyField(
+    image: Bitmap,
+    onImageUpdate: (Bitmap) -> Unit
+) {
+    ImageGetter(
+        image = image,
+        onImageUpdate = onImageUpdate
+    )
+}
+
+@Composable
+private fun YouTubeBodyField(
+    id: String,
+    start: Int,
+    onUpdate: (String, Int) -> Unit
+) {
+    YoutubeLinkInput(
+        youtubeId = id,
+        startTime = start,
+        onYoutubeUpdate = { newId, newStart -> onUpdate(newId, newStart) }
+    )
+}
+
+@Composable
+private fun AddBodyButton(onClick: () -> Unit) {
+    TextButton(
+        modifier = Modifier.testTag("QuizCreatorAddBodyButton"),
+        onClick = onClick
+    ) {
+        Text(stringResource(R.string.add_body))
+    }
+}
+
+@Composable
+private fun DeleteBodyButton(
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit
+) {
+    IconButton(
+        modifier = modifier
+            .testTag("QuizCreatorDeleteBodyButton"),
+        onClick = onDelete
+    ) {
+        Icon(
+            imageVector = Icons.Default.RemoveCircleOutline,
+            contentDescription = stringResource(R.string.delete_body)
+        )
     }
 }
 

@@ -34,9 +34,7 @@ fun ShortAnswerQuizCreator(
         quiz = quizState,
         testTag = "ShortAnswerQuizCreatorLazyColumn",
         onSave = { onSave(quizState) },
-        focusManager = focusManager,
-        updateQuestion = { it -> quiz.updateQuestion(it) },
-        updateBodyState = { it -> quiz.updateBodyState(it) },
+        updateQuiz = { action -> quiz.onAction(action) },
     ) {
         item{
             OutlinedTextField(

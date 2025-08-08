@@ -91,6 +91,7 @@ ui-tooling = "1.8.3"
 ui-text-google-fonts = "1.8.3"
 runtime-android = "1.8.3"
 work-runtime-ktx = "2.10.2"
+runtime-saveable = "1.8.3"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist-flowlayout" }
@@ -207,6 +208,7 @@ androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-andr
 androidx-compose-ui-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
 ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtime-android" }
+androidx-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtime-saveable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

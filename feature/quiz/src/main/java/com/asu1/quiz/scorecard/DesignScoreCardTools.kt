@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,160 +56,230 @@ sealed class ScoreCardDialog {
 @Composable
 fun DesignScoreCardTools(
     updateQuizCoordinate: (QuizCoordinatorActions) -> Unit = {},
-    removeBackground: Boolean = false,
+    removeBackground: Boolean,
     scoreCard: ScoreCard,
     screenWidth: Dp,
-    screenHeight: Dp,
+    screenHeight: Dp
 ) {
-    var showGradientDropdown by remember { mutableStateOf(false) }
-    var colorIndex by remember{ mutableIntStateOf(0) }
-    var scoreCardDialog by remember {mutableStateOf<ScoreCardDialog>(ScoreCardDialog.None)}
+    // 1️⃣ Keep track of which dialog is open (or none)
+    var dialogType by remember { mutableStateOf<ScoreCardDialog>(ScoreCardDialog.None) }
+    var colorIndex by remember { mutableIntStateOf(0) }
 
-    fun onDismiss() {
-        scoreCardDialog = ScoreCardDialog.None
-    }
-    if(scoreCardDialog != ScoreCardDialog.None) {
-        Dialog(
-            onDismissRequest = { onDismiss() },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-            )
-        ) {
-            when(scoreCardDialog){
-                ScoreCardDialog.ColorPicker -> {
-                    ScoreCardColorPickerDialog(
-                        colorIndex = colorIndex,
-                        scoreCard = scoreCard,
-                        updateQuizCoordinate = updateQuizCoordinate
+    // 2️⃣ Host all dialogs in one place
+    ToolsDialogHost(
+        dialogType       = dialogType,
+        colorIndex       = colorIndex,
+        scoreCard        = scoreCard,
+        removeBackground = removeBackground,
+        screenWidth      = screenWidth,
+        screenHeight     = screenHeight,
+        updateQuiz       = updateQuizCoordinate,
+        onDismiss        = { dialogType = ScoreCardDialog.None }
+    )
+
+    // 3️⃣ The column of tool buttons
+    ToolsButtonColumn(
+        scoreCard        = scoreCard,
+        onAction = { action ->
+            when (action) {
+                ToolAction.PickTextColor -> {
+                    dialogType = ScoreCardDialog.TextColorPicker
+                }
+                ToolAction.PickOverlayImage -> {
+                    dialogType = ScoreCardDialog.OverlayImagePicker
+                }
+                ToolAction.PickBackgroundImage -> {
+                    dialogType = ScoreCardDialog.BackgroundImagePicker
+                }
+                ToolAction.OpenEffectPicker -> {
+                    dialogType = ScoreCardDialog.EffectPicker
+                }
+                is ToolAction.PickColor -> {
+                    colorIndex = action.index
+                    dialogType = ScoreCardDialog.ColorPicker
+                }
+                is ToolAction.ChangeShader -> {
+                    updateQuizCoordinate(
+                        QuizCoordinatorActions.UpdateScoreCard(
+                            ScoreCardViewModelActions.UpdateShaderType(action.type)
+                        )
                     )
                 }
-                ScoreCardDialog.OverlayImagePicker -> {
-                    OverlayImagePickerDialog(
-                        scoreCard = scoreCard,
-                        removeBackground = removeBackground,
-                        updateQuizCoordinate = updateQuizCoordinate
-                    )
-                }
-                ScoreCardDialog.TextColorPicker -> {
-                    TextColorPickerDialog(
-                        scoreCard = scoreCard,
-                        updateQuizCoordinate = updateQuizCoordinate
-                    )
-                }
-                ScoreCardDialog.BackgroundImagePicker -> {
-                    BackgroundImagePickerDialog(
-                        scoreCard = scoreCard,
-                        updateQuizCoordinate = updateQuizCoordinate,
-                        onDismiss = {onDismiss()},
-                        screenWidth = screenWidth,
-                        screenHeight = screenHeight
-                    )
-                }
-                ScoreCardDialog.EffectPicker -> {
-                    EffectPickerDialog(
-                        onClick = { selectedEffect ->
-                            updateQuizCoordinate(
-                                QuizCoordinatorActions.UpdateScoreCard(
-                                    ScoreCardViewModelActions.UpdateEffect(selectedEffect)
-                                )
-                            )
-                        },
-                        currentSelection = scoreCard.background.effect,
-                        onDismiss = {onDismiss()},
-                    )
-                }
-                ScoreCardDialog.None -> { /* Do nothing */ }
             }
+        },
+    )
+}
+
+@Composable
+private fun ToolsDialogHost(
+    dialogType: ScoreCardDialog,
+    colorIndex: Int,
+    scoreCard: ScoreCard,
+    removeBackground: Boolean,
+    screenWidth: Dp,
+    screenHeight: Dp,
+    updateQuiz: (QuizCoordinatorActions) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (dialogType == ScoreCardDialog.None) return
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnBackPress = true)
+    ) {
+        when (dialogType) {
+            ScoreCardDialog.ColorPicker ->
+                ScoreCardColorPickerDialog(colorIndex, scoreCard, updateQuiz)
+
+            ScoreCardDialog.OverlayImagePicker ->
+                OverlayImagePickerDialog(scoreCard, removeBackground, updateQuiz)
+
+            ScoreCardDialog.TextColorPicker ->
+                TextColorPickerDialog(scoreCard, updateQuiz)
+
+            ScoreCardDialog.BackgroundImagePicker ->
+                BackgroundImagePickerDialog(
+                    scoreCard, updateQuiz, onDismiss,
+                    screenWidth, screenHeight
+                )
+
+            ScoreCardDialog.EffectPicker ->
+                EffectPickerDialog(
+                    onClick = { eff ->
+                        updateQuiz(
+                            QuizCoordinatorActions.UpdateScoreCard(
+                                ScoreCardViewModelActions.UpdateEffect(eff)
+                            )
+                        )
+                        onDismiss()
+                    },
+                    currentSelection = scoreCard.background.effect,
+                    onDismiss = onDismiss
+                )
+
+            ScoreCardDialog.None -> Unit
         }
     }
+}
+
+@Composable
+private fun ToolsButtonColumn(
+    scoreCard: ScoreCard,
+    onAction: (ToolAction) -> Unit,
+) {
+    val iconSize = 32.dp
 
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         modifier = Modifier
             .wrapContentSize()
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = RoundedCornerShape(4.dp)
-            )
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(4.dp))
             .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
     ) {
-        val iconSize = 32.dp
-        IconButtonWithText(
-            imageVector = Icons.Default.FormatColorText,
-            text = stringResource(R.string.text_color),
-            onClick = {
-                scoreCardDialog = ScoreCardDialog.TextColorPicker
-            },
-            description = "Set Text Color For ScoreCard",
-            modifier = Modifier.testTag("DesignScoreCardSetTextColorButton"),
+        ToolIconButton(
+            icon = Icons.Default.FormatColorText,
+            label = stringResource(R.string.text_color),
+            tag = "DesignScoreCardSetTextColorButton",
             iconSize = iconSize,
+            onClick = { onAction(ToolAction.PickTextColor) }
         )
-        IconButtonWithText(
-            imageVector = Icons.Default.ImageSearch,
-            text = stringResource(R.string.image_on_top),
-            onClick = {
-                scoreCardDialog = ScoreCardDialog.OverlayImagePicker
-            },
-            description = "Set Image to go on top",
-            modifier = Modifier.testTag("DesignScoreCardSetOverlayImage"),
+
+        ToolIconButton(
+            icon = Icons.Default.ImageSearch,
+            label = stringResource(R.string.image_on_top),
+            tag = "DesignScoreCardSetOverlayImage",
             iconSize = iconSize,
+            onClick = { onAction(ToolAction.PickOverlayImage) }
         )
-        IconButtonWithText(
-            imageVector = Icons.Default.ImageSearch,
-            text = stringResource(R.string.background_newline),
-            onClick = {
-                scoreCardDialog = ScoreCardDialog.BackgroundImagePicker
-            },
-            description = "Set Background Image For ScoreCard",
-            modifier = Modifier.testTag("DesignScoreCardSetBackgroundImageButton"),
+
+        ToolIconButton(
+            icon = Icons.Default.ImageSearch,
+            label = stringResource(R.string.background_newline),
+            tag = "DesignScoreCardSetBackgroundImageButton",
             iconSize = iconSize,
+            onClick = { onAction(ToolAction.PickBackgroundImage) }
         )
-        colorNames.forEachIndexed { index, colorName ->
-            if (colorName == R.string.effect) {
-                IconButtonWithText(
-                    imageVector = Icons.Filled.Animation,
-                    text = stringResource(R.string.effects),
-                    onClick = {
-                        scoreCardDialog = ScoreCardDialog.EffectPicker
-                    },
-                    modifier = Modifier.testTag("DesignScoreCardAnimationButton"),
-                    description = "Open Dialog",
-                    iconSize = iconSize,
-                )
-            } else if (colorName == R.string.gradient) {
-                FastCreateDropDownWithIcon(
-                    showDropdownMenu = showGradientDropdown,
-                    labelText = stringResource(R.string.gradient),
-                    onClick = { dropdownIndex ->
-                        showGradientDropdown = false
-                        updateQuizCoordinate(
-                            QuizCoordinatorActions.UpdateScoreCard(
-                                ScoreCardViewModelActions.UpdateShaderType(ShaderType.entries[dropdownIndex])
-                            )
-                        )
-                    },
-                    onChangeDropDown = { showGradientDropdown = it },
-                    inputItems = remember { ShaderType.entries.map { it.shaderName } },
-                    imageVector = Icons.Filled.Gradient,
-                    modifier = Modifier.width(iconSize * 1.7f),
-                    testTag = "DesignScoreCardShaderButton",
-                    iconSize = iconSize,
-                    currentSelection = scoreCard.background.shaderType.index
-                )
-            }
-            IconButtonWithText(
-                imageVector = Icons.Default.ColorLens,
-                text = stringResource(colorName),
-                onClick = {
-                    colorIndex = index
-                    scoreCardDialog = ScoreCardDialog.ColorPicker
-                },
-                description = "Set Color For ScoreCard",
-                modifier = Modifier.testTag("DesignScoreCardSetColorButton$index"),
-                iconSize = iconSize,
-            )
+
+        ToolIconButton(
+            icon = Icons.Filled.Animation,
+            label = stringResource(R.string.effects),
+            tag = "DesignScoreCardAnimationButton",
+            iconSize = iconSize,
+            onClick = { onAction(ToolAction.OpenEffectPicker) }
+        )
+
+        GradientSelector(
+            current = scoreCard.background.shaderType,
+            iconSize = iconSize,
+            onChange = { onAction(ToolAction.ChangeShader(it)) }
+        )
+
+        ColorButtons(iconSize = iconSize) { idx ->
+            onAction(ToolAction.PickColor(idx))
         }
+    }
+}
+
+sealed interface ToolAction {
+    data object PickTextColor : ToolAction
+    data object PickOverlayImage : ToolAction
+    data object PickBackgroundImage : ToolAction
+    data object OpenEffectPicker : ToolAction
+    data class PickColor(val index: Int) : ToolAction
+    data class ChangeShader(val type: ShaderType) : ToolAction
+}
+
+@Composable
+private fun ToolIconButton(
+    icon: ImageVector,
+    label: String,
+    tag: String,
+    iconSize: Dp,
+    onClick: () -> Unit
+) {
+    IconButtonWithText(
+        imageVector = icon,
+        text = label,
+        onClick = onClick,
+        modifier = Modifier.testTag(tag),
+        iconSize = iconSize
+    )
+}
+
+@Composable
+private fun GradientSelector(
+    current: ShaderType,
+    iconSize: Dp,
+    onChange: (ShaderType) -> Unit
+) {
+    FastCreateDropDownWithIcon(
+        showDropdownMenu = false,
+        labelText        = stringResource(R.string.gradient),
+        inputItems       = ShaderType.entries.map { it.shaderName },
+        currentSelection = current.index,
+        onItemSelected   = { idx -> onChange(ShaderType.entries[idx]) },
+        onChangeDropDown = { /* handled internally */ },
+        imageVector      = Icons.Filled.Gradient,
+        modifier         = Modifier.width(iconSize * 1.7f),
+        testTag          = "DesignScoreCardShaderButton",
+        iconSize         = iconSize
+    )
+}
+
+@Composable
+private fun ColorButtons(
+    iconSize: Dp,
+    onPick: (index: Int) -> Unit
+) {
+    colorNames.forEachIndexed { index, _ ->
+        ToolIconButton(
+            icon  = Icons.Default.ColorLens,
+            label = stringResource(colorNames[index]),
+            tag   = "DesignScoreCardSetColorButton$index",
+            iconSize = iconSize,
+            onClick = { onPick(index) }
+        )
     }
 }
 
@@ -217,6 +288,8 @@ fun DesignScoreCardTools(
 fun DesignScoreCardToolsPreview() {
     val scoreCard = sampleScoreCard
     DesignScoreCardTools(
+        updateQuizCoordinate = {},
+        removeBackground = false,
         scoreCard = scoreCard,
         screenHeight = 600.dp,
         screenWidth = 80.dp

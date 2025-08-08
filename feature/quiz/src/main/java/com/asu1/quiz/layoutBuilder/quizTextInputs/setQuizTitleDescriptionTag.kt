@@ -23,11 +23,10 @@ fun QuizLayoutTitleDescriptionTag(
     quizData: QuizData = QuizData(),
     step: LayoutSteps = LayoutSteps.TITLE,
     proceed: () -> Unit = { -> },
-    onTagUpdate: (String) -> Unit = {},
-    onDescriptionUpdate: (String) -> Unit = {},
-    onTitleUpdate: (String) -> Unit = {},
+    onTagToggle: (String) -> Unit = {},
+    onDescriptionChange: (String) -> Unit = {},
+    onTitleChange: (String) -> Unit = {},
 ) {
-
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier
@@ -47,7 +46,7 @@ fun QuizLayoutTitleDescriptionTag(
                 ) {
                     QuizLayoutSetTags(
                         quizTags = quizData.tags,
-                        onTagUpdate = { tag -> onTagUpdate(tag) },
+                        onTagUpdate = { tag -> onTagToggle(tag) },
                         enabled = step == LayoutSteps.TAGS,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -60,7 +59,7 @@ fun QuizLayoutTitleDescriptionTag(
                 ) {
                     QuizLayoutSetDescription(
                         quizDescription = quizData.description,
-                        onDescriptionUpdate = { onDescriptionUpdate(it) },
+                        onDescriptionUpdate = { onDescriptionChange(it) },
                         proceed = { proceed() },
                         enabled = step == LayoutSteps.DESCRIPTION,
                         modifier = Modifier.fillMaxWidth()
@@ -71,7 +70,7 @@ fun QuizLayoutTitleDescriptionTag(
             item("QuizTitle") {
                 QuizLayoutTitle(
                     title = quizData.title,
-                    onTitleUpdate = { onTitleUpdate(it) },
+                    onTitleUpdate = { onTitleChange(it) },
                     proceed = { proceed() },
                     enabled = step == LayoutSteps.TITLE,
                     modifier = Modifier.fillMaxWidth()

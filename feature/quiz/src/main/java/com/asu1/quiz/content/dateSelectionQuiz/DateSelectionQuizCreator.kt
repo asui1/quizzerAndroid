@@ -1,12 +1,14 @@
 package com.asu1.quiz.content.dateSelectionQuiz
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +43,7 @@ import com.asu1.resources.Months
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.kizitonwose.calendar.core.yearMonth
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -49,72 +52,96 @@ val monthYearFormatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("yyyy /
 
 @Composable
 fun DateSelectionQuizCreator(
-    quiz: DateSelectionQuizViewModel = viewModel(),
-    onSave: (DateSelectionQuiz) -> Unit
-){
-    val quizState by quiz.quizState.collectAsStateWithLifecycle()
-    var currentMonth by remember { mutableStateOf(quizState.centerDate) }
-    val focusManager = LocalFocusManager.current
+    quizVm: DateSelectionQuizViewModel = viewModel(),
+    onSave:  (DateSelectionQuiz) -> Unit
+) {
+    val quizState     by quizVm.quizState.collectAsStateWithLifecycle()
+    var displayedDate by remember { mutableStateOf(quizState.centerDate) }
 
-    LaunchedEffect(quizState.centerDate){
-        currentMonth = quizState.centerDate
+    LaunchedEffect(quizState.centerDate) {
+        displayedDate = quizState.centerDate
     }
 
     QuizCreatorBase(
-        quiz = quizState,
-        testTag = "DateSelectionQuizCreatorLazyColumn",
-        onSave = { onSave(quizState) },
-        focusManager = focusManager,
-        updateQuestion = { it -> quiz.updateQuestion(it) },
-        updateBodyState = { it -> quiz.updateBodyState(it) },
+        quiz         = quizState,
+        testTag      = "DateSelectionQuizCreatorLazyColumn",
+        onSave       = { onSave(quizState) },
+        updateQuiz = { action -> quizVm.onAction(action) },
     ) {
-        item{
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                buildString {
-                    append(stringResource(R.string.current_start))
-                    append("${quizState.centerDate.format(monthYearFormatter)}")
-                },
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            Text(
-                buildString {
-                    append(stringResource(R.string.year_range))
-                    append(": ±20Y")
-                },
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            YearMonthDropDown(
-                yearMonth = quizState.centerDate.yearMonth,
-                onYearMonthChange = {
-                    quiz.updateCenterDate(it)
-                },
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            CalendarWithFocusDates(
-                focusDates = quizState.answerDate,
-                onDateClick = { date ->
-                    quiz.updateDate(date)
-                    currentMonth = date
-                },
-                currentMonth = currentMonth.yearMonth
-            )
-        }
-        item{
-            SelectedDatesColumn(
-                answerDate = quizState.answerDate,
-                updateDate = { date ->
-                    quiz.updateDate(date)
-                }
-            )
-        }
+        // delegate all items to a dedicated editor
+        dateSelectionEditor(
+            quizState      = quizState,
+            displayedDate  = displayedDate,
+            onMonthChange  = { newMonth -> quizVm.updateCenterDate(newMonth) },
+            onDateClick    = { date ->
+                quizVm.updateDate(date)
+                displayedDate = date
+            }
+        )
+    }
+}
+
+/**
+ * Lazily emits the three list items:
+ * 1) header with month/year and dropdown
+ * 2) calendar grid with clickable dates
+ * 3) selected dates list
+ */
+private fun LazyListScope.dateSelectionEditor(
+    quizState:      DateSelectionQuiz,
+    displayedDate: LocalDate,
+    onMonthChange:  (YearMonth) -> Unit,
+    onDateClick:    (LocalDate) -> Unit
+) {
+    item {
+        DateSelectionHeader(
+            centerDate    = quizState.centerDate,
+            onMonthChange = onMonthChange
+        )
+    }
+
+    item {
+        CalendarWithFocusDates(
+            focusDates   = quizState.answerDate,
+            onDateClick  = onDateClick,
+            currentMonth = displayedDate.yearMonth
+        )
+    }
+
+    item {
+        SelectedDatesColumn(
+            answerDate = quizState.answerDate,
+            updateDate = onDateClick
+        )
+    }
+}
+
+@Composable
+private fun DateSelectionHeader(
+    centerDate:    LocalDate,
+    onMonthChange: (YearMonth) -> Unit
+) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text(
+            text       = stringResource(R.string.current_start)
+                    + centerDate.format(monthYearFormatter),
+            fontWeight = FontWeight.Bold,
+            modifier   = Modifier.padding(start = 16.dp)
+        )
+
+        Text(
+            text       = stringResource(R.string.year_range) + ": ±20Y",
+            style      = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Light,
+            modifier   = Modifier.padding(start = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        YearMonthDropDown(
+            yearMonth        = centerDate.yearMonth,
+            onYearMonthChange = onMonthChange
+        )
     }
 }
 
@@ -192,7 +219,7 @@ fun PreviewDateSelectionQuizCreator() {
     QuizzerAndroidTheme {
         val quizViewModel: DateSelectionQuizViewModel = viewModel()
         DateSelectionQuizCreator(
-            quiz = quizViewModel,
+            quizVm = quizViewModel,
             onSave = {}
         )
     }

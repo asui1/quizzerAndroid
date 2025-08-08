@@ -1,5 +1,6 @@
 package com.asu1.quiz.scorecard
 
+import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -61,101 +62,154 @@ val colorNames: List<Int> = listOf(R.string.background_newline,
 fun DesignScoreCardScreen(
     navController: NavController
 ) {
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
-    val loadMyQuizViewModel: LoadMyQuizViewModel = viewModel()
-    val scoreCardViewModel: ScoreCardViewModel = viewModel()
-    val quizUIState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
-    val scoreCardState = quizUIState.scoreCardState
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeight = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.height.toDp() }
-    }
-    val screenWidth = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.width.toDp() }.coerceAtMost(screenHeight * 0.6f)
-    }
-    val quizLayoutViewModelState by quizCoordinatorViewModel.quizViewModelState.collectAsStateWithLifecycle()
-    var expanded by remember {mutableStateOf(true)}
-    var immerseMode by remember { mutableStateOf(false) }
-    val localActivity = LocalActivity.current
-    val scope = rememberCoroutineScope()
-    val quizQuestions = remember(Unit){quizCoordinatorViewModel.getQuestions()}
-    fun onUpload(){
-        navController.popBackStack(Route.Home, inclusive = false)
-        loadMyQuizViewModel.reset()
-        scoreCardViewModel.resetScoreCard()
-    }
+    // 1️⃣ Gather all your state & callbacks
+    val coordinatorVm: QuizCoordinatorViewModel   = viewModel()
+    val loadVm:          LoadMyQuizViewModel      = viewModel()
+    val scoreVm:         ScoreCardViewModel       = viewModel()
+    val uiState by       coordinatorVm.quizUIState.collectAsStateWithLifecycle()
+    val scoreCardState   = uiState.scoreCardState
+    val viewModelState by coordinatorVm.quizViewModelState.collectAsStateWithLifecycle()
+    val quizQuestions    = remember { coordinatorVm.getQuestions() }
+    val contextActivity  = LocalActivity.current
+    val scope            = rememberCoroutineScope()
 
-    DisposableEffect(Unit) {
-        onDispose {
-            localActivity?.disableImmersiveMode()
+    // 2️⃣ Side-effects (immersive cleanup, reset on upload finish)
+    DesignScoreCardSideEffects(
+        viewModelState = viewModelState,
+        activity        = contextActivity,
+        onUploadFinish = {
+            navController.popBackStack(Route.Home, false)
+            loadVm.reset()
+            scoreVm.resetScoreCard()
         }
-    }
+    )
 
-    MaterialTheme(
-        colorScheme = scoreCardState.scoreCard.colorScheme
-    ) {
-        if(ViewModelState.UPLOADING == quizLayoutViewModelState){
-            Dialog(
-                onDismissRequest = { },
-                properties = DialogProperties(dismissOnBackPress = false)
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(200.dp)
-                ){
-                    UploadingAnimation()
-                }
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    if (immerseMode) {
-                        localActivity?.disableImmersiveMode()
-                    } else {
-                        localActivity?.enableImmersiveMode()
-                    }
-                    immerseMode = !immerseMode
-                }
-        ) {
-            DesignScoreCardBody(
-                scoreCardState.scoreCard,
-                immerseMode,
-                onUpload = {
-                    scope.launch {
-                        quizCoordinatorViewModel.tryUpload(navController, { onUpload() })
-                    }
-                },
-                questions = quizQuestions,
-            )
-            OpenCloseColumn(
-                isOpen = expanded,
-                onToggleOpen = { expanded = !expanded },
-                height = screenHeight,
-                openWidth = 80.dp,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-            ){
-                DesignScoreCardTools(
-                    updateQuizCoordinate = {action ->
-                        quizCoordinatorViewModel.updateQuizCoordinator(action = action)
+    // 3️⃣ UI
+    MaterialTheme(colorScheme = scoreCardState.scoreCard.colorScheme) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 3a) Show upload‐in‐progress dialog if needed
+            DesignScoreCardUploadDialog(viewModelState)
+
+            // 3b) Content with immersive toggle on tap
+            ImmersiveToggleBox(activity = contextActivity) {
+                DesignScoreCardContent(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    scoreCard    = scoreCardState.scoreCard,
+                    questions    = quizQuestions,
+                    onUpload     = {
+                        scope.launch {
+                            coordinatorVm.tryUpload(navController) { /* handled in side-effect */ }
+                        }
                     },
                     removeBackground = scoreCardState.removeOverLayImageBackground,
-                    scoreCard = scoreCardState.scoreCard,
-                    screenWidth = screenWidth,
-                    screenHeight = screenHeight,
                 )
             }
         }
     }
 }
 
+@Composable
+private fun DesignScoreCardSideEffects(
+    viewModelState: ViewModelState,
+    activity: Activity?,
+    onUploadFinish: () -> Unit
+) {
+    // Pop back / reset when upload completes
+    LaunchedEffect(viewModelState) {
+        if (viewModelState == ViewModelState.SUCCESS) {
+            onUploadFinish()
+        }
+    }
 
+    // Always disable immersive mode when leaving
+    DisposableEffect(Unit) {
+        onDispose {
+            activity?.disableImmersiveMode()
+        }
+    }
+}
+
+@Composable
+private fun DesignScoreCardUploadDialog(
+    viewModelState: ViewModelState
+) {
+    if (viewModelState == ViewModelState.UPLOADING) {
+        Dialog(onDismissRequest = {}) {
+            Box(Modifier.size(200.dp), contentAlignment = Alignment.Center) {
+                UploadingAnimation()
+            }
+        }
+    }
+}
+
+@Composable
+private fun ImmersiveToggleBox(
+    activity: Activity?,
+    content: @Composable () -> Unit
+) {
+    var immerseMode by remember { mutableStateOf(false) }
+    Box(
+        Modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                if (immerseMode) activity?.disableImmersiveMode()
+                else             activity?.enableImmersiveMode()
+                immerseMode = !immerseMode
+            }
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun DesignScoreCardContent(
+    modifier: Modifier,
+    scoreCard: ScoreCard,
+    questions: PersistentList<String>,
+    onUpload:  () -> Unit,
+    removeBackground: Boolean,
+) {
+    // screen dimensions for the tools panel
+    val windowInfo = LocalWindowInfo.current
+    val density    = LocalDensity.current
+    val height     = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.height.toDp() }
+    }
+    val width      = remember(windowInfo, density) {
+        with(density) { windowInfo.containerSize.width.toDp() }
+            .coerceAtMost(height * 0.6f)
+    }
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+
+    // content + slide-out tools
+    OpenCloseColumn(
+        isOpen      = true,
+        onToggleOpen= {},
+        height      = height,
+        openWidth   = 80.dp,
+        modifier    = modifier
+    ) {
+        DesignScoreCardTools(
+            scoreCard      = scoreCard,
+            screenWidth    = width,
+            screenHeight   = height,
+            updateQuizCoordinate = { action ->
+                quizCoordinatorViewModel.updateQuizCoordinator(action)
+            },
+            removeBackground  = removeBackground
+        )
+    }
+
+    DesignScoreCardBody(
+        scoreCard   = scoreCard,
+        immerseMode = false,
+        onUpload    = onUpload,
+        questions   = questions
+    )
+}
 
 @Composable
 private fun DesignScoreCardBody(

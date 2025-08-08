@@ -38,9 +38,7 @@ fun ReorderQuizCreator(
         quiz = quizState,
         testTag = "ReorderQuizCreatorLazyColumn",
         onSave = { onSave(quizState) },
-        focusManager = focusManager,
-        updateQuestion = { it -> quiz.updateQuestion(it) },
-        updateBodyState = { it -> quiz.updateBodyState(it) },
+        updateQuiz = { action -> quiz.onAction(action) },
     ) {
         itemsIndexed(quizState.answers) { index, item ->
             val isLast = index == quizState.answers.size - 1

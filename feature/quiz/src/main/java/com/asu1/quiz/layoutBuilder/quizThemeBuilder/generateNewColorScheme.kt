@@ -1,6 +1,5 @@
 package com.asu1.quiz.layoutBuilder.quizThemeBuilder
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,109 +40,130 @@ import com.asu1.resources.R
 @Composable
 fun GenerateNewColorScheme(
     isTitleImageSet: Boolean = false,
-    generateColorScheme: (QuizCoordinatorActions) -> Unit = { _ -> },
-    scrollTo: () -> Unit = {},
-){
+    generateColorScheme: (QuizCoordinatorActions) -> Unit = {},
+    scrollTo: () -> Unit = {}
+) {
+    // 1️⃣ local UI state
+    var openSettings by remember { mutableStateOf(false) }
+    var paletteLevel by remember { mutableStateOf(PaletteLevel.Fidelity) }
+    var contrastLevel by remember { mutableStateOf(ContrastLevel.Default) }
     val isDark = isSystemInDarkTheme()
-    var openColorSettings by remember {mutableStateOf(false)}
-    var paletteLevel by remember { mutableStateOf(PaletteLevel.Fidelity)}
-    var contrastLevel by remember { mutableStateOf(ContrastLevel.Default)}
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp)),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.refresh_color),
-            fontWeight = FontWeight.Bold,
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-            TextButton(
-                enabled = isTitleImageSet,
-                onClick = {
-                    generateColorScheme(QuizCoordinatorActions.GenerateColorScheme(
+        SchemeHeader()
+        ButtonsRow(
+            isTitleImageSet = isTitleImageSet,
+            onGenerateWithImage = {
+                generateColorScheme(
+                    QuizCoordinatorActions.GenerateColorScheme(
                         generateWith = GenerateWith.TITLE_IMAGE,
-                        palette = paletteLevel,
-                        contrast = contrastLevel,
-                        isDark = isDark,
-                    ))
-                },
-                shape = RoundedCornerShape(10),
-                colors = ButtonDefaults.buttonColors(),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp),
-            ) {
-                Text(
-                    stringResource(R.string.gen_with_title_image)
+                        palette     = paletteLevel,
+                        contrast    = contrastLevel,
+                        isDark      = isDark
+                    )
                 )
-            }
-            TextButton(
-                modifier = Modifier
-                    .testTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor"),
-                onClick = {
-                    generateColorScheme(QuizCoordinatorActions.GenerateColorScheme(
+            },
+            onGenerateWithColor = {
+                generateColorScheme(
+                    QuizCoordinatorActions.GenerateColorScheme(
                         generateWith = GenerateWith.COLOR,
-                        palette = paletteLevel,
-                        contrast = contrastLevel,
-                        isDark = isDark,
-                    ))
-                },
-                shape = RoundedCornerShape(10),
-                colors = ButtonDefaults.buttonColors(),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp),
-            ) {
-                Text(
-                    stringResource(R.string.gen_with_primary_color)
+                        palette     = paletteLevel,
+                        contrast    = contrastLevel,
+                        isDark      = isDark
+                    )
                 )
+            },
+            onToggleSettings = {
+                openSettings = !openSettings
+                if (openSettings) scrollTo()
             }
-            IconButton(
-                onClick = {
-                    openColorSettings = openColorSettings.not()
-                    if(openColorSettings) scrollTo()
-                },
-                colors = IconButtonDefaults.iconButtonColors(),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Open Edit Row for Color Scheme Generation"
-                )
-            }
-        }
-        AnimatedVisibility(
-            visible = openColorSettings
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
-                LevelSelector(
-                    prefix = stringResource(R.string.palette),
-                    items = PaletteLevel.entries.map { stringResource(it.stringResource) },
-                    onUpdateLevel = { level ->
-                        paletteLevel = PaletteLevel.entries[level]
-                    },
-                    selectedLevel = paletteLevel.ordinal,
-                )
-                LevelSelector(
-                    prefix = stringResource(R.string.contrast),
-                    items = ContrastLevel.entries.map { stringResource(it.stringResource) },
-                    onUpdateLevel = { level ->
-                        contrastLevel = ContrastLevel.entries[level]
-                    },
-                    selectedLevel = contrastLevel.ordinal,
-                )
-            }
+        )
+        if (openSettings) {
+            ColorSettingsPanel(
+                paletteLevel    = paletteLevel,
+                onPaletteChange = { paletteLevel = it },
+                contrastLevel   = contrastLevel,
+                onContrastChange= { contrastLevel = it }
+            )
         }
     }
 }
 
+@Composable
+private fun SchemeHeader() {
+    Text(
+        text       = stringResource(R.string.refresh_color),
+        fontWeight = FontWeight.Bold,
+        modifier   = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Composable
+private fun ButtonsRow(
+    isTitleImageSet: Boolean,
+    onGenerateWithImage: () -> Unit,
+    onGenerateWithColor: () -> Unit,
+    onToggleSettings: () -> Unit
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment   = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        TextButton(
+            enabled = isTitleImageSet,
+            onClick = onGenerateWithImage,
+            shape = RoundedCornerShape(10),
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp)
+        ) {
+            Text(stringResource(R.string.gen_with_title_image))
+        }
+        TextButton(
+            onClick = onGenerateWithColor,
+            shape = RoundedCornerShape(10),
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 10.dp),
+            modifier = Modifier.testTag("QuizLayoutBuilderColorSchemeGenWithPrimaryColor")
+        ) {
+            Text(stringResource(R.string.gen_with_primary_color))
+        }
+        IconButton(onClick = onToggleSettings) {
+            Icon(
+                imageVector     = Icons.Default.Edit,
+                contentDescription = "Open Edit Row for Color Scheme Generation"
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColorSettingsPanel(
+    paletteLevel: PaletteLevel,
+    onPaletteChange: (PaletteLevel) -> Unit,
+    contrastLevel: ContrastLevel,
+    onContrastChange: (ContrastLevel) -> Unit
+) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        LevelSelector(
+            prefix        = stringResource(R.string.palette),
+            items         = PaletteLevel.entries.map { stringResource(it.stringResource) },
+            selectedLevel = paletteLevel.ordinal,
+            onUpdateLevel = { onPaletteChange(PaletteLevel.entries[it]) }
+        )
+        Spacer(Modifier.height(8.dp))
+        LevelSelector(
+            prefix        = stringResource(R.string.contrast),
+            items         = ContrastLevel.entries.map { stringResource(it.stringResource) },
+            selectedLevel = contrastLevel.ordinal,
+            onUpdateLevel = { onContrastChange(ContrastLevel.entries[it]) }
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

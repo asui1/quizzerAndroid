@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,12 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.asu1.colormodel.ThemeColorPicker
 import com.asu1.customComposable.colorPicker.ColorPicker
-import com.asu1.customComposable.colorPicker.toRgbHex
 import com.asu1.quiz.viewmodel.quizLayout.QuizThemeActions
 import com.asu1.resources.LightColorScheme
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
-import com.asu1.utils.Logger
 
 val size = 50.dp
 
@@ -47,76 +46,104 @@ fun SetColorScheme(
     modifier: Modifier = Modifier,
     currentColors: ColorScheme,
     updateQuizTheme: (QuizThemeActions) -> Unit = {},
-    scrollTo: () -> Unit = {},
-){
-    var selectedColor: ThemeColorPicker? by remember { mutableStateOf(null) }
-    val state = rememberLazyListState()
+    scrollTo: () -> Unit = {}
+) {
+    // state: which color slot is open?
+    var selectedColor by remember { mutableStateOf<ThemeColorPicker?>(null) }
+    val listState = rememberLazyListState()
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
             .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            stringResource(R.string.color_colon),
-            fontWeight = FontWeight.ExtraBold,
-        )
-        LazyRow(
-            state = state,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = modifier
-                .fillMaxWidth(),
-        ) {
-            items(ThemeColorPicker.entries, key = {it.name}) { color ->
-                val testTag = if(color == ThemeColorPicker.Primary) "QuizLayoutSetColorSchemeButtonPrimary" else "QuizLayout"
-                OverlappingColorCircles(
-                    modifier = Modifier
-                        .testTag(testTag)
-                        .clickable {
-                            Logger.debug("Overlapping Color Circles clicked")
-                            if(selectedColor == color){
-                                selectedColor = null
-                            }else{
-                                selectedColor = color
-                                scrollTo()
-                            }
-                        }
-                        .then(
-                            if (color == selectedColor) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(8.dp))
-                            else Modifier
-                        ),
-                    label = stringResource(color.stringResourceId),
-                    backgroundColor = color.colorAccessor(currentColors),
-                    foregroundColor = color.onColorAccessor(currentColors),
-                    size = size,
-                )
+        ColorSchemeHeader()
+
+        ColorSchemeRow(
+            state = listState,
+            currentColors = currentColors,
+            selected = selectedColor,
+            onSelect = { color ->
+                selectedColor = if (selectedColor == color) null else color
+                if (selectedColor != null) scrollTo()
             }
-        }
-        AnimatedVisibility(
-            visible = selectedColor != null,
-        ) {
-            if(selectedColor != null)
-                key(selectedColor){
-                    ColorPicker(
-                        modifier = Modifier
-                            .height(300.dp),
-                        initialColor = selectedColor?.colorAccessor(currentColors) ?: Color.White,
-                        colorName = stringResource(selectedColor?.stringResourceId ?: R.string.empty_string),
-                        onColorSelected = { color ->
-                            Logger.debug("Update Color ${color.toRgbHex()}")
-                            updateQuizTheme(
-                                QuizThemeActions.UpdateColor(
-                                    colorType = selectedColor ?: ThemeColorPicker.Primary,
-                                    color = color,
-                                )
-                            )
-                        },
-                        testTag = "QuizLayoutSetColorSchemeTextField"
+        )
+
+        ColorSchemeDetailPanel(
+            selectedColor  = selectedColor,
+            currentColors  = currentColors,
+            onColorChanged = { newColor ->
+                selectedColor?.let { slot ->
+                    updateQuizTheme(
+                        QuizThemeActions.UpdateColor(slot, newColor)
                     )
                 }
+            }
+        )
+    }
+}
+
+@Composable
+private fun ColorSchemeHeader() {
+    Text(
+        text       = stringResource(R.string.color_colon),
+        fontWeight = FontWeight.ExtraBold,
+        modifier   = Modifier.padding(vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun ColorSchemeRow(
+    state: LazyListState,
+    currentColors: ColorScheme,
+    selected: ThemeColorPicker?,
+    onSelect: (ThemeColorPicker) -> Unit
+) {
+    LazyRow(
+        state               = state,
+        verticalAlignment   = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        items(ThemeColorPicker.entries, key = { it.name }) { colorSlot ->
+            OverlappingColorCircles(
+                modifier = Modifier
+                    .clickable { onSelect(colorSlot) }
+                    .then(
+                        if (colorSlot == selected)
+                            Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+                        else Modifier
+                    )
+                    .testTag("ColorSlot${colorSlot.name}"),
+                label           = stringResource(colorSlot.stringResourceId),
+                backgroundColor = colorSlot.colorAccessor(currentColors),
+                foregroundColor = colorSlot.onColorAccessor(currentColors),
+                size            = size
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColorSchemeDetailPanel(
+    selectedColor: ThemeColorPicker?,
+    currentColors: ColorScheme,
+    onColorChanged: (Color) -> Unit
+) {
+    AnimatedVisibility(visible = selectedColor != null) {
+        // wrap in a key so re-composition resets the picker
+        key(selectedColor) {
+            ColorPicker(
+                modifier      = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                initialColor  = selectedColor!!.colorAccessor(currentColors),
+                colorName     = stringResource(selectedColor.stringResourceId),
+                onColorSelected = onColorChanged,
+                testTag       = "ColorPicker${selectedColor.name}"
+            )
         }
     }
 }

@@ -11,14 +11,14 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.asu1.models.quizRefactor.Quiz
-import com.asu1.models.serializers.BodyType
 import com.asu1.quiz.content.boxPadding
 import com.asu1.quiz.content.quizBodyBuilder.QuizBodyBuilder
 import com.asu1.quiz.ui.QuestionTextField
+import com.asu1.quiz.viewmodel.quiz.QuizAction
 
 @Composable
 fun QuizCreatorBase(
@@ -26,13 +26,13 @@ fun QuizCreatorBase(
     quiz: Quiz,
     testTag: String = "QuizCreatorBase",
     onSave: () -> Unit,
-    focusManager: FocusManager,
-    updateQuestion: (String) -> Unit,
-    updateBodyState: (BodyType) -> Unit,
+    updateQuiz: (QuizAction) -> Unit,
     boxScopeBehind: @Composable () -> Unit = {},
     boxScopeOnTop: @Composable () -> Unit = {},
-    content: LazyListScope.() -> Unit,
+    content: LazyListScope.() -> Unit
 ){
+    val focusManager = LocalFocusManager.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +49,7 @@ fun QuizCreatorBase(
             item {
                 QuestionTextField(
                     question = quiz.question,
-                    onQuestionChange =  { updateQuestion(it) },
+                    onQuestionChange =  { updateQuiz(QuizAction.UpdateQuestion(it)) },
                     focusManager = focusManager,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -57,7 +57,7 @@ fun QuizCreatorBase(
             item {
                 QuizBodyBuilder(
                     bodyState = quiz.bodyValue,
-                    updateBody = { updateBodyState(it) },
+                    updateBody = { updateQuiz(QuizAction.UpdateBody(it)) },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

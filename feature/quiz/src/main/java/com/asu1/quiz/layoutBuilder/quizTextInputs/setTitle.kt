@@ -18,15 +18,83 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
+
+@Composable
+private fun TitleLabel() {
+    Text(
+        text = stringResource(R.string.enter_quiz_title),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+private fun TitleInputField(
+    textFieldValue: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
+    proceed: () -> Unit,
+    enabled: Boolean
+) {
+    var localError by remember { mutableStateOf(false) }
+    val titleSizeLimit = 50
+
+    TextField(
+        value = textFieldValue,
+        onValueChange = {
+            localError = false
+            if (it.text.length <= titleSizeLimit) {
+                onValueChange(it)
+            }
+        },
+        enabled = enabled,
+        isError = localError,
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+            .testTag("QuizLayoutTitleTextField"),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                if (textFieldValue.text.isBlank()) {
+                    localError = true
+                } else {
+                    proceed()
+                }
+            }
+        ),
+        supportingText = {
+            if (localError) {
+                Text(text = stringResource(R.string.quiz_title_cannot_be_empty))
+            } else {
+                Text(text = "${textFieldValue.text.length}/$titleSizeLimit")
+            }
+        }
+    )
+}
+
+@Composable
+private fun TitleFocusEffect(
+    enabled: Boolean,
+    focusRequester: FocusRequester,
+    keyboardController: SoftwareKeyboardController?
+) {
+    LaunchedEffect(enabled) {
+        if (enabled) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+}
 
 @Composable
 fun QuizLayoutTitle(
@@ -36,68 +104,32 @@ fun QuizLayoutTitle(
     proceed: () -> Unit = {},
     enabled: Boolean = true,
 ) {
-    val focusRequester = remember{ FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = title)) }
-    val titleSizeLimit = 50
     val keyboardController = LocalSoftwareKeyboardController.current
-    var localError by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(R.string.enter_quiz_title),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-        )
-        TextField(
-            value = textFieldValue,
-            onValueChange = {
-                localError = false
-                if (it.text.length <= titleSizeLimit) {
-                    textFieldValue = it
-                    onTitleUpdate(it.text)
-                }
+        TitleLabel()
+        TitleInputField(
+            textFieldValue    = textFieldValue,
+            onValueChange     = { tfv ->
+                textFieldValue = tfv
+                onTitleUpdate(tfv.text)
             },
-            enabled = enabled,
-            isError = localError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .testTag("QuizLayoutTitleTextField"),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    if(textFieldValue.text.isBlank()){
-                        localError = true
-                    } else if(textFieldValue.text.isNotBlank()) {
-                        proceed()
-                    }
-                }
-            ),
-            supportingText = {
-                if(localError){
-                    Text(text = stringResource(R.string.quiz_title_cannot_be_empty))
-                }else{
-                    Text(text = buildString {
-                        append(stringResource(R.string.length))
-                        append("${textFieldValue.text.length}/$titleSizeLimit")
-                    })
-                }
-            }
+            focusRequester    = focusRequester,
+            proceed           = proceed,
+            enabled           = enabled
         )
     }
 
-    LaunchedEffect(enabled) {
-        if(enabled){
-            focusRequester.requestFocus()
-            textFieldValue = textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
-            keyboardController?.show()
-        }
-    }
+    TitleFocusEffect(
+        enabled            = enabled,
+        focusRequester     = focusRequester,
+        keyboardController = keyboardController
+    )
 }
 
 @Preview(showBackground = true)

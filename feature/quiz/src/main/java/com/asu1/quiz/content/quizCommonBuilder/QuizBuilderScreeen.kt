@@ -7,19 +7,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,24 +35,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,289 +63,284 @@ import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.models.quiz.QuizTheme
+import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.serializers.QuizType
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.ui.QuizLayoutBottomBar
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
-import com.asu1.quiz.viewmodel.quizLayout.QuizThemeViewModel
-import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import kotlinx.coroutines.launch
-import kotlin.collections.isNotEmpty
-
-const val scale = 0.66f
 
 @Composable
 fun QuizBuilderScreen(
-    navController: NavController,
+    navController: NavController
 ) {
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
-    val quizGeneralViewModel: QuizGeneralViewModel = viewModel()
-    val quizThemeViewModel: QuizThemeViewModel = viewModel()
-    val scoreCardViewModel: ScoreCardViewModel = viewModel()
-    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
-    val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
-    val quizzes = quizState.quizContentState.quizzes
-    val quizTheme = quizState.quizTheme
-    val colorScheme = quizTheme.colorScheme
-    var showNewQuizDialog by remember { mutableStateOf(false) }
-    var curIndex by remember{ mutableIntStateOf(0) }
-    val snapLayoutInfoProvider = rememberLazyListState()
-    val initialIndex = quizState.quizContentState.quizInitIndex
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    // 1) collect shared state and helpers
+    val vm: QuizCoordinatorViewModel   = viewModel()
+    val loadVm: LoadLocalQuizViewModel = viewModel()
+    val userVm: UserViewModel          = viewModel()
+    val state by vm.quizUIState.collectAsStateWithLifecycle()
+
+    val quizzes     = state.quizContentState.quizzes
+    val theme       = state.quizTheme
+    val colors      = theme.colorScheme
+    val context     = LocalContext.current
+    val scope       = rememberCoroutineScope()
+
+    // 2) remember UI state
+    var isPreview by remember { mutableStateOf(false) }
     val pagerState = rememberPagerState(
-        initialPage = initialIndex,
-    ){
-        quizzes.size + 1
-    }
-    var isPreview by remember{ mutableStateOf(false) }
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeight = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.height.toDp() }
-    }
-    val screenWidth = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.width.toDp() }
-    }
-    val onMoveToScoringScreen = remember {
-        {
-            scoreCardViewModel.updateScoreCard(
-                quizGeneralViewModel.quizGeneralUiState.value.quizData,
-                quizThemeViewModel.quizTheme.value.colorScheme
-            )
-            navController.navigate(Route.DesignScoreCard) { launchSingleTop = true }
-        }
-    }
+        initialPage = state.quizContentState.quizInitIndex
+    ) { quizzes.size + 1 }
 
-    val onLoadLocalQuiz = remember {
-        {
-            loadLocalQuizViewModel.loadLocalQuiz(context = context, email = userViewModel.userData.value?.email ?: "GUEST")
-            navController.navigate(Route.LoadLocalQuiz) { launchSingleTop = true }
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapLayoutInfoProvider.scrollToItem(initialIndex)
-    }
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }
-            .collect { page ->
-                curIndex = page
-            }
-    }
-
-    fun moveToQuizCaller(loadIndex: Int, quizType: QuizType, insertIndex: Int){
-        navController.navigate(
-            Route.QuizCaller(
-                loadIndex = loadIndex,
-                quizType = quizType,
-                insertIndex = insertIndex
-            )
-        ){
-            launchSingleTop = true
-        }
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme
-    ) {
+    MaterialTheme(colorScheme = colors) {
         if (isPreview) {
-            BackHandler {
-                isPreview = false
-            }
-            Scaffold { paddingValues ->
-                Box(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    ImageColorBackground(
-                        imageColor = quizTheme.backgroundImage,
-                        modifier = Modifier.fillMaxSize()
+            QuizBuilderPreview(
+                theme        = theme,
+                pagerState   = pagerState,
+                quizzes      = quizzes,
+                onExitPreview = { isPreview = false }
+            )
+        } else {
+            QuizBuilderEditor(
+                navController  = navController,
+                theme          = theme,
+                quizzes        = quizzes,
+                pagerState     = pagerState,
+                onEnterPreview = { isPreview = true },
+                onSaveLocal    = { scope.launch { vm.saveLocal(context) } },
+                onLoadLocal    = {
+                    loadVm.loadLocalQuiz(
+                        context,
+                        userVm.userData.value?.email ?: "GUEST"
                     )
-                    QuizViewerPager(
-                        pagerState = pagerState,
-                        quizSize = quizzes.size,
-                        quizzes = quizzes,
-                        modifier = Modifier.fillMaxSize(),
-                        lastElement = {
-                            QuizSubmit(
-                                title = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
-                                modifier = Modifier.fillMaxSize(),
-                                onSubmit = {}
-                            )
-                        }
-                    )
-                }
-            }
-        }
-        else {
-            Scaffold(
-                topBar = {
-                    QuizzerTopBarBase(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = colorScheme.primaryContainer),
-                        header = @Composable {
-                            IconButton(onClick = {
-                                navController.popBackStack(
-                                    Route.CreateQuizLayout,
-                                    inclusive = false,
-                                )
-                            }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBackIosNew,
-                                    contentDescription = stringResource(R.string.move_back_home)
-                                )
-                            }
-                        },
-                        body = {
-                            Text(
-                                text = "Quizzer",
-                                style = QuizzerTypographyDefaults.quizzerHeadlineMedium,
-                            )
-                        },
-                        actions = {
-                            IconButton(
-                                modifier = Modifier.width(30.dp),
-                                onClick = {
-                                    onLoadLocalQuiz()
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FileDownload,
-                                    contentDescription = "Load Local Save"
-                                )
-                            }
-                        }
-                    )
+                    navController.navigate(Route.LoadLocalQuiz) { launchSingleTop = true }
                 },
-                bottomBar = {
-                    QuizLayoutBottomBar(
-                        moveBack = {
-                            navController.popBackStack(
-                                Route.CreateQuizLayout,
-                                inclusive = false,
-                            )
-                        },
-                        moveForward = {
-                            onMoveToScoringScreen()
-                        },
-                    ){
-                        IconButtonWithText(
-                            imageVector = Icons.Default.Save,
-                            text = stringResource(R.string.temp_save),
-                            onClick = {
-                                scope.launch {
-                                    quizCoordinatorViewModel.saveLocal(
-                                        context,
-                                    )
-                                }
-                            },
-                            description = "Save Local",
-                            iconSize = 24.dp
+                onMoveToCaller = { loadIndex, quizType, insertIndex ->
+                    navController.navigate(
+                        Route.QuizCaller(
+                            loadIndex   = loadIndex,
+                            quizType    = quizType,
+                            insertIndex = insertIndex
                         )
-                        IconButtonWithText(
-                            imageVector = Icons.Default.Visibility,
-                            text = stringResource(R.string.preview),
-                            onClick = {
-                                isPreview = true
-                            },
-                            description = "Preview Quiz",
-                            iconSize = 24.dp
-                        )
-                    }
+                    ) { launchSingleTop = true }
                 },
-
-                ) { innerPadding ->
-                if (showNewQuizDialog) {
-                    AddNewQuizDialog(
-                        updateShowNewQuizDialog = { update ->
-                            showNewQuizDialog = update
-                        },
-                        moveToQuizCaller = { index ->
-                            moveToQuizCaller(
-                                loadIndex = -1,
-                                quizType = QuizType.entries[index],
-                                insertIndex = curIndex
-                            )
-                        })
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .size(width = screenWidth * scale, height = screenHeight * scale)
-                            .requiredSize(
-                                width = screenWidth, height = screenHeight
-                            )
-                            .scale(scale)
-                            .border(
-                                width = 2.dp,
-                                color = colorScheme.outline,
-                                shape = RoundedCornerShape(16.dp)
-                            ),
-                    ) { page ->
-                        if(page < quizzes.size){
-                            QuizPreview(
-                                quizzes[page]
-                            )
-                        }
-                        else{
-                            NewQuizAdd(
-                                showDialog = { showDialog ->
-                                    showNewQuizDialog = showDialog
-                                }
-                            )
-                        }
-                    }
-                    Text(
-                        text = buildString {
-                            append(stringResource(R.string.quiz))
-                            append("${if (quizzes.isNotEmpty()) curIndex + 1 else curIndex} / ${quizzes.size}")
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                    )
-                    QuizEditIconsRow(
-                        deleteCurrentQuiz = {
-                            quizCoordinatorViewModel.updateQuizCoordinator(
-                                QuizCoordinatorActions.RemoveQuizAt(curIndex)
-                            )
-                        },
-                        editCurrentQuiz = {
-                            if (curIndex >= quizzes.size) {
-                                return@QuizEditIconsRow
-                            }
-                            moveToQuizCaller(
-                                loadIndex = curIndex,
-                                quizType = quizzes[curIndex].quizType,
-                                insertIndex = curIndex
-                            )
-                        },
-                        addQuiz = {
-                            showNewQuizDialog = true
-                        }
-                    )
-                }
-            }
+            )
         }
     }
+}
+
+@Composable
+private fun QuizBuilderPreview(
+    theme: QuizTheme,
+    pagerState: PagerState,
+    quizzes: List<Quiz>,
+    onExitPreview: () -> Unit
+) {
+    BackHandler { onExitPreview() }
+    Scaffold { padding ->
+        Box(
+            Modifier
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            ImageColorBackground(
+                imageColor = theme.backgroundImage,
+                modifier   = Modifier.fillMaxSize()
+            )
+            QuizViewerPager(
+                pagerState = pagerState,
+                quizSize   = quizzes.size,
+                quizzes    = quizzes,
+                modifier   = Modifier.fillMaxSize(),
+                lastElement = {
+                    QuizSubmit(
+                        title    = stringResource(R.string.end_of_quiz_do_you_want_to_submit_your_answers),
+                        modifier = Modifier.fillMaxSize(),
+                        onSubmit = {}
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuizBuilderEditor(
+    navController:   NavController,
+    theme:           QuizTheme,
+    quizzes:         List<Quiz>,
+    pagerState:      PagerState,
+    onEnterPreview:  () -> Unit,
+    onSaveLocal:     () -> Unit,
+    onLoadLocal:     () -> Unit,
+    onMoveToCaller:  (Int, QuizType, Int) -> Unit,
+) {
+    var showNewQuizDialog by remember { mutableStateOf(false) }
+    if (showNewQuizDialog) {
+        AddNewQuizDialog(
+            updateShowNewQuizDialog = { showNewQuizDialog = it },
+            moveToQuizCaller = { index ->
+                onMoveToCaller(
+                    -1,
+                    QuizType.entries[index],
+                    pagerState.currentPage
+                )
+            }
+        )
+    }
+    Scaffold(
+        topBar    = { EditorTopBar(navController, theme, onLoadLocal) },
+        bottomBar = { EditorBottomBar( navController, onEnterPreview, onSaveLocal) }
+    ) { padding ->
+        EditorContent(
+            padding       = padding,
+            quizzes       = quizzes,
+            pagerState    = pagerState,
+            onAddQuiz     = { showNewQuizDialog = true },
+            onMoveToCaller= onMoveToCaller
+        )
+    }
+}
+
+@Composable
+private fun EditorTopBar(
+    navController: NavController,
+    theme: QuizTheme,
+    onLoadLocal: () -> Unit
+) {
+    QuizzerTopBarBase(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(theme.colorScheme.primaryContainer),
+        header = {
+            IconButton(onClick = {
+                navController.popBackStack(Route.CreateQuizLayout, inclusive = false)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = stringResource(R.string.move_back_home)
+                )
+            }
+        },
+        body = {
+            Text(
+                text  = stringResource(R.string.app_name),
+                style = QuizzerTypographyDefaults.quizzerHeadlineMedium
+            )
+        },
+        actions = {
+            IconButton(onClick = onLoadLocal) {
+                Icon(
+                    imageVector = Icons.Default.FileDownload,
+                    contentDescription = stringResource(R.string.my_quizzes)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun EditorBottomBar(
+    navController: NavController,
+    onEnterPreview: () -> Unit,
+    onSaveLocal:    () -> Unit
+) {
+    QuizLayoutBottomBar(
+        moveBack    = {
+            navController.popBackStack(Route.CreateQuizLayout, inclusive = false)
+        },
+        moveForward = {
+            onEnterPreview()
+        }
+    ) {
+        IconButtonWithText(
+            imageVector = Icons.Default.Save,
+            text        = stringResource(R.string.temp_save),
+            onClick     = onSaveLocal,
+            description = stringResource(R.string.temp_save),
+            iconSize    = 24.dp
+        )
+        IconButtonWithText(
+            imageVector = Icons.Default.Visibility,
+            text        = stringResource(R.string.preview),
+            onClick     = onEnterPreview,
+            description = stringResource(R.string.preview),
+            iconSize    = 24.dp
+        )
+    }
+}
+
+@Composable
+private fun EditorContent(
+    padding:       PaddingValues,
+    quizzes:       List<Quiz>,
+    pagerState:    PagerState,
+    onAddQuiz:     () -> Unit,
+    onMoveToCaller:(Int, QuizType, Int) -> Unit
+) {
+    val vm: QuizCoordinatorViewModel = viewModel()
+
+    Column(
+        Modifier
+            .padding(padding)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            state    = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+        ) { page ->
+            if (page < quizzes.size) {
+                QuizPreview(quizzes[page])
+            } else {
+                NewQuizAdd(showDialog = { /* show dialog in parent scope */ })
+            }
+        }
+        QuizPagerIndicator(
+            currentPage = pagerState.currentPage,
+            pageCount   = quizzes.size
+        )
+        QuizEditIconsRow(
+            deleteCurrentQuiz = {
+                vm.updateQuizCoordinator(QuizCoordinatorActions.RemoveQuizAt(pagerState.currentPage))
+            },
+            editCurrentQuiz   = {
+                val currentPage = pagerState.currentPage
+                if (currentPage < quizzes.size) {
+                    onMoveToCaller(
+                        currentPage,
+                        quizzes[currentPage].quizType,
+                        currentPage
+                    )
+                }
+            },
+            addQuiz = { onAddQuiz() }
+        )
+    }
+}
+
+@Composable
+private fun QuizPagerIndicator(
+    currentPage: Int,
+    pageCount: Int
+) {
+    LinearProgressIndicator(
+        progress = { (currentPage + 1) / (pageCount + 1).toFloat() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        color = ProgressIndicatorDefaults.linearColor,
+        trackColor = ProgressIndicatorDefaults.linearTrackColor,
+        strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+    )
 }
 
 @Composable

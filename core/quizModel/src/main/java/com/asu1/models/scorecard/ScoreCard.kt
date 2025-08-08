@@ -26,7 +26,7 @@ data class ScoreCard (
         effect = Effect.SNOWFLAKES,
         shaderType = ShaderType.Brush1
     ),
-    var imageStateval : Int = 0,
+    var imageStateVal : Int = 0,
     @Contextual var textColor: Color = Color.Black,
     @Serializable(with = ColorSchemeSerializer::class) var colorScheme: ColorScheme = LightColorScheme,
 ){
@@ -37,7 +37,7 @@ data class ScoreCard (
         if (title != other.title) return false
         if (solver != other.solver) return false
         if(background != other.background) return false
-        if (imageStateval != other.imageStateval) return false
+        if (imageStateVal != other.imageStateVal) return false
         if (colorScheme != other.colorScheme) return false
         if (textColor != other.textColor) return false
         if (quizUuid != other.quizUuid) return false
@@ -46,7 +46,7 @@ data class ScoreCard (
     }
 
     override fun hashCode(): Int {
-        var result = imageStateval
+        var result = imageStateVal
         result = 31 * result + (quizUuid?.hashCode() ?: 0)
         result = 31 * result + title.hashCode()
         result = 31 * result + solver.hashCode()
@@ -69,7 +69,7 @@ val sampleScoreCard = ScoreCard(
         effect = Effect.SNOWFLAKES,
         shaderType = ShaderType.Brush1
     ),
-    imageStateval = 0,
+    imageStateVal = 0,
     textColor = Color.Black,
     colorScheme = LightColorScheme
 )

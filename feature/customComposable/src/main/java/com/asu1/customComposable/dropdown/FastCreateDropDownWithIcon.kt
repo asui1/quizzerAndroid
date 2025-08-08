@@ -27,7 +27,7 @@ fun FastCreateDropDownWithIcon(
     modifier: Modifier = Modifier,
     showDropdownMenu: Boolean,
     labelText: String = "",
-    onClick: (Int) -> Unit = {},
+    onItemSelected: (Int) -> Unit = {},
     onChangeDropDown: (Boolean) -> Unit = {},
     inputItems: List<Int> = emptyList(),
     imageVector: ImageVector,
@@ -67,7 +67,7 @@ fun FastCreateDropDownWithIcon(
                         )
                     },
                     onClick = {
-                        onClick(index)
+                        onItemSelected(index)
                     }
                 )
             }
@@ -82,7 +82,7 @@ fun FastCreateDropDownPreview() {
         FastCreateDropDownWithIcon(
             showDropdownMenu = false,
             labelText = "Select",
-            onClick = { },
+            onItemSelected = { },
             onChangeDropDown = { },
             inputItems = ShaderType.entries.map { it.shaderName },
             imageVector = Icons.Default.Animation,
