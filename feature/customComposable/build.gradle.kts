@@ -10,14 +10,14 @@ android {
 
 dependencies {
 
+    implementation(libs.bundles.compose.core)
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.foundation.android)
-    implementation(libs.androidx.ui.tooling.preview.android)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.material.icons.core)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.foundation.android)
+    implementation(libs.material3)
+    implementation(libs.material.icons.core)
+    implementation(libs.material.icons.extended)
     implementation(libs.compose.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
@@ -25,7 +25,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.dotlottie.android)
     implementation(libs.colorpicker.compose)
-    implementation(libs.androidx.constraint.layout)
+    implementation(libs.constraint.layout)
 
     implementation(project(":core:resource"))
     implementation(project(":core:util"))
@@ -35,6 +35,6 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.androidx.compose.ui.ui.tooling)
+    androidTestImplementation(libs.espresso.core)
+    debugImplementation(libs.ui.tooling)
 }

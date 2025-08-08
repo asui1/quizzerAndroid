@@ -196,132 +196,105 @@ dependencies {
     androidTestImplementation(project(":core:quizModel"))
     testImplementation(project(":core:util"))
     androidTestImplementation(project(":core:util"))
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.androidx.animation.graphics.android)
-    implementation(libs.androidx.junit.ktx)
-    testImplementation(libs.testng)
+    // ---- Compose (via BOM) ----
+    implementation(platform(libs.compose.bom))
+    implementation(libs.bundles.compose.core)
+
+    // ---- Room ----
+    implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
+    // ---- Retrofit / Moshi / JSON ----
+    implementation(libs.bundles.retrofit.full)
+
+    // ---- AndroidX & lifecycle/work ----
     implementation(libs.core.ktx)
-    implementation(libs.foundation.layout)
-    implementation(libs.navigation.compose)
-    implementation (libs.credentials)
-    implementation(libs.play.services.auth)
-    implementation (libs.credentials.play.services.auth)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.androidx.runtime.livedata)
-    implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.accompanist.flowlayout)
-    implementation(libs.uuid.creator)
-    implementation(libs.compose.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.ui.tooling)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.material3)
     implementation(libs.lifecycle.viewmodel.compose)
-    implementation (libs.converter.gson)
-    implementation(libs.logging.interceptor)
-    implementation(libs.java.dotenv)
-    implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
-    implementation(libs.converter.moshi)
-    implementation(libs.androidx.security.crypto)
-    implementation(libs.androidx.material)
-    implementation(libs.androidx.material.icons.core)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.work.runtime.ktx)
+
+    // Optional Compose extras
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.google.fonts)
+    // If you use foundation-layout specifically:
+    implementation(libs.foundation.layout)
+
+    // ---- Google sign-in / credentials ----
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.androidx.fragment.ktx)
+
+    // ---- Data / Security ----
+    implementation(libs.datastore.preferences)
+    implementation(libs.datastore.core)
+    implementation(libs.security.crypto)
+
+    // ---- Media / Imaging ----
+    implementation(libs.bundles.media3)            // effect, ui, exoplayer-dash, session
+    implementation(libs.exoplayer)                 // core exoplayer
     implementation(libs.coil.compose)
-    implementation(libs.colorpicker.compose)
-    implementation(libs.androidx.media3.effect)
-    implementation(libs.material.kolor)
-    implementation(libs.kotlinx.serialization.json)
-    implementation (libs.retrofit)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.youtubeplayer.core)
-    implementation(libs.calendar.compose)
-    implementation(libs.reorderable)
+    implementation(libs.landscapist.glide)
     implementation(libs.lottie.compose)
     implementation(libs.dotlottie.android)
-    implementation(libs.places)
-    implementation(libs.material)
-    implementation(libs.app.update)
-    implementation(libs.app.update.ktx)
-    implementation(libs.landscapist.glide)
-//    ksp(libs.landscapist.glide) -> This line adds error in build
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.constraint.layout)
-    implementation(libs.androidx.tracing)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.datastore.core)
-    implementation(libs.androidx.ui.text.google.fonts)
-    implementation(libs.kotlinx.collections.immutable)
-    implementation(libs.androidx.work.runtime.ktx)
 
+    // ---- UI extras ----
+    implementation(libs.material3)                 // Compose M3
+    implementation(libs.material.components)       // Google Material (XML) if needed
+    implementation(libs.material.kolor)
+    implementation(libs.colorpicker.compose)
+    implementation(libs.reorderable)
+    implementation(libs.places)
+    implementation(libs.uuid.creator)
+    implementation(libs.java.dotenv)
+    implementation(libs.tracing)
+    implementation(libs.constraint.layout)
+    // Optional: animation graphics module
+    // implementation(libs.androidx.animation.graphics.android)
+
+    // ---- Navigation ----
+    implementation(libs.navigation.compose)
+
+    // ---- Serialization / Coroutines / Rx ----
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.coroutines.rx3)
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
-    implementation(libs.kotlinx.coroutines.rx3)
-    implementation(libs.androidx.lifecycle.process)
 
-    //EXOPLAYER
-    implementation(libs.exoplayer)
-    implementation(libs.androidx.media3.exoplayer.dash)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.legacy.support.v4)
-
-    //firebase login
+    // ---- Firebase (via BOM) ----
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
 
-    androidTestImplementation(project(":app"))
-    testImplementation(libs.junit)
+    // ---- App Update ----
+    implementation(libs.google.play.update)
+    implementation(libs.google.play.update.ktx)
+
+    // ---- Hilt ----
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // ---- Tests ----
+    testImplementation(libs.bundles.test.core)
+    testImplementation(libs.bundles.mocking)
     testImplementation(libs.mockwebserver)
-    testImplementation(libs.kotlin.test)
-    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.jetbrain.kotlin.test.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.moshi.kotlin)
     testImplementation(libs.converter.moshi)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.androidx.core.testing)
-    testImplementation(libs.mockito.inline)
-    testImplementation(libs.exoplayer)
-    testImplementation(libs.androidx.media3.exoplayer.dash)
-    testImplementation(libs.androidx.media3.ui)
-    testImplementation(libs.androidx.media3.session)
+    // If you need Media3 in tests:
     testImplementation(libs.exoplayer.test)
-    testImplementation(libs.androidx.legacy.support.v4)
-    testImplementation(libs.androidx.core)
-    testImplementation(libs.androidx.core.testing)
-    testImplementation(libs.mockk)
 
-    androidTestImplementation(libs.androidx.fragment.ktx)
-    androidTestImplementation(libs.androidx.core.testing)
-    androidTestImplementation(libs.mockito.mockito.core)
-    androidTestImplementation(libs.mockito.mockito.inline)
-    androidTestImplementation(libs.mockito.kotlin)
-    androidTestImplementation(libs.mockwebserver)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(libs.exoplayer)
-    androidTestImplementation(libs.androidx.media3.exoplayer.dash)
-    androidTestImplementation(libs.androidx.media3.ui)
-    androidTestImplementation(libs.androidx.media3.session)
-    androidTestImplementation(libs.exoplayer.test)
+    androidTestImplementation(libs.bundles.test.core)
+    androidTestImplementation(libs.bundles.mocking)
+    androidTestImplementation(libs.mockwebserver)
     androidTestImplementation(libs.hilt.android.test)
     kspAndroidTest(libs.hilt.compiler)
 
-    androidTestImplementation(project(":microbenchmark"))
-
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    // ---- Debug-only ----
+    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.ui.test.manifest)
 }

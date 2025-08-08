@@ -24,5 +24,5 @@ dependencies {
     implementation(project(":repository:userData"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.espresso.core)
 }

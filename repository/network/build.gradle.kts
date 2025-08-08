@@ -32,5 +32,5 @@ dependencies {
     implementation(project(":core:resource"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.espresso.core)
 }

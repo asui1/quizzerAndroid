@@ -18,11 +18,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.foundation.layout)
-    implementation(libs.androidx.material3.android)
     implementation(libs.material3)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.runtime.livedata)
     implementation(libs.compose.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
@@ -31,5 +30,5 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.espresso.core)
 }

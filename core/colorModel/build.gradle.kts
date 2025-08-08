@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:util"))
+    implementation(project(":core:resource"))
 
     implementation(libs.material.kolor)
     implementation(libs.core.ktx)
@@ -16,12 +18,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.androidx.ui.graphics.android)
-    implementation(libs.androidx.material3.android)
+    implementation(libs.ui.graphics)
     implementation(libs.material3)
-    implementation(project(":core:util"))
-    implementation(project(":core:resource"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.espresso.core)
 }

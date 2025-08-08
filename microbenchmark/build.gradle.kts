@@ -64,11 +64,11 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.ui.graphics.android)
-    androidTestImplementation(libs.androidx.runner)
+    implementation(libs.ui.graphics)
+    androidTestImplementation(libs.runner)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.benchmark.junit4)
+    androidTestImplementation(libs.benchmark.junit4)
     androidTestImplementation(project(":app"))
     // Add your dependencies here. Note that you cannot benchmark code
     // in an app module this way - you will need to move any code you

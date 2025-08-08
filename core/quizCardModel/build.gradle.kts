@@ -12,7 +12,7 @@ dependencies {
     implementation (libs.converter.gson)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.androidx.runtime.android)
+    implementation(libs.runtime.android)
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -20,5 +20,5 @@ dependencies {
     implementation(project(":core:resource"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.espresso.core)
 }
