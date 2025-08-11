@@ -9,7 +9,12 @@ import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList
 import com.asu1.quizcardmodel.Recommendations
 import com.asu1.userdatamodels.FcmToken
+import com.asu1.userdatamodels.GuestAccount
+import com.asu1.userdatamodels.UserActivity
+import com.asu1.userdatamodels.UserInfo
 import com.asu1.userdatamodels.UserRankList
+import com.asu1.userdatamodels.UserRegister
+import com.asu1.userdatamodels.UserRequest
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -18,99 +23,65 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface ApiService {
-
-    @UseKotlinxSerialization
+// recommendations
+interface RecommendationApi {
     @GET("recommendations")
-    suspend fun getRecommendations(@Query("language") language: String, @Query("email") email: String): Response<RecommendationList>
+    suspend fun getRecommendations(
+        @Query("email") email: String
+    ): Response<RecommendationList>
 
-    @UseKotlinxSerialization
-    @GET("mostviewed")
-    suspend fun mostViewed(@Query("language") language: String): Response<Recommendations>
+    @GET("mostviewed")  suspend fun mostViewed(): Response<Recommendations>
+    @GET("mostrecent")  suspend fun mostRecent(): Response<Recommendations>
+    @GET("related")     suspend fun getRelated(): Response<Recommendations>
+}
 
-    @UseKotlinxSerialization
-    @GET("mostrecent")
-    suspend fun mostRecent(@Query("language") language: String): Response<Recommendations>
+// auth / account
+interface AuthApi {
+    @POST("guestAccount") suspend fun guestAccount(@Query("isKo") isKo: Boolean): Response<GuestAccount>
+    @GET("login")         suspend fun login(@Query("email") email: String): Response<UserInfo>
+    @POST("userRequest")  suspend fun userRequest(@Body request: UserRequest): Response<Void>
+    @DELETE("signout")    suspend fun deleteUser(@Query("email") email: String): Response<Void>
+    @GET("nicknameCheck") suspend fun checkDuplicateNickname
+                (@Query("nickname") nickname: String): Response<Void>
+    @POST("register")     suspend fun register(@Body body: UserRegister): Response<Void>
+    @POST("fcmToken")     suspend fun updateFcmToken(@Body fcmToken: FcmToken): Response<Void>
+}
 
-    @UseKotlinxSerialization
-    @GET("related")
-    suspend fun getRelated(@Query("language") language: String): Response<Recommendations>
-
-    @UseKotlinxSerialization
-    @POST("guestAccount")
-    suspend fun guestAccount(@Query("isKo") isKo: Boolean): Response<com.asu1.userdatamodels.GuestAccount>
-
-    @GET("login")
-    suspend fun login(@Query("email") email: String): Response<com.asu1.userdatamodels.UserInfo>
-
-    @POST("userRequest")
-    suspend fun userRequest(@Body request: com.asu1.userdatamodels.UserRequest): Response<Void>
-
-    @DELETE("signout")
-    suspend fun deleteUser(@Query("email") email: String): Response<Void>
-
-    @GET("nicknameCheck")
-    suspend fun checkDuplicateNickname(@Query("nickname") nickname: String): Response<Void>
-
-    @POST("register")
-    suspend fun register(@Body userInfo: com.asu1.userdatamodels.UserRegister): Response<Void>
-
-    @UseKotlinxSerialization
-    @GET("searchQuiz")
-    suspend fun searchQuiz(@Query("search") search: String): Response<QuizCardList>
-
-    @UseKotlinxSerialization
-    @GET("myQuiz")
-    suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
+// quiz
+interface QuizApi {
+    @GET("searchQuiz")   suspend fun searchQuiz(@Query("search") search: String): Response<QuizCardList>
+    @GET("myQuiz")       suspend fun getMyQuiz(@Query("email") email: String): Response<QuizCardList>
 
     @DELETE("deleteQuiz")
-    suspend fun deleteQuiz(@Query("uuid") email: String, @Query("email") quizId: String): Response<Void>
+    suspend fun deleteQuiz(@Query("uuid") uuid: String, @Query("email") email: String): Response<Void>
 
-    @UseKotlinxSerialization
-    @POST("addQuiz")
-    suspend fun addQuiz(@Body quizLayoutSerializer: QuizLayoutSerializer): Response<Void>
+    @POST("addQuiz")     suspend fun addQuiz(@Body quiz: QuizLayoutSerializer): Response<Void>
+    @GET("quizData")     suspend fun getQuizData(@Query("uuid") uuid: String): Response<QuizLayoutSerializer>
 
-    @UseKotlinxSerialization
-    @GET("quizData")
-    suspend fun getQuizData(@Query("uuid") uuid: String): Response<QuizLayoutSerializer>
+    @POST("submitQuiz")  suspend fun submitQuiz(@Body result: SendQuizResult): Response<QuizResult>
+    @GET("result")       suspend fun getResult(@Query("resultId") id: String): Response<GetQuizResult>
 
-    @UseKotlinxSerialization
-    @POST("submitQuiz")
-    suspend fun submitQuiz(@Body sendQuizResult: SendQuizResult): Response<QuizResult>
+    @GET("trends")       suspend fun getTrends(): Response<QuizCardList>
+    @GET("ranks")        suspend fun getUserRanks(): Response<UserRankList>
+}
 
-    @UseKotlinxSerialization
-    @GET("result")
-    suspend fun getResult(@Query("resultId") resultId: String): Response<GetQuizResult>
-
-    @UseKotlinxSerialization
-    @GET("trends")
-    suspend fun getTrends(@Query("language") language: String): Response<QuizCardList>
-
-    @UseKotlinxSerialization
-    @GET("ranks")
-    suspend fun getUserRanks(): Response<UserRankList>
-
-    @UseKotlinxSerialization
+// notifications
+interface NotificationApi {
     @GET("notifications")
-    suspend fun getNotifications(@Query("page") page: Int, @Query("lang") lang: String): Response<List<Notification>>
+    suspend fun getNotifications(@Query("page") page: Int): Response<List<Notification>>
 
-    @UseKotlinxSerialization
     @GET("notificationDetail")
-    suspend fun getNotificationDetail(@Query("id") id: Int, @Query("lang") lang: String): Response<ResponseBody>
+    suspend fun getNotificationDetail(@Query("id") id: Int): Response<ResponseBody>
 
-    @UseKotlinxSerialization
     @GET("onboardingNotification")
-    suspend fun getOnBoardingNotification(@Query("id") id: Int): Response<Notification>
+    suspend fun getOnBoardingNotification(@Query("id") id: Int): Response<Notification?>
 
-    @UseKotlinxSerialization
     @GET("notificationPageNumber")
     suspend fun getNotificationPageNumber(): Response<Int>
+}
 
-    @UseKotlinxSerialization
+// user activity
+interface ActivityApi {
     @GET("userActivity")
-    suspend fun getUserActivity(@Query("email") email: String): Response<List<com.asu1.userdatamodels.UserActivity>>
-
-    @UseKotlinxSerialization
-    @POST("fcmToken")
-    suspend fun updateFcmToken(@Body fcmToken: FcmToken): Response<Void>
+    suspend fun getUserActivity(@Query("email") email: String): Response<List<UserActivity>>
 }

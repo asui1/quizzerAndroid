@@ -42,40 +42,44 @@ object NetworkModule {
 }
 
 object RetrofitInstance {
-
     private val authInterceptor = BasicAuthInterceptor()
     private val contentTypeInterceptor = ContentTypeInterceptor()
     private val trafficStatsInterceptor = TrafficStatsInterceptor()
 
-    private val client = OkHttpClient.Builder()
+    private val client: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
         .addInterceptor(contentTypeInterceptor)
         .addInterceptor(trafficStatsInterceptor)
         .build()
-//        .addInterceptor(loggingInterceptor)
 
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(List::class.java, QuizCardListDeserializer())
-        .registerTypeAdapter(List::class.java, com.asu1.userdatamodels.UserInfoDeserializer())
-        .registerTypeAdapter(object : TypeToken<List<com.asu1.quizcardmodel.QuizCard>>() {}.type, QuizCardListDeserializer())
-        .create()
+    // kotlinx.serialization JSON config
+    private val json = Json {
+        ignoreUnknownKeys = true       // 서버가 보내는 추가 필드 무시
+        isLenient = true               // 느슨한 파싱 허용
+        explicitNulls = false          // null은 생략 가능
+        encodeDefaults = true
+        coerceInputValues = true       // 타입 불일치 시 기본값 강제
+    }
 
-    val gsonConverterFactory = GsonConverterFactory.create(gson)
-    val contentType = "application/json".toMediaType()
-    @OptIn(ExperimentalSerializationApi::class)
-    val kotlinxSerializationConverterFactory = json.asConverterFactory(contentType)
+    private val contentType = "application/json".toMediaType()
 
-    private val retrofit by lazy {
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("${BASE_URL_API}quizzerServer/")
-            .addConverterFactory(CustomConverterFactory(gsonConverterFactory, kotlinxSerializationConverterFactory))
             .client(client)
+            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }
 
-    val api: ApiService by lazy {
-        retrofit.create(ApiService::class.java)
-    }
+    // 단일 API 묶음이 아니라면 기능별로 나눠서 제공하는 것을 권장
+    val quizApi: QuizApi by lazy { retrofit.create(QuizApi::class.java) }
+    val authApi: AuthApi by lazy { retrofit.create(AuthApi::class.java) }
+    val recommendationApi: RecommendationApi by lazy { retrofit.create(RecommendationApi::class.java) }
+    val notificationApi: NotificationApi by lazy { retrofit.create(NotificationApi::class.java) }
+    val activityApi: ActivityApi by lazy { retrofit.create(ActivityApi::class.java) }
+//QuizCardListDeserializer())
+//UserInfoDeserializer())
+//QuizCardListDeserializer())
 }
 
 class TrafficStatsInterceptor : Interceptor {
