@@ -212,7 +212,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.api
+                    RetrofitInstance.quizApi
                         .getResult(resultId)
                         .requireSuccess() // throws HttpException or NoSuchElementException
                 }
@@ -276,7 +276,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.api
+                    RetrofitInstance.quizApi
                         .getQuizData(quizId)
                         .requireSuccess()   // throws HttpException / NoSuchElementException
                 }
@@ -331,7 +331,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 val json = toJson()
-                RetrofitInstance.api.addQuiz(json).requireSuccess()
+                RetrofitInstance.quizApi.addQuiz(json).requireSuccess()
             }
 
             result.onSuccess {
@@ -410,7 +410,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.api.submitQuiz(payload).requireSuccess()
+                    RetrofitInstance.quizApi.submitQuiz(payload).requireSuccess()
                 }
             }
 

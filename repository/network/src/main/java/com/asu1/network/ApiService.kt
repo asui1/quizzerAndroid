@@ -68,10 +68,10 @@ interface QuizApi {
 // notifications
 interface NotificationApi {
     @GET("notifications")
-    suspend fun getNotifications(@Query("page") page: Int): Response<List<Notification>>
+    suspend fun getNotifications(@Query("page") page: Int, @Query("lang") lang: String): Response<List<Notification>>
 
     @GET("notificationDetail")
-    suspend fun getNotificationDetail(@Query("id") id: Int): Response<ResponseBody>
+    suspend fun getNotificationDetail(@Query("id") id: Int, @Query("lang") lang: String): Response<ResponseBody>
 
     @GET("onboardingNotification")
     suspend fun getOnBoardingNotification(@Query("id") id: Int): Response<Notification?>

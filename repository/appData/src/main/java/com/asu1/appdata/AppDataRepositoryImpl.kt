@@ -32,7 +32,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 + 응답 검증 (예외 매핑은 runApi가 담당)
         val result: Result<List<Notification>> =
-            runApi { retrofitInstance.api.getNotifications(page, LanguageSetter.lang) }
+            runApi { retrofitInstance.notificationApi.getNotifications(page, LanguageSetter.lang) }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body() ?: emptyList()
@@ -49,7 +49,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 (예외는 runApi가 Result.failure로 매핑)
         val result: Result<String> =
-            runApi { retrofitInstance.api.getNotificationDetail(id, LanguageSetter.lang) }
+            runApi { retrofitInstance.notificationApi.getNotificationDetail(id, LanguageSetter.lang) }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body()?.use { it.string() }
@@ -68,7 +68,7 @@ class AppDataRepositoryImpl @Inject constructor(
                     if (id.isNullOrBlank()) {
                         Result.success(null)
                     } else {
-                        runApi { retrofitInstance.api.getOnBoardingNotification(id.toInt()) }
+                        runApi { retrofitInstance.notificationApi.getOnBoardingNotification(id.toInt()) }
                             .mapCatching { resp ->
                                 if (!resp.isSuccessful) throw HttpException(resp)
                                 resp.body()
@@ -94,7 +94,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 (예외는 runApi에서 Result.failure로 매핑)
         val result: Result<Int> =
-            runApi { retrofitInstance.api.getNotificationPageNumber() }
+            runApi { retrofitInstance.notificationApi.getNotificationPageNumber() }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body() ?: throw NoSuchElementException("Empty body")
