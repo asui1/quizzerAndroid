@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.asu1.resources.InitializationState
 
-class InitializationViewModel() : ViewModel() {
+class InitializationViewModel : ViewModel() {
 
     private val _initializationState = MutableLiveData(InitializationState.CHECKING_FOR_UPDATES)
     val initializationState: LiveData<InitializationState> get() = _initializationState
