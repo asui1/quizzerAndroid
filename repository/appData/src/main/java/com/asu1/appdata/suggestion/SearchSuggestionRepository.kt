@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.asu1.appdata.suggestion
 
 import kotlinx.coroutines.Dispatchers

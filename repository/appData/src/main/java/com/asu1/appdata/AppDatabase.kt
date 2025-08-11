@@ -55,7 +55,9 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Add missing table if it doesn't exist (to avoid errors)
                 db.execSQL(
-                    "CREATE TABLE IF NOT EXISTS search_suggestions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, query TEXT NOT NULL, priority INTEGER NOT NULL DEFAULT 0, lang TEXT NOT NULL)"
+                    "CREATE TABLE IF NOT EXISTS search_suggestions " +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, query TEXT NOT NULL, " +
+                            "priority INTEGER NOT NULL DEFAULT 0, lang TEXT NOT NULL)"
                 )
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS admin_words (" +

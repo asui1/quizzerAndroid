@@ -6,9 +6,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.asu1.appdatamodels.Notification
 import com.asu1.network.RetrofitInstance
+import com.asu1.network.runApi
 import com.asu1.utils.LanguageSetter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,78 +27,57 @@ class AppDataRepositoryImpl @Inject constructor(
     private var notificationPageNumberCache = 0
 
     override suspend fun getNotification(page: Int): Result<List<Notification>> {
-        return try {
-            // Check cache first
-            val cachedNotifications = notificationsCache[page]
+        // 1) 캐시 먼저
+        notificationsCache[page]?.let { return Result.success(it) }
 
-            if (cachedNotifications != null) {
-                return Result.success(cachedNotifications)
-            }
+        // 2) API 호출 + 응답 검증 (예외 매핑은 runApi가 담당)
+        val result: Result<List<Notification>> =
+            runApi { retrofitInstance.api.getNotifications(page, LanguageSetter.lang) }
+                .mapCatching { response ->
+                    if (!response.isSuccessful) throw HttpException(response)
+                    response.body() ?: emptyList()
+                }
 
-            // Make your API call
-            val response = retrofitInstance.api.getNotifications(page, LanguageSetter.lang)
-
-            // Check if response is successful
-            if (response.isSuccessful) {
-                // Get the body or default to an empty list
-                val notifications = response.body() ?: emptyList()
-
-                // Cache / process as needed, then return the result
-                notificationsCache[page] = notifications
-                Result.success(notifications)
-            } else {
-                // Return a failure Result with a descriptive Exception
-                Result.failure(Exception("API call failed with code: ${response.code()}"))
-            }
-        } catch (e: Exception) {
-            // Catch network or other exceptions
-            Result.failure(e)
-        }
+        // 3) 성공 시 캐싱
+        result.onSuccess { notifications -> notificationsCache[page] = notifications }
+        return result
     }
 
     override suspend fun getNotificationDetail(id: Int): Result<String> {
-        return try {
-            // 1. Check cache first
-            val cachedBody = notificationsBodyCache[id]
-            if (cachedBody != null) {
-                Result.success(cachedBody)
-            } else {
-                // 2. Fetch from API
-                val response = retrofitInstance.api.getNotificationDetail(id, LanguageSetter.lang)
-                if (response.isSuccessful) {
-                    val body = response.body()?.use { it.string() } ?: ""
-                    // 3. Cache result
-                    notificationsBodyCache[id] = body
-                    Result.success(body)
-                } else {
-                    Result.failure(Exception("API call failed with code: ${response.code()}"))
+        // 1) 캐시 히트 시 즉시 반환
+        notificationsBodyCache[id]?.let { return Result.success(it) }
+
+        // 2) API 호출 (예외는 runApi가 Result.failure로 매핑)
+        val result: Result<String> =
+            runApi { retrofitInstance.api.getNotificationDetail(id, LanguageSetter.lang) }
+                .mapCatching { response ->
+                    if (!response.isSuccessful) throw HttpException(response)
+                    response.body()?.use { it.string() }
+                        ?: throw NoSuchElementException("Empty body")
                 }
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+
+        // 3) 성공 시 캐싱
+        result.onSuccess { body -> notificationsBodyCache[id] = body }
+        return result
     }
 
     override suspend fun getOnBoardingNotification(): Result<Notification?> {
-        return try {
-            // 1. Get current preferences (blocking first emission)
-            val preferences = dataStore.data.first()
-            val onBoardingNotificationId = preferences[onBoardingNotificationIdKey]
-            // 2. If there's an ID, fetch from the API
-            if (onBoardingNotificationId != null) {
-                val response = retrofitInstance.api.getOnBoardingNotification(onBoardingNotificationId.toInt())
-                if (response.isSuccessful) {
-                    Result.success(response.body()) // could be Notification or null
-                } else {
-                    Result.failure(Exception("API call failed with code: ${response.code()}"))
-                }
-            } else {
-                // 3. No ID found — return null, or handle differently if needed
-                Result.success(null)
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        val result: Result<Notification?> = runApi { dataStore.data.first()[onBoardingNotificationIdKey] }
+            .fold(
+                onSuccess = { id ->
+                    if (id.isNullOrBlank()) {
+                        Result.success(null)
+                    } else {
+                        runApi { retrofitInstance.api.getOnBoardingNotification(id.toInt()) }
+                            .mapCatching { resp ->
+                                if (!resp.isSuccessful) throw HttpException(resp)
+                                resp.body()
+                            }
+                    }
+                },
+                onFailure = { Result.failure(it) }
+            )
+        return result
     }
 
     override suspend fun closedOnBoardingNotification(id: Int) {
@@ -106,20 +87,21 @@ class AppDataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getNotificationPageNumber(): Result<Int> {
-        if(notificationPageNumberCache != 0) {
+        // 1) 캐시 히트면 즉시 반환
+        if (notificationPageNumberCache != 0) {
             return Result.success(notificationPageNumberCache)
         }
 
-        return try {
-            val response = retrofitInstance.api.getNotificationPageNumber()
-            if (response.isSuccessful && response.body() != null) {
-                notificationPageNumberCache = response.body()!!
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("API call failed with code: ${response.code()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        // 2) API 호출 (예외는 runApi에서 Result.failure로 매핑)
+        val result: Result<Int> =
+            runApi { retrofitInstance.api.getNotificationPageNumber() }
+                .mapCatching { response ->
+                    if (!response.isSuccessful) throw HttpException(response)
+                    response.body() ?: throw NoSuchElementException("Empty body")
+                }
+
+        // 3) 성공 시 캐싱
+        result.onSuccess { pageNum -> notificationPageNumberCache = pageNum }
+        return result
     }
 }
