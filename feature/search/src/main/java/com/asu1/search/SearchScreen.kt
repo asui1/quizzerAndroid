@@ -101,31 +101,27 @@ fun SearchScreenBody(
     searchSuggestions: List<String>,
     searchResult: PersistentList<QuizCard>?,
     onQuizClick: (String) -> Unit = {},
-){
+) {
     val focusManager = LocalFocusManager.current
-    var isFocused by remember {mutableStateOf(false)}
-    val focusRequester = remember{ FocusRequester() }
+    var isFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
-    fun onBackPressed() {
-        onSearchTextChange("")
-        focusRequester.requestFocus()
-    }
+    val clearFocusAndSearch = remember(search, focusManager) { { text: String ->
+        focusManager.clearFocus()
+        search(text)
+    } }
 
-    BackHandler(
-        enabled = searchText.isNotEmpty(),
-    ) {
-        onBackPressed()
-    }
-
-    LaunchedEffect(Unit) {
-        if(searchText.isEmpty()){
+    val onBackPressed = remember(onSearchTextChange, focusRequester) {
+        {
             focusRequester.requestFocus()
+            onSearchTextChange("")
         }
     }
 
-    fun clearFocusAndSearch(text: String){
-        focusManager.clearFocus()
-        search(text)
+    BackHandler(enabled = searchText.isNotEmpty()) { onBackPressed() }
+
+    LaunchedEffect(searchText.isEmpty()) {
+        if (searchText.isEmpty()) focusRequester.requestFocus()
     }
 
     Scaffold(
@@ -133,49 +129,57 @@ fun SearchScreenBody(
             SearchTopBar(
                 onMoveBackHome = onMoveBackHome,
                 searchText = searchText,
-                onSearchTextChanged = {text ->
-                    onSearchTextChange(text)
-                },
-                search = {
-                    clearFocusAndSearch(it)
-                },
-                onFocusChange = {focusChange ->
-                    isFocused = focusChange
-                },
+                onSearchTextChanged = onSearchTextChange,
+                search = clearFocusAndSearch,
+                onFocusChange = { isFocused = it },
                 focusManager = focusManager,
-                onBackPressed = { onBackPressed() },
+                onBackPressed = onBackPressed,
                 focusRequester = focusRequester,
             )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                when (isFocused) {
-                    true -> {
-                        SearchScreenSuggestions(
-                            suggestions = searchSuggestions,
-                            onSuggestionClick = {suggestion ->
-                                clearFocusAndSearch(suggestion)
-                            }
-                        )
-                    }
-
-                    false -> {
-                        SearchScreenResults(
-                            searchResult = searchResult,
-                            onQuizClick = onQuizClick
-                        )
-                    }
-                }
-            }
         }
-    )
+    ) { padding ->
+        SearchContent(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(8.dp),
+            isFocused = isFocused,
+            suggestions = searchSuggestions,
+            onSuggestionClick = clearFocusAndSearch,
+            results = searchResult,
+            onQuizClick = onQuizClick
+        )
+    }
+}
+
+/* -------- content switch -------- */
+
+@Composable
+private fun SearchContent(
+    modifier: Modifier,
+    isFocused: Boolean,
+    suggestions: List<String>,
+    onSuggestionClick: (String) -> Unit,
+    results: PersistentList<QuizCard>?,
+    onQuizClick: (String) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (isFocused) {
+            SearchScreenSuggestions(
+                suggestions = suggestions,
+                onSuggestionClick = onSuggestionClick
+            )
+        } else {
+            SearchScreenResults(
+                searchResult = results,
+                onQuizClick = onQuizClick
+            )
+        }
+    }
 }
 
 @Composable
@@ -187,7 +191,7 @@ private fun SearchScreenSuggestions(
     LazyColumn(
         modifier = modifier.fillMaxWidth()
     ) {
-        items(suggestions, key = {it -> it}) { suggestion ->
+        items(suggestions, key = {suggestion -> suggestion}) { suggestion ->
             SearchScreenSuggestionItem(
                 modifier = Modifier.fillMaxWidth()
                     .clickable{
@@ -297,75 +301,85 @@ fun SearchTopBar(
     onMoveBackHome: () -> Unit = {},
     searchText: String,
     onSearchTextChanged: (String) -> Unit,
-    search: (searchText: String) -> Unit,
+    search: (String) -> Unit,
     focusManager: FocusManager,
     onFocusChange: (Boolean) -> Unit = {},
     onBackPressed: () -> Unit = {},
     focusRequester: FocusRequester,
 ) {
+    val onPerformSearch = remember(searchText, search, focusManager) {
+        { searchTextNonNull: String ->
+            search(searchTextNonNull)
+            focusManager.clearFocus()
+        }
+    }
+
     TopAppBar(
         title = {
-            TextField(
+            SearchField(
                 value = searchText,
-                shape = RoundedCornerShape(20.dp),
                 onValueChange = onSearchTextChanged,
-                singleLine = true,
-                textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
-                modifier = Modifier
-                    .focusRequester(focusRequester)
-                    .height(55.dp)
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            onFocusChange(true)
-                        } else {
-                            onFocusChange(false)
-                        }
-                    },
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.search),
-                        fontSize = 14.sp,
-                    )
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        search(searchText)
-                        focusManager.clearFocus()
-                    }
-                ),
-                trailingIcon = {
-                    if (searchText.isNotEmpty()) {
-                        IconButton(onClick = {
-                            onBackPressed()
-                        }) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Clear"
-                            )
-                        }
-                    }
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                )
+                onFocusChange = onFocusChange,
+                onSearch = { onPerformSearch(searchText) },
+                onClear = onBackPressed,
+                focusRequester = focusRequester
             )
         },
-        navigationIcon = {
-            IconButton(
-                onClick = onMoveBackHome
-            ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+        navigationIcon = { BackButton(onClick = onMoveBackHome) },
+        actions = { SearchAction { onPerformSearch(searchText) } }
+    )
+}
+
+/* ---------- pieces ---------- */
+
+@Composable
+private fun SearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onFocusChange: (Boolean) -> Unit,
+    onSearch: () -> Unit,
+    onClear: () -> Unit,
+    focusRequester: FocusRequester,
+) {
+    val tfColors = TextFieldDefaults.colors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent
+    )
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        shape = RoundedCornerShape(20.dp),
+        textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .height(55.dp)
+            .onFocusChanged { onFocusChange(it.isFocused) },
+        placeholder = { Text(stringResource(R.string.search), fontSize = 14.sp) },
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(onClick = onClear) {
+                    Icon(Icons.Default.Close, contentDescription = "Clear")
+                }
             }
         },
-        actions = {
-            IconButton(onClick = { search(searchText) }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            }
-        }
+        colors = tfColors
     )
+}
+
+@Composable
+private fun BackButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+    }
+}
+
+@Composable
+private fun SearchAction(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Default.Search, contentDescription = "Search")
+    }
 }

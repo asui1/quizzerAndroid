@@ -3,6 +3,8 @@ package com.asu1.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.suggestion.SearchSuggestionRepository
+import com.asu1.network.RetrofitInstance
+import com.asu1.network.runApi
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.asu1.resources.R
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -56,25 +59,31 @@ class SearchViewModel @Inject constructor(
         _searchQuery.value = searchText
     }
 
-    fun search(searchText: String){
+    fun search(searchText: String) {
         _searchQuery.value = searchText
         Logger.debug("searching for $searchText")
-        viewModelScope.launch {
+
+        if (searchText.isBlank()) {
             _searchResult.value = emptyList()
-            try {
-                val response = com.asu1.network.RetrofitInstance.api.searchQuiz(searchText)
-                if(response.isSuccessful){
-                    val quizCards = response.body()?.searchResult
-                    if(quizCards == null){
-                        return@launch
-                    }else{
-                        _searchResult.value = quizCards
+            return
+        }
+
+        viewModelScope.launch {
+            _searchResult.value = emptyList() // 필요 시 로딩 상태 플래그로 교체
+            runApi { RetrofitInstance.api.searchQuiz(searchText) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) {
+                        _searchResult.value = response.body()?.searchResult.orEmpty()
+                    } else {
+                        val err = response.errorBody()?.string()
+                        Logger.debug("search failure: $err")
+                        SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
                     }
                 }
-            }
-            catch (e: Exception){
-                Logger.debug("search error", e)
-            }
+                .onFailure { e ->
+                    Logger.debug("search error ${e.message}")
+                    SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
+                }
         }
     }
 }
