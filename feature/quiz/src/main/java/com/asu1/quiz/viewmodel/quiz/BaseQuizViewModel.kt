@@ -46,5 +46,4 @@ abstract class BaseQuizViewModel<Q: Quiz>(initialQuiz: Q) : ViewModel() {
             (quiz.cloneQuiz(bodyType = bodyType) as Q)
         }
     }
-
 }

@@ -132,7 +132,8 @@ class QuizCoordinatorViewModel : ViewModel() {
                                 isLight = !isDark
                             )
                         } else {
-                            randomDynamicColorScheme(_titleImageColors.value[0], paletteLevel.palette!!, contrastLevel.contrast, isDark)
+                            randomDynamicColorScheme(_titleImageColors.value[0],
+                                paletteLevel.palette!!, contrastLevel.contrast, isDark)
                         }
                     }
 
@@ -146,7 +147,8 @@ class QuizCoordinatorViewModel : ViewModel() {
                                 isLight = !isDark
                             )
                         } else {
-                            randomDynamicColorScheme(currentScheme.primary, paletteLevel.palette!!, contrastLevel.contrast, isDark)
+                            randomDynamicColorScheme(currentScheme.primary,
+                                paletteLevel.palette!!, contrastLevel.contrast, isDark)
                         }
                     }
                 }
@@ -347,7 +349,8 @@ class QuizCoordinatorViewModel : ViewModel() {
     fun saveLocal(context: Context) {
         _quizViewModelState.value = ViewModelState.LOADING
         val quizJsonData = Json.encodeToString(toJson())
-        val fileName = "${quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid}_${quizGeneralViewModel.quizGeneralUiState.value.quizData.creator}_quizSave.json"
+        val fileName = "${quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid}_" +
+                "${quizGeneralViewModel.quizGeneralUiState.value.quizData.creator}_quizSave.json"
         val file = File(context.filesDir, fileName)
         file.writeText(quizJsonData)
         _quizViewModelState.value = ViewModelState.IDLE
@@ -438,9 +441,12 @@ class QuizCoordinatorViewModel : ViewModel() {
                 quizThemeViewModel.resetQuizTheme()
                 scoreCardViewModel.resetScoreCard()
             }
-            is QuizCoordinatorActions.UpdateScoreCard -> scoreCardViewModel.updateScoreCardViewModel(action = action.scoreCardAction)
-            is QuizCoordinatorActions.UpdateQuizGeneral -> quizGeneralViewModel.updateQuizGeneralViewModel(action.quizGeneralAction)
-            is QuizCoordinatorActions.UpdateQuizTheme -> quizThemeViewModel.updateQuizTheme(action.quizThemeAction)
+            is QuizCoordinatorActions.UpdateScoreCard ->
+                scoreCardViewModel.updateScoreCardViewModel(action = action.scoreCardAction)
+            is QuizCoordinatorActions.UpdateQuizGeneral ->
+                quizGeneralViewModel.updateQuizGeneralViewModel(action.quizGeneralAction)
+            is QuizCoordinatorActions.UpdateQuizTheme ->
+                quizThemeViewModel.updateQuizTheme(action.quizThemeAction)
             is QuizCoordinatorActions.GenerateColorScheme -> generateColorScheme(
                 action.generateWith, action.palette, action.contrast, action.isDark
             )
@@ -458,7 +464,9 @@ sealed class QuizCoordinatorActions{
     data class AddQuizAt(val quiz: Quiz, val index: Int) : QuizCoordinatorActions()
     data object ResetQuizResult: QuizCoordinatorActions()
     data object ResetQuiz: QuizCoordinatorActions()
-    data class GenerateColorScheme(val generateWith: GenerateWith, val palette: PaletteLevel, val contrast: ContrastLevel, val isDark: Boolean): QuizCoordinatorActions()
+    data class GenerateColorScheme(
+        val generateWith: GenerateWith, val palette: PaletteLevel,
+        val contrast: ContrastLevel, val isDark: Boolean): QuizCoordinatorActions()
 }
 
 data class QuizCoordinatorState(

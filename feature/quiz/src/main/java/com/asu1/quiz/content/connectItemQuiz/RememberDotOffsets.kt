@@ -11,7 +11,9 @@ import com.asu1.models.quizRefactor.ConnectItemsQuiz
 internal fun rememberDotOffsets(
     quiz: ConnectItemsQuiz
 ): Pair<SnapshotStateList<Offset>, SnapshotStateList<Offset>> {
-    val left  = remember { mutableStateListOf<Offset>().apply { repeat(quiz.answers.size)           { add(Offset.Zero) } } }
-    val right = remember { mutableStateListOf<Offset>().apply { repeat(quiz.connectionAnswers.size) { add(Offset.Zero) } } }
+    val left  = remember { mutableStateListOf<Offset>().apply {
+        repeat(quiz.answers.size)           { add(Offset.Zero) } } }
+    val right = remember { mutableStateListOf<Offset>().apply {
+        repeat(quiz.connectionAnswers.size) { add(Offset.Zero) } } }
     return left to right
 }

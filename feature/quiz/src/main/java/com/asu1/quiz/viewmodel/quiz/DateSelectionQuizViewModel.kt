@@ -55,5 +55,4 @@ class DateSelectionQuizViewModel: BaseQuizViewModel<DateSelectionQuiz>(
             )
         }
     }
-
 }

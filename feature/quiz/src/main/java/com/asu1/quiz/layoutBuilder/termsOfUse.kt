@@ -9,8 +9,10 @@ import androidx.compose.ui.text.withStyle
 fun getTermsOfUseEn(): AnnotatedString {
     return buildAnnotatedString {
         // Bullet-style content
-        append("✓ Quizzes containing content that may cause social controversy, such as disparagement or ridicule, may be deleted.\n\n")
-        append("✓ Quizzes that infringe on rights such as copyright, portrait rights, or include inappropriate content (e.g., pornography) may be removed without consent.\n\n")
+        append("✓ Quizzes containing content that may cause social controversy, " +
+                "such as disparagement or ridicule, may be deleted.\n\n")
+        append("✓ Quizzes that infringe on rights such as copyright, portrait rights, " +
+                "or include inappropriate content (e.g., pornography) may be removed without consent.\n\n")
         append("✓ The creator is solely responsible for any issues arising from the quizzes they create.\n\n")
         append("✓ ")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {

@@ -43,7 +43,8 @@ fun LevelSelector(
         Text(
             text = buildAnnotatedString {
                 append(prefix)
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) { // Replace with your desired color
+                withStyle(style = SpanStyle
+                    (color = MaterialTheme.colorScheme.primary)) {
                     append(items[selectedLevel])
                 }
             },

@@ -74,7 +74,8 @@ class ScoreCardViewModel: ViewModel() {
             _scoreCardState.update {
                 it.copy(
                     scoreCard = it.scoreCard.copy(
-                        background = it.scoreCard.background.copy(imageData = createEmptyBitmap(), state = ImageColorState.IMAGE))
+                        background = it.scoreCard.background.copy
+                            (imageData = createEmptyBitmap(), state = ImageColorState.IMAGE))
                 )
             }
             return

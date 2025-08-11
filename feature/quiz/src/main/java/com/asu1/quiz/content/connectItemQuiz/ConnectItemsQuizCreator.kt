@@ -28,6 +28,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -161,62 +162,132 @@ private fun AnswerWithDotRow(
     focusManager: FocusManager,
     moveOffset: Float
 ) {
+    val testTag = remember(index) { "QuizCreatorAnswerLeftTextField$index" }
+    val dragHandlers = rememberLeftDotDragHandlers(
+        index = index,
+        dragState = dragState,
+        dotOffset = dotOffset,
+        onQuiz4Update = onQuiz4Update
+    )
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        TextFieldWithDelete(
+        AnswerLeftField(
             modifier = Modifier
                 .weight(1f)
-                .testTag("QuizCreatorAnswerLeftTextField$index"),
+                .testTag(testTag),
             value = answer,
-            onValueChange = { inputText ->
-                onQuiz4Update(ConnectItemsQuizAction.
-                UpdateLeftAnswerAt(index, inputText))
-            },
-            onNext = { focusManager.moveFocus(FocusDirection.Right) },
-            deleteAnswer = { onQuiz4Update(
-                ConnectItemsQuizAction.RemoveLeft(index)) }
+            index = index,
+            focusManager = focusManager,
+            onQuiz4Update = onQuiz4Update
         )
-        DraggableDot(
-            setOffset = { offset ->
-                onQuiz4Update(
-                    ConnectItemsQuizAction.
-                    UpdateLeftDotOffset(index, offset)) },
-            pointerEvent = { detectDragGestures(
-                onDragStart = {
-                    dragState.startOffset = dotOffset
-                    dragState.endOffset = dotOffset
-                    onQuiz4Update(
-                        ConnectItemsQuizAction.
-                        ResetConnectionCreator(index))
-                    dragState.initOffset = null
-                    dragState.isDragging = true
-                },
-                onDragEnd = {
-                    dragState.isDragging = false
-                    onQuiz4Update(
-                        ConnectItemsQuizAction.
-                        OnDragEndCreator(index, dragState.endOffset))
-                    dragState.startOffset = Offset.Zero
-                    dragState.endOffset = Offset.Zero
-                },
-                onDrag = { change, _ ->
-                    change.consume()
-                    if (dragState.initOffset == null) dragState.initOffset = change.position
-                    dragState.initOffset?.let { init ->
-                        dragState.endOffset = Offset(
-                            x = dragState.startOffset.x + change.position.x - init.x,
-                            y = dragState.startOffset.y + change.position.y - init.y
-                        )
-                    }
+        LeftDraggableDot(
+            index = index,
+            dragHandlers = dragHandlers,
+            dragState = dragState,
+            moveOffset = moveOffset
+        )
+    }
+}
+
+/* ---------- sub-composables ---------- */
+
+@Composable
+private fun AnswerLeftField(
+    modifier: Modifier = Modifier,
+    value: String,
+    index: Int,
+    focusManager: FocusManager,
+    onQuiz4Update: (ConnectItemsQuizAction) -> Unit
+) {
+    TextFieldWithDelete(
+        modifier = modifier,
+        value = value,
+        onValueChange = { text ->
+            onQuiz4Update(ConnectItemsQuizAction.UpdateLeftAnswerAt(index, text))
+        },
+        onNext = { focusManager.moveFocus(FocusDirection.Right) },
+        deleteAnswer = {
+            onQuiz4Update(ConnectItemsQuizAction.RemoveLeft(index))
+        }
+    )
+}
+
+@Composable
+private fun LeftDraggableDot(
+    index: Int,
+    dragHandlers: LeftDotDragHandlers,
+    dragState: DragState,
+    moveOffset: Float
+) {
+    DraggableDot(
+        setOffset = { offset ->
+            dragHandlers.onSetOffset(index, offset)
+        },
+        pointerEvent = {
+            detectDragGestures(
+                onDragStart = { dragHandlers.onStart() },
+                onDragEnd = { dragHandlers.onEnd() },
+                onDrag = { change, _ -> dragHandlers.onDrag(change) }
+            )
+        },
+        boxPosition = dragState.boxPosition,
+        dotSize = DOT_SIZE_DP,
+        padding = PADDING_SIZE_DP,
+        moveOffset = moveOffset,
+        key = "QuizCreatorLeftDot$index"
+    )
+}
+
+/* ---------- drag handlers (logic-only) ---------- */
+
+private class LeftDotDragHandlers(
+    val onSetOffset: (index: Int, offset: Offset) -> Unit,
+    val onStart: () -> Unit,
+    val onDrag: (change: PointerInputChange) -> Unit,
+    val onEnd: () -> Unit
+)
+
+@Composable
+private fun rememberLeftDotDragHandlers(
+    index: Int,
+    dragState: DragState,
+    dotOffset: Offset,
+    onQuiz4Update: (ConnectItemsQuizAction) -> Unit
+): LeftDotDragHandlers {
+    // 이 내부는 로직만 보관해서 UI를 간결하게 유지
+    return remember(index, dragState, dotOffset) {
+        LeftDotDragHandlers(
+            onSetOffset = { idx, offset ->
+                onQuiz4Update(ConnectItemsQuizAction.UpdateLeftDotOffset(idx, offset))
+            },
+            onStart = {
+                dragState.startOffset = dotOffset
+                dragState.endOffset = dotOffset
+                onQuiz4Update(ConnectItemsQuizAction.ResetConnectionCreator(index))
+                dragState.initOffset = null
+                dragState.isDragging = true
+            },
+            onDrag = { change ->
+                change.consume()
+                if (dragState.initOffset == null) dragState.initOffset = change.position
+                dragState.initOffset?.let { init ->
+                    dragState.endOffset = Offset(
+                        x = dragState.startOffset.x + change.position.x - init.x,
+                        y = dragState.startOffset.y + change.position.y - init.y
+                    )
                 }
-            ) },
-            boxPosition = dragState.boxPosition,
-            dotSize = DOT_SIZE_DP,
-            padding = PADDING_SIZE_DP,
-            moveOffset = moveOffset,
-            key = "QuizCreatorLeftDot$index"
+            },
+            onEnd = {
+                dragState.isDragging = false
+                onQuiz4Update(
+                    ConnectItemsQuizAction.OnDragEndCreator(index, dragState.endOffset)
+                )
+                dragState.startOffset = Offset.Zero
+                dragState.endOffset = Offset.Zero
+            }
         )
     }
 }

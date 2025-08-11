@@ -189,7 +189,6 @@ benchmark-junit4              = { module = "androidx.benchmark:benchmark-junit4"
 benchmark-macro-junit4        = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 runner                        = { module = "androidx.test:runner", version.ref = "runner" }
 jetbrain-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "jetbrain-kotlin-test" }
-jetbrain-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "jetbrain-kotlin-test" }
 
 mockito-core                  = { module = "org.mockito:mockito-core", version.ref = "mockito-core" }
 mockito-inline                = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }

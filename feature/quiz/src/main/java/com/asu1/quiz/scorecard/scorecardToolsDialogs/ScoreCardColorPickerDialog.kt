@@ -53,7 +53,9 @@ fun ScoreCardColorPickerDialog(
         toggleBlendMode = {
             if(colorIndex == 0){
                 ToggleTextWithTabRow(
-                    tabTexts = persistentListOf(stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId), stringResource(ImageBlendMode.BLENDHUE.stringResourceId)),
+                    tabTexts = persistentListOf(
+                        stringResource(ImageBlendMode.BLENDCOLOR.stringResourceId),
+                        stringResource(ImageBlendMode.BLENDHUE.stringResourceId)),
                     selectedItem = if(scoreCard.background.imageBlendMode == ImageBlendMode.BLENDHUE) 1 else 0,
                     onClick = {
                         updateQuizCoordinate(

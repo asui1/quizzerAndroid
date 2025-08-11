@@ -53,7 +53,7 @@ fun MultipleChoiceQuizCreator(
         items(quizState.options.size) { index ->
             AnswerTextField(
                 value = quizState.options[index],
-                onValueChange = {it ->  quiz.updateAnswerAt(index, it) },
+                onValueChange = {answerText ->  quiz.updateAnswerAt(index, answerText) },
                 answerCheck = quizState.correctFlags[index],
                 toggleAnswer = {
                     quiz.toggleAnsAt(index)

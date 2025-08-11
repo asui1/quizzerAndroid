@@ -29,41 +29,92 @@ class ConnectItemsQuizViewModel : BaseQuizViewModel<ConnectItemsQuiz>(
     private fun <T> MutableList<T>.removeIfInBounds(i: Int) { if (i in indices) removeAt(i) }
     private fun <T> MutableList<T?>.setNullIfInBounds(i: Int) { if (i in indices) this[i] = null }
 
-    // --- action entry ---
-    fun onQuiz4Update(action: ConnectItemsQuizAction) = when (action) {
+    // --- action entry (flat dispatcher) ---
+    fun onQuiz4Update(action: ConnectItemsQuizAction) {
+        when (action) {
+            ConnectItemsQuizAction.AddLeft,
+            ConnectItemsQuizAction.AddRight ->
+                handleAdd(action)
+
+            is ConnectItemsQuizAction.RemoveLeft,
+            is ConnectItemsQuizAction.RemoveRight ->
+                handleRemove(action)
+
+            is ConnectItemsQuizAction.UpdateLeftDotOffset,
+            is ConnectItemsQuizAction.UpdateRightDotOffset ->
+                handleDotOffset(action)
+
+            is ConnectItemsQuizAction.OnDragEndCreator,
+            is ConnectItemsQuizAction.OnDragEndViewer ->
+                handleDragEnd(action)
+
+            is ConnectItemsQuizAction.ResetConnectionCreator,
+            is ConnectItemsQuizAction.ResetConnectionViewer ->
+                handleReset(action)
+
+            is ConnectItemsQuizAction.UpdateLeftAnswerAt,
+            is ConnectItemsQuizAction.UpdateRightAnswerAt ->
+                handleTextUpdate(action)
+        }
+    }
+
+    /* ---------- handlers ---------- */
+    private fun handleAdd(action: ConnectItemsQuizAction) = when (action) {
         ConnectItemsQuizAction.AddLeft  -> addLeft()
         ConnectItemsQuizAction.AddRight -> addRight()
+        else -> Unit
+    }
 
+    private fun handleRemove(action: ConnectItemsQuizAction) = when (action) {
         is ConnectItemsQuizAction.RemoveLeft  -> removeLeft(action.index)
         is ConnectItemsQuizAction.RemoveRight -> removeRight(action.index)
+        else -> Unit
+    }
 
+    private fun handleDotOffset(action: ConnectItemsQuizAction) = when (action) {
         is ConnectItemsQuizAction.UpdateLeftDotOffset  ->
             leftDotOffsets.setIfInBounds(action.index, action.offset)
         is ConnectItemsQuizAction.UpdateRightDotOffset ->
             rightDotOffsets.setIfInBounds(action.index, action.offset)
+        else -> Unit
+    }
 
-        is ConnectItemsQuizAction.OnDragEndCreator ->
-            updateQuiz { connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+    private fun handleDragEnd(action: ConnectItemsQuizAction) = when (action) {
+        is ConnectItemsQuizAction.OnDragEndCreator -> updateQuiz {
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
                 setIfInBounds(action.from, onDragEnd(action.offset))
-            } }
-        is ConnectItemsQuizAction.OnDragEndViewer  ->
-            updateQuiz { userConnectionIndex.setIfInBounds(action.from, onDragEnd(action.offset)) }
+            }
+        }
+        is ConnectItemsQuizAction.OnDragEndViewer -> updateQuiz {
+            userConnectionIndex.setIfInBounds(action.from, onDragEnd(action.offset))
+        }
+        else -> Unit
+    }
 
-        is ConnectItemsQuizAction.ResetConnectionCreator ->
-            updateQuiz { connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
+    private fun handleReset(action: ConnectItemsQuizAction) = when (action) {
+        is ConnectItemsQuizAction.ResetConnectionCreator -> updateQuiz {
+            connectionAnswerIndex = connectionAnswerIndex.toMutableList().apply {
                 setNullIfInBounds(action.index)
-            } }
-        is ConnectItemsQuizAction.ResetConnectionViewer ->
-            updateQuiz { userConnectionIndex.setNullIfInBounds(action.index) }
+            }
+        }
+        is ConnectItemsQuizAction.ResetConnectionViewer -> updateQuiz {
+            userConnectionIndex.setNullIfInBounds(action.index)
+        }
+        else -> Unit
+    }
 
-        is ConnectItemsQuizAction.UpdateLeftAnswerAt  ->
-            updateQuiz { answers = answers.toMutableList().apply {
+    private fun handleTextUpdate(action: ConnectItemsQuizAction) = when (action) {
+        is ConnectItemsQuizAction.UpdateLeftAnswerAt -> updateQuiz {
+            answers = answers.toMutableList().apply {
                 setIfInBounds(action.index, action.text)
-            } }
-        is ConnectItemsQuizAction.UpdateRightAnswerAt ->
-            updateQuiz { connectionAnswers = connectionAnswers.toMutableList().apply {
+            }
+        }
+        is ConnectItemsQuizAction.UpdateRightAnswerAt -> updateQuiz {
+            connectionAnswers = connectionAnswers.toMutableList().apply {
                 setIfInBounds(action.index, action.text)
-            } }
+            }
+        }
+        else -> Unit
     }
 
     // --- helpers below keep main function short ---

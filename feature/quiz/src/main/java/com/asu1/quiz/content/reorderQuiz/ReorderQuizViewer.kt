@@ -45,7 +45,7 @@ fun ReorderQuizViewer(
                 .heightIn(min = 300.dp, max = 600.dp)
                 .fillMaxWidth()
         ) {
-            itemsIndexed(quiz.shuffledAnswers, key = {_, it -> it }) { index, value ->
+            itemsIndexed(quiz.shuffledAnswers, key = {_, answer -> answer }) { index, value ->
                 ReorderableItem(reorderState, key = value) { isDragging ->
                     val display = value.replace(Regex("Q!Z2\\d+$"), "")
                     SurfaceWithAnswerComposable(

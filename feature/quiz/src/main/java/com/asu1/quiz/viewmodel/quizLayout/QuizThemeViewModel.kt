@@ -185,7 +185,8 @@ class QuizThemeViewModel : ViewModel() {
             is QuizThemeActions.UpdateBackgroundImage -> updateBackgroundImage(action.bitmap)
             is QuizThemeActions.UpdateBackgroundType -> updateBackgroundState(action.backgroundState)
             is QuizThemeActions.UpdateGradientType -> updateGradientType(action.shaderType)
-            is QuizThemeActions.UpdateTextStyle -> updateTextStyle(action.targetSelector, action.index, action.isIncrease)
+            is QuizThemeActions.UpdateTextStyle ->
+                updateTextStyle(action.targetSelector, action.index, action.isIncrease)
         }
     }
 }

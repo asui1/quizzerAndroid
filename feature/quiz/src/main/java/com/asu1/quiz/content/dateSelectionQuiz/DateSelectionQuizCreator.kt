@@ -188,7 +188,8 @@ fun YearMonthDropDown(
                         onYearMonthChange(YearMonth.of(yearInt, yearMonth.month))
                     }
                 },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy
+                (keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()

@@ -32,5 +32,4 @@ class ShortAnswerQuizViewModel : BaseQuizViewModel<ShortAnswerQuiz>(
             )
         }
     }
-
 }

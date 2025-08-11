@@ -393,13 +393,16 @@ fun ScoreCardComposablePreview() {
     )
 }
 
+val DEFAULT_CORRECTION_LIST: PersistentList<Boolean> =
+    persistentListOf(true, true, false, false, true, false, true, false, true, false).toPersistentList()
+
 @Composable
 fun AnswerCorrection(
-    correction: PersistentList<Boolean> = listOf(true, true, false, false, true, false, true, false, true, false).toPersistentList(),
+    correction: PersistentList<Boolean> = DEFAULT_CORRECTION_LIST,
     textColor: Color,
     errorColor: Color,
     correctColor: Color,
-    questions: PersistentList<String> = persistentListOf<String>()
+    questions: PersistentList<String> = persistentListOf()
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
