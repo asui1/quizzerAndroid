@@ -2,6 +2,7 @@ package com.asu1.quizcard.quizLoad
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,15 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.topBar.RowWithAppIconAndName
-import com.asu1.models.quiz.QuizTheme
-import com.asu1.models.scorecard.ScoreCard
-import com.asu1.models.serializers.QuizDataSerializer
+import com.asu1.models.serializers.QuizLayoutSerializer
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal
 import com.asu1.quizcardmodel.QuizCard
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
@@ -45,31 +46,12 @@ fun LoadLocalQuizScreen(
 ) {
     val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
     val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
-    val quizSerializerList by loadLocalQuizViewModel.localQuizList.collectAsStateWithLifecycle()
-    val quizList = remember(quizSerializerList?.size ?: 0){quizSerializerList?.map{
-        QuizCard(
-            id = it.quizData.uuid,
-            title = it.quizData.title,
-            creator = it.quizData.creator,
-            tags = it.quizData.tags.toList(),
-            image = Base64.getDecoder().decode(it.quizData.titleImage),
-            count = 0,
-        )
-    } ?: emptyList()}
+
+    val serializerList by loadLocalQuizViewModel.localQuizList.collectAsStateWithLifecycle()
     val loadComplete by loadLocalQuizViewModel.loadLocalQuizViewModelState.observeAsState()
     val context = LocalContext.current
-    fun onClickLoad(
-        quizData: QuizDataSerializer,
-        quizTheme: QuizTheme,
-        scoreCard: ScoreCard
-    ){
-        quizCoordinatorViewModel.loadQuiz(
-            quizData = quizData,
-            quizTheme = quizTheme,
-            scoreCard = scoreCard
-        )
-        loadLocalQuizViewModel.loadComplete()
-    }
+
+    val quizCards = rememberQuizCards(serializerList)
 
     LaunchedEffect(loadComplete) {
         if (loadComplete == ViewModelState.SUCCESS) {
@@ -80,61 +62,105 @@ fun LoadLocalQuizScreen(
 
     Scaffold(
         topBar = {
-            RowWithAppIconAndName(
-                header = @Composable {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = stringResource(R.string.move_back_home)
-                        )
-                    }
-                }
-            )
+            LoadLocalTopBar(onBack = { navController.popBackStack() })
         }
-    ) { paddingValue ->
-        Box(
+    ) { padding ->
+        LoadLocalContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValue)
+                .padding(padding)
                 .padding(top = 16.dp)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            if (quizSerializerList == null) {
+                .background(MaterialTheme.colorScheme.background),
+            serializerList = serializerList,
+            quizCards = quizCards,
+            onDelete = { id -> loadLocalQuizViewModel.deleteLocalQuiz(context, id) },
+            onPick = { index ->
+                // index는 quizCards 인덱스와 serializerList 인덱스가 동일하다는 전제
+                val layout = serializerList!![index]
+                quizCoordinatorViewModel.loadQuiz(
+                    quizData = layout.quizData,
+                    quizTheme = layout.quizTheme,
+                    scoreCard = layout.scoreCard
+                )
+                loadLocalQuizViewModel.loadComplete()
+            }
+        )
+    }
+}
+
+/* ---------------- UI pieces ---------------- */
+
+@Composable
+private fun LoadLocalTopBar(onBack: () -> Unit) {
+    RowWithAppIconAndName(
+        header = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = stringResource(R.string.move_back_home)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun LoadLocalContent(
+    modifier: Modifier,
+    serializerList: List<QuizLayoutSerializer>?, // 타입 이름은 실제에 맞게 변경
+    quizCards: List<QuizCard>,
+    onDelete: (String) -> Unit,
+    onPick: (Int) -> Unit,
+) {
+    Box(modifier) {
+        if (serializerList == null) {
+            Column {
                 Text(
                     stringResource(R.string.searching_for_quizzes),
                     style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
                 )
                 LoadingAnimation()
-            } else {
-                LazyColumnWithSwipeToDismiss(
-                    inputList = quizList.toPersistentList(),
-                    deleteItemWithId = { deleteUuid ->
-                        loadLocalQuizViewModel.deleteLocalQuiz(context, deleteUuid)
-                    },
-                    content = {quizCard, index ->
-                        QuizCardHorizontal(
-                            quizCard = quizCard,
-                            onClick = {
-                                val quizLayout = quizSerializerList!![index]
-                                onClickLoad(
-                                    quizLayout.quizData,
-                                    quizLayout.quizTheme,
-                                    quizLayout.scoreCard
-                                )
-                            }
-                        )
-                    }
+            }
+        } else {
+            LazyColumnWithSwipeToDismiss(
+                inputList = quizCards.toPersistentList(),
+                deleteItemWithId = onDelete,
+            ) { quizCard, index ->
+                QuizCardHorizontal(
+                    quizCard = quizCard,
+                    onClick = { onPick(index) }
                 )
             }
         }
     }
 }
 
+@Composable
+private fun rememberQuizCards(
+    serializerList: List<QuizLayoutSerializer>?
+): List<QuizCard> {
+    return remember(serializerList) {
+        serializerList?.map { s ->
+            QuizCard(
+                id = s.quizData.uuid,
+                title = s.quizData.title,
+                creator = s.quizData.creator,
+                tags = s.quizData.tags.toList(),
+                image = runCatching { Base64.getDecoder().decode(s.quizData.titleImage) }
+                    .getOrNull(),
+                count = 0,
+            )
+        } ?: emptyList()
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun LoadItemsPreview(){
+    val navController = rememberNavController()
+    QuizzerAndroidTheme {
+        LoadLocalQuizScreen(
+            navController
+        )
+    }
 }

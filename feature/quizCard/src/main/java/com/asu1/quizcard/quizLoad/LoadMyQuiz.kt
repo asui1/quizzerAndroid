@@ -89,76 +89,120 @@ fun LoadMyQuizBody(
     quizList: PersistentList<QuizCard>,
     deleteQuiz: (String) -> Unit = {},
     onLoadQuiz: (Int) -> Unit = {},
-){
+) {
     Scaffold(
-        topBar = {
-            QuizzerTopBarBase(
-                header = @Composable {
-                    IconButton(onClick = onMoveHome
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = stringResource(R.string.move_back)
-                        )
-                    }
-                },
-                body = {
-                    Text(
-                        stringResource(R.string.my_quizzes),
-                        style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal,
-                    )
-                },
-            )
-        }
-    ) { paddingValue ->
+        topBar = { MyQuizTopBar(onBack = onMoveHome) }
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValue).padding(8.dp).padding(top = 16.dp)
+                .padding(padding)
+                .padding(horizontal = 8.dp, vertical = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            AnimatedContent(
-                targetState = quizLoadViewModelState,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
-                },
-                label = "Load My Quiz Screen",
-            ) {targetState ->
-                when(targetState){
-                    ViewModelState.LOADING -> {
-                        Text(
-                            stringResource(R.string.searching_for_quizzes),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        LoadingAnimation(
-                            modifier = Modifier.align(Alignment.Center).fillMaxSize()
-                        )
-                    }
-                    else ->{
-                        if(quizList.isEmpty()){
-                            Text(
-                                stringResource(R.string.my_quizzes_empty),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                        else {
-                            LazyColumnWithSwipeToDismiss(
-                                inputList = quizList.toPersistentList(),
-                                deleteItemWithId = deleteQuiz,
-                                content = { quizCard, index ->
-                                    QuizCardHorizontal(
-                                        quizCard = quizCard,
-                                        onClick = {
-                                            onLoadQuiz(index)
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                    }
+            MyQuizAnimatedContent(
+                state = quizLoadViewModelState,
+                loading = { LoadingSection() },
+                content = {
+                    if (quizList.isEmpty()) EmptyMyQuizMessage()
+                    else MyQuizList(
+                        quizList = quizList,
+                        deleteQuiz = deleteQuiz,
+                        onLoadQuiz = onLoadQuiz
+                    )
                 }
-            }
+            )
         }
+    }
+}
+
+/* ---------- Top bar ---------- */
+
+@Composable
+private fun MyQuizTopBar(onBack: () -> Unit) {
+    QuizzerTopBarBase(
+        header = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = stringResource(R.string.move_back)
+                )
+            }
+        },
+        body = {
+            Text(
+                text = stringResource(R.string.my_quizzes),
+                style = QuizzerTypographyDefaults.quizzerHeadlineSmallNormal
+            )
+        }
+    )
+}
+
+/* ---------- Content switch ---------- */
+
+@Composable
+private fun MyQuizAnimatedContent(
+    state: ViewModelState,
+    loading: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    AnimatedContent(
+        targetState = state,
+        transitionSpec = {
+            fadeIn(animationSpec = tween(500)) togetherWith fadeOut(animationSpec = tween(500))
+        },
+        label = "Load My Quiz Screen"
+    ) { target ->
+        when (target) {
+            ViewModelState.LOADING -> loading()
+            else -> content
+        }
+    }
+}
+
+/* ---------- Sections ---------- */
+
+@Composable
+private fun LoadingSection() {
+    Box(Modifier.fillMaxSize()) {
+        Text(
+            text = stringResource(R.string.searching_for_quizzes),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        LoadingAnimation(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxSize()
+        )
+    }
+}
+
+@Composable
+private fun EmptyMyQuizMessage() {
+    Text(
+        text = stringResource(R.string.my_quizzes_empty),
+        style = MaterialTheme.typography.bodyMedium
+    )
+}
+
+@Composable
+private fun MyQuizList(
+    quizList: PersistentList<QuizCard>,
+    deleteQuiz: (String) -> Unit,
+    onLoadQuiz: (Int) -> Unit
+) {
+    if (quizList.isEmpty()) {
+        EmptyMyQuizMessage()
+        return
+    }
+    LazyColumnWithSwipeToDismiss(
+        inputList = quizList,
+        deleteItemWithId = deleteQuiz
+    ) { quizCard, index ->
+        QuizCardHorizontal(
+            quizCard = quizCard,
+            onClick = { onLoadQuiz(index) }
+        )
     }
 }
 

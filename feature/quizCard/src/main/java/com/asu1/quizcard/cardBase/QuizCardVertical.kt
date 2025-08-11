@@ -23,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +43,7 @@ import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
+import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
@@ -92,65 +95,97 @@ fun VerticalQuizCardLargeBody(
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
-        Row() {
-            imageComposable()
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                modifier = Modifier
-                    .height(minSize),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = quizCard.title,
-                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = quizCard.creator,
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Light,
-                    maxLines = 1,
-                )
-                Spacer(modifier = Modifier.weight(2f))
-                TagsView(
-                    tags = quizCard.tags,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .padding(horizontal = 4.dp),
-                    maxLines = 3,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = buildString {
-                        append(stringResource(R.string.solved))
-                        append(quizCard.count)
-                    },
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp),
-            text = quizCard.description,
-            style = QuizzerTypographyDefaults.quizzerBodySmall,
-            minLines = 1,
-            maxLines = 6,
+        HeaderRow(
+            minSize = minSize,
+            imageComposable = imageComposable,
+            quizCard = quizCard
         )
+        Spacer(Modifier.height(8.dp))
+        DescriptionText(quizCard.description)
     }
 }
+
+/* ---------------- header ---------------- */
+
+@Composable
+private fun HeaderRow(
+    minSize: Dp,
+    imageComposable: @Composable () -> Unit,
+    quizCard: QuizCard
+) {
+    Row {
+        imageComposable()
+        Spacer(Modifier.width(8.dp))
+        MetaColumn(minSize = minSize, quizCard = quizCard)
+    }
+}
+
+@Composable
+private fun MetaColumn(minSize: Dp, quizCard: QuizCard) {
+    Column(
+        modifier = Modifier.height(minSize),
+        verticalArrangement = Arrangement.Center
+    ) {
+        TitleText(quizCard.title)
+        Spacer(Modifier.weight(1f))
+        CreatorText(quizCard.creator)
+        Spacer(Modifier.weight(2f))
+        TagsSection(quizCard.tags as PersistentList<String>)
+        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.weight(1f))
+        SolvedCountText(quizCard.count)
+        Spacer(Modifier.height(4.dp))
+    }
+}
+
+/* ---------------- leaf pieces ---------------- */
+
+@Composable
+private fun TitleText(text: String) = Text(
+    text = text,
+    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
+    overflow = TextOverflow.Ellipsis,
+    maxLines = 3
+)
+
+@Composable
+private fun CreatorText(name: String) = Text(
+    text = name,
+    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+    overflow = TextOverflow.Ellipsis,
+    fontWeight = FontWeight.Light,
+    maxLines = 1
+)
+
+@Composable
+private fun TagsSection(tags: PersistentList<String>) = TagsView(
+    tags = tags,
+    modifier = Modifier.fillMaxWidth().height(32.dp).padding(horizontal = 4.dp),
+    maxLines = 3
+)
+
+@Composable
+private fun SolvedCountText(count: Int) {
+    val solvedText = stringResource(R.string.solved)
+    val solved by remember(count) {
+        mutableStateOf("${solvedText}$count")
+    }
+    Text(
+        text = solved,
+        style = QuizzerTypographyDefaults.quizzerLabelSmallLight
+    )
+}
+
+@Composable
+private fun DescriptionText(desc: String) = Text(
+    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+    text = desc,
+    style = QuizzerTypographyDefaults.quizzerBodySmall,
+    minLines = 1,
+    maxLines = 6
+)
 
 @Composable
 fun VerticalQuizCardLargeColumn(

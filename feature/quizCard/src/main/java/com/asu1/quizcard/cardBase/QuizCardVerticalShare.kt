@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.dialog.ShareDialog
@@ -57,29 +58,16 @@ fun VerticalQuizCardLargeShare(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeight = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.height.toDp() }
-    }
-    val screenWidth = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.width.toDp() }
-    }
-    val minSize = remember{minOf(screenWidth, screenHeight).times(0.45f).coerceAtMost(400.dp)}
-    var showShareBottomSheet by remember{ mutableStateOf(false) }
+    val minSize = rememberCardMinSquare(ratio = 0.45f, maxSize = 400.dp)
+    var showShare by remember { mutableStateOf(false) }
 
-    if(showShareBottomSheet) {
-        ModalBottomSheet(onDismissRequest = {showShareBottomSheet = false },
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ) {
-            ShareDialog(
-                quizId = quizCard.id,
-                onDismiss = {
-                    showShareBottomSheet = false
-                }
-            )
-        }
+    if (showShare) {
+        ShareBottomSheet(
+            quizId = quizCard.id,
+            onDismiss = { showShare = false }
+        )
     }
+
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         modifier = modifier
@@ -88,66 +76,137 @@ fun VerticalQuizCardLargeShare(
             .padding(horizontal = 4.dp)
             .clickable { onClick() }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
+        CardContent(
+            quizCard = quizCard,
+            minSize = minSize,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope,
+            onShareClick = { showShare = true },
+            onPrimaryClick = { onIconClick(quizCard.id) }
+        )
+    }
+}
+
+/* ---------------- pieces ---------------- */
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun CardContent(
+    quizCard: QuizCard,
+    minSize: Dp,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    onShareClick: () -> Unit,
+    onPrimaryClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.fillMaxWidth().wrapContentHeight()
         ) {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                VerticalQuizCardLargeBody(
-                    quizCard = quizCard,
-                    minSize = minSize,
-                ){
-                    with(sharedTransitionScope){
-                        QuizImage(
-                            uuid = quizCard.id,
-                            title = quizCard.title,
-                            modifier = Modifier
-                                .size(minSize) // Square shape
-                                .sharedElement(
-                                    rememberSharedContentState(key = quizCard.id),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                        )
-                    }
+            VerticalQuizCardLargeBody(
+                quizCard = quizCard,
+                minSize = minSize,
+                imageComposable = {
+                    SharedImage(
+                        id = quizCard.id,
+                        title = quizCard.title,
+                        size = minSize,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                ){
-                    IconButton(
-                        onClick = { showShareBottomSheet = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share Quiz",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    TextButton(
-                        onClick = {onIconClick(quizCard.id) },
-                        colors = ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer, // Soft background
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer  // Readable text
-                        ),
-                        shape =
-                            RoundedCornerShape(4.dp),
-                    ) {
-                        Text(
-                            stringResource(R.string.get_quiz),
-                            style = QuizzerTypographyDefaults.quizzerLabelSmallMedium
-                        )
-                    }
-                }
-            }
+            )
+            ActionRow(onShareClick = onShareClick, onPrimaryClick = onPrimaryClick)
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedImage(
+    id: String,
+    title: String,
+    size: Dp,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
+) {
+    with(sharedTransitionScope) {
+        QuizImage(
+            uuid = id,
+            title = title,
+            modifier = Modifier
+                .size(size) // square
+                .sharedElement(
+                    rememberSharedContentState(key = id),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+        )
+    }
+}
+
+@Composable
+private fun ActionRow(
+    onShareClick: () -> Unit,
+    onPrimaryClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+    ) {
+        IconButton(onClick = onShareClick) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share Quiz",
+                modifier = Modifier.size(16.dp)
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        TextButton(
+            onClick = onPrimaryClick,
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            shape = RoundedCornerShape(4.dp),
+        ) {
+            Text(
+                stringResource(R.string.get_quiz),
+                style = QuizzerTypographyDefaults.quizzerLabelSmallMedium
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShareBottomSheet(
+    quizId: String,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+    ) {
+        ShareDialog(quizId = quizId, onDismiss = onDismiss)
+    }
+}
+
+/* ---------------- helpers ---------------- */
+
+@Composable
+private fun rememberCardMinSquare(ratio: Float, maxSize: Dp): Dp {
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    return remember(windowInfo, density, ratio, maxSize) {
+        with(density) {
+            val h = windowInfo.containerSize.height.toDp()
+            val w = windowInfo.containerSize.width.toDp()
+            (minOf(w, h) * ratio).coerceAtMost(maxSize)
         }
     }
 }

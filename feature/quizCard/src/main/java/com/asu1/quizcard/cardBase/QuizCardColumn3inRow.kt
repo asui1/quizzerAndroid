@@ -91,7 +91,8 @@ fun QuizCardItemVertical(
                     .height(screenWidth)
                     .clip(RoundedCornerShape(8.dp))
                     .semantics {
-                        contentDescription = StringBuilder().append("Quiz image for : ").append(quizCard.title).toString()
+                        contentDescription = StringBuilder()
+                            .append("Quiz image for : ").append(quizCard.title).toString()
                     }
             )
             Text(

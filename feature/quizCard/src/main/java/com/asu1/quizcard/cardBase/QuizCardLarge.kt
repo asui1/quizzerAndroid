@@ -28,11 +28,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.pageSelector.HorizontalPageIndicator
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
+import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun HorizontalQuizCardItemLarge(
@@ -75,15 +77,8 @@ fun QuizCardLarge(
     quizCard: QuizCard,
     onClick: (String) -> Unit = {},
 ) {
-    val windowInfo = LocalWindowInfo.current
-    val density = LocalDensity.current
-    val screenHeight = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.height.toDp() }
-    }
-    val screenWidth = remember(windowInfo, density) {
-        with(density) { windowInfo.containerSize.width.toDp() }
-    }
-    val minSize = minOf(screenWidth, screenHeight).times(0.55f)
+    val minSize = rememberCardMinSquare()
+
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
@@ -93,54 +88,115 @@ fun QuizCardLarge(
             .padding(4.dp)
             .clickable { onClick(quizCard.id) }
     ) {
-        Row(modifier = Modifier) {
-            QuizImage(
+        Row {
+            QuizCardImage(
                 uuid = quizCard.id,
                 title = quizCard.title,
-                modifier = Modifier
-                    .size(minSize) // Square shape
-                    .clip(RoundedCornerShape(8.dp))
+                size = minSize,
             )
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(modifier = Modifier
-                .padding(top = 4.dp)
-                .height(minSize - 4.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = quizCard.title,
-                    style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = quizCard.creator,
-                    style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                )
-                Spacer(modifier = Modifier.weight(2f))
-                TagsView(
-                    tags = quizCard.tags,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .padding(horizontal = 4.dp),
-                    maxLines = 2
-                )
-                Spacer(modifier = Modifier.weight(2f))
-                Text(
-                    text = quizCard.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    minLines = 6,
-                    maxLines = 6,
-                )
-            }
+            Spacer(Modifier.width(4.dp))
+            QuizCardMeta(
+                quizCard = quizCard,
+                height = minSize - 4.dp,
+            )
         }
     }
 }
 
+/* ---------- size & layout helpers ---------- */
+
+const val WIDTH_HEIGHT_RATIO = 0.55f
+@Composable
+private fun rememberCardMinSquare(): Dp {
+    val windowInfo = LocalWindowInfo.current
+    val density = LocalDensity.current
+    return remember(windowInfo, density) {
+        with(density) {
+            val h = windowInfo.containerSize.height.toDp()
+            val w = windowInfo.containerSize.width.toDp()
+            minOf(w, h) * WIDTH_HEIGHT_RATIO
+        }
+    }
+}
+
+/* ---------- pieces ---------- */
+@Composable
+private fun QuizCardImage(
+    uuid: String,
+    title: String,
+    size: Dp,
+) {
+    QuizImage(
+        uuid = uuid,
+        title = title,
+        modifier = Modifier
+            .size(size)               // 정사각형
+            .clip(RoundedCornerShape(8.dp))
+    )
+}
+
+@Composable
+private fun QuizCardMeta(
+    quizCard: QuizCard,
+    height: Dp,
+) {
+    Column(
+        modifier = Modifier
+            .padding(top = 4.dp)
+            .height(height),
+        verticalArrangement = Arrangement.Center
+    ) {
+        QuizCardTitle(quizCard.title)
+        Spacer(Modifier.weight(1f))
+        QuizCardCreator(quizCard.creator)
+        Spacer(Modifier.weight(2f))
+        QuizCardTags(quizCard.tags as PersistentList<String>)
+        Spacer(Modifier.weight(2f))
+        QuizCardDescription(quizCard.description)
+    }
+}
+
+@Composable
+private fun QuizCardTitle(text: String) {
+    Text(
+        text = text,
+        style = QuizzerTypographyDefaults.quizzerTitleSmallMedium,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 3,
+    )
+}
+
+@Composable
+private fun QuizCardCreator(name: String) {
+    Text(
+        text = name,
+        style = QuizzerTypographyDefaults.quizzerLabelSmallLight,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 1,
+    )
+}
+
+@Composable
+private fun QuizCardTags(tags: PersistentList<String>) {
+    TagsView(
+        tags = tags,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(32.dp)
+            .padding(horizontal = 4.dp),
+        maxLines = 2
+    )
+}
+
+@Composable
+private fun QuizCardDescription(desc: String) {
+    Text(
+        text = desc,
+        style = MaterialTheme.typography.bodySmall,
+        minLines = 6,
+        maxLines = 6,
+    )
+}
 
 @Preview(showBackground = true)
 @Composable

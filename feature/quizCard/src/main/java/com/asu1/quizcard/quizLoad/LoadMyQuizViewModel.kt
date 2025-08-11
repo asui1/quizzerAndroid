@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.network.RetrofitInstance
+import com.asu1.network.runApi
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
@@ -32,31 +33,27 @@ class LoadMyQuizViewModel: ViewModel() {
         _myQuizList.value = null
     }
 
-    fun loadUserQuiz(email: String){
-        if(email.isEmpty()) return
+    fun loadUserQuiz(email: String) {
+        if (email.isBlank()) return
         viewModelScope.launch {
-            try {
-                val response = RetrofitInstance.api.getMyQuiz(email)
-                if(response.isSuccessful){
-                    val quizCards = response.body()?.searchResult
-                    if(quizCards != null){
-                        _myQuizList.value = quizCards as MutableList<QuizCard>?
-                    }
-                    else{
-                        _myQuizList.value = mutableListOf()
+            runApi { RetrofitInstance.api.getMyQuiz(email) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) {
+                        val list = response.body()?.searchResult.orEmpty()
+                        _myQuizList.value = list.toMutableList() // 🔄 안전 변환
+                    } else {
+                        val err = response.errorBody()?.string()
+                        Logger.debug("loadUserQuiz Failure: $err")
+                        SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
                     }
                 }
-                else{
-                    Logger.debug("loadUserQuiz Failure")
+                .onFailure { e ->
+                    Logger.debug("loadUserQuizFailed ${e.message}")
                     SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
                 }
-            }
-            catch (e: Exception){
-                Logger.debug("loadUserQuizFailed ${e.message}")
-                SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
-            }
         }
     }
+
 
     fun deleteMyQuiz(uuid: String, email: String){
         if(_myQuizList.value == null) return

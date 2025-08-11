@@ -25,38 +25,25 @@ fun <T> retrofit2.Response<T>.requireSuccess(): T {
 inline fun <T> runApi(block: () -> T): Result<T> =
     runCatching(block).fold(
         onSuccess = { Result.success(it) },
-        onFailure = { e ->
-            when (e) {
-                is CancellationException -> throw e
-
-                is HttpException -> {
-                    val err = e.response()?.errorBody()?.string()
-                    Result.failure(RuntimeException(NetworkError.Http(e.code(), err).toString()))
-                }
-
-                is SocketTimeoutException -> {
-                    Result.failure(RuntimeException(NetworkError.Timeout(e.message).toString()))
-                }
-
-                is UnknownHostException -> {
-                    Result.failure(RuntimeException(NetworkError.UnknownHost(e.message).toString()))
-                }
-
-                is IOException -> {
-                    Result.failure(RuntimeException(NetworkError.Network(e.message).toString()))
-                }
-
-                is SerializationException -> {
-                    Result.failure(RuntimeException(NetworkError.Serialization(e.message).toString()))
-                }
-
-                is NoSuchElementException -> {
-                    Result.failure(RuntimeException(NetworkError.EmptyBody(e.message).toString()))
-                }
-
-                else -> {
-                    Result.failure(RuntimeException(NetworkError.Unexpected(e.message).toString()))
-                }
-            }
-        }
+        onFailure = { e -> mapToResultFailure(e) }
     )
+
+fun <T> mapToResultFailure(e: Throwable): Result<T> = when (e) {
+    is CancellationException -> throw e
+    is HttpException -> {
+        val err = e.response()?.errorBody()?.string()
+        Result.failure(RuntimeException(NetworkError.Http(e.code(), err).toString()))
+    }
+    is SocketTimeoutException -> Result.failure(RuntimeException(
+        NetworkError.Timeout(e.message).toString()))
+    is UnknownHostException   -> Result.failure(RuntimeException(
+        NetworkError.UnknownHost(e.message).toString()))
+    is IOException            -> Result.failure(RuntimeException(
+        NetworkError.Network(e.message).toString()))
+    is SerializationException -> Result.failure(RuntimeException(
+        NetworkError.Serialization(e.message).toString()))
+    is NoSuchElementException -> Result.failure(RuntimeException(
+        NetworkError.EmptyBody(e.message).toString()))
+    else                      -> Result.failure(RuntimeException(
+        NetworkError.Unexpected(e.message).toString()))
+}

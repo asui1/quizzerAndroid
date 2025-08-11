@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -72,84 +73,39 @@ fun <T : HasUniqueId> LazyColumnWithSwipeToDismiss(
     deleteItemWithId: (String) -> Unit = {},
     content: @Composable (T, Int) -> Unit,
 ) {
+    // shell: 공용 상태만 둠
     var showDialog by remember { mutableStateOf(false) }
     var deleteUuid by remember { mutableStateOf("") }
     val dismissStates = remember { mutableStateMapOf<String, SwipeToDismissBoxState>() }
-    val scope = rememberCoroutineScope()
     val visibleItems = remember(inputList) {
-        mutableStateMapOf<String, Boolean>().apply {
-            inputList.forEach { put(it.id, true) }
-        }
+        mutableStateMapOf<String, Boolean>().apply { inputList.forEach { put(it.id, true) } }
     }
+    val scope = rememberCoroutineScope()
 
-    LazyColumn(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        if (inputList.isEmpty()) {
-            item {
-                Text(
-                    stringResource(stringResourceWhenEmpty),
-                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
-                )
-            }
-        } else {
-            items(inputList.size, key = { index -> inputList[index].id}) { index ->
-                val inputItem = inputList[index]
-                val currentDismissState = getOrPutDismiss(
-                    uuid = inputItem.id,
-                    dismissStates = dismissStates,
-                    onDismiss = {id ->
-                        deleteUuid = id
-                        showDialog = true
-                    },
-                )
-                val isVisible = visibleItems[inputItem.id] != false
+    SwipeListContent(
+        modifier = modifier,
+        stringResWhenEmpty = stringResourceWhenEmpty,
+        inputList = inputList,
+        visibleItems = visibleItems,
+        dismissStates = dismissStates,
+        onRequestDelete = { id ->
+            deleteUuid = id
+            showDialog = true
+        },
+        itemContent = content
+    )
 
-                AnimatedVisibility(
-                    visible = isVisible,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    SwipeToDismissBox(
-                        state = currentDismissState,
-                        backgroundContent =  {
-                            val backgroundColor = when (currentDismissState.dismissDirection) {
-                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
-                                else -> Color.Transparent
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(backgroundColor)
-                                    .padding(16.dp),
-                            )
-                        },
-                        enableDismissFromStartToEnd = false,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        content = {
-                            content(inputItem, index)
-                        }
-                    )
-                }
-            }
-        }
-    }
     if (showDialog) {
-        LazyColumnSwipeToDismissDialog(
+        ConfirmDeleteDialog(
             deleteUuid = deleteUuid,
             onDelete = {
                 val uuid = deleteUuid
                 visibleItems[uuid] = false
-                scope.launch {
-                    deleteItemWithId(deleteUuid)
-                    dismissStates.remove(uuid)
-                }
+                deleteItemWithId(uuid)
+                dismissStates.remove(uuid)
+                showDialog = false
             },
-            resetDismiss = { uuid ->
+            onReset = { uuid ->
                 scope.launch {
                     dismissStates[uuid]?.reset()
                     showDialog = false
@@ -157,6 +113,101 @@ fun <T : HasUniqueId> LazyColumnWithSwipeToDismiss(
             }
         )
     }
+}
+
+/* ---------------- list content ---------------- */
+
+@Composable
+private fun <T : HasUniqueId> SwipeListContent(
+    modifier: Modifier,
+    @androidx.annotation.StringRes stringResWhenEmpty: Int,
+    inputList: PersistentList<T>,
+    visibleItems: MutableMap<String, Boolean>,
+    dismissStates: MutableMap<String, SwipeToDismissBoxState>,
+    onRequestDelete: (String) -> Unit,
+    itemContent: @Composable (T, Int) -> Unit,
+) {
+    LazyColumn(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top,
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)
+    ) {
+        if (inputList.isEmpty()) {
+            item {
+                Text(
+                    text = stringResource(stringResWhenEmpty),
+                    style = QuizzerTypographyDefaults.quizzerBodyMediumNormal,
+                )
+            }
+        } else {
+            items(inputList.size, key = { index -> inputList[index].id }) { index ->
+                val item = inputList[index]
+                val state = getOrPutDismiss(
+                    uuid = item.id,
+                    dismissStates = dismissStates,
+                    onDismiss = onRequestDelete,
+                )
+                val isVisible = visibleItems[item.id] != false
+                SwipeToDismissItem(
+                    state = state,
+                    isVisible = isVisible
+                ) {
+                    itemContent(item, index)
+                }
+            }
+        }
+    }
+}
+
+/* ---------------- item ---------------- */
+
+@Composable
+private fun SwipeToDismissItem(
+    state: SwipeToDismissBoxState,
+    isVisible: Boolean,
+    content: @Composable RowScope.() -> Unit
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        SwipeToDismissBox(
+            state = state,
+            backgroundContent = { DismissBackground(state) },
+            enableDismissFromStartToEnd = false,
+            modifier = Modifier.padding(vertical = 4.dp),
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun DismissBackground(state: SwipeToDismissBoxState) {
+    val bg = when (state.dismissDirection) {
+        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.surfaceContainer
+        else -> Color.Transparent
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bg)
+            .padding(16.dp)
+    )
+}
+
+/* ---------------- dialog wrapper ---------------- */
+@Composable
+private fun ConfirmDeleteDialog(
+    deleteUuid: String,
+    onDelete: () -> Unit,
+    onReset: (String) -> Unit,
+) {
+    LazyColumnSwipeToDismissDialog(
+        deleteUuid = deleteUuid,
+        onDelete = onDelete,
+        resetDismiss = onReset
+    )
 }
 
 @Preview(showBackground = true)
