@@ -7,20 +7,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.stringFilter.StringFilterRepository
+import com.asu1.network.AuthApi
+import com.asu1.network.runApi
 import com.asu1.resources.R
+import com.asu1.userdatamodels.UserRegister
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val stringFilterRepository: StringFilterRepository,
+    private val authApi: AuthApi,
 ) : ViewModel() {
 
     private val _registerStep = MutableLiveData(0)
@@ -39,7 +46,7 @@ class RegisterViewModel @Inject constructor(
     private val _photoUri = MutableLiveData<String?>(null)
     val photoUri: LiveData<String?> get() = _photoUri
 
-    private val _isError = MutableLiveData<Boolean>(false)
+    private val _isError = MutableLiveData(false)
     val isError: LiveData<Boolean> get() = _isError
 
     fun registerViewModelActions(action: RegisterViewModelActions){
@@ -76,89 +83,103 @@ class RegisterViewModel @Inject constructor(
         _registerStep.value = 1
     }
 
-    fun setNickName(nickName: String){
-        if(nickName.isEmpty()){
+    fun setNickName(nickName: String) {
+        if (nickName.isBlank()) {
             SnackBarManager.showSnackBar(R.string.please_enter_a_nickname, ToastType.ERROR)
             _isError.value = true
             return
         }
 
         viewModelScope.launch {
+            // 1) local validations
             val containsAdminWord = stringFilterRepository.containsAdminWord(nickName)
             val containsInappropriateWord = stringFilterRepository.containsInappropriateWord(nickName)
+
             if (containsAdminWord || containsInappropriateWord) {
                 _isError.postValue(true)
 
-                // 🚨 Show appropriate toast message
-                @Suppress("KotlinConstantConditions") val messageRes = when {
-                    containsInappropriateWord -> R.string.nickname_contains_inappropriate_word
-                    containsAdminWord -> R.string.nickname_contains_admin_word
-                    else -> R.string.can_not_use_this_nickname // Fallback (should not happen)
-                }
+                val messageRes =
+                    if (containsInappropriateWord) R.string.nickname_contains_inappropriate_word
+                    else R.string.nickname_contains_admin_word
 
                 SnackBarManager.showSnackBar(messageRes, ToastType.ERROR)
-                return@launch
             }
 
-            val response = com.asu1.network.RetrofitInstance.api.checkDuplicateNickname(nickName)
-            if(response.isSuccessful){
-                if(response.code() == 200){
+            // 2) server duplication check via runApi
+            runApi { authApi.checkDuplicateNickname(nickName) } // Result<Response<Void>>
+                .mapCatching { resp ->
+                    if (!resp.isSuccessful) throw HttpException(resp)
+                    // no body to parse; success == nickname available
+                }
+                .onSuccess {
                     Logger.debug("Can use this nickname")
                     _nickname.value = nickName
                     _registerStep.postValue(2)
+                    _isError.postValue(false)
                 }
-            }
-            else {
-                _isError.postValue(true)
-                SnackBarManager.showSnackBar(R.string.can_not_use_this_nickname, ToastType.ERROR)
-            }
+                .onFailure { e ->
+                    Logger.debug("Nickname check failed: ${e.message}")
+                    _isError.postValue(true)
+                    SnackBarManager.showSnackBar(R.string.can_not_use_this_nickname, ToastType.ERROR)
+                }
         }
     }
 
-    fun register(){
-        if(_email.value == null){
+    fun register() {
+        val email = _email.value
+        val nickname = _nickname.value
+        val tags = _tags.value
+        val photo = photoUri.value ?: ""
+
+        if (email.isNullOrBlank() || nickname.isNullOrBlank()) {
+            SnackBarManager.showSnackBar(R.string.failed_to_register, ToastType.ERROR)
             return
         }
-        viewModelScope.launch {
-            val response = com.asu1.network.RetrofitInstance.api.register(
-                com.asu1.userdatamodels.UserRegister(
-                    _email.value!!,
-                    _nickname.value!!,
-                    _tags.value.toList(),
-                    photoUri.value ?: ""
+
+        viewModelScope.launch(Dispatchers.IO) {
+            runApi {
+                authApi.register(
+                    UserRegister(
+                        email = email,
+                        nickname = nickname,
+                        tags = tags.toList(),
+                        idIcon = photo
+                    )
                 )
-            )
-            if(response.isSuccessful){
-                if(response.code() == 201){
+            }
+                .mapCatching { resp ->
+                    check(resp.isSuccessful) { "HTTP ${resp.code()}: ${resp.message()}" }
+                    check(resp.code() == 201) { "Unexpected code: ${resp.code()}" }
+                }
+                .onSuccess {
                     SnackBarManager.showSnackBar(R.string.registered_successfully, ToastType.SUCCESS)
                     _registerStep.postValue(3)
                 }
-                else{
+                .onFailure { e ->
+                    Logger.debug("register failed: ${e.message}")
                     SnackBarManager.showSnackBar(R.string.failed_to_register, ToastType.ERROR)
                 }
-            }
-            else{
-                SnackBarManager.showSnackBar(R.string.failed_to_register, ToastType.ERROR)
-            }
         }
     }
-    fun toggleTag(tag: String){
-        val tags = _tags.value.toMutableList()
-        if(tags.contains(tag)){
-            tags.remove(tag)
-            _tags.value = tags.toSet()
+
+    fun toggleTag(tag: String) {
+        val current = _tags.value
+
+        // remove path is instant (no suspend)
+        if (tag in current) {
+            _tags.value = current - tag
+            return
         }
-        else{
-            viewModelScope.launch {
-                val containsInappropriateWord = stringFilterRepository.containsInappropriateWord(tag)
-                if (containsInappropriateWord) {
-                    _isError.postValue(true)
-                    SnackBarManager.showSnackBar(R.string.contains_inappropriate_word, ToastType.ERROR)
-                    return@launch
-                }
-                tags.add(tag)
-                _tags.value = tags.toSet()
+
+        // add path: validate first, then add atomically against latest value
+        viewModelScope.launch {
+            if (stringFilterRepository.containsInappropriateWord(tag)) {
+                _isError.postValue(true)
+                SnackBarManager.showSnackBar(R.string.contains_inappropriate_word, ToastType.ERROR)
+                return@launch
             }
+            _isError.postValue(false)
+            _tags.update { it + tag }   // uses latest state; avoids lost updates
         }
     }
 }

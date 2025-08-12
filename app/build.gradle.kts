@@ -186,6 +186,7 @@ dependencies {
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
     implementation(project(":feature:permissionRequest"))
+    implementation(libs.androidx.lifecycle.process)
     testImplementation(project(":feature:quizCard"))
     androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:mainPage"))
@@ -259,8 +260,6 @@ dependencies {
     // ---- Serialization / Coroutines / Rx ----
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.rx3)
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
 
     // ---- Firebase (via BOM) ----
     implementation(platform(libs.firebase.bom))

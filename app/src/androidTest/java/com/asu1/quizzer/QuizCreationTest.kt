@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.asu1.customComposable.colorPicker.toRgbHex
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralViewModel
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
 import com.asu1.quizzer.quizCreateUtils.QuizLayoutTestUtils

@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -16,13 +18,13 @@ dependencies {
     implementation(project(":core:imageColor"))
     implementation(project(":core:quizCardModel"))
     implementation(project(":core:colorModel"))
+    implementation(project(":core:userDataModels"))
+    implementation(project(":domain:userDataUseCase"))
 
     implementation(project(":repository:network"))
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
-    implementation(project(":feature:quizCard"))
-    implementation(project(":feature:mainPage"))
 
     implementation(libs.core.ktx)
     implementation(libs.uuid.creator)
@@ -50,6 +52,9 @@ dependencies {
     implementation(libs.material.kolor)
     implementation (libs.compose.charts)
     implementation(libs.runtime.saveable)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

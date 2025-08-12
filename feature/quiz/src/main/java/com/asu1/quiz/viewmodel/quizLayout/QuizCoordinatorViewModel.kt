@@ -19,7 +19,7 @@ import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizLayoutSerializer
-import com.asu1.network.RetrofitInstance
+import com.asu1.network.QuizApi
 import com.asu1.network.requireSuccess
 import com.asu1.network.runApi
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
@@ -30,6 +30,7 @@ import com.asu1.utils.Logger
 import com.asu1.utils.calculateSeedColor
 import com.asu1.utils.randomDynamicColorScheme
 import com.asu1.utils.toScheme
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -53,9 +54,13 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.Base64
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class QuizCoordinatorViewModel : ViewModel() {
+@HiltViewModel
+class QuizCoordinatorViewModel @Inject constructor(
+    private val quizApi: QuizApi
+) : ViewModel() {
     private var _quizViewModelState = MutableStateFlow(ViewModelState.IDLE)
     val quizViewModelState: StateFlow<ViewModelState> = _quizViewModelState
 
@@ -212,7 +217,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.quizApi
+                    quizApi
                         .getResult(resultId)
                         .requireSuccess() // throws HttpException or NoSuchElementException
                 }
@@ -276,7 +281,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.quizApi
+                    quizApi
                         .getQuizData(quizId)
                         .requireSuccess()   // throws HttpException / NoSuchElementException
                 }
@@ -331,7 +336,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 val json = toJson()
-                RetrofitInstance.quizApi.addQuiz(json).requireSuccess()
+                quizApi.addQuiz(json).requireSuccess()
             }
 
             result.onSuccess {
@@ -410,7 +415,7 @@ class QuizCoordinatorViewModel : ViewModel() {
         viewModelScope.launch {
             val result = runApi {
                 withContext(Dispatchers.IO) {
-                    RetrofitInstance.quizApi.submitQuiz(payload).requireSuccess()
+                    quizApi.submitQuiz(payload).requireSuccess()
                 }
             }
 

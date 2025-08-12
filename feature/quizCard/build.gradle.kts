@@ -19,7 +19,6 @@ dependencies {
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
     implementation(project(":feature:quiz"))
-    implementation(project(":feature:mainPage"))
 
     implementation(libs.collections.immutable)
     implementation(libs.runtime.android)

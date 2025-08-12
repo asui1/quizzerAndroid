@@ -30,7 +30,8 @@ import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.LoadMyQuizViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quizcard.cardBase.LazyColumnWithSwipeToDismiss
 import com.asu1.quizcard.cardBase.QuizCardHorizontal

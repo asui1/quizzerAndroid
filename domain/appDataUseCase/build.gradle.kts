@@ -15,8 +15,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.hilt.android)
     implementation (libs.retrofit)
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
     implementation(project(":core:resource"))
     implementation(project(":repository:appData"))
     implementation(project(":core:appDataModels"))

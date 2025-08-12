@@ -1,25 +1,30 @@
 package com.asu1.userdatausecase
 
-import com.asu1.userdata.UserRepository
+import com.asu1.userdata.PushRepository
 import com.asu1.utils.Logger
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class SaveFcmTokenUseCase @Inject constructor(
-    private val userRepository: UserRepository
+    private val pushRepository: PushRepository
 ) {
     suspend operator fun invoke(token: String): Result<Unit> {
-        return try {
-            userRepository.saveFcmToken(token)
-            userRepository.sendEmailToken()
-            Result.success(Unit)
-        } catch (e: IOException) {
-            Logger.debug("I/O error saving FCM token: ${e.message}")
-            Result.failure(e)
-        } catch (e: HttpException) {
-            Logger.debug("HTTP ${e.code()} error sending email token: ${e.message}")
-            Result.failure(e)
+        val normalized = token.trim()
+        if (normalized.isEmpty()) {
+            Logger.debug("SaveFcmTokenUseCase: token is empty")
+            return Result.failure(IllegalArgumentException("FCM token must not be empty"))
         }
+
+        // Save locally first; if that fails, surface the error
+        return runCatching { pushRepository.saveFcmTokenLocal(normalized) }
+            .fold(
+                onSuccess = {
+                    // Then try to send (PushRepository.sendEmailToken() returns Result<Unit>)
+                    pushRepository.sendEmailToken()
+                },
+                onFailure = { e ->
+                    Logger.debug("SaveFcmTokenUseCase: local save failed: ${e.message}")
+                    Result.failure(e)
+                }
+            )
     }
 }

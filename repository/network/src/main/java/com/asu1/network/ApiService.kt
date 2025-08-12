@@ -27,12 +27,16 @@ import retrofit2.http.Query
 interface RecommendationApi {
     @GET("recommendations")
     suspend fun getRecommendations(
+        @Query("language") language: String,
         @Query("email") email: String
     ): Response<RecommendationList>
 
-    @GET("mostviewed")  suspend fun mostViewed(): Response<Recommendations>
-    @GET("mostrecent")  suspend fun mostRecent(): Response<Recommendations>
-    @GET("related")     suspend fun getRelated(): Response<Recommendations>
+    @GET("mostviewed")  suspend fun mostViewed(@Query("language") language: String):
+            Response<Recommendations>
+    @GET("mostrecent")  suspend fun mostRecent(@Query("language") language: String):
+            Response<Recommendations>
+    @GET("related")     suspend fun getRelated(@Query("language") language: String):
+            Response<Recommendations>
 }
 
 // auth / account
@@ -61,7 +65,7 @@ interface QuizApi {
     @POST("submitQuiz")  suspend fun submitQuiz(@Body result: SendQuizResult): Response<QuizResult>
     @GET("result")       suspend fun getResult(@Query("resultId") id: String): Response<GetQuizResult>
 
-    @GET("trends")       suspend fun getTrends(): Response<QuizCardList>
+    @GET("trends")       suspend fun getTrends(@Query("language") language: String): Response<QuizCardList>
     @GET("ranks")        suspend fun getUserRanks(): Response<UserRankList>
 }
 

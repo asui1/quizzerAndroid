@@ -1,6 +1,9 @@
 package com.asu1.userdatausecase
 
-import com.asu1.userdata.UserRepository
+import com.asu1.userdata.ActivityRepository
+import com.asu1.userdata.AuthRepository
+import com.asu1.userdata.PushRepository
+import com.asu1.userdata.UserSessionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,69 +12,93 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object UserDataModule {
-    @Provides
-    fun provideCreateGuestAccountUseCase(userRepository: UserRepository): CreateGuestAccountUseCase {
-        return CreateGuestAccountUseCase(userRepository)
-    }
+
+    /* ---------- Auth + Session ---------- */
 
     @Provides
-    fun provideTryGuestLoginUseCase(userRepository: UserRepository): TryGuestLoginUseCase {
-        return TryGuestLoginUseCase(userRepository)
-    }
+    fun provideCreateGuestAccountUseCase(
+        authRepository: AuthRepository,
+        userSessionRepository: UserSessionRepository
+    ): CreateGuestAccountUseCase =
+        CreateGuestAccountUseCase(authRepository, userSessionRepository)
 
     @Provides
-    fun provideTryLoginUseCase(userRepository: UserRepository): TryLoginUseCase {
-        return TryLoginUseCase(userRepository)
-    }
+    fun provideTryGuestLoginUseCase(
+        authRepository: AuthRepository,
+        userSessionRepository: UserSessionRepository
+    ): TryGuestLoginUseCase =
+        TryGuestLoginUseCase(authRepository, userSessionRepository)
+
+    @Provides
+    fun provideTryLoginUseCase(
+        authRepository: AuthRepository,
+        userSessionRepository: UserSessionRepository
+    ): TryLoginUseCase =
+        TryLoginUseCase(authRepository, userSessionRepository)
+
+    @Provides
+    fun provideLoginWithEmailUseCase(
+        authRepository: AuthRepository,
+        userSessionRepository: UserSessionRepository
+    ): LoginWithEmailUseCase =
+        LoginWithEmailUseCase(authRepository, userSessionRepository)
+
+    /* ---------- Orchestration ---------- */
 
     @Provides
     fun provideLogOutAndGetGuestUseCase(
-        userRepository: UserRepository,
+        userSessionRepository: UserSessionRepository,
         tryGuestLoginUseCase: TryGuestLoginUseCase,
         createGuestAccountUseCase: CreateGuestAccountUseCase
-    ): LogOutAndGetGuestUseCase {
-        return LogOutAndGetGuestUseCase(userRepository, tryGuestLoginUseCase, createGuestAccountUseCase)
-    }
+    ): LogOutAndGetGuestUseCase =
+        LogOutAndGetGuestUseCase(
+            userSessionRepository,
+            tryGuestLoginUseCase,
+            createGuestAccountUseCase
+        )
 
     @Provides
     fun provideInitLoginUseCase(
         tryLoginUseCase: TryLoginUseCase,
         tryGuestLoginUseCase: TryGuestLoginUseCase,
         createGuestAccountUseCase: CreateGuestAccountUseCase
-    ): InitLoginUseCase {
-        return InitLoginUseCase(tryLoginUseCase, tryGuestLoginUseCase, createGuestAccountUseCase)
-    }
-
-    @Provides
-    fun provideGetUserActivitiesUseCase(userRepository: UserRepository): GetUserActivitiesUseCase {
-        return GetUserActivitiesUseCase(userRepository)
-    }
-
-    @Provides
-    fun provideLoginWithEmailUseCase(userRepository: UserRepository): LoginWithEmailUseCase {
-        return LoginWithEmailUseCase(userRepository)
-    }
+    ): InitLoginUseCase =
+        InitLoginUseCase(tryLoginUseCase, tryGuestLoginUseCase, createGuestAccountUseCase)
 
     @Provides
     fun provideLogoutToGuestUseCase(
-        userRepository: UserRepository,
+        userSessionRepository: UserSessionRepository,
         tryGuestLoginUseCase: TryGuestLoginUseCase,
-        createGuestAccountUseCase: CreateGuestAccountUseCase
-    ): LogoutToGuestUseCase {
-        return LogoutToGuestUseCase(userRepository, tryGuestLoginUseCase, createGuestAccountUseCase)
-    }
+    ): LogoutToGuestUseCase =
+        LogoutToGuestUseCase(
+            userSessionRepository,
+            tryGuestLoginUseCase,
+        )
+
+    /* ---------- Activity ---------- */
+
+    @Provides
+    fun provideGetUserActivitiesUseCase(
+        activityRepository: ActivityRepository
+    ): GetUserActivitiesUseCase =
+        GetUserActivitiesUseCase(activityRepository)
+
+    /* ---------- Push/FCM ---------- */
 
     @Provides
     fun provideSaveFcmTokenUseCase(
-        userRepository: UserRepository,
-    ): SaveFcmTokenUseCase{
-        return SaveFcmTokenUseCase(userRepository)
-    }
+        pushRepository: PushRepository
+    ): SaveFcmTokenUseCase =
+        SaveFcmTokenUseCase(pushRepository)
 
     @Provides
     fun provideUpdateEmailFcmTokenUseCase(
-        userRepository: UserRepository
-    ): UpdateEmailFcmTokenUseCase{
-        return UpdateEmailFcmTokenUseCase(userRepository)
-    }
+        pushRepository: PushRepository
+    ): UpdateEmailFcmTokenUseCase =
+        UpdateEmailFcmTokenUseCase(pushRepository)
+
+    // If you also added the sendEmailToken() orchestration as a separate use case:
+    // @Provides
+    // fun provideSendEmailTokenUseCase(pushRepository: PushRepository): SendEmailTokenUseCase =
+    //     SendEmailTokenUseCase(pushRepository)
 }

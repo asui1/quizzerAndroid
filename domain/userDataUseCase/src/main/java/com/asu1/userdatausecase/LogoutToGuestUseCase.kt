@@ -1,26 +1,17 @@
-@file:Suppress("unused")
-
 package com.asu1.userdatausecase
 
 import com.asu1.resources.UserLoginInfo
-import com.asu1.userdata.UserRepository
-import kotlinx.coroutines.coroutineScope
+import com.asu1.userdata.UserSessionRepository
 import javax.inject.Inject
 
 class LogoutToGuestUseCase @Inject constructor(
-    private val userRepository: UserRepository,
+    private val userSessionRepository: UserSessionRepository,
     private val tryGuestLoginUseCase: TryGuestLoginUseCase,
-    private val createGuestAccountUseCase: CreateGuestAccountUseCase,
 ) {
-    suspend operator fun invoke(): UserLoginInfo? = coroutineScope {
-        userRepository.clearUserLoginInfo()
-
-        tryGuestLoginUseCase().run {
-            if (this != null) {
-                return@coroutineScope this
-            }
-        }
-
-        return@coroutineScope null
+    suspend operator fun invoke(): UserLoginInfo? {
+        // wipe only the *user* session; guest prefs remain
+        userSessionRepository.clearUserLoginInfo()
+        // try to use an existing guest session; if none, return null
+        return tryGuestLoginUseCase()
     }
 }

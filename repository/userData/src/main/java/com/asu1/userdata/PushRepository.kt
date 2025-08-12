@@ -8,8 +8,6 @@ import com.asu1.network.AuthApi
 import com.asu1.network.runApi
 import com.asu1.userdatamodels.FcmToken
 import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,6 +15,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface PushRepository {
     suspend fun updateFcmTokenRemote(email: String, token: String): Result<Unit>

@@ -15,8 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
 import com.asu1.mainpage.screens.UserProfilePic
-import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.mainpage.viewModels.sampleUserData
+import com.asu1.quiz.viewmodel.UserViewModel
+import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerAndroidTheme
 import kotlinx.coroutines.launch
 

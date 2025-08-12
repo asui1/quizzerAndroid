@@ -20,7 +20,7 @@ import com.asu1.appdatamodels.SettingItems
 import com.asu1.mainpage.composables.InquiryBottomSheetContent
 import com.asu1.mainpage.composables.SignoutBottomSheetContent
 import com.asu1.mainpage.viewModels.InquiryViewModel
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.resources.R
 import kotlinx.collections.immutable.persistentListOf
 

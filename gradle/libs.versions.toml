@@ -25,10 +25,8 @@ logging-interceptor = "5.1.0"
 moshi = "1.15.2"
 kotlinx-serialization-json = "1.9.0"
 
-# Coroutines / Rx
+# Coroutines
 kotlinx-coroutines = "1.10.2"
-rxjava = "3.1.11"
-rxandroid = "3.0.2"
 
 # DI / Room / Data
 room = "2.7.2"
@@ -43,7 +41,8 @@ lottie-compose = "6.6.7"
 dotlottie-android = "0.9.2"
 
 # UI extras
-material = "1.12.0"
+material = "1.8.3"
+material-icons = "1.7.8"
 material-kolor = "3.0.1"
 accompanist-flowlayout = "0.36.0"
 colorpicker-compose = "1.1.2"
@@ -78,6 +77,7 @@ jetbrain-kotlin-test = "1.8.22"
 appcompat = "1.7.1"
 collections-immutable = "0.4.0"
 segmentation-selfie-version = "16.0.0-beta6"
+lifecycle-process = "2.9.2"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }
@@ -100,7 +100,7 @@ compose-bom                   = { module = "androidx.compose:compose-bom", versi
 compose-ui                    = { module = "androidx.compose.ui:ui" }
 ui-tooling                    = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview            = { module = "androidx.compose.ui:ui-tooling-preview" }
-ui-graphics                   = { module = "androidx.compose.ui:ui-graphics" }
+ui-graphics                   = { module = "androidx.compose.ui:ui-graphics", version.ref = "material" }
 runtime-saveable              = { module = "androidx.compose.runtime:runtime-saveable" }
 runtime-livedata              = { module = "androidx.compose.runtime:runtime-livedata" }
 material3                     = { module = "androidx.compose.material3:material3-android" }
@@ -117,7 +117,7 @@ lifecycle-runtime-ktx         = { module = "androidx.lifecycle:lifecycle-runtime
 lifecycle-viewmodel-compose   = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 work-runtime-ktx              = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 constraint-layout             = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraint-layout" }
-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android" }
+animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "material" }
 
 # Google sign-in / credentials
 play-services-auth            = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
@@ -139,11 +139,9 @@ moshi                         = { module = "com.squareup.moshi:moshi", version.r
 moshi-kotlin                  = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 kotlinx-serialization-json    = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 
-# Coroutines / Rx
+# Coroutines
 kotlinx-coroutines-test       = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-rx3        = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3",  version.ref = "kotlinx-coroutines" }
-rxjava                        = { module = "io.reactivex.rxjava3:rxjava",  version.ref = "rxjava" }
-rxandroid                     = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
 mlkit-segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version.ref = "segmentation-selfie-version" }
 
 # Room / Data / Security
@@ -214,9 +212,10 @@ calendar-compose  = { module = "com.kizitonwose.calendar:compose", version.ref =
 google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
 google-play-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "google-play-update" }
 google-play-update = { module = "com.google.android.play:app-update", version.ref = "google-play-update" }
-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "material-icons" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons" }
 foundation-android = { group = "androidx.compose.foundation", name = "foundation-android" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle-process" }
 
 [bundles]
 compose-core = [

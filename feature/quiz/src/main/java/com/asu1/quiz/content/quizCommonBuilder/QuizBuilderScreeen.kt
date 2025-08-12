@@ -62,15 +62,15 @@ import androidx.navigation.compose.rememberNavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.serializers.QuizType
 import com.asu1.quiz.ui.ImageColorBackground
 import com.asu1.quiz.ui.QuizLayoutBottomBar
+import com.asu1.quiz.viewmodel.LoadLocalQuizViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
@@ -83,7 +83,7 @@ fun QuizBuilderScreen(
     // 1) collect shared state and helpers
     val vm: QuizCoordinatorViewModel   = viewModel()
     val loadVm: LoadLocalQuizViewModel = viewModel()
-    val userVm: UserViewModel          = viewModel()
+    val userVm: UserViewModel = viewModel()
     val state by vm.quizUIState.collectAsStateWithLifecycle()
 
     val quizzes     = state.quizContentState.quizzes

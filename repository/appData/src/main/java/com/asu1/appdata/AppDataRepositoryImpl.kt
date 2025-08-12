@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.asu1.appdatamodels.Notification
-import com.asu1.network.RetrofitInstance
+import com.asu1.network.NotificationApi
 import com.asu1.network.runApi
 import com.asu1.utils.LanguageSetter
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class AppDataRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
-    private val retrofitInstance: RetrofitInstance,
+    private val notificationApi: NotificationApi,
 ) : AppDataRepository {
     private val Context.dataStore by preferencesDataStore(name = "onBoardingNotification_state")
     private val dataStore = context.dataStore
@@ -32,7 +32,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 + 응답 검증 (예외 매핑은 runApi가 담당)
         val result: Result<List<Notification>> =
-            runApi { retrofitInstance.notificationApi.getNotifications(page, LanguageSetter.lang) }
+            runApi { notificationApi.getNotifications(page, LanguageSetter.lang) }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body() ?: emptyList()
@@ -49,7 +49,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 (예외는 runApi가 Result.failure로 매핑)
         val result: Result<String> =
-            runApi { retrofitInstance.notificationApi.getNotificationDetail(id, LanguageSetter.lang) }
+            runApi { notificationApi.getNotificationDetail(id, LanguageSetter.lang) }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body()?.use { it.string() }
@@ -68,7 +68,7 @@ class AppDataRepositoryImpl @Inject constructor(
                     if (id.isNullOrBlank()) {
                         Result.success(null)
                     } else {
-                        runApi { retrofitInstance.notificationApi.getOnBoardingNotification(id.toInt()) }
+                        runApi { notificationApi.getOnBoardingNotification(id.toInt()) }
                             .mapCatching { resp ->
                                 if (!resp.isSuccessful) throw HttpException(resp)
                                 resp.body()
@@ -94,7 +94,7 @@ class AppDataRepositoryImpl @Inject constructor(
 
         // 2) API 호출 (예외는 runApi에서 Result.failure로 매핑)
         val result: Result<Int> =
-            runApi { retrofitInstance.notificationApi.getNotificationPageNumber() }
+            runApi { notificationApi.getNotificationPageNumber() }
                 .mapCatching { response ->
                     if (!response.isSuccessful) throw HttpException(response)
                     response.body() ?: throw NoSuchElementException("Empty body")

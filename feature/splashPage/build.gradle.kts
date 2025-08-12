@@ -13,6 +13,7 @@ dependencies {
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:mainPage"))
+    implementation(project(":feature:quiz"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)

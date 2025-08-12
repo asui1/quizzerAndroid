@@ -2,7 +2,7 @@ package com.asu1.appdata
 
 import android.content.Context
 import com.asu1.appdatamodels.Notification
-import com.asu1.network.RetrofitInstance
+import com.asu1.network.NotificationApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +26,8 @@ object AppDataRepositoryModule {
     @Singleton
     fun provideAppDataRepository(
         @ApplicationContext context: Context,
-        retrofitInstance: RetrofitInstance
+        notificationApi: NotificationApi,
     ): AppDataRepository {
-        return AppDataRepositoryImpl(context, retrofitInstance)
+        return AppDataRepositoryImpl(context, notificationApi)
     }
 }

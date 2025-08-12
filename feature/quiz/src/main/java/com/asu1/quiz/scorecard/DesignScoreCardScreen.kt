@@ -46,9 +46,9 @@ import com.asu1.customComposable.uiUtil.disableImmersiveMode
 import com.asu1.customComposable.uiUtil.enableImmersiveMode
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
+import com.asu1.quiz.viewmodel.LoadMyQuizViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.ScoreCardViewModel
-import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import kotlinx.collections.immutable.PersistentList
@@ -64,7 +64,7 @@ fun DesignScoreCardScreen(
 ) {
     // 1️⃣ Gather all your state & callbacks
     val coordinatorVm: QuizCoordinatorViewModel   = viewModel()
-    val loadVm:          LoadMyQuizViewModel      = viewModel()
+    val loadVm: LoadMyQuizViewModel = viewModel()
     val scoreVm:         ScoreCardViewModel       = viewModel()
     val uiState by       coordinatorVm.quizUIState.collectAsStateWithLifecycle()
     val scoreCardState   = uiState.scoreCardState

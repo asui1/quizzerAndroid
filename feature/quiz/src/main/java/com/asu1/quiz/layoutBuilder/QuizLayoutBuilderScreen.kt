@@ -61,16 +61,16 @@ import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.button.IconButtonWithText
 import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.quiz.layoutBuilder.quizTextInputs.QuizLayoutTitleDescriptionTag
 import com.asu1.quiz.layoutBuilder.quizThemeBuilder.QuizLayoutSetQuizTheme
 import com.asu1.quiz.ui.QuizLayoutBottomBar
+import com.asu1.quiz.viewmodel.LoadLocalQuizViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizGeneralActions
-import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
 import com.asu1.resources.LayoutSteps
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
@@ -88,8 +88,8 @@ fun QuizLayoutBuilderScreen(
 ) {
     // 1) Gather all state & callbacks
     val vm: QuizCoordinatorViewModel       = viewModel()
-    val loadVm: LoadLocalQuizViewModel      = viewModel()
-    val userVm: UserViewModel               = viewModel()
+    val loadVm: LoadLocalQuizViewModel = viewModel()
+    val userVm: UserViewModel = viewModel()
     val context = LocalContext.current
     val scope   = rememberCoroutineScope()
 

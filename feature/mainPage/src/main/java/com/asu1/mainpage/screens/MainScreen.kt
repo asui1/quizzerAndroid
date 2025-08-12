@@ -47,7 +47,7 @@ import com.asu1.customComposable.dialog.DialogComposable
 import com.asu1.mainpage.composables.MainActivityBottomBar
 import com.asu1.mainpage.composables.MainActivityTopbar
 import com.asu1.mainpage.viewModels.QuizCardViewModel
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.QuizCardsWithTag
 import com.asu1.resources.QuizzerAndroidTheme

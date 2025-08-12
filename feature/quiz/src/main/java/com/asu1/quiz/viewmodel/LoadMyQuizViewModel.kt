@@ -1,16 +1,17 @@
-package com.asu1.quizcard.quizLoad
+package com.asu1.quiz.viewmodel
 
 import SnackBarManager
 import ToastType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.network.RetrofitInstance
+import com.asu1.network.QuizApi
 import com.asu1.network.runApi
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
 import com.asu1.utils.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -18,8 +19,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoadMyQuizViewModel: ViewModel() {
+@HiltViewModel
+class LoadMyQuizViewModel @Inject constructor(
+    private val quizApi: QuizApi
+) : ViewModel() {
     private val _loadMyQuizViewModelState = MutableLiveData(ViewModelState.IDLE)
     val loadMyQuizViewModelState: MutableLiveData<ViewModelState> get() = _loadMyQuizViewModelState
 
@@ -36,7 +41,7 @@ class LoadMyQuizViewModel: ViewModel() {
     fun loadUserQuiz(email: String) {
         if (email.isBlank()) return
         viewModelScope.launch {
-            runApi { RetrofitInstance.api.getMyQuiz(email) }
+            runApi { quizApi.getMyQuiz(email) }
                 .onSuccess { response ->
                     if (response.isSuccessful) {
                         val list = response.body()?.searchResult.orEmpty()
@@ -60,7 +65,7 @@ class LoadMyQuizViewModel: ViewModel() {
         val quiz = _myQuizList.value?.find { it.id == uuid }
         if(quiz == null) return
         viewModelScope.launch {
-            val response = RetrofitInstance.api.deleteQuiz(quiz.id, email)
+            val response = quizApi.deleteQuiz(quiz.id, email)
             if(response.isSuccessful){
                 val updatedList = _myQuizList.value?.toMutableList()
                 updatedList?.remove(quiz)

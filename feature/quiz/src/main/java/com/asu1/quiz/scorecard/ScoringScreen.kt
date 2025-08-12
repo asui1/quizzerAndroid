@@ -52,10 +52,10 @@ import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.customComposable.dialog.ShareDialog
 import com.asu1.customComposable.uiUtil.disableImmersiveMode
 import com.asu1.customComposable.uiUtil.enableImmersiveMode
-import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quiz.QuizResult
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.scorecard.sampleScoreCard
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorActions
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R

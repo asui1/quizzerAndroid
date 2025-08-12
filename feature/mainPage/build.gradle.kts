@@ -65,8 +65,6 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.coil.compose)
     implementation(libs.landscapist.glide)
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
     implementation(libs.kotlinx.coroutines.rx3)
     implementation(libs.accompanist.flowlayout)
     implementation(libs.animation.graphics.android)

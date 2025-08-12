@@ -5,9 +5,9 @@ import com.asu1.network.runApi
 import com.asu1.userdatamodels.GuestAccount
 import com.asu1.userdatamodels.UserInfo
 import com.asu1.userdatamodels.UserRegister
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import retrofit2.HttpException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // 1) Auth / Account (네트워크)
 interface AuthRepository {

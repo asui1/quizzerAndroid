@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.asu1.appdatamodels.SettingItems
 import com.asu1.appdatamodels.sampleSettingItems
 import com.asu1.mainpage.composables.SettingsGroupCard
-import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.mainpage.viewModels.sampleUserData
+import com.asu1.quiz.viewmodel.UserViewModel
+import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.getAppVersion

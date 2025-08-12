@@ -3,9 +3,9 @@ package com.asu1.userdata
 import com.asu1.network.ActivityApi
 import com.asu1.network.runApi
 import com.asu1.userdatamodels.UserActivity
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import retrofit2.HttpException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ActivityRepository {
     suspend fun getUserActivities(email: String): Result<List<UserActivity>>

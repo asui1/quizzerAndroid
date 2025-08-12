@@ -53,7 +53,7 @@ import com.asu1.customComposable.topBar.RowWithAppIconAndName
 import com.asu1.customComposable.uiUtil.keyboardAsState
 import com.asu1.mainpage.viewModels.RegisterViewModel
 import com.asu1.mainpage.viewModels.RegisterViewModelActions
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter

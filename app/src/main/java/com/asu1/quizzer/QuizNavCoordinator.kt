@@ -4,10 +4,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.asu1.activityNavigation.Route
 import com.asu1.mainpage.viewModels.QuizCardViewModel
-import com.asu1.mainpage.viewModels.UserViewModel
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
-import com.asu1.quizcard.quizLoad.LoadLocalQuizViewModel
-import com.asu1.quizcard.quizLoad.LoadMyQuizViewModel
+import com.asu1.quiz.viewmodel.LoadLocalQuizViewModel
+import com.asu1.quiz.viewmodel.LoadMyQuizViewModel
 import com.asu1.resources.R
 
 @Suppress("LongParameterList")

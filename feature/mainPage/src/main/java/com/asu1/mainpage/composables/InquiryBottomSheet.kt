@@ -40,8 +40,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.asu1.mainpage.viewModels.UserViewModel
-import com.asu1.mainpage.viewModels.sampleUserData
+import com.asu1.quiz.viewmodel.UserViewModel
+import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R

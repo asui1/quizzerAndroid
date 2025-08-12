@@ -35,12 +35,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
-import com.asu1.mainpage.viewModels.UserViewModel
 import com.asu1.models.quiz.QuizData
 import com.asu1.models.quiz.QuizTheme
 import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.sampleQuizList
 import com.asu1.quiz.ui.ImageColorBackground
+import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState

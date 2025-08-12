@@ -1,7 +1,5 @@
-package com.asu1.quizcard.quizLoad
+package com.asu1.quiz.viewmodel
 
-import SnackBarManager
-import ToastType
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,4 +69,3 @@ class LoadLocalQuizViewModel: ViewModel() {
         }
     }
 }
-
