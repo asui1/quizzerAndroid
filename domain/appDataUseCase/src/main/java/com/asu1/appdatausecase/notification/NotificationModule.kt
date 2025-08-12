@@ -1,4 +1,4 @@
-package com.asu1.appdatausecase
+package com.asu1.appdatausecase.notification
 
 import com.asu1.appdata.AppDataRepository
 import dagger.Module
@@ -8,7 +8,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppDataModule {
+object NotificationModule {
     @Provides
     fun provideGetNotificationUseCase(appDataRepository: AppDataRepository): GetNotificationUseCase {
         return GetNotificationUseCase(appDataRepository)

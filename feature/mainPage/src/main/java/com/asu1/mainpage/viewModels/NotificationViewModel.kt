@@ -7,9 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdatamodels.Notification
-import com.asu1.appdatausecase.GetNotificationDetailUseCase
-import com.asu1.appdatausecase.GetNotificationPageNumberUseCase
-import com.asu1.appdatausecase.GetNotificationUseCase
+import com.asu1.appdatausecase.notification.GetNotificationDetailUseCase
+import com.asu1.appdatausecase.notification.GetNotificationPageNumberUseCase
+import com.asu1.appdatausecase.notification.GetNotificationUseCase
 import com.asu1.resources.R
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel

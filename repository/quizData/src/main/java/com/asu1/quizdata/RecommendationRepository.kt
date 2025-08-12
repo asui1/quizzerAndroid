@@ -1,5 +1,5 @@
 // RecommendationRepository.kt
-package com.asu1.quizzer.repository
+package com.asu1.quizdata
 
 import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList

@@ -1,4 +1,4 @@
-package com.asu1.appdatausecase
+package com.asu1.appdatausecase.notification
 
 import com.asu1.appdata.AppDataRepository
 import com.asu1.appdatamodels.Notification

@@ -1,4 +1,4 @@
-package com.asu1.quizzer.repository
+package com.asu1.quizdata
 
 import com.asu1.models.quiz.GetQuizResult
 import com.asu1.models.quiz.QuizResult

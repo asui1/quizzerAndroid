@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -8,17 +11,27 @@ android {
     namespace = "com.asu1.appdatausecase"
 }
 
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    }
+}
+
 dependencies {
+    implementation(project(":core:resource"))
+    implementation(project(":core:quizCardModel"))
+    implementation(project(":core:appDataModels"))
+    implementation(project(":core:userDataModels"))
+    implementation(project(":core:util"))
+
+    implementation(project(":repository:quizData"))
+    implementation(project(":repository:appData"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.hilt.android)
     implementation (libs.retrofit)
-    implementation(project(":core:resource"))
-    implementation(project(":repository:appData"))
-    implementation(project(":core:appDataModels"))
-    implementation(project(":core:util"))
     implementation(libs.datastore.core)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)

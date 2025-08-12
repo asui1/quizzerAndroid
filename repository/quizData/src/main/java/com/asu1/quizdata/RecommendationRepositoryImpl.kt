@@ -1,4 +1,4 @@
-package com.asu1.quizzer.repository
+package com.asu1.quizdata
 
 import com.asu1.network.QuizApi
 import com.asu1.network.RecommendationApi

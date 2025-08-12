@@ -1,4 +1,4 @@
-package com.asu1.appdatausecase
+package com.asu1.appdatausecase.notification
 
 import androidx.datastore.core.CorruptionException
 import com.asu1.appdata.AppDataRepository
