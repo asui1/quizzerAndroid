@@ -6,14 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.network.AuthApi
 import com.asu1.network.runApi
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserActivity
-import com.asu1.userdatausecase.GetUserActivitiesUseCase
-import com.asu1.userdatausecase.InitLoginUseCase
-import com.asu1.userdatausecase.LoginWithEmailUseCase
-import com.asu1.userdatausecase.LogoutToGuestUseCase
+import com.asu1.userdatausecase.account.DeleteUserUseCase
+import com.asu1.userdatausecase.user.GetUserActivitiesUseCase
+import com.asu1.userdatausecase.auth.InitLoginUseCase
+import com.asu1.userdatausecase.auth.LoginWithEmailUseCase
+import com.asu1.userdatausecase.auth.LogoutToGuestUseCase
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +35,7 @@ class UserViewModel @Inject constructor(
     private val getUserActivitiesUseCase: GetUserActivitiesUseCase,
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
     private val logoutToGuestUseCase: LogoutToGuestUseCase,
-    private val authApi: AuthApi,
+    private val deleteUserUseCase: DeleteUserUseCase,
 ): ViewModel() {
 
     private val _isUserLoggedIn = MutableLiveData(false)
@@ -119,11 +119,8 @@ class UserViewModel @Inject constructor(
     }
 
     fun signOut(email: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            runApi { authApi.deleteUser(email) } // Result<Response<Void>>
-                .mapCatching { resp ->
-                    if (!resp.isSuccessful) throw retrofit2.HttpException(resp)
-                }
+        viewModelScope.launch {
+            deleteUserUseCase(email)
                 .onSuccess {
                     SnackBarManager.showSnackBar(R.string.user_delete_successed, ToastType.SUCCESS)
                     logOut()

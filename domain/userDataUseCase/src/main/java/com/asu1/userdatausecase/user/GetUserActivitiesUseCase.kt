@@ -1,4 +1,4 @@
-package com.asu1.userdatausecase
+package com.asu1.userdatausecase.user
 
 import com.asu1.userdata.ActivityRepository
 import com.asu1.userdatamodels.UserActivity

@@ -1,4 +1,4 @@
-package com.asu1.userdatausecase
+package com.asu1.userdatausecase.auth
 
 import com.asu1.resources.UserLoginInfo
 import com.asu1.userdata.AuthRepository

@@ -4,6 +4,16 @@ import com.asu1.userdata.ActivityRepository
 import com.asu1.userdata.AuthRepository
 import com.asu1.userdata.PushRepository
 import com.asu1.userdata.UserSessionRepository
+import com.asu1.userdatausecase.auth.CreateGuestAccountUseCase
+import com.asu1.userdatausecase.auth.InitLoginUseCase
+import com.asu1.userdatausecase.auth.LogOutAndGetGuestUseCase
+import com.asu1.userdatausecase.auth.LoginWithEmailUseCase
+import com.asu1.userdatausecase.auth.LogoutToGuestUseCase
+import com.asu1.userdatausecase.auth.TryGuestLoginUseCase
+import com.asu1.userdatausecase.auth.TryLoginUseCase
+import com.asu1.userdatausecase.session.SaveFcmTokenUseCase
+import com.asu1.userdatausecase.session.UpdateEmailFcmTokenUseCase
+import com.asu1.userdatausecase.user.GetUserActivitiesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

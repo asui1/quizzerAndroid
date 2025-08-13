@@ -1,6 +1,6 @@
 package com.asu1.activityNavigation
 
-import com.asu1.userdatausecase.SaveFcmTokenUseCase
+import com.asu1.userdatausecase.session.SaveFcmTokenUseCase
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

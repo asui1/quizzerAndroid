@@ -5,7 +5,7 @@ import ToastType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.resources.R
-import com.asu1.userdatausecase.SendInquiryUseCase
+import com.asu1.userdatausecase.account.SendInquiryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.logging.Logger

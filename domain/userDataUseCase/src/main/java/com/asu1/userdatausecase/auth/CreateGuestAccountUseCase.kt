@@ -1,4 +1,4 @@
-package com.asu1.userdatausecase
+package com.asu1.userdatausecase.auth
 
 import com.asu1.resources.UserLoginInfo
 import com.asu1.userdata.AuthRepository
@@ -6,8 +6,6 @@ import com.asu1.userdata.UserSessionRepository
 import com.asu1.utils.Logger
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class CreateGuestAccountUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.asu1.userdatausecase
+package com.asu1.userdatausecase.account
 
 import com.asu1.userdata.AuthRepository
 import javax.inject.Inject

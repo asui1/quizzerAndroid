@@ -1,4 +1,4 @@
-package com.asu1.userdatausecase
+package com.asu1.userdatausecase.session
 
 import com.asu1.userdata.PushRepository
 import kotlinx.coroutines.coroutineScope

@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.stringFilter.StringFilterRepository
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRegister
-import com.asu1.userdatausecase.CheckDuplicateNicknameUseCase
-import com.asu1.userdatausecase.RegisterUserUseCase
+import com.asu1.userdatausecase.account.CheckDuplicateNicknameUseCase
+import com.asu1.userdatausecase.account.RegisterUserUseCase
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentSet
