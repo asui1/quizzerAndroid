@@ -9,6 +9,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.asu1.appdatausecase.quizData.AddQuizUseCase
+import com.asu1.appdatausecase.quizData.GetQuizDataUseCase
+import com.asu1.appdatausecase.quizData.GetQuizResultUseCase
+import com.asu1.appdatausecase.quizData.SubmitQuizUseCase
 import com.asu1.colormodel.ContrastLevel
 import com.asu1.colormodel.PaletteLevel
 import com.asu1.models.quiz.GetQuizResult
@@ -19,8 +23,6 @@ import com.asu1.models.quizRefactor.Quiz
 import com.asu1.models.scorecard.ScoreCard
 import com.asu1.models.serializers.QuizDataSerializer
 import com.asu1.models.serializers.QuizLayoutSerializer
-import com.asu1.network.QuizApi
-import com.asu1.network.requireSuccess
 import com.asu1.network.runApi
 import com.asu1.quiz.viewmodel.quiz.QuizUserUpdates
 import com.asu1.resources.GenerateWith
@@ -47,19 +49,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import retrofit2.HttpException
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
 import java.util.Base64
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class QuizCoordinatorViewModel @Inject constructor(
-    private val quizApi: QuizApi
+    private val getQuizResult: GetQuizResultUseCase,
+    private val getQuizData: GetQuizDataUseCase,
+    private val addQuiz: AddQuizUseCase,
+    private val submitQuiz: SubmitQuizUseCase,
 ) : ViewModel() {
     private var _quizViewModelState = MutableStateFlow(ViewModelState.IDLE)
     val quizViewModelState: StateFlow<ViewModelState> = _quizViewModelState
@@ -215,26 +216,9 @@ class QuizCoordinatorViewModel @Inject constructor(
 
     fun loadQuizResult(resultId: String) {
         viewModelScope.launch {
-            val result = runApi {
-                withContext(Dispatchers.IO) {
-                    quizApi
-                        .getResult(resultId)
-                        .requireSuccess() // throws HttpException or NoSuchElementException
-                }
-            }
-
-            result.onSuccess { quizResult ->
-                processQuizResult(quizResult)
-            }.onFailure { e ->
-                when (e) {
-                    is CancellationException      -> throw e
-                    is HttpException              -> handleFailure("HTTP ${e.code()} – ${e.message()}")
-                    is IOException                -> handleFailure("Network error – ${e.message}")
-                    is NoSuchElementException     -> handleFailure(e.message ?: "No quiz result found")
-                    is SerializationException     -> handleFailure("Invalid quiz result format ${e.message}")
-                    else                          -> handleFailure("Unexpected error: ${e.message}")
-                }
-            }
+            getQuizResult(resultId)
+                .onSuccess { quizResult -> processQuizResult(quizResult) }
+                .onFailure { e -> Logger.debug("$e, No quiz result found") }
         }
     }
 
@@ -277,24 +261,15 @@ class QuizCoordinatorViewModel @Inject constructor(
 
     fun loadQuiz(quizId: String) {
         _quizViewModelState.value = ViewModelState.LOADING
-
         viewModelScope.launch {
-            val result = runApi {
-                withContext(Dispatchers.IO) {
-                    quizApi
-                        .getQuizData(quizId)
-                        .requireSuccess()   // throws HttpException / NoSuchElementException
+            getQuizData(quizId)
+                .onSuccess { body ->
+                    processQuizData(body)
+                    _quizViewModelState.value = ViewModelState.IDLE
                 }
-            }
-
-            result.onSuccess { body ->
-                processQuizData(body)       // body is QuizLayoutSerializer
-                _quizViewModelState.value = ViewModelState.IDLE
-            }.onFailure { e ->
-                // NOTE: your current runApi wraps errors into RuntimeException(NetworkError.toString()).
-                // So we only have a message here. If you want typed handling, return NetworkError instead.
-                handleFailure(e.message ?: "Unexpected error while loading quiz.")
-            }
+                .onFailure { e ->
+                    handleFailure(e.message ?: "Unexpected error while loading quiz.")
+                }
         }
     }
 
@@ -332,22 +307,19 @@ class QuizCoordinatorViewModel @Inject constructor(
 
     private fun uploadQuizLayout(onUpload: () -> Unit) {
         _quizViewModelState.value = ViewModelState.LOADING
-
         viewModelScope.launch {
-            val result = runApi {
-                val json = toJson()
-                quizApi.addQuiz(json).requireSuccess()
-            }
-
-            result.onSuccess {
-                SnackBarManager.showSnackBar(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
-                onUpload()
-                _quizViewModelState.value = ViewModelState.IDLE
-            }.onFailure { err ->
-                Logger.debug("Upload failed: ${err.message}")
-                _quizViewModelState.value = ViewModelState.IDLE
-                SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
-            }
+            val layout = toJson()
+            addQuiz(layout)
+                .onSuccess {
+                    SnackBarManager.showSnackBar(R.string.quiz_uploaded_successfully, ToastType.SUCCESS)
+                    onUpload()
+                    _quizViewModelState.value = ViewModelState.IDLE
+                }
+                .onFailure { err ->
+                    Logger.debug("Upload failed: ${err.message}")
+                    _quizViewModelState.value = ViewModelState.IDLE
+                    SnackBarManager.showSnackBar(R.string.failed_to_upload_quiz, ToastType.ERROR)
+                }
         }
     }
 
@@ -396,14 +368,15 @@ class QuizCoordinatorViewModel @Inject constructor(
         )
         return quizDataSerializer
     }
+
     fun gradeQuiz(email: String, onDone: () -> Unit) {
         val (correctCount, corrections) = quizContentViewModel.gradeQuiz()
         val uuid = quizGeneralViewModel.quizGeneralUiState.value.quizData.uuid
-        if (uuid == null) {
-            Logger.debug("gradeQuiz: missing quiz UUID")
-            SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
-            return
-        }
+            ?: run {
+                Logger.debug("gradeQuiz: missing quiz UUID")
+                SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
+                return
+            }
 
         val payload = SendQuizResult(
             email = email,
@@ -413,19 +386,15 @@ class QuizCoordinatorViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            val result = runApi {
-                withContext(Dispatchers.IO) {
-                    quizApi.submitQuiz(payload).requireSuccess()
+            submitQuiz(payload)
+                .onSuccess { quizResult ->
+                    quizResultViewModel.updateQuizResult(quizResult)
+                    onDone()
                 }
-            }
-
-            result.onSuccess { quizResult ->
-                quizResultViewModel.updateQuizResult(quizResult)
-                onDone()
-            }.onFailure { e ->
-                SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
-                Logger.debug("gradeQuiz failed: ${e.message}")
-            }
+                .onFailure { e ->
+                    SnackBarManager.showSnackBar(R.string.failed_to_grade_quiz, ToastType.ERROR)
+                    Logger.debug("gradeQuiz failed: ${e.message}")
+                }
         }
     }
 

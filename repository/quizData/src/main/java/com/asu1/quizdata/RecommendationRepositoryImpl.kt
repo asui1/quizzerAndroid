@@ -5,10 +5,6 @@ import com.asu1.network.RecommendationApi
 import com.asu1.quizcardmodel.QuizCardList
 import com.asu1.quizcardmodel.RecommendationList
 import com.asu1.userdatamodels.UserRankList
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -49,12 +45,3 @@ class RecommendationRepositoryImpl @Inject constructor(
     }
 }
 
-@Suppress("unused")
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepositoryBindings {
-    @Binds
-    abstract fun bindRecommendationRepository(
-        impl: RecommendationRepositoryImpl
-    ): RecommendationRepository
-}

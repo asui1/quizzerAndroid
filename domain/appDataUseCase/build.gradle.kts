@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:appDataModels"))
     implementation(project(":core:userDataModels"))
     implementation(project(":core:util"))
+    implementation(project(":core:quizModel"))
 
     implementation(project(":repository:network"))
     implementation(project(":repository:quizData"))

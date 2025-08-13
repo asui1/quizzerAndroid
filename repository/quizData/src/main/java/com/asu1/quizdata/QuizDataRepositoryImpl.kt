@@ -22,20 +22,36 @@ class QuizDataRepositoryImpl @Inject constructor(
         return quizApi.deleteQuiz(uuid, email)
     }
 
-    override suspend fun addQuiz(quizLayoutSerializer: QuizLayoutSerializer): Response<Void> {
-        return quizApi.addQuiz(quizLayoutSerializer)
+    override suspend fun addQuiz(layout: QuizLayoutSerializer): Result<Unit> = withContext(io) {
+        runApi { quizApi.addQuiz(layout) }
+            .mapCatching { resp ->
+                if (!resp.isSuccessful) throw HttpException(resp)
+            }
+            .map { }
     }
 
-    override suspend fun getQuizData(uuid: String): Response<QuizLayoutSerializer> {
-        return quizApi.getQuizData(uuid)
+    override suspend fun getQuizData(quizId: String): Result<QuizLayoutSerializer> = withContext(io) {
+        runApi { quizApi.getQuizData(quizId) }
+            .mapCatching { resp ->
+                if (!resp.isSuccessful) throw HttpException(resp)
+                resp.body() ?: throw NoSuchElementException("Empty quiz data")
+            }
     }
 
-    override suspend fun submitQuiz(sendQuizResult: SendQuizResult): Response<QuizResult> {
-        return quizApi.submitQuiz(sendQuizResult)
+    override suspend fun submitQuiz(payload: SendQuizResult): Result<QuizResult> = withContext(io) {
+        runApi { quizApi.submitQuiz(payload) }
+            .mapCatching { resp ->
+                if (!resp.isSuccessful) throw HttpException(resp)
+                resp.body() ?: throw NoSuchElementException("Empty quiz result")
+            }
     }
 
-    override suspend fun getResult(resultId: String): Response<GetQuizResult> {
-        return quizApi.getResult(resultId)
+    override suspend fun getResult(resultId: String): Result<GetQuizResult> = withContext(io) {
+        runApi { quizApi.getResult(resultId) }
+            .mapCatching { resp ->
+                if (!resp.isSuccessful) throw HttpException(resp)
+                resp.body() ?: throw NoSuchElementException("Empty quiz result")
+            }
     }
     override suspend fun getMyQuiz(email: String): Result<List<QuizCard>> = withContext(io) {
         runApi { quizApi.getMyQuiz(email) }                 // Result<Response<QuizCardList>>
