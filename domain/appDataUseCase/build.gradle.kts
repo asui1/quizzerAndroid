@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":core:userDataModels"))
     implementation(project(":core:util"))
 
+    implementation(project(":repository:network"))
     implementation(project(":repository:quizData"))
     implementation(project(":repository:appData"))
 

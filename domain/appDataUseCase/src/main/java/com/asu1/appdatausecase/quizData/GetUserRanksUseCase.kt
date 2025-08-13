@@ -1,6 +1,6 @@
 package com.asu1.appdatausecase.quizData
 
-import com.asu1.appdatausecase.IoDispatcher
+import com.asu1.network.IoDispatcher
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizdata.RecommendationRepository
 import com.asu1.userdatamodels.UserRank

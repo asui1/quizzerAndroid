@@ -7,27 +7,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.stringFilter.StringFilterRepository
-import com.asu1.network.AuthApi
-import com.asu1.network.runApi
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRegister
+import com.asu1.userdatausecase.CheckDuplicateNicknameUseCase
+import com.asu1.userdatausecase.RegisterUserUseCase
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val stringFilterRepository: StringFilterRepository,
-    private val authApi: AuthApi,
+    private val checkDuplicateNickname: CheckDuplicateNicknameUseCase,
+    private val registerUser: RegisterUserUseCase,
 ) : ViewModel() {
 
     private val _registerStep = MutableLiveData(0)
@@ -97,20 +96,15 @@ class RegisterViewModel @Inject constructor(
 
             if (containsAdminWord || containsInappropriateWord) {
                 _isError.postValue(true)
-
                 val messageRes =
                     if (containsInappropriateWord) R.string.nickname_contains_inappropriate_word
                     else R.string.nickname_contains_admin_word
-
                 SnackBarManager.showSnackBar(messageRes, ToastType.ERROR)
+                return@launch
             }
 
-            // 2) server duplication check via runApi
-            runApi { authApi.checkDuplicateNickname(nickName) } // Result<Response<Void>>
-                .mapCatching { resp ->
-                    if (!resp.isSuccessful) throw HttpException(resp)
-                    // no body to parse; success == nickname available
-                }
+            // 2) server duplication check via use case
+            checkDuplicateNickname(nickName)
                 .onSuccess {
                     Logger.debug("Can use this nickname")
                     _nickname.value = nickName
@@ -136,21 +130,15 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            runApi {
-                authApi.register(
-                    UserRegister(
-                        email = email,
-                        nickname = nickname,
-                        tags = tags.toList(),
-                        idIcon = photo
-                    )
-                )
-            }
-                .mapCatching { resp ->
-                    check(resp.isSuccessful) { "HTTP ${resp.code()}: ${resp.message()}" }
-                    check(resp.code() == 201) { "Unexpected code: ${resp.code()}" }
-                }
+        viewModelScope.launch {
+            val req = UserRegister(
+                email = email,
+                nickname = nickname,
+                tags = tags.toList(),
+                idIcon = photo
+            )
+
+            registerUser(req)
                 .onSuccess {
                     SnackBarManager.showSnackBar(R.string.registered_successfully, ToastType.SUCCESS)
                     _registerStep.postValue(3)
