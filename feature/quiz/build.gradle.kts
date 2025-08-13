@@ -19,9 +19,11 @@ dependencies {
     implementation(project(":core:quizCardModel"))
     implementation(project(":core:colorModel"))
     implementation(project(":core:userDataModels"))
-    implementation(project(":domain:userDataUseCase"))
 
     implementation(project(":repository:network"))
+
+    implementation(project(":domain:userDataUseCase"))
+    implementation(project(":domain:appDataUseCase"))
 
     implementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))

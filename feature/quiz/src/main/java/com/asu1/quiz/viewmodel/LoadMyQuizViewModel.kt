@@ -5,8 +5,8 @@ import ToastType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.network.QuizApi
-import com.asu1.network.runApi
+import com.asu1.appdatausecase.quizData.DeleteMyQuizUseCase
+import com.asu1.appdatausecase.quizData.GetMyQuizUseCase
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.R
 import com.asu1.resources.ViewModelState
@@ -23,8 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoadMyQuizViewModel @Inject constructor(
-    private val quizApi: QuizApi
-) : ViewModel() {
+    private val getMyQuiz: GetMyQuizUseCase,
+    private val deleteMyQuizUseCase: DeleteMyQuizUseCase,
+    ) : ViewModel() {
     private val _loadMyQuizViewModelState = MutableLiveData(ViewModelState.IDLE)
     val loadMyQuizViewModelState: MutableLiveData<ViewModelState> get() = _loadMyQuizViewModelState
 
@@ -41,40 +42,31 @@ class LoadMyQuizViewModel @Inject constructor(
     fun loadUserQuiz(email: String) {
         if (email.isBlank()) return
         viewModelScope.launch {
-            runApi { quizApi.getMyQuiz(email) }
-                .onSuccess { response ->
-                    if (response.isSuccessful) {
-                        val list = response.body()?.searchResult.orEmpty()
-                        _myQuizList.value = list.toMutableList() // 🔄 안전 변환
-                    } else {
-                        val err = response.errorBody()?.string()
-                        Logger.debug("loadUserQuiz Failure: $err")
-                        SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
-                    }
+            getMyQuiz(email)
+                .onSuccess { list ->
+                    _myQuizList.value = list.toMutableList()
                 }
                 .onFailure { e ->
-                    Logger.debug("loadUserQuizFailed ${e.message}")
+                    Logger.debug("loadUserQuiz failed: ${e.message}")
                     SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
                 }
         }
     }
 
+    fun deleteMyQuiz(uuid: String, email: String) {
+        val current = _myQuizList.value ?: return
+        val target = current.find { it.id == uuid } ?: return
 
-    fun deleteMyQuiz(uuid: String, email: String){
-        if(_myQuizList.value == null) return
-        val quiz = _myQuizList.value?.find { it.id == uuid }
-        if(quiz == null) return
         viewModelScope.launch {
-            val response = quizApi.deleteQuiz(quiz.id, email)
-            if(response.isSuccessful){
-                val updatedList = _myQuizList.value?.toMutableList()
-                updatedList?.remove(quiz)
-                _myQuizList.value = updatedList
-                SnackBarManager.showSnackBar(R.string.delete_successful, ToastType.SUCCESS)
-            }
-            else{
-                SnackBarManager.showSnackBar(R.string.delete_failed, ToastType.ERROR)
-            }
+            deleteMyQuizUseCase(uuid, email)
+                .onSuccess {
+                    val updated = current.toMutableList().apply { remove(target) }
+                    _myQuizList.value = updated
+                    SnackBarManager.showSnackBar(R.string.delete_successful, ToastType.SUCCESS)
+                }
+                .onFailure {
+                    SnackBarManager.showSnackBar(R.string.delete_failed, ToastType.ERROR)
+                }
         }
     }
 }
