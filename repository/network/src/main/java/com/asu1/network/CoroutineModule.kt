@@ -1,4 +1,4 @@
-package com.asu1.appdatausecase
+package com.asu1.network
 
 import dagger.Module
 import dagger.Provides
@@ -12,6 +12,7 @@ import javax.inject.Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class IoDispatcher
 
+@Suppress("unused")
 @Module
 @InstallIn(SingletonComponent::class)
 object CoroutineModule {
