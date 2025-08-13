@@ -5,32 +5,27 @@ import ToastType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asu1.appdata.suggestion.SearchSuggestionRepository
-import com.asu1.network.QuizApi
-import com.asu1.network.RecommendationApi
-import com.asu1.network.runApi
+import com.asu1.appdatausecase.FetchHomeRecommendationsUseCase
+import com.asu1.appdatausecase.quizData.GetQuizTrendsUseCase
+import com.asu1.appdatausecase.quizData.GetUserRanksUseCase
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.QuizCardsWithTag
-import com.asu1.quizcardmodel.Recommendations
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter
 import com.asu1.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
-import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
 class QuizCardViewModel @Inject constructor(
-    private val quizApi: QuizApi,
-    private val recommendationApi: RecommendationApi,
+    private val getUserRanks: GetUserRanksUseCase,
+    private val getQuizTrends: GetQuizTrendsUseCase,
+    private val fetchHomeRecommendations: FetchHomeRecommendationsUseCase
 ) : ViewModel() {
     private val _loadResultId = MutableLiveData<String?>(null)
     val loadResultId: MutableLiveData<String?> get() = _loadResultId
@@ -97,53 +92,41 @@ class QuizCardViewModel @Inject constructor(
             }
         }else if (index == 1){
             if(_quizTrends.value.isEmpty()){
-                fetchQuizTrends()
+                fetchQuizTrends(LanguageSetter.lang)
             }
         }else if (index == 2){
             fetchUserRanks()
         }
     }
 
-    private fun fetchUserRanks() {
+    private fun fetchUserRanks() = viewModelScope.launch {
         _userRanks.value = emptyList()
         _visibleUserRanks.value = emptyList()
 
-        viewModelScope.launch {
-            runApi { quizApi.getUserRanks() }      // Result<Response<UserRankList>>
-                .mapCatching { resp ->
-                    if (!resp.isSuccessful) throw HttpException(resp)
-                    resp.body()?.searchResult ?: throw NoSuchElementException("Empty body")
-                }
-                .onSuccess { ranks ->
-                    _userRanks.value = ranks
-                    _visibleUserRanks.value = ranks.take(trendPageCount)
-                }
-                .onFailure { e ->
-                    Logger.debug("Fetch user ranks error: ${e.message}")
-                    SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
-                }
-        }
+        getUserRanks()
+            .onSuccess { ranks ->
+                _userRanks.value = ranks
+                _visibleUserRanks.value = ranks.take(userRankPageCount)
+            }
+            .onFailure { e ->
+                Logger.debug("Fetch user ranks error: ${e.message}")
+                SnackBarManager.showSnackBar(R.string.failed_to_get_user_ranks, ToastType.ERROR)
+            }
     }
 
-    private fun fetchQuizTrends() {
-        val language = if (LanguageSetter.isKo) "ko" else "en"
+    private fun fetchQuizTrends(language: String) = viewModelScope.launch {
         _quizTrends.value = emptyList()
         _visibleQuizTrends.value = emptyList()
 
-        viewModelScope.launch {
-            runApi { quizApi.getTrends(language) }          // Result<Response<QuizCardList>>
-                .mapCatching { resp ->
-                    if (!resp.isSuccessful) throw HttpException(resp)
-                    resp.body()?.searchResult ?: throw NoSuchElementException("Empty body")
-                }
-                .onSuccess { result ->
-                    _quizTrends.value = result
-                    _visibleQuizTrends.value = result.take(trendPageCount)
-                }
-                .onFailure { e ->
-                    Logger.debug("Fetch trends error: ${e.message}")
-                }
-        }
+        getQuizTrends(language)
+            .onSuccess { trends ->
+                _quizTrends.value = trends
+                _visibleQuizTrends.value = trends.take(trendPageCount)
+            }
+            .onFailure { e ->
+                Logger.debug("Fetch quiz trends error: ${e.message}")
+                SnackBarManager.showSnackBar(R.string.failed_to_fetch_quiz_trends, ToastType.ERROR)
+            }
     }
 
     fun resetQuizTrends(){
@@ -159,30 +142,12 @@ class QuizCardViewModel @Inject constructor(
         _quizCards.value = emptyList()
 
         viewModelScope.launch {
-            val results = supervisorScope {
-                awaitAll(
-                    async { fetchRec { recommendationApi.mostViewed(language) } },
-                    async { fetchRec { recommendationApi.mostRecent(language) } },
-                    async { fetchRec { recommendationApi.getRelated(language) } },
-                ).filterNotNull()
-            }
-
-            _quizCards.value = results
-                .filter { it.items.isNotEmpty() }
-                .map { QuizCardsWithTag(it.key, it.items) }
+            fetchHomeRecommendations(language)
+                .onSuccess { sections -> _quizCards.value = sections }
+                .onFailure { e ->
+                    Logger.debug("fetchHomeRecommendations error: ${e.message}")
+                    SnackBarManager.showSnackBar(R.string.failed_request, ToastType.ERROR)
+                }
         }
-    }
-
-    /** One place for status/body checks + runApi error mapping. */
-    private suspend fun fetchRec(
-        call: suspend () -> retrofit2.Response<Recommendations>
-    ): Recommendations? {
-        return runApi { call() }                       // Result<Response<Recommendations>>
-            .mapCatching { resp ->
-                if (!resp.isSuccessful) throw retrofit2.HttpException(resp)
-                resp.body() ?: throw NoSuchElementException("Empty body")
-            }
-            .onFailure { e -> Logger.debug("fetchRec failed: ${e.message}") }
-            .getOrNull()                               // null -> this leg is skipped
     }
 }

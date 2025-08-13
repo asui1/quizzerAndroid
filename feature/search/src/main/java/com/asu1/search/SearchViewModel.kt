@@ -5,8 +5,7 @@ import ToastType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asu1.appdata.suggestion.SearchSuggestionRepository
-import com.asu1.network.QuizApi
-import com.asu1.network.runApi
+import com.asu1.appdatausecase.quizData.SearchQuizCardsUseCase
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.resources.R
 import com.asu1.utils.LanguageSetter
@@ -34,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchSuggestionRepository: SearchSuggestionRepository,
-    private val quizApi: QuizApi,
+    private val searchQuizCards: SearchQuizCardsUseCase
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> get() = _searchQuery.asStateFlow()
@@ -72,16 +71,10 @@ class SearchViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _searchResult.value = emptyList() // 필요 시 로딩 상태 플래그로 교체
-            runApi { quizApi.searchQuiz(searchText) }
-                .onSuccess { response ->
-                    if (response.isSuccessful) {
-                        _searchResult.value = response.body()?.searchResult.orEmpty()
-                    } else {
-                        val err = response.errorBody()?.string()
-                        Logger.debug("search failure: $err")
-                        SnackBarManager.showSnackBar(R.string.search_failed, ToastType.ERROR)
-                    }
+            _searchResult.value = emptyList()
+            searchQuizCards(searchText)
+                .onSuccess { cards ->
+                    _searchResult.value = cards
                 }
                 .onFailure { e ->
                     Logger.debug("search error ${e.message}")
