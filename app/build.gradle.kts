@@ -167,11 +167,8 @@ tasks.register<JacocoReport>("jacocoMergedReport") {
 }
 
 dependencies {
-    implementation(project(":core:quizCardModel"))
     implementation(project(":core:resource"))
-    implementation(project(":core:imageColor"))
-    implementation(project(":core:userDataModels"))
-    implementation(project(":core:appDataModels"))
+    testImplementation(project(":core:imageColor"))
     implementation(project(":core:quizModel"))
     implementation(project(":core:util"))
 
@@ -183,20 +180,13 @@ dependencies {
 
     implementation(project(":feature:quizCard"))
     implementation(project(":feature:quiz"))
-    implementation(project(":feature:customComposable"))
+    androidTestImplementation(project(":feature:customComposable"))
     implementation(project(":feature:activityNavigation"))
-    implementation(project(":feature:permissionRequest"))
     implementation(libs.androidx.lifecycle.process)
-    testImplementation(project(":feature:quizCard"))
-    androidTestImplementation(project(":feature:quizCard"))
     implementation(project(":feature:mainPage"))
     implementation(project(":feature:splashPage"))
     implementation(project(":feature:search"))
 
-    testImplementation(project(":core:quizModel"))
-    androidTestImplementation(project(":core:quizModel"))
-    testImplementation(project(":core:util"))
-    androidTestImplementation(project(":core:util"))
     // ---- Compose (via BOM) ----
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose.core)
@@ -222,35 +212,21 @@ dependencies {
     implementation(libs.foundation.layout)
 
     // ---- Google sign-in / credentials ----
-    implementation(libs.credentials)
-    implementation(libs.credentials.play.services.auth)
+    runtimeOnly(libs.credentials.play.services.auth)
     implementation(libs.play.services.auth)
-    implementation(libs.googleid)
 
     // ---- Data / Security ----
-    implementation(libs.datastore.preferences)
     implementation(libs.datastore.core)
-    implementation(libs.security.crypto)
 
     // ---- Media / Imaging ----
     implementation(libs.bundles.media3)            // effect, ui, exoplayer-dash, session
-    implementation(libs.exoplayer)                 // core exoplayer
-    implementation(libs.coil.compose)
-    implementation(libs.landscapist.glide)
-    implementation(libs.lottie.compose)
-    implementation(libs.dotlottie.android)
+                 // core exoplayer
+    runtimeOnly(libs.dotlottie.android)
 
     // ---- UI extras ----
     implementation(libs.material3)                 // Compose M3
-    implementation(libs.material.components)       // Google Material (XML) if needed
-    implementation(libs.material.kolor)
-    implementation(libs.colorpicker.compose)
-    implementation(libs.reorderable)
-    implementation(libs.places)
-    implementation(libs.uuid.creator)
-    implementation(libs.java.dotenv)
-    implementation(libs.tracing)
-    implementation(libs.constraint.layout)
+       // Google Material (XML) if needed
+    runtimeOnly(libs.places)
     // Optional: animation graphics module
     // implementation(libs.androidx.animation.graphics.android)
 
@@ -258,8 +234,6 @@ dependencies {
     implementation(libs.navigation.compose)
 
     // ---- Serialization / Coroutines / Rx ----
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.coroutines.rx3)
 
     // ---- Firebase (via BOM) ----
     implementation(platform(libs.firebase.bom))
@@ -268,23 +242,16 @@ dependencies {
 
     // ---- App Update ----
     implementation(libs.google.play.update)
-    implementation(libs.google.play.update.ktx)
 
     // ---- Hilt ----
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
 
     // ---- Tests ----
     testImplementation(libs.bundles.test.core)
     testImplementation(libs.bundles.mocking)
-    testImplementation(libs.mockwebserver)
-    testImplementation(libs.jetbrain.kotlin.test.junit)
+    testRuntimeOnly(libs.jetbrain.kotlin.test.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.moshi.kotlin)
-    testImplementation(libs.converter.moshi)
-    // If you need Media3 in tests:
-    testImplementation(libs.exoplayer.test)
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.bundles.test.core)
@@ -292,6 +259,7 @@ dependencies {
     androidTestImplementation(libs.mockwebserver)
     androidTestImplementation(libs.hilt.android.test)
     kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.collections.immutable)
 
     // ---- Debug-only ----
     debugImplementation(libs.ui.tooling)

@@ -7,8 +7,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val androidLifecycleQuiz = listOf(
+val androidLifecycleQuiz = persistentListOf(
     ReorderQuiz(
         answers = mutableListOf("onCreate", "onStart", "onResume", "onPause", "onStop", "onDestroy"),
         question = "Arrange the Activity lifecycle methods in the correct order when an Activity is created and then destroyed."
@@ -139,7 +140,7 @@ val androidLifecycleQuizBundle = QuizBundle(
 
 // ================ KOREAN VERSION =================
 
-val androidLifecycleQuizKo = listOf(
+val androidLifecycleQuizKo = persistentListOf(
     ReorderQuiz(
         answers = mutableListOf("onCreate", "onStart", "onResume", "onPause", "onStop", "onDestroy"),
         question = "Activity가 생성되고 종료될 때까지의 올바른 생명주기 메서드 순서를 배열하세요."

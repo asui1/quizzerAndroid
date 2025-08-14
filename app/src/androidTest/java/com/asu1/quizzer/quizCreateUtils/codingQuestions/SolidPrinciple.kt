@@ -7,8 +7,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val solidPrinciplesQuiz = listOf(
+val solidPrinciplesQuiz = persistentListOf(
 
     MultipleChoiceQuiz(
         question = "Which SOLID principle does the following code snippet violate?",
@@ -173,7 +174,7 @@ val solidPrinciplesQuizBundle = QuizBundle(
 
 // ================ KOREAN VERSION =================
 
-val solidPrinciplesQuizKorean = listOf(
+val solidPrinciplesQuizKorean = persistentListOf(
     MultipleChoiceQuiz(
         question = "다음 코드 스니펫이 위반하고 있는 SOLID 원칙은 무엇입니까?",
         options = mutableListOf(

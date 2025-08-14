@@ -12,10 +12,8 @@ dependencies {
 
     implementation(libs.bundles.compose.core)
     implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.foundation.android)
-    implementation(libs.material3)
+    api(libs.material3)
     implementation(libs.material.icons.core)
     implementation(libs.material.icons.extended)
     implementation(libs.compose.ui)
@@ -28,13 +26,12 @@ dependencies {
     implementation(libs.constraint.layout)
 
     implementation(project(":core:resource"))
-    implementation(project(":core:util"))
-    implementation(project(":core:imageColor"))
+    api(project(":core:util"))
+    api(project(":core:imageColor"))
     implementation(project(":feature:activityNavigation"))
-    implementation(libs.activity.compose)
+    api(libs.activity.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.espresso.core)
     debugImplementation(libs.ui.tooling)
 }

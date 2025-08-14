@@ -10,18 +10,14 @@ android {
 
 dependencies {
     implementation(project(":core:util"))
-    implementation(project(":core:imageColor"))
+    api(project(":core:imageColor"))
     implementation(project(":core:resource"))
-    implementation(libs.material3)
+    api(libs.material3)
     implementation(project(":core:colorModel"))
-    testImplementation(project(":core:util"))
-    androidTestImplementation(project(":core:util"))
     implementation(libs.collections.immutable)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.compose.ui)
     implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.material.icons.extended)
 
     testImplementation(libs.junit)

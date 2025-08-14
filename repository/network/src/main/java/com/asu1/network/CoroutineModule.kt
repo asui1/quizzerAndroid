@@ -10,6 +10,13 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+@Target(
+    AnnotationTarget.FIELD,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.PROPERTY_GETTER
+)
 annotation class IoDispatcher
 
 @Suppress("unused")
@@ -17,5 +24,6 @@ annotation class IoDispatcher
 @InstallIn(SingletonComponent::class)
 object CoroutineModule {
     @Provides
-    @IoDispatcher fun provideIo(): CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher
+    fun provideIo(): CoroutineDispatcher = Dispatchers.IO
 }

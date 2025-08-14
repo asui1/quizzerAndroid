@@ -13,8 +13,9 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val t1GenQuiz20250201 = listOf(
+val t1GenQuiz20250201 = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf(
             "T1, Gen.G 둘 다 3승 1패의 상황이었다.",

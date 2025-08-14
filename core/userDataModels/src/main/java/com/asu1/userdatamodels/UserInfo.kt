@@ -1,17 +1,14 @@
 package com.asu1.userdatamodels
 
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@JsonAdapter(UserInfoDeserializer::class)
+
+@Serializable
 data class UserInfo(
-    @SerializedName("Nickname")
-    val nickname: String,
-    @SerializedName("Tags")
-    val tags: Set<String>,
-    @SerializedName("Agreed")
-    val agreed: Boolean
+    @SerialName("Nickname") val nickname: String,
+    @SerialName("Tags")     val tags: Set<String>, // or List<String> if order/dupes matter
+    @SerialName("Agreed")   val agreed: Boolean
 )
 
 @Serializable

@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class QuizDataRepositoryImpl @Inject constructor(
     private val quizApi: QuizApi,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @param:IoDispatcher private val io: CoroutineDispatcher
 ) : QuizDataRepository {
     override suspend fun deleteQuiz(uuid: String, email: String): Response<Void> {
         return quizApi.deleteQuiz(uuid, email)

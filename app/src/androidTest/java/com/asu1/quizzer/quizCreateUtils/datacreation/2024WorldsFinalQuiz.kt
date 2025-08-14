@@ -14,9 +14,10 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val worlds24T1Ko = listOf(
+val worlds24T1Ko = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf(
             "15승 3패",

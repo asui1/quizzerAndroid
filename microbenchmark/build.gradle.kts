@@ -14,12 +14,9 @@ java {
 
 android {
     namespace = "com.asu1.microbenchmark"
-    compileSdk = 35
 
     defaultConfig {
         minSdk = 29
-        targetSdk = 35
-
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
     }
 
@@ -65,14 +62,11 @@ android {
 
 dependencies {
     implementation(libs.ui.graphics)
-    androidTestImplementation(libs.runner)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.benchmark.junit4)
-    androidTestImplementation(project(":app"))
     // Add your dependencies here. Note that you cannot benchmark code
     // in an app module this way - you will need to move any code you
     // want to benchmark to a library module:
     // https://developer.android.com/studio/projects/android-library#Convert
-
 }

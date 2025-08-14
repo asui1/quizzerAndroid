@@ -9,15 +9,9 @@ android {
 }
 
 dependencies {
-    implementation (libs.converter.gson)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.runtime.android)
+    api(libs.retrofit2.kotlinx.serialization.converter)
 
-    implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(project(":core:resource"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)

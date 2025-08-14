@@ -9,11 +9,12 @@ import com.asu1.quizzer.quizCreateUtils.datacreation.iuQuizData1
 import com.asu1.quizzer.quizCreateUtils.datacreation.iuQuizTheme1
 import com.asu1.quizzer.quizCreateUtils.datacreation.iuScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.PersistentList
 
 data class QuizBundle(
     val data: QuizData,
     val theme: QuizTheme,
-    val quizzes: List<Quiz>,
+    val quizzes: PersistentList<Quiz>,
     val scoreCard: ScoreCard,
     val titleImage: Int,
     val overlayImage: Int = 0,

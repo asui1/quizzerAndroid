@@ -10,17 +10,18 @@ android {
 }
 
 dependencies {
-    implementation(libs.material.kolor)
 
-    implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.compose.ui)
     implementation(libs.foundation.android)
-    implementation(libs.material3)
+    implementation(libs.androidx.foundation.android)
     implementation(libs.google.fonts)
-    implementation(libs.media3.session)
+    implementation(libs.compose.ui)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)
+    api(libs.google.fonts)
+    api(libs.media3.session)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)

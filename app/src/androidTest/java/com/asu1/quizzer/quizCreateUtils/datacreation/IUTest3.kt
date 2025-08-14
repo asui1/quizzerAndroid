@@ -15,9 +15,10 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val iuquizzes3 = listOf(
+val iuquizzes3 = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf("에잇", "밤편지", "분홍신", "금요일에 만나요", "관객이 될게"),
         correctFlags = mutableListOf(true, true, false, false, true),

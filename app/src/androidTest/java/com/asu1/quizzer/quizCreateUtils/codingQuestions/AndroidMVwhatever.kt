@@ -6,8 +6,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val androidMVWQuiz = listOf(
+val androidMVWQuiz = persistentListOf(
     // MVP, MVVM, MVI Questions
     MultipleChoiceQuiz(
         question = "What is the main characteristic of the MVP (Model-View-Presenter) pattern?",
@@ -122,7 +123,7 @@ val androidMVWQuizBundle = QuizBundle(
     scoreCard = androidScoreCard,
 )
 
-val androidMVWQuizKo = listOf(
+val androidMVWQuizKo = persistentListOf(
     // MVP, MVVM, MVI 질문
     MultipleChoiceQuiz(
         question = "MVP (Model-View-Presenter) 패턴의 주요 특징은 무엇인가요?",

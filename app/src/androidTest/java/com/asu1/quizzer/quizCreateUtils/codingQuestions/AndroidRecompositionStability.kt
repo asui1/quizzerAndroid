@@ -6,8 +6,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val androidRecompositionStabilityQuiz = listOf(
+val androidRecompositionStabilityQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "Which of the following statements about Compose stability is true?",
         options = mutableListOf(
@@ -132,7 +133,7 @@ val androidRecompositionStabilityQuizBundle = QuizBundle(
     scoreCard = androidScoreCard,
 )
 
-val androidRecompositionStabilityQuizKo = listOf(
+val androidRecompositionStabilityQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "다음 중 Compose Stability에 대한 올바른 설명은 무엇인가요?",
         options = mutableListOf(

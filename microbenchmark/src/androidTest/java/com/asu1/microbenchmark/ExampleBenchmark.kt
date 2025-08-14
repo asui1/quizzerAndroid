@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.asu1.quizzer.util.toScheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

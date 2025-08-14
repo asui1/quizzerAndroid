@@ -28,7 +28,7 @@ interface AuthRepository {
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @param:IoDispatcher private val io: CoroutineDispatcher
 ) : AuthRepository {
 
     override suspend fun guestSignIn(isKo: Boolean): Result<GuestAccount> =

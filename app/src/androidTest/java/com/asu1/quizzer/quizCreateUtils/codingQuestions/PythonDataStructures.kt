@@ -6,8 +6,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val pythonDataStructureQuiz = listOf(
+val pythonDataStructureQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "What is the main difference between a Python list and a tuple?",
         options = mutableListOf(
@@ -85,7 +86,7 @@ val pythonDataStructureQuizBundle = QuizBundle(
 )
 
 
-val pythonDataStructureQuizKo = listOf(
+val pythonDataStructureQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "Python의 리스트(list)와 튜플(tuple)의 주요 차이점은 무엇인가요?",
         options = mutableListOf(

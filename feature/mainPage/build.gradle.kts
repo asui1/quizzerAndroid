@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -13,42 +11,33 @@ android {
     namespace = "com.asu1.mainpage"
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-    }
-}
-
 dependencies {
     implementation(project(":core:resource"))
     implementation(project(":core:util"))
-    implementation(project(":core:appDataModels"))
-    implementation(project(":core:userDataModels"))
-    implementation(project(":core:quizCardModel"))
+    api(project(":core:appDataModels"))
+    api(project(":core:userDataModels"))
+    api(project(":core:quizCardModel"))
 
     implementation(project(":repository:network"))
-    implementation(project(":repository:appData"))
+    api(project(":repository:appData"))
 
-    implementation(project(":domain:appDataUseCase"))
-    implementation(project(":domain:userDataUseCase"))
+    api(project(":domain:appDataUseCase"))
+    api(project(":domain:userDataUseCase"))
 
     implementation(project(":feature:customComposable"))
-    implementation(project(":feature:activityNavigation"))
+    api(project(":feature:activityNavigation"))
     implementation(project(":feature:quizCard"))
-    implementation(project(":feature:quiz"))
+    api(project(":feature:quiz"))
 
     implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-    implementation (libs.credentials)
+    api(libs.credentials)
     implementation(libs.play.services.auth)
-    implementation (libs.credentials.play.services.auth)
+    runtimeOnly(libs.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.foundation.android)
-    implementation(libs.material)
+    api(libs.foundation.android)
     implementation(libs.material.icons.core)
     implementation(libs.material.icons.extended)
     implementation(libs.material3)
@@ -56,22 +45,14 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.ui.tooling)
-    implementation(libs.accompanist.flowlayout)
     implementation(libs.runtime.livedata)
     implementation(libs.collections.immutable)
     implementation(libs.constraint.layout)
-    implementation(libs.kotlinx.serialization.json)
-    implementation (libs.retrofit)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.coil.compose)
     implementation(libs.landscapist.glide)
-    implementation(libs.kotlinx.coroutines.rx3)
-    implementation(libs.accompanist.flowlayout)
-    implementation(libs.animation.graphics.android)
 
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.espresso.core)
     testImplementation(kotlin("test"))
 }

@@ -6,8 +6,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val androidAacQuiz = listOf(
+val androidAacQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "What is the primary goal of Android Architecture Components (AAC)?",
         options = mutableListOf(
@@ -142,7 +143,7 @@ val androidAacQuizData = QuizBundle(
     scoreCard = androidScoreCard,
 )
 
-val androidAacQuizKo = listOf(
+val androidAacQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "AAC (Android Architecture Components)의 주요 목표는 무엇인가요?",
         options = mutableListOf(

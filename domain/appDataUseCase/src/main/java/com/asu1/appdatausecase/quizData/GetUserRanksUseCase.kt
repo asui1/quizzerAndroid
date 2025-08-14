@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class GetUserRanksUseCase @Inject constructor(
     private val repo: RecommendationRepository,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @param:IoDispatcher private val io: CoroutineDispatcher
 ) {
     suspend operator fun invoke(): Result<List<UserRank>> = withContext(io) {
         runCatching {

@@ -16,11 +16,15 @@ plugins {
     alias(libs.plugins.benchmark) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
+    id("com.autonomousapps.dependency-analysis") version "2.19.0"
 }
 
 subprojects {
     // 🔹 Apply only to modules that use Android Library plugin
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "com.autonomousapps.dependency-analysis")
+    // ./gradlew app:projectHealth -> Project Health Check
+    // ./gradlew fixDependencies -> Dependency fix
 
     extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         toolVersion = "1.23.8"
@@ -68,12 +72,22 @@ subprojects {
 tasks.register("detektAll") {
     group = "verification"
     description = "Run detekt on all subprojects"
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "detekt" } })
+    dependsOn(subprojects.flatMap { project -> project.tasks.matching { it.name == "detekt" } })
 }
 
 // optional: alias so `./gradlew detekt` runs all
 tasks.register("detekt") {
     group = "verification"
     description = "Alias to run detekt across all subprojects"
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "detekt" } })
+    dependsOn(subprojects.flatMap { project -> project.tasks.matching { it.name == "detekt" } })
+}
+
+dependencyAnalysis {
+    issues {
+        all {
+            onUnusedDependencies { severity("warn") }
+            onUsedTransitiveDependencies { severity("warn") }
+            onIncorrectConfiguration { severity("warn") } // api↔implementation
+        }
+    }
 }

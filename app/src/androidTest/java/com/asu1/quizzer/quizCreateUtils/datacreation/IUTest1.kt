@@ -12,9 +12,10 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val iuquizzes1 = listOf(
+val iuquizzes1 = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf("빨강", "분홍", "보라", "연두", "연노랑"),
         correctFlags = mutableListOf(false, false, true, false, false),

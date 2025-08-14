@@ -14,8 +14,9 @@ import com.asu1.models.serializers.BodyType
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val iuquizzes2 = listOf(
+val iuquizzes2 = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf("새우깡", "건빵", "초코칩", "와플", "감자칩"),
         correctFlags = mutableListOf(false, true, false, false, false),

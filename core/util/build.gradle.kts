@@ -12,17 +12,13 @@ android {
 dependencies {
     implementation(project(":core:resource"))
 
-    implementation(libs.calendar.compose)
     implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    api(libs.material3)
     implementation(libs.navigation.runtime.ktx)
-    implementation(libs.material3)
     implementation(libs.material.kolor)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.datastore.preferences)
     implementation(libs.datastore.core)
-    implementation(libs.mlkit.segmentation.selfie)
+    api(libs.mlkit.segmentation.selfie)
     implementation(libs.collections.immutable)
     implementation(libs.activity.compose)
 

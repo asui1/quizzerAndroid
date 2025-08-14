@@ -7,8 +7,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.androidScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val androidCoroutinesQuiz = listOf(
+val androidCoroutinesQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "What is the main reason for using coroutines in Android?",
         options = mutableListOf(
@@ -140,7 +141,7 @@ val androidCoroutinesQuizBundle = QuizBundle(
     scoreCard = androidScoreCard,
 )
 
-val androidCoroutinesQuizKo = listOf(
+val androidCoroutinesQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "안드로이드에서 코루틴을 사용하는 주요 이유는 무엇인가요?",
         options = mutableListOf(

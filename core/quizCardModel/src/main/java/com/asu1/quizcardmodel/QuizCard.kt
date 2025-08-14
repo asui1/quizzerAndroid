@@ -1,28 +1,17 @@
 package com.asu1.quizcardmodel
 
-import androidx.compose.runtime.Immutable
-import com.asu1.quizcardmodel.HasUniqueId
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
-@Immutable
-@Serializable(with = KQuizCardDeserializer::class)
+@Serializable(with = QuizCardSerializer::class)
 data class QuizCard(
-    @SerializedName("id")
     override val id: String,
-    @SerializedName("title")
     val title: String,
-    @SerializedName("tags")
     val tags: List<String>,
-    @SerializedName("creator")
     val creator: String,
-    @SerializedName("image")
-    val image: ByteArray?,
-    @SerializedName("count")
+    val image: ByteArray?,      // decoded from Base64 string in JSON
     val count: Int,
-    @SerializedName("description")
-    val description: String = ""
+    val description: String = "" // default if field missing
 ) : HasUniqueId {
     constructor(
         title: String,

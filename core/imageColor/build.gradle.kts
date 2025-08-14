@@ -12,7 +12,7 @@ dependencies {
 
     implementation(project(":core:resource"))
     implementation(project(":core:colorModel"))
-    implementation(project(":core:util"))
+    api(project(":core:util"))
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.appcompat)

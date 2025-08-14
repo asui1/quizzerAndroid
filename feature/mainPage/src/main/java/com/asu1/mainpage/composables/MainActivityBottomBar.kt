@@ -68,7 +68,7 @@ fun MainActivityBottomBar(
 }
 
 private data class NavBarItem(
-    @StringRes val labelRes: Int,
+    @param:StringRes val labelRes: Int,
     val activeIcon: ImageVector,
     val inactiveIcon: ImageVector
 )

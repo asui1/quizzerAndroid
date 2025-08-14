@@ -9,9 +9,10 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.datacreation.lolworlds24ScoreCard
 import com.asu1.quizzer.quizCreateUtils.datacreation.t1WorldsQuizTheme
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val worlds24T1En = listOf(
+val worlds24T1En = persistentListOf(
     MultipleChoiceQuiz(
         options = mutableListOf(
             "15 wins, 3 losses",

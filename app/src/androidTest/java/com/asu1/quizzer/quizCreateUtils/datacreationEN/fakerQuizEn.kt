@@ -12,9 +12,10 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.datacreation.fakerScoreCard
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val fakerquizzesEn = listOf(
+val fakerquizzesEn = persistentListOf(
     ConnectItemsQuiz(
         connectionAnswers = mutableListOf("Azir", "Galio", "Orianna", "Ryze", "LeBlanc"),
         connectionAnswerIndex = mutableListOf(3, 4, 0, 1, 2),

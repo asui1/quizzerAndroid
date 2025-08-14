@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class GetQuizTrendsUseCase @Inject constructor(
     private val repo: RecommendationRepository,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @param:IoDispatcher private val io: CoroutineDispatcher
 ) {
     suspend operator fun invoke(language: String): Result<List<QuizCard>> = withContext(io) {
         runCatching {

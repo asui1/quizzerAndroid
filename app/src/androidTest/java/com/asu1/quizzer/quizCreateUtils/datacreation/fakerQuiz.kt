@@ -14,9 +14,10 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val fakerquizzes = listOf(
+val fakerquizzes = persistentListOf(
     ConnectItemsQuiz(
         connectionAnswers = mutableListOf("아지르", "갈리오", "오리아나", "라이즈", "르블랑"),
         connectionAnswerIndex = mutableListOf(3, 4, 0, 1, 2),

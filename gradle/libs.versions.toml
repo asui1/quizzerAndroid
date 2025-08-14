@@ -31,7 +31,6 @@ kotlinx-coroutines = "1.10.2"
 # DI / Room / Data
 room = "2.7.2"
 datastore = "1.1.7"
-security-crypto = "1.1.0"
 
 # Media / Imaging
 exoplayer = "1.8.0"
@@ -65,15 +64,13 @@ runner = "1.7.0"
 
 # Misc
 uuid-creator = "6.1.1"
-java-dotenv = "5.2.2"
 places = "4.4.1"
 core-ktx = "1.16.0"
-tracing = "1.3.0"
 
 youtube-player = "12.1.2"
 calendar = "2.8.0"
 google-play-update = "2.1.0"
-jetbrain-kotlin-test = "1.8.22"
+jetbrain-kotlin-test = "2.2.0"
 appcompat = "1.7.1"
 collections-immutable = "0.4.0"
 segmentation-selfie-version = "16.0.0-beta6"
@@ -96,6 +93,7 @@ google-services     = { id = "com.google.gms.google-services", version = "4.4.3"
 
 [libraries]
 # Compose via BOM (no per-artifact versions)
+androidx-foundation-android = { module = "androidx.compose.foundation:foundation-android" }
 compose-bom                   = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-ui                    = { module = "androidx.compose.ui:ui" }
 ui-tooling                    = { module = "androidx.compose.ui:ui-tooling" }
@@ -103,7 +101,7 @@ ui-tooling-preview            = { module = "androidx.compose.ui:ui-tooling-previ
 ui-graphics                   = { module = "androidx.compose.ui:ui-graphics", version.ref = "material" }
 runtime-saveable              = { module = "androidx.compose.runtime:runtime-saveable" }
 runtime-livedata              = { module = "androidx.compose.runtime:runtime-livedata" }
-material3                     = { module = "androidx.compose.material3:material3-android" }
+material3                     = { module = "androidx.compose.material3:material3" }
 material                      = { module = "androidx.compose.material:material", version.ref = "material" } # if you still need M2
 activity-compose              = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 navigation-compose            = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
@@ -117,7 +115,6 @@ lifecycle-runtime-ktx         = { module = "androidx.lifecycle:lifecycle-runtime
 lifecycle-viewmodel-compose   = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 work-runtime-ktx              = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 constraint-layout             = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraint-layout" }
-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "material" }
 
 # Google sign-in / credentials
 play-services-auth            = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
@@ -133,7 +130,6 @@ firebase-messaging            = { module = "com.google.firebase:firebase-messagi
 # Networking / Serialization
 retrofit                      = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-moshi               = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
-converter-gson                = { module = "com.squareup.retrofit2:converter-gson",  version.ref = "retrofit" }
 logging-interceptor           = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "logging-interceptor" }
 moshi                         = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin                  = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
@@ -141,7 +137,6 @@ kotlinx-serialization-json    = { module = "org.jetbrains.kotlinx:kotlinx-serial
 
 # Coroutines
 kotlinx-coroutines-test       = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-rx3        = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3",  version.ref = "kotlinx-coroutines" }
 mlkit-segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version.ref = "segmentation-selfie-version" }
 
 # Room / Data / Security
@@ -150,15 +145,12 @@ room-ktx                      = { module = "androidx.room:room-ktx",     version
 room-compiler                 = { module = "androidx.room:room-compiler", version.ref = "room" }
 datastore-core                = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
 datastore-preferences         = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-security-crypto               = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Media / Imaging
 media3-effect                 = { module = "androidx.media3:media3-effect", version.ref = "exoplayer" }
 media3-ui                     = { module = "androidx.media3:media3-ui",     version.ref = "exoplayer" }
 media3-exoplayer-dash         = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "exoplayer" }
 media3-session                = { module = "androidx.media3:media3-session",        version.ref = "exoplayer" }
-exoplayer                     = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
-exoplayer-test = { module = "androidx.media3:media3-test-utils", version.ref = "exoplayer" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2-kotlinx-serialization-converter" }
 
 coil-compose                  = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
@@ -174,7 +166,6 @@ material-kolor                = { module = "com.materialkolor:material-kolor", v
 reorderable                   = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 places                        = { module = "com.google.android.libraries.places:places", version.ref = "places" }
 uuid-creator                  = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuid-creator" }
-java-dotenv                   = { module = "io.github.cdimascio:java-dotenv", version.ref = "java-dotenv" }
 
 # Testing
 junit                         = { module = "junit:junit", version.ref = "junit" }
@@ -201,16 +192,11 @@ hilt-compiler                 = { module = "com.google.dagger:hilt-compiler", ve
 hilt-navigation-compose       = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
 hilt-android-test = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 
-# Google Material (if needed outside Compose)
-material-components           = { module = "com.google.android.material:material", version.ref = "material" }
-
 foundation-layout = { module = "androidx.compose.foundation:foundation-layout" }
-tracing  = { module = "androidx.tracing:tracing", version.ref = "tracing" }
 core-ktx          = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 youtubeplayer-core= { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtube-player" }
 calendar-compose  = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
-google-play-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "google-play-update" }
 google-play-update = { module = "com.google.android.play:app-update", version.ref = "google-play-update" }
 material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "material-icons" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons" }
@@ -250,12 +236,6 @@ media3 = [
     "media3-ui",
     "media3-exoplayer-dash",
     "media3-session"
-]
-
-firebase = [
-    "firebase-bom",
-    "firebase-analytics",
-    "firebase-messaging"
 ]
 
 test-core = [

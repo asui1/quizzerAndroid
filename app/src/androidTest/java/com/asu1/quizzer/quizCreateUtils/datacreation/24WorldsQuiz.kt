@@ -14,9 +14,10 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val lolworldsKr24 = listOf(
+val lolworldsKr24 = persistentListOf(
     ReorderQuiz(
         answers = mutableListOf("오로라", "요네", "스카너", "잭스", "애쉬"),
         question = "2024 월즈에서 밴픽률 순서대로 나열하세요."

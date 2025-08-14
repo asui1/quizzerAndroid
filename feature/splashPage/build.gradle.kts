@@ -9,19 +9,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:resource"))
+    api(project(":core:resource"))
 
     implementation(project(":feature:customComposable"))
-    implementation(project(":feature:mainPage"))
     implementation(project(":feature:quiz"))
 
-    implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.foundation.layout)
     implementation(libs.material3)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.runtime.livedata)
     implementation(libs.compose.ui)
     implementation(libs.ui.graphics)

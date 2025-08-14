@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class FetchHomeRecommendationsUseCase @Inject constructor(
     private val repo: RecommendationRepository,
-    @IoDispatcher private val io: CoroutineDispatcher
+    @param:IoDispatcher private val io: CoroutineDispatcher
 ) {
     suspend operator fun invoke(language: String): Result<List<QuizCardsWithTag>> =
         withContext(io) {

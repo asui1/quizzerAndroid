@@ -7,8 +7,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val pythonUtilityQuiz = listOf(
+val pythonUtilityQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "What does the Python map() function do?",
         options = mutableListOf(
@@ -112,7 +113,7 @@ val pythonUtilityQuizBundle = QuizBundle(
 )
 
 
-val pythonUtilityQuizKo = listOf(
+val pythonUtilityQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "Python의 map() 함수는 무엇을 하나요?",
         options = mutableListOf(

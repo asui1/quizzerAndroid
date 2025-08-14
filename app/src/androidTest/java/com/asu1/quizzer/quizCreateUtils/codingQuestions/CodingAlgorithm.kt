@@ -6,8 +6,9 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingQuizTheme
 import com.asu1.quizzer.quizCreateUtils.quizTheme.codingScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 
-val codingApproachQuiz = listOf(
+val codingApproachQuiz = persistentListOf(
     MultipleChoiceQuiz(
         question = "You need to determine the minimum number of coins required to make a given amount of money. Which algorithmic approach is best suited for this problem?",
         options = mutableListOf(
@@ -123,7 +124,7 @@ val codingApproachQuizBundle = QuizBundle(
 //------------------------------------------------------------------
 
 
-val codingApproachQuizKo = listOf(
+val codingApproachQuizKo = persistentListOf(
     MultipleChoiceQuiz(
         question = "주어진 금액을 만들기 위해 필요한 최소 동전 개수를 결정해야 합니다. 어떤 접근 방식이 가장 적절한가요?",
         options = mutableListOf(

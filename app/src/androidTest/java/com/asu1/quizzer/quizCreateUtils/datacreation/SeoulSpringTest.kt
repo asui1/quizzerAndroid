@@ -14,9 +14,10 @@ import com.asu1.models.scorecard.ScoreCard
 import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.quizTheme.hexColor
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val seoulSpringQuiz = listOf(
+val seoulSpringQuiz = persistentListOf(
     DateSelectionQuiz(
         centerDate = LocalDate.of(1979, 12, 1),
         answerDate = mutableSetOf(LocalDate.of(1979, 12, 12)),

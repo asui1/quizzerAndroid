@@ -9,9 +9,10 @@ import com.asu1.quizzer.quizCreateUtils.QuizBundle
 import com.asu1.quizzer.quizCreateUtils.datacreation.lolWorlds24Theme
 import com.asu1.quizzer.quizCreateUtils.datacreation.lolworlds24ScoreCard
 import com.asu1.quizzer.test.R
+import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
-val lolworldsEn24 = listOf(
+val lolworldsEn24 = persistentListOf(
     ReorderQuiz(
         answers = mutableListOf("Aurora", "Yone", "Skarner", "Jax", "Ashe"),
         question = "Arrange the champions by ban/pick rate at the 2024 Worlds."
