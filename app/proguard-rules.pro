@@ -146,12 +146,8 @@
 -keep class * extends android.app.Activity { *; }
 -keep class * extends android.app.Service { *; }
 -keep class * extends android.content.BroadcastReceiver { *; }
--keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends android.view.View { *; }
--keep @com.google.gson.annotations.SerializedName class * { *; }
--keepclassmembers class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
+
 -keep class com.asu1.** { *; }
 -keep class retrofit2.** { *; }
 -keep class okhttp3.** { *; }
@@ -164,7 +160,6 @@
   *;
 }
 
--keep class * extends com.google.gson.TypeAdapter
 -keep class com.google.android.gms.** { *; }
 
 # Keep CredentialManager and related classes

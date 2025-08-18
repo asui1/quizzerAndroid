@@ -19,6 +19,9 @@ plugins {
     id("com.autonomousapps.dependency-analysis") version "2.19.0"
 }
 
+// ---------- common settings ----------
+val jacocoToolVersion = "0.8.13"
+
 subprojects {
     // 🔹 Apply only to modules that use Android Library plugin
     apply(plugin = "io.gitlab.arturbosch.detekt")
@@ -31,6 +34,22 @@ subprojects {
         buildUponDefaultConfig = true
         parallel = true
         config.setFrom(rootProject.file("detekt.yml"))
+    }
+
+    // Apply jacoco to Android + JVM modules only
+    pluginManager.withPlugin("com.android.application") { apply(plugin = "jacoco") }
+    pluginManager.withPlugin("com.android.library")     { apply(plugin = "jacoco") }
+    pluginManager.withPlugin("org.jetbrains.kotlin.jvm"){ apply(plugin = "jacoco") }
+
+    // Configure jacoco/tool & make Kotlin-friendly
+    plugins.withId("jacoco") {
+        extensions.configure(JacocoPluginExtension::class.java) { toolVersion = jacocoToolVersion }
+        tasks.withType(Test::class.java).configureEach {
+            extensions.configure(JacocoTaskExtension::class.java) {
+                isIncludeNoLocationClasses = true
+                excludes = listOf("jdk.internal.*")
+            }
+        }
     }
 
     plugins.withId("com.android.library") {

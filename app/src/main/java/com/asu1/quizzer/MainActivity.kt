@@ -71,30 +71,33 @@ class MainActivity : ComponentActivity() {
     private val loadMyQuizViewModel: LoadMyQuizViewModel by viewModels()
     private val loadLocalQuizViewModel: LoadLocalQuizViewModel by viewModels()
     private val initializationViewModel: InitializationViewModel by viewModels()
-
+    private lateinit var quizNavCoordinator: QuizNavCoordinator
 
     private lateinit var navController: NavHostController
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var updateLauncher: ActivityResultLauncher<IntentSenderRequest>
 
-    val quizNavCoordinator: QuizNavCoordinator = QuizNavCoordinator(
-        navController = navController,
-        quizCoordinatorViewModel = quizCoordinatorViewModel,
-        quizCardViewModel = quizCardViewModel,
-        userViewModel = userViewModel,
-        loadLocalQuizViewModel = loadLocalQuizViewModel,
-        loadMyQuizViewModel = loadMyQuizViewModel
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        initializationViewModel.initializationState.observe(this) { state ->
+            Logger.debug("InitializationState", "State changed to: $state")
+        }
         initInAppUpdate()
         initViewModelsAndObservers()
         handleIntent(intent)
         setContent{
             QuizzerAndroidTheme {
                 navController = rememberNavController()
+                if (!::quizNavCoordinator.isInitialized) {
+                    quizNavCoordinator = QuizNavCoordinator(
+                        navController = navController,
+                        quizCoordinatorViewModel = quizCoordinatorViewModel,
+                        quizCardViewModel = quizCardViewModel,
+                        userViewModel = userViewModel,
+                        loadLocalQuizViewModel = loadLocalQuizViewModel,
+                        loadMyQuizViewModel = loadMyQuizViewModel
+                    )
+                }
                 AppScaffold()
             }
         }
@@ -127,6 +130,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             if (BuildConfig.isDebug) {
+                Logger.debug("Release Debug Updater in Debug")
                 delay(DEFAULT_DELAY_MS)
                 initializationViewModel.noUpdateAvailable()
             }
@@ -164,6 +168,7 @@ class MainActivity : ComponentActivity() {
                 QuizNavGraphManager(
                     navController = navController,
                     quizNavCoordinator = quizNavCoordinator,
+                    initializationViewModel = initializationViewModel,
                 )
             }
         }

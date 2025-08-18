@@ -17,19 +17,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.resources.InitializationState
 import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 
 @Composable
 fun InitializationScreen(
+    initializationViewModel: InitializationViewModel,
     navigateToHome: () -> Unit = {},
 ) {
-    val initializationViewModel: InitializationViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
     val initializationState by initializationViewModel.initializationState.observeAsState()
 
     LaunchedEffect(initializationState){
@@ -37,6 +38,7 @@ fun InitializationScreen(
             InitializationState.CHECKING_FOR_UPDATES -> {
             }
             InitializationState.GETTING_USER_DATA -> {
+                Logger.debug("Getting User Data Called in Initialization Screen")
                 userViewModel.initLogin(
                     onDone = {
                         initializationViewModel.updateInitializationState(InitializationState.DONE)

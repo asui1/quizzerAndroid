@@ -34,11 +34,13 @@ import com.asu1.quizcard.quizLoad.LoadLocalQuizScreen
 import com.asu1.quizcard.quizLoad.LoadMyQuizScreen
 import com.asu1.search.SearchScreen
 import com.asu1.splashpage.InitializationScreen
+import com.asu1.splashpage.InitializationViewModel
 
 @Composable
 fun QuizNavGraphManager(
     navController: NavHostController,
     quizNavCoordinator: QuizNavCoordinator,
+    initializationViewModel: InitializationViewModel,
 ) {
     NavHost(
         navController    = navController,
@@ -47,6 +49,7 @@ fun QuizNavGraphManager(
         exitTransition   = { ExitTransition.None }
     ) {
         initializationRoute(
+            initializationViewModel = initializationViewModel,
             getHome = { fetchData -> quizNavCoordinator.getHome(fetchData) }
         )
         homeRoute(
@@ -77,10 +80,12 @@ fun QuizNavGraphManager(
 }
 
 fun NavGraphBuilder.initializationRoute(
+    initializationViewModel: InitializationViewModel,
     getHome: (fetchData: Boolean) -> Unit
 ) {
     composable<Route.Init> {
         InitializationScreen(
+            initializationViewModel = initializationViewModel,
             navigateToHome = {
                 getHome(
                     !BuildConfig.isDebug

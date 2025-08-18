@@ -37,8 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -74,10 +74,13 @@ fun MainScreen(
     loadQuizResult: (String) -> Unit,
     moveHome: () -> Unit
 ) {
+    val quizCardViewModel: QuizCardViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
+
     // 1) collect all state and effects into one state holder
     val state = rememberMainScreenState(
-        quizCardViewModel = viewModel(),
-        userViewModel         = viewModel(),
+        quizCardViewModel = quizCardViewModel,
+        userViewModel = userViewModel,
         loadQuiz = loadQuiz,
         loadQuizResult = loadQuizResult,
     )

@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asu1.models.quizRefactor.ConnectItemsQuiz
 import com.asu1.models.quizRefactor.DateSelectionQuiz
 import com.asu1.models.quizRefactor.FillInBlankQuiz
@@ -40,7 +40,7 @@ import com.asu1.utils.setTopBarColor
 @Composable
 fun QuizChecker(
 ){
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
     val quizState by quizCoordinatorViewModel.quizUIState.collectAsStateWithLifecycle()
     val quizzes = quizState.quizContentState.quizzes
     val quizTheme = quizState.quizTheme

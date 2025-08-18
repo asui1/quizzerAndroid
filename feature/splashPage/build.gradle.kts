@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.ui.tooling)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.hilt.navigation.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

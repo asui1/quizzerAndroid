@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.runtime.livedata)
     implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
 
     testImplementation(libs.junit)
 

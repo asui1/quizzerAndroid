@@ -14,7 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.asu1.activityNavigation.Route
 import com.asu1.appdatamodels.SettingItems
 import com.asu1.mainpage.composables.InquiryBottomSheetContent
@@ -31,8 +31,8 @@ fun SettingsPage(
     isLoggedIn:  Boolean,
     navigateTo:  (Route) -> Unit
 ) {
-    val inquiryVm: InquiryViewModel = viewModel()
-    val userVm:    UserViewModel    = viewModel()
+    val inquiryVm: InquiryViewModel = hiltViewModel()
+    val userVm:    UserViewModel = hiltViewModel()
 
     var showInquiry  by remember { mutableStateOf(false) }
     var showSignOut  by remember { mutableStateOf(false) }

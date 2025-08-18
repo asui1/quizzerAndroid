@@ -30,8 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
@@ -53,9 +53,9 @@ fun QuizSolver(
     hasVisitedRoute: Boolean
 ) {
     // 1) Collect state & prepare helpers
-    val coordinatorVm: QuizCoordinatorViewModel = viewModel()
+    val coordinatorVm: QuizCoordinatorViewModel = hiltViewModel()
     val quizState by coordinatorVm.quizUIState.collectAsStateWithLifecycle()
-    val userVm: UserViewModel = viewModel()
+    val userVm: UserViewModel = hiltViewModel()
 
     // 2) Extract pieces of state
     val quizzes     = quizState.quizContentState.quizzes

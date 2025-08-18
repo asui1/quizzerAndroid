@@ -24,7 +24,7 @@ class UserSessionRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : UserSessionRepository {
 
-    private val Context.dataStore by preferencesDataStore(name = "user_prefs")
+    private val Context.dataStore by preferencesDataStore(name = "user_session_prefs")
     private val dataStore = context.dataStore
 
     private val emailKey = stringPreferencesKey("email")

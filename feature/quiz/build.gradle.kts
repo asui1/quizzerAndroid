@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.ui.tooling)
+    implementation(libs.hilt.navigation.compose)
     api(libs.material3)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.material.icons.core)

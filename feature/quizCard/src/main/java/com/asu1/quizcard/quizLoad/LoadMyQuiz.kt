@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
@@ -49,9 +49,9 @@ import kotlinx.collections.immutable.toPersistentList
 fun LoadMyQuizScreen(
     navController: NavController,
 ) {
-    val loadMyQuizViewModel: LoadMyQuizViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val loadMyQuizViewModel: LoadMyQuizViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
     val email: String = userViewModel.userData.value?.email ?: ""
     val quizList by loadMyQuizViewModel.myQuizList
         .collectAsStateWithLifecycle(persistentListOf())

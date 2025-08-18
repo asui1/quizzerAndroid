@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -81,9 +82,9 @@ fun QuizBuilderScreen(
     navController: NavController
 ) {
     // 1) collect shared state and helpers
-    val vm: QuizCoordinatorViewModel   = viewModel()
+    val vm: QuizCoordinatorViewModel   = hiltViewModel()
     val loadVm: LoadLocalQuizViewModel = viewModel()
-    val userVm: UserViewModel = viewModel()
+    val userVm: UserViewModel = hiltViewModel()
     val state by vm.quizUIState.collectAsStateWithLifecycle()
 
     val quizzes     = state.quizContentState.quizzes
@@ -284,7 +285,7 @@ private fun EditorContent(
     onAddQuiz:     () -> Unit,
     onMoveToCaller:(Int, QuizType, Int) -> Unit
 ) {
-    val vm: QuizCoordinatorViewModel = viewModel()
+    val vm: QuizCoordinatorViewModel = hiltViewModel()
 
     Column(
         Modifier

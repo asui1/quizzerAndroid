@@ -3,7 +3,7 @@ package com.asu1.mainpage.screens
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.asu1.mainpage.viewModels.QuizCardViewModel
 import com.asu1.quizcard.cardBase.VerticalQuizCardLargeColumn
 import com.asu1.quizcardmodel.QuizCard
@@ -13,7 +13,7 @@ fun TrendsPage(
     cards: List<QuizCard>,
     loadQuiz: (String) -> Unit
 ) {
-    val vm: QuizCardViewModel = viewModel()
+    val vm: QuizCardViewModel = hiltViewModel()
     VerticalQuizCardLargeColumn(
         quizCards = cards,
         onClick = loadQuiz,

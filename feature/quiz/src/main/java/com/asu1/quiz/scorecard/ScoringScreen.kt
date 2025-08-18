@@ -44,8 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.animations.LoadingAnimation
@@ -73,8 +73,8 @@ fun ScoringScreen(
     navController: NavController,
     loadQuiz: (String) -> Unit = {},
 ) {
-    val coordinator: QuizCoordinatorViewModel = viewModel()
-    val userVm: UserViewModel = viewModel()
+    val coordinator: QuizCoordinatorViewModel = hiltViewModel()
+    val userVm: UserViewModel = hiltViewModel()
     val email = userVm.userData.value?.email ?: "GUEST"
     val ui by coordinator.quizUIState.collectAsStateWithLifecycle()
     val vmState by coordinator.quizViewModelState.collectAsStateWithLifecycle()

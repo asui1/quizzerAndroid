@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -40,7 +41,7 @@ fun QuizCaller(
     insertIndex: Int
 ) {
     // 1) Shared viewModel & state
-    val coordinatorVm: QuizCoordinatorViewModel = viewModel()
+    val coordinatorVm: QuizCoordinatorViewModel = hiltViewModel()
     val uiState by coordinatorVm.quizUIState.collectAsStateWithLifecycle()
     val theme   = uiState.quizTheme
     val quizzes = uiState.quizContentState.quizzes

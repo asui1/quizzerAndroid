@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -63,8 +64,8 @@ fun DesignScoreCardScreen(
     navController: NavController
 ) {
     // 1️⃣ Gather all your state & callbacks
-    val coordinatorVm: QuizCoordinatorViewModel   = viewModel()
-    val loadVm: LoadMyQuizViewModel = viewModel()
+    val coordinatorVm: QuizCoordinatorViewModel   = hiltViewModel()
+    val loadVm: LoadMyQuizViewModel = hiltViewModel()
     val scoreVm:         ScoreCardViewModel       = viewModel()
     val uiState by       coordinatorVm.quizUIState.collectAsStateWithLifecycle()
     val scoreCardState   = uiState.scoreCardState
@@ -182,7 +183,7 @@ private fun DesignScoreCardContent(
         with(density) { windowInfo.containerSize.width.toDp() }
             .coerceAtMost(height * 0.6f)
     }
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = viewModel()
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
 
     // content + slide-out tools
     OpenCloseColumn(

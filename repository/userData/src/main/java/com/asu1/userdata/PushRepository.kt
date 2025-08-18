@@ -31,8 +31,7 @@ class PushRepositoryImpl @Inject constructor(
     private val userSessionRepository: UserSessionRepository, // to read current email
     @ApplicationContext context: Context
 ) : PushRepository {
-
-    private val Context.dataStore by preferencesDataStore("user_prefs")
+    private val Context.dataStore by preferencesDataStore("push_prefs")
     private val dataStore = context.dataStore
     private val fcmTokenKey = stringPreferencesKey("fcmToken")
 

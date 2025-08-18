@@ -45,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.textField.TagSetter
@@ -69,7 +68,7 @@ fun RegisterScreen(
     profileUri: String
 ) {
     val registerViewModel: RegisterViewModel = hiltViewModel()
-    val userViewModel: UserViewModel = viewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
 
     val state = rememberRegisterState(
         registerViewModel = registerViewModel,

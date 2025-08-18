@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -87,9 +88,9 @@ fun QuizLayoutBuilderScreen(
     navigateToQuizLoad: () -> Unit = {}
 ) {
     // 1) Gather all state & callbacks
-    val vm: QuizCoordinatorViewModel       = viewModel()
+    val vm: QuizCoordinatorViewModel       = hiltViewModel()
     val loadVm: LoadLocalQuizViewModel = viewModel()
-    val userVm: UserViewModel = viewModel()
+    val userVm: UserViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope   = rememberCoroutineScope()
 
@@ -176,7 +177,7 @@ private fun QuizLayoutBuilderSideEffects(
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val view     = LocalView.current
-    val vm: QuizCoordinatorViewModel       = viewModel()
+    val vm: QuizCoordinatorViewModel = hiltViewModel()
 
     // Sync pager → step
     LaunchedEffect(step) {

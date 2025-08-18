@@ -35,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
@@ -55,7 +55,7 @@ import kotlinx.collections.immutable.toPersistentList
 fun MyActivitiesScreen(
     navController: NavController,
 ) {
-    val userViewModel: UserViewModel = viewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
     val userActivities by userViewModel.userActivities.collectAsStateWithLifecycle(
         persistentListOf()
     )
