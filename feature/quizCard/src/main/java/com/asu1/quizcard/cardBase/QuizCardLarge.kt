@@ -34,7 +34,6 @@ import com.asu1.customComposable.pageSelector.HorizontalPageIndicator
 import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
-import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun HorizontalQuizCardItemLarge(
@@ -150,7 +149,7 @@ private fun QuizCardMeta(
         Spacer(Modifier.weight(1f))
         QuizCardCreator(quizCard.creator)
         Spacer(Modifier.weight(2f))
-        QuizCardTags(quizCard.tags as PersistentList<String>)
+        QuizCardTags(quizCard.tags)
         Spacer(Modifier.weight(2f))
         QuizCardDescription(quizCard.description)
     }
@@ -177,7 +176,7 @@ private fun QuizCardCreator(name: String) {
 }
 
 @Composable
-private fun QuizCardTags(tags: PersistentList<String>) {
+private fun QuizCardTags(tags: List<String>) {
     TagsView(
         tags = tags,
         modifier = Modifier

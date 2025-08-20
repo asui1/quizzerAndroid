@@ -22,7 +22,7 @@ import com.asu1.activityNavigation.enterFromRightTransition
 import com.asu1.activityNavigation.exitFadeOutTransition
 import com.asu1.activityNavigation.exitToRightTransition
 import com.asu1.mainpage.screens.LoginScreen
-import com.asu1.mainpage.screens.MainScreen
+import com.asu1.mainpage.screens.mainScreen.MainScreen
 import com.asu1.mainpage.screens.MyActivitiesScreen
 import com.asu1.mainpage.screens.NotificationScreen
 import com.asu1.mainpage.screens.PrivacyPolicy
@@ -57,7 +57,6 @@ fun QuizNavGraphManager(
 ) {
     val quizCardViewModel: QuizCardViewModel = hiltViewModel()
     val userViewModel: UserViewModel = hiltViewModel()
-
     val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
     val quizGeneralViewModel: QuizGeneralViewModel = viewModel()
     val quizContentViewModel: QuizContentViewModel = viewModel()
@@ -66,29 +65,21 @@ fun QuizNavGraphManager(
     val scoreCardViewModel: ScoreCardViewModel = viewModel()
     val loadMyQuizViewModel: LoadMyQuizViewModel = hiltViewModel()
     val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
-
     val quizNavCoordinator = QuizNavCoordinator(
-        navController = navController,
-        quizCoordinatorViewModel = quizCoordinatorViewModel,
-        quizCardViewModel = quizCardViewModel,
-        userViewModel = userViewModel,
-        loadLocalQuizViewModel = loadLocalQuizViewModel,
-        loadMyQuizViewModel = loadMyQuizViewModel
+        navController = navController, quizCoordinatorViewModel = quizCoordinatorViewModel,
+        quizCardViewModel = quizCardViewModel, userViewModel = userViewModel,
+        loadLocalQuizViewModel = loadLocalQuizViewModel, loadMyQuizViewModel = loadMyQuizViewModel
     )
 
     quizCoordinatorViewModel.setViewModels(
-        quizGeneral     = quizGeneralViewModel,
-        quizTheme       = quizThemeViewModel,
-        quizContent     = quizContentViewModel,
-        quizResult      = quizResultViewModel,
+        quizGeneral     = quizGeneralViewModel, quizTheme       = quizThemeViewModel,
+        quizContent     = quizContentViewModel, quizResult      = quizResultViewModel,
         scoreCard       = scoreCardViewModel
     )
 
     NavHost(
-        navController    = navController,
-        startDestination = Route.Init,
-        enterTransition  = { EnterTransition.None },
-        exitTransition   = { ExitTransition.None }
+        navController    = navController, startDestination = Route.Init,
+        enterTransition  = { EnterTransition.None }, exitTransition   = { ExitTransition.None }
     ) {
         initializationRoute(
             initializationViewModel = initializationViewModel,

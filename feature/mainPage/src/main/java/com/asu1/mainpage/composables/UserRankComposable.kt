@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.asu1.customComposable.animations.UserRankAnimation
-import com.asu1.mainpage.screens.UriImageButton
+import com.asu1.mainpage.screens.mainScreen.UriImageButton
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRank
@@ -237,7 +237,7 @@ fun UserRankComposableList(
 @Preview(showBackground = true)
 @Composable
 fun UserRankComposablePreview() {
-    val userRanks = List(20) { com.asu1.userdatamodels.userRankSample }
+    val userRanks = List(20) { com.asu1.userdatamodels.sampleUserRank }
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,

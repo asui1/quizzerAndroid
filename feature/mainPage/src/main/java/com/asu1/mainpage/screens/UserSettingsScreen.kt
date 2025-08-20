@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.asu1.appdatamodels.SettingItems
 import com.asu1.appdatamodels.sampleSettingItems
 import com.asu1.mainpage.composables.SettingsGroupCard
+import com.asu1.mainpage.screens.mainScreen.LogoutConfirmationDialog
+import com.asu1.mainpage.screens.mainScreen.UserProfilePic
 import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerTypographyDefaults

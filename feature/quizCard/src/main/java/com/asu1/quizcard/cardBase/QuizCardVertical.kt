@@ -43,7 +43,6 @@ import com.asu1.quizcardmodel.QuizCard
 import com.asu1.quizcardmodel.sampleQuizCardList
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
-import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun VerticalQuizCardLarge(quizCard: QuizCard, onClick: (String) -> Unit = {}, index: Int) {
@@ -132,7 +131,7 @@ private fun MetaColumn(minSize: Dp, quizCard: QuizCard) {
         Spacer(Modifier.weight(1f))
         CreatorText(quizCard.creator)
         Spacer(Modifier.weight(2f))
-        TagsSection(quizCard.tags as PersistentList<String>)
+        TagsSection(quizCard.tags)
         Spacer(Modifier.height(4.dp))
         Spacer(Modifier.weight(1f))
         SolvedCountText(quizCard.count)
@@ -160,7 +159,7 @@ private fun CreatorText(name: String) = Text(
 )
 
 @Composable
-private fun TagsSection(tags: PersistentList<String>) = TagsView(
+private fun TagsSection(tags: List<String>) = TagsView(
     tags = tags,
     modifier = Modifier.fillMaxWidth().height(32.dp).padding(horizontal = 4.dp),
     maxLines = 3

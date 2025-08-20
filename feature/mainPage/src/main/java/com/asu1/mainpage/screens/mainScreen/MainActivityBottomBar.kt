@@ -1,4 +1,4 @@
-package com.asu1.mainpage.composables
+package com.asu1.mainpage.screens.mainScreen
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -40,11 +40,15 @@ fun MainActivityBottomBar(
     onCreateQuiz: () -> Unit
 ) {
     val items = listOf(
-        NavBarItem(R.string.home, Icons.Filled.Home, Icons.Outlined.Home),
-        NavBarItem(R.string.trends, Icons.AutoMirrored.Filled.TrendingUp, Icons.AutoMirrored.Outlined.TrendingUp),
+        NavBarItem(R.string.home, Icons.Filled.Home,
+            Icons.Outlined.Home, 0),
+        NavBarItem(R.string.trends, Icons.AutoMirrored.Filled.TrendingUp,
+            Icons.AutoMirrored.Outlined.TrendingUp, 1),
         null, // placeholder for FAB
-        NavBarItem(R.string.ranks, Icons.Filled.BarChart, Icons.Outlined.BarChart),
-        NavBarItem(R.string.setting, Icons.Filled.Settings, Icons.Outlined.Settings)
+        NavBarItem(R.string.ranks, Icons.Filled.BarChart,
+            Icons.Outlined.BarChart, 2),
+        NavBarItem(R.string.setting, Icons.Filled.Settings,
+            Icons.Outlined.Settings, 3)
     )
 
     Row(
@@ -59,8 +63,8 @@ fun MainActivityBottomBar(
                 item == null -> CreateQuizButton(onClick = onCreateQuiz)
                 else -> NavBarIcon(
                     item = item,
-                    isSelected = index == selectedTab,
-                    onClick = { onTabSelected(index) }
+                    isSelected = item.fixedIndex == selectedTab,
+                    onClick = { onTabSelected(item.fixedIndex) }
                 )
             }
         }
@@ -70,7 +74,8 @@ fun MainActivityBottomBar(
 private data class NavBarItem(
     @param:StringRes val labelRes: Int,
     val activeIcon: ImageVector,
-    val inactiveIcon: ImageVector
+    val inactiveIcon: ImageVector,
+    val fixedIndex: Int,
 )
 
 @Composable

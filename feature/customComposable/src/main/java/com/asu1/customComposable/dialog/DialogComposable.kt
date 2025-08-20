@@ -11,9 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.QuizzerTypographyDefaults
+import com.asu1.resources.R
 
 @Composable
 fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
@@ -60,4 +63,19 @@ fun DialogComposable(title: Int, message: Int, onContinue: (Context) -> Unit,
 
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDialogComposable(){
+    QuizzerAndroidTheme {
+        DialogComposable(
+            title = R.string.logout_confirmation,
+            message = R.string.logout_confirmation_body,
+            onContinue = {  },
+            onContinueText = R.string.logout_confirm,
+            onCancel = { },
+            onCancelText = R.string.logout_cancel
+        )
+    }
 }

@@ -1,4 +1,4 @@
-package com.asu1.mainpage.composables
+package com.asu1.mainpage.screens.mainScreen
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -14,7 +14,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.asu1.activityNavigation.Route
 import com.asu1.customComposable.topBar.QuizzerTopBarBase
-import com.asu1.mainpage.screens.UserProfilePic
 import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerAndroidTheme
