@@ -19,23 +19,12 @@ class QuizNavCoordinator(
     private val loadLocalQuizViewModel: LoadLocalQuizViewModel,
     private val loadMyQuizViewModel: LoadMyQuizViewModel,
 ) {
-    fun getQuizResult(resultId: String) {
-        if (resultId.isBlank()) return
-        quizCoordinatorViewModel.loadQuizResult(resultId)
-        navController.navigate(Route.ScoringScreen) {
-            popUpTo(Route.Home) { inclusive = false }
-            launchSingleTop = true
-        }
-        quizCardViewModel.setLoadResultId(null)
-    }
-
     fun loadQuiz(quizId: String, doPop: Boolean = false) {
         quizCoordinatorViewModel.loadQuiz(quizId)
         navController.navigate(Route.QuizSolver()) {
             if (doPop) popUpTo(Route.Home) { inclusive = false }
             launchSingleTop = true
         }
-        quizCardViewModel.setLoadQuizId(null)
     }
 
     fun getHome(fetchData: Boolean = true) {

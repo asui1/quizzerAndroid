@@ -232,6 +232,7 @@ dependencies {
 
     // ---- Navigation ----
     implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
 
     // ---- Serialization / Coroutines / Rx ----
 

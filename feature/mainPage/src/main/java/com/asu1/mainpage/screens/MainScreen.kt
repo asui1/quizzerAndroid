@@ -21,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
@@ -71,7 +70,6 @@ fun MainScreen(
     navController: NavController,
     navigateTo: (Route) -> Unit,
     loadQuiz: (String) -> Unit,
-    loadQuizResult: (String) -> Unit,
     moveHome: () -> Unit
 ) {
     val quizCardViewModel: QuizCardViewModel = hiltViewModel()
@@ -81,8 +79,6 @@ fun MainScreen(
     val state = rememberMainScreenState(
         quizCardViewModel = quizCardViewModel,
         userViewModel = userViewModel,
-        loadQuiz = loadQuiz,
-        loadQuizResult = loadQuizResult,
     )
 
     // 2) render UI based on state
@@ -120,8 +116,6 @@ data class UserState(
 private fun rememberMainScreenState(
     quizCardViewModel: QuizCardViewModel,
     userViewModel:         UserViewModel,
-    loadQuiz: (String) -> Unit,
-    loadQuizResult: (String) -> Unit,
 ): MainScreenState {
     // 1) your pager
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
@@ -134,14 +128,6 @@ private fun rememberMainScreenState(
     // 3) collect all user‐related bits
     val userData   by userViewModel.userData.observeAsState()
     val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
-
-    // 4) triggers to load detail screens
-    val loadQuizId   by quizCardViewModel.loadQuizId.observeAsState()
-    val loadResultId by quizCardViewModel.loadResultId.observeAsState()
-
-    // 5) launch the side‐effects
-    LaunchedEffect(loadQuizId)   { loadQuizId?.let { loadQuiz(it) } }
-    LaunchedEffect(loadResultId) { loadResultId?.let { loadQuizResult(it) } }
 
     // 6) build your sub‐state objects
     val quizState = remember(quizCards, quizTrends, userRanks) {
