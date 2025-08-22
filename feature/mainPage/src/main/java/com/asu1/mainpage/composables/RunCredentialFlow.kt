@@ -1,6 +1,9 @@
 package com.asu1.mainpage.composables
 
-import androidx.credentials.exceptions.*
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.GetCredentialInterruptedException
+import androidx.credentials.exceptions.GetCredentialProviderConfigurationException
 import com.asu1.utils.Logger
 import com.asu1.resources.R
 

@@ -54,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -85,12 +86,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun QuizLayoutBuilderScreen(
     navController: NavController,
-    navigateToQuizLoad: () -> Unit = {}
+    navigateToQuizLoad: () -> Unit = {},
+    parentOwner: ViewModelStoreOwner,
 ) {
     // 1) Gather all state & callbacks
-    val vm: QuizCoordinatorViewModel       = hiltViewModel()
-    val loadVm: LoadLocalQuizViewModel = viewModel()
-    val userVm: UserViewModel = hiltViewModel()
+    val vm: QuizCoordinatorViewModel       = hiltViewModel(parentOwner)
+    val loadVm: LoadLocalQuizViewModel = viewModel(parentOwner)
+    val userVm: UserViewModel = hiltViewModel(parentOwner)
     val context = LocalContext.current
     val scope   = rememberCoroutineScope()
 

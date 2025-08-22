@@ -1,12 +1,16 @@
 package com.asu1.quizzer
 
+import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -22,11 +26,11 @@ import com.asu1.activityNavigation.enterFromRightTransition
 import com.asu1.activityNavigation.exitFadeOutTransition
 import com.asu1.activityNavigation.exitToRightTransition
 import com.asu1.mainpage.screens.LoginScreen
-import com.asu1.mainpage.screens.mainScreen.MainScreen
 import com.asu1.mainpage.screens.MyActivitiesScreen
 import com.asu1.mainpage.screens.NotificationScreen
 import com.asu1.mainpage.screens.PrivacyPolicy
 import com.asu1.mainpage.screens.RegisterScreen
+import com.asu1.mainpage.screens.mainScreen.MainScreen
 import com.asu1.mainpage.viewModels.QuizCardViewModel
 import com.asu1.quiz.content.quizCommonBuilder.QuizBuilderScreen
 import com.asu1.quiz.content.quizCommonBuilder.QuizCaller
@@ -51,20 +55,32 @@ import com.asu1.splashpage.InitializationScreen
 import com.asu1.splashpage.InitializationViewModel
 
 @Composable
+private fun activityOwner(): ViewModelStoreOwner {
+    val context = LocalContext.current
+    return remember(context) {
+        generateSequence(context) { (it as? ContextWrapper)?.baseContext }
+            .filterIsInstance<ComponentActivity>()
+            .first()
+    }
+}
+
+@Composable
 fun QuizNavGraphManager(
     navController: NavHostController,
     initializationViewModel: InitializationViewModel,
 ) {
-    val quizCardViewModel: QuizCardViewModel = hiltViewModel()
-    val userViewModel: UserViewModel = hiltViewModel()
-    val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel()
-    val quizGeneralViewModel: QuizGeneralViewModel = viewModel()
-    val quizContentViewModel: QuizContentViewModel = viewModel()
-    val quizThemeViewModel: QuizThemeViewModel = viewModel()
-    val quizResultViewModel: QuizResultViewModel = viewModel()
-    val scoreCardViewModel: ScoreCardViewModel = viewModel()
-    val loadMyQuizViewModel: LoadMyQuizViewModel = hiltViewModel()
-    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel()
+    val owner = activityOwner()
+
+    val quizCardViewModel: QuizCardViewModel = hiltViewModel(owner)
+    val userViewModel: UserViewModel = hiltViewModel(owner)
+    val quizCoordinatorViewModel: QuizCoordinatorViewModel = hiltViewModel(owner)
+    val quizGeneralViewModel: QuizGeneralViewModel = viewModel(owner)
+    val quizContentViewModel: QuizContentViewModel = viewModel(owner)
+    val quizThemeViewModel: QuizThemeViewModel = viewModel(owner)
+    val quizResultViewModel: QuizResultViewModel = viewModel(owner)
+    val scoreCardViewModel: ScoreCardViewModel = viewModel(owner)
+    val loadMyQuizViewModel: LoadMyQuizViewModel = hiltViewModel(owner)
+    val loadLocalQuizViewModel: LoadLocalQuizViewModel = viewModel(owner)
     val quizNavCoordinator = QuizNavCoordinator(
         navController = navController, quizCoordinatorViewModel = quizCoordinatorViewModel,
         quizCardViewModel = quizCardViewModel, userViewModel = userViewModel,
@@ -82,21 +98,20 @@ fun QuizNavGraphManager(
         enterTransition  = { EnterTransition.None }, exitTransition   = { ExitTransition.None }
     ) {
         initializationRoute(
-            initializationViewModel = initializationViewModel,
-            getHome = { fetchData -> quizNavCoordinator.getHome(fetchData) }
+            initializationViewModel = initializationViewModel, parentOwner = owner,
+            getHome = { fetchData -> quizNavCoordinator.getHome(fetchData) },
         )
         homeRoute(
-            navController = navController,
-            quizNavCoordinator = quizNavCoordinator,
+            navController = navController, quizNavCoordinator = quizNavCoordinator, parentOwner = owner,
         )
         searchRoute(
-            navController = navController,
-            loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
+            navController = navController, loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
         )
         loginRoute(navController)
         privacyPolicyRoute(navController)
         registerRoute(navController)
-        createQuizLayoutRoute(navController)
+        createQuizLayoutRoute(navController, parentOwner = owner,
+        )
         quizBuilderRoute(navController)
         quizCallerRoute(navController)
         quizSolverRoute(navController)
@@ -114,7 +129,8 @@ fun QuizNavGraphManager(
 
 fun NavGraphBuilder.initializationRoute(
     initializationViewModel: InitializationViewModel,
-    getHome: (fetchData: Boolean) -> Unit
+    getHome: (fetchData: Boolean) -> Unit,
+    parentOwner: ViewModelStoreOwner,
 ) {
     composable<Route.Init> {
         InitializationScreen(
@@ -123,7 +139,8 @@ fun NavGraphBuilder.initializationRoute(
                 getHome(
                     !BuildConfig.isDebug
                 )
-            }
+            },
+            parentOwner = parentOwner
         )
     }
 }
@@ -131,6 +148,7 @@ fun NavGraphBuilder.initializationRoute(
 fun NavGraphBuilder.homeRoute(
     navController: NavController,
     quizNavCoordinator: QuizNavCoordinator,
+    parentOwner: ViewModelStoreOwner,
 ) {
     composable<Route.Home>(
     ) {
@@ -147,7 +165,8 @@ fun NavGraphBuilder.homeRoute(
                 }
             },
             loadQuiz = { id -> quizNavCoordinator.loadQuiz(id, false)},
-            moveHome = { quizNavCoordinator.getHome(true)}
+            moveHome = { quizNavCoordinator.getHome(true)},
+            parentOwner = parentOwner,
         )
     }
 }
@@ -204,13 +223,15 @@ fun NavGraphBuilder.registerRoute(
 
 fun NavGraphBuilder.createQuizLayoutRoute(
     navController: NavController,
+    parentOwner: ViewModelStoreOwner,
 ) {
     composable<Route.CreateQuizLayout> {
         QuizLayoutBuilderScreen(
             navController = navController,
             navigateToQuizLoad = {
                 navController.navigate(Route.LoadLocalQuiz) { launchSingleTop = true }
-            }
+            },
+            parentOwner = parentOwner,
         )
     }
 }

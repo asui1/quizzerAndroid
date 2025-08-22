@@ -31,13 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.asu1.customComposable.text.TextDivider
 import com.asu1.activityNavigation.Route
+import com.asu1.customComposable.text.TextDivider
 import com.asu1.mainpage.composables.GoogleCredentialManager
 import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
-import com.asu1.utils.getAppVersion
+import com.asu1.utils.rememberAppVersion
 
 
 @Composable
@@ -85,8 +85,7 @@ fun LoginBody(
     onClickSignIn: () -> Unit,
     onClickRegister: () -> Unit
 ) {
-    val context = LocalContext.current
-    val version = remember { context.getAppVersion() }
+    val version = rememberAppVersion()
 
     Column(
         modifier = Modifier

@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import com.asu1.customComposable.animations.LoadingAnimation
 import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.resources.InitializationState
@@ -29,8 +30,9 @@ import com.asu1.utils.Logger
 fun InitializationScreen(
     initializationViewModel: InitializationViewModel,
     navigateToHome: () -> Unit = {},
+    parentOwner: ViewModelStoreOwner,
 ) {
-    val userViewModel: UserViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel(parentOwner)
     val initializationState by initializationViewModel.initializationState.observeAsState()
 
     LaunchedEffect(initializationState){

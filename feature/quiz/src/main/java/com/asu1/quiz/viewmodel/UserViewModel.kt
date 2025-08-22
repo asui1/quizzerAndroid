@@ -62,6 +62,8 @@ class UserViewModel @Inject constructor(
                         return@onSuccess
                     }
 
+                    Logger.debug("Init login Success: with User Id ${userInfo.email}")
+
                     _userData.postValue(
                         UserData(
                             email      = userInfo.email,

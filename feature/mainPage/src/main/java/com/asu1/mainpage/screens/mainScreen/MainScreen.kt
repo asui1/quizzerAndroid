@@ -12,7 +12,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -42,8 +42,8 @@ import com.asu1.resources.QuizzerAndroidTheme
 import com.asu1.resources.R
 import com.asu1.userdatamodels.UserRank
 import com.asu1.userdatamodels.sampleUserRankList
+import com.asu1.utils.Logger
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,10 +51,11 @@ fun MainScreen(
     navController: NavController,
     navigateTo: (Route) -> Unit,
     loadQuiz: (String) -> Unit,
-    moveHome: () -> Unit
+    moveHome: () -> Unit,
+    parentOwner: ViewModelStoreOwner,
 ) {
-    val quizCardViewModel: QuizCardViewModel = hiltViewModel()
-    val userViewModel: UserViewModel = hiltViewModel()
+    val quizCardViewModel: QuizCardViewModel = hiltViewModel(parentOwner)
+    val userViewModel: UserViewModel = hiltViewModel(parentOwner)
 
     // 1) collect all state and effects into one state holder
     val state = rememberMainScreenState(
@@ -73,21 +74,18 @@ fun MainScreen(
 }
 
 // --- State holder encapsulates all mutable state & side effects ---
-@Immutable  // data classes are automatically considered immutable
 data class MainScreenState(
     val pagerState: PagerState,
     val quizState:  QuizState,
     val userState:  UserState
 )
 
-@Immutable
 data class QuizState(
     val cards:   List<QuizCardsWithTag>,
     val trends:  List<QuizCard>,
     val ranks:   List<UserRank>
 )
 
-@Immutable
 data class UserState(
     val data:       UserViewModel.UserData?,
     val isLoggedIn: Boolean
@@ -113,6 +111,10 @@ private fun rememberMainScreenState(
     // 3) collect all user‐related bits
     val userData   by userViewModel.userData.observeAsState()
     val isLoggedIn by userViewModel.isUserLoggedIn.observeAsState(false)
+
+    LaunchedEffect(userData) {
+        Logger.debug("User Data Check", userData?.email ?: "Null")
+    }
 
     // 6) build your sub‐state objects
     val quizState = remember(quizCards, quizTrends, userRanks) {

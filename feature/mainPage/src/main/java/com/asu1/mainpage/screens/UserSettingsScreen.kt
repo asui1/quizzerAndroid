@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,7 +35,7 @@ import com.asu1.quiz.viewmodel.UserViewModel
 import com.asu1.quiz.viewmodel.sampleUserData
 import com.asu1.resources.QuizzerTypographyDefaults
 import com.asu1.resources.R
-import com.asu1.utils.getAppVersion
+import com.asu1.utils.rememberAppVersion
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -49,8 +48,7 @@ fun UserSettingsScreen(
     onLogOut: () -> Unit = {},
     onSignOut: () -> Unit = {}
 ) {
-    val context = LocalContext.current
-    val version = remember { context.getAppVersion() }
+    val version = rememberAppVersion()
     var showLogoutDialog by remember { mutableStateOf(false) }
     // Dialog handler
     if (showLogoutDialog) {

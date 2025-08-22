@@ -9,6 +9,7 @@ import com.asu1.quiz.viewmodel.quizLayout.QuizCoordinatorViewModel
 import com.asu1.quiz.viewmodel.LoadLocalQuizViewModel
 import com.asu1.quiz.viewmodel.LoadMyQuizViewModel
 import com.asu1.resources.R
+import com.asu1.utils.Logger
 
 @Suppress("LongParameterList")
 class QuizNavCoordinator(
@@ -40,6 +41,7 @@ class QuizNavCoordinator(
 
     fun navigateToCreateQuizLayout() {
         val email = userViewModel.userData.value?.email
+        Logger.debug("navigate To Create Quiz Layout $email")
         if (email.isNullOrEmpty()) {
             SnackBarManager.showSnackBar(R.string.please_login_first, ToastType.INFO)
             navController.navigate(Route.Login) {
