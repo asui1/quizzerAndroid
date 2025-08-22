@@ -1,15 +1,11 @@
 package com.asu1.mainpage.composables
 
-import SnackBarManager
-import ToastType
 import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import androidx.credentials.exceptions.GetCredentialException
-import com.asu1.resources.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -41,42 +37,24 @@ class GoogleCredentialManager(
 
     fun requestLogin(login: (email: String, profileUri: String) -> Unit) {
         coroutineScope.launch {
-            try {
-                val result = credentialManager.getCredential(
-                    request = loginRequest,
-                    context = context,
-                )
+            runCredentialFlow(flow = "Login") {
+                val result = credentialManager.getCredential(request = loginRequest, context = context)
                 handleSignIn(result) { email, profileUri -> login(email, profileUri) }
-            } catch (e: GetCredentialException) {
-                SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
-                Log.e("Quizzer", "Error getting credential", e)
             }
         }
     }
 
     fun requestRegister(register: (email: String, profileUri: String) -> Unit) {
         coroutineScope.launch {
-            try {
+            runCredentialFlow(flow = "Register") {
                 val result = credentialManager.getCredential(
                     request = registerRequest,
                     context = context,
                 )
-                val googleIdTokenCredential =
-                    GoogleIdTokenCredential.createFrom(result.credential.data)
-
-                val email =
-                    googleIdTokenCredential.data.getString(
-                        "com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID")
-                if (email == null) {
-                    SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
-
-                    return@launch
-                }
-                val profileUri = googleIdTokenCredential.profilePictureUri
-                register(email, profileUri.toString())
-            } catch (e: GetCredentialException) {
-                SnackBarManager.showSnackBar(R.string.failed_login, ToastType.ERROR)
-                Log.e("Quizzer", "Error getting credential", e)
+                val cred = GoogleIdTokenCredential.createFrom(result.credential.data)
+                val accountId = cred.id
+                val profileUri = cred.profilePictureUri?.toString().orEmpty()
+                register(accountId, profileUri)
             }
         }
     }
